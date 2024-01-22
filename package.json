@@ -1,7 +1,7 @@
 {
   "name": "mupdf",
-  "version": "0.1.1",
-  "description": "MuPDF WASM Library",
+  "version": "0.1.2",
+  "description": "MuPDF.js",
   "exports": "./lib/mupdf.js",
   "files": [
     "lib/mupdf.js",

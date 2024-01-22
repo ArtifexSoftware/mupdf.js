@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://git.ghostscript.com/mupdf.git"
+    "url": "https://github.com/ArtifexSoftware/mupdf-js.git"
   },
   "keywords": [
     "mupdf",

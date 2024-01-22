@@ -9,7 +9,11 @@ script to point to the appropriate location.
 
         https://kripken.github.io/emscripten-site/docs/getting_started/downloads.html
 
-From the mupdf platform/wasm directory, you can run build.sh to build the WebAssembly library.
+This project needs the main mupdf library to be checked out as `libmupdf`.
+If the build fails, ensure that you either cloned this repository recursively,
+or run `git submodule update --init --recursive`.
+
+From this directory, you can run build.sh to build the WebAssembly library.
 The results of the build are the files lib/mupdf-wasm.wasm and lib/mupdf-wasm.js.
 These files are not intended for direct use, but only to be used via lib/mupdf.js which provides the MuPDF.js module.
 

@@ -5,3 +5,4 @@ build:
 
 clean:
 	rm -f lib/mupdf-wasm.wasm lib/mupdf-wasm.js
+	rm -rf libmupdf/build/wasm

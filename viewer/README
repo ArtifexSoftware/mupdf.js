@@ -11,9 +11,9 @@ You CANNOT run this from the file system!
 Modern web browsers refuse to load and run scripts from the file system, so
 this project must be served up by a web server.
 
-In the platform/wasm directory start a stand-alone web server:
+In the top-level directory start a stand-alone web server:
 
-	mupdf/platform/wasm $ python -m http.server
+	mupdf.js $ python -m http.server
 
 Then open a browser:
 

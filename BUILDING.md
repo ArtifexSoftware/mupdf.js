@@ -23,13 +23,17 @@ This project needs the main **MuPDF** library to be checked out as `libmupdf`.
 If the build fails, ensure that you either cloned this repository recursively,
 or run: 
 
-	git submodule update --init --recursive
+```bash
+git submodule update --init --recursive
+```
 
 ## Running a Build
 
 To build the **WebAssembly** library. On the command line simply run:
 
-	make
+```bash
+make
+```
 
 ---
 
@@ -57,6 +61,7 @@ Separate from the build files in `lib/` is the file `mupdf.js` which is a module
 
 To clean the **WebAssembly** library. On the command line simply run:
 
-	make clean
-
+```bash
+make clean
+```
 

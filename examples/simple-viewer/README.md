@@ -1,4 +1,4 @@
-# The MuPDF.js Viewer
+# Simple Viewer
 
 
 This project contains a very simple demo of a **PDF** viewer using the **MuPDF.js** Library.
@@ -21,7 +21,7 @@ python -m http.server
 
 - Then open the viewer in a browser with the following URL:
 
-	[http://localhost:8000/viewer/mupdf-view.html](http://localhost:8000/viewer/mupdf-view.html)
+	[http://localhost:8000/examples/simple-viewer/mupdf-view.html](http://localhost:8000/examples/simple-viewer/mupdf-view.html)
 
 
 ## View a PDF file

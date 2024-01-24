@@ -36,7 +36,7 @@ node test.js
 
 If all is well, this will print the `mupdf` module object to the console.
 
-## Loading a document
+### Loading a document
 
 The following example demonstrates how to load a document and then print out the page count.
 Ensure you have a `my_document.pdf` file alongside this example before trying it.
@@ -55,21 +55,25 @@ console.log(doc.countPages())
 
 ## Documentation
 
-For documentation please refer to: [https://mupdf.readthedocs.io/](https://mupdf.readthedocs.io/).
+For documentation please refer to: [mupdf.readthedocs.io](https://mupdf.readthedocs.io/en/latest/mupdf-js.html).
+
+
+## Examples
+
+Check the [Github repo](https://github.com/ArtifexSoftware/mupdf.js) for example implementations including a simple **PDF Viewer** to help you get started.
 
 
 ---
 
-# Getting Started with Local Development
+## Getting Started with Local Development
 
 You can build the **MuPDF.js WebAssembly** libraries from source by referring to [BUILDING.md](https://github.com/ArtifexSoftware/mupdf.js/blob/master/BUILDING.md).
 
 From here you can then try adding code to the main library file `mupdf.js` or adding your own **JavaScript** files or implementations.
 
-Additionally the `viewer` folder contains a simple **HTML PDF Viewer** with its own [README.md](https://github.com/ArtifexSoftware/mupdf.js/blob/master/viewer/README.md) to help you get started.
 
 
-# Contributing
+## Contributing
 
 
 To contribute please open up (or help answer!) an issue on our **Github** board and create a Pull Request (PR) for review. Find us on **Discord** at [#mupdf](https://discord.gg/DQjvZ6ERqH) to chat with us directly.

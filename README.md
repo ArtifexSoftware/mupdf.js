@@ -7,8 +7,10 @@ The **MuPDF.js** library (`lib/mupdf.js`) can be used both in browsers and in [N
 ## Features
 
 - Fast rendering of **PDF** files
-- Get information about your **PDF**
-- **PDF** editing
+- Search **PDF** files
+- **PDF** editing & annotations
+- Get **PDF** metadata information
+- Manage **PDF** passwords
 
 
 ## Getting started using NPM

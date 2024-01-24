@@ -12,9 +12,11 @@ this project must be served up by a web server.
 
 - In the top directory of your **mupdf.js** repository checkout start a stand-alone web server:
 
-		python -m http.server
+```bash
+python -m http.server
+```
 
-	*this will start a local server instance with the top level folder of your checkout as root.*
+*This will start a local server instance with the top level folder of your checkout as root.*
 
 
 - Then open the viewer in a browser with the following URL:

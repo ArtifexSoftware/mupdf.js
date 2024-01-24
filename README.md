@@ -1,31 +1,36 @@
 # MuPDF.js
 
-This is a build of [MuPDF](https://mupdf.com) targeting [WebAssembly](https://webassembly.org) environments.
+This is a build of [MuPDF](https://mupdf.com) for **JavaScript** & [WebAssembly](https://webassembly.org) environments.
 
 The **MuPDF.js** library (`lib/mupdf.js`) can be used both in browsers and in [Node.js](https://nodejs.org).
 
-This library is very similar in design and use to the **MuPDF Java** library.
-The same classes and methods can be used in the same way - but there are also a few
-conveniences available here thanks to the dynamic nature of **Javascript** that are
-not available in the **Java API**.
+## Features
 
-
+- Fast rendering of **PDF** files
+- Get information about your **PDF**
+- **PDF** editing
 
 
 ## Getting started using NPM
 
 From the command line, go to the folder you want to work from and run:
 
-	npm install mupdf
+```bash
+npm install mupdf
+```
 
 To verify your installation you can create a file `test.js` with the following script:
 
-	const mupdf = require("mupdf")
-	console.log(mupdf)
+```js
+const mupdf = require("mupdf")
+console.log(mupdf)
+```
 
 Then, on the command line, run:
 
-	node test.js
+```bash
+node test.js
+```
 
 If all is well, this will print the `mupdf` module object to the console.
 
@@ -34,11 +39,13 @@ If all is well, this will print the `mupdf` module object to the console.
 The following example demonstrates how to load a document and then print out the page count.
 Ensure you have a `my_document.pdf` file alongside this example before trying it.
 
-	const fs = require("fs")
-	const mupdf = require("mupdf")
-	var data = fs.readFileSync("my_document.pdf")
-	var doc = mupdf.Document.openDocument(data, "application/pdf")
-	console.log(doc.countPages())
+```js
+const fs = require("fs")
+const mupdf = require("mupdf")
+var data = fs.readFileSync("my_document.pdf")
+var doc = mupdf.Document.openDocument(data, "application/pdf")
+console.log(doc.countPages())
+```
 
 ## License and Copyright
 

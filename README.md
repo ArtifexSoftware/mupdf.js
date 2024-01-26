@@ -11,6 +11,7 @@ The **MuPDF.js** library (`lib/mupdf.js`) can be used both in browsers and in [N
 - **PDF** editing & annotations
 - Get **PDF** metadata information
 - Manage **PDF** passwords
+- Supports basic CJK (Chinese, Japanese, Korean) fonts
 
 
 ## Getting started using NPM

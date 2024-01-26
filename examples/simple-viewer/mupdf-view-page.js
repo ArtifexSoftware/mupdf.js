@@ -23,6 +23,7 @@
 /* eslint-disable no-unused-vars */
 
 class MupdfPageViewer {
+	// pageNumber here is NOT zero-indexed
 	constructor(worker, pageNumber, defaultSize, dpi, title) {
 		this.title = title
 		this.worker = worker
@@ -38,8 +39,8 @@ class MupdfPageViewer {
 
 		const anchor = document.createElement("a")
 		anchor.classList.add("anchor")
-		// TODO - document the "+ 1" better
-		anchor.id = "page" + (pageNumber + 1)
+
+		anchor.id = "page" + (pageNumber)
 		rootNode.appendChild(anchor)
 		rootNode.pageNumber = pageNumber
 
@@ -130,8 +131,8 @@ class MupdfPageViewer {
 
 	async mouseDown(event, dpi) {
 		let { x, y } = this._getLocalCoords(event.clientX, event.clientY)
-		// TODO - remove "+ 1"
-		let changed = await this.worker.mouseDownOnPage(this.pageNumber + 1, dpi * devicePixelRatio, x, y)
+
+		let changed = await this.worker.mouseDownOnPage(this.pageNumber, dpi * devicePixelRatio, x, y)
 		this.mouseIsPressed = true
 		if (changed) {
 			this._invalidatePageImg()
@@ -148,15 +149,12 @@ class MupdfPageViewer {
 			if (event.buttons == 0) {
 				// In case we missed an onmouseup event outside of the frame
 				this.mouseIsPressed = false
-				// TODO - remove "+ 1"
-				changed = await this.worker.mouseUpOnPage(this.pageNumber + 1, dpi * devicePixelRatio, x, y)
+				changed = await this.worker.mouseUpOnPage(this.pageNumber, dpi * devicePixelRatio, x, y)
 			} else {
-				// TODO - remove "+ 1"
-				changed = await this.worker.mouseDragOnPage(this.pageNumber + 1, dpi * devicePixelRatio, x, y)
+				changed = await this.worker.mouseDragOnPage(this.pageNumber, dpi * devicePixelRatio, x, y)
 			}
 		} else {
-			// TODO - remove "+ 1"
-			changed = await this.worker.mouseMoveOnPage(this.pageNumber + 1, dpi * devicePixelRatio, x, y)
+			changed = await this.worker.mouseMoveOnPage(this.pageNumber, dpi * devicePixelRatio, x, y)
 		}
 		if (changed) {
 			this._invalidatePageImg()
@@ -167,8 +165,7 @@ class MupdfPageViewer {
 	async mouseUp(event, dpi) {
 		let { x, y } = this._getLocalCoords(event.clientX, event.clientY)
 		this.mouseIsPressed = false
-		// TODO - remove "+ 1"
-		let changed = await this.worker.mouseUpOnPage(this.pageNumber + 1, dpi * devicePixelRatio, x, y)
+		let changed = await this.worker.mouseUpOnPage(this.pageNumber, dpi * devicePixelRatio, x, y)
 		if (changed) {
 			this._invalidatePageImg()
 			this._loadPageImg({ dpi })
@@ -210,13 +207,12 @@ class MupdfPageViewer {
 			this.renderIsOngoing = true
 
 			if (this.sizeIsDefault) {
-				// TODO - remove "+ 1"
-				this.size = await this.worker.getPageSize(this.pageNumber + 1)
+				this.size = await this.worker.getPageSize(this.pageNumber)
 				this.sizeIsDefault = false
 				this._updateSize(dpi)
 			}
-			// TODO - remove "+ 1"
-			this.renderPromise = this.worker.drawPageAsPixmap(this.pageNumber + 1, dpi * devicePixelRatio)
+
+			this.renderPromise = this.worker.drawPageAsPixmap(this.pageNumber, dpi * devicePixelRatio)
 			let imageData = await this.renderPromise
 
 			// if render was aborted, return early
@@ -267,8 +263,7 @@ class MupdfPageViewer {
 		this.rootNode.appendChild(textNode)
 
 		try {
-			// TODO - remove "+ 1"
-			this.textPromise = this.worker.getPageText(this.pageNumber + 1)
+			this.textPromise = this.worker.getPageText(this.pageNumber)
 
 			this.textResultObject = await this.textPromise
 			this._applyPageText(this.textResultObject, dpi)
@@ -336,8 +331,7 @@ class MupdfPageViewer {
 		this.rootNode.appendChild(linksNode)
 
 		try {
-			// TODO - remove "+ 1"
-			this.linksPromise = this.worker.getPageLinks(this.pageNumber + 1)
+			this.linksPromise = this.worker.getPageLinks(this.pageNumber)
 
 			this.linksResultObject = await this.linksPromise
 			this._applyPageLinks(this.linksResultObject, dpi)
@@ -390,9 +384,8 @@ class MupdfPageViewer {
 
 		try {
 			if (this.searchNeedle !== "") {
-				// TODO - remove "+ 1"
-				console.log("SEARCH", this.pageNumber + 1, JSON.stringify(this.searchNeedle))
-				this.searchPromise = this.worker.search(this.pageNumber + 1, this.searchNeedle)
+				console.log("SEARCH", this.pageNumber, JSON.stringify(this.searchNeedle))
+				this.searchPromise = this.worker.search(this.pageNumber, this.searchNeedle)
 				this.searchResultObject = await this.searchPromise
 			} else {
 				this.searchResultObject = []
@@ -502,7 +495,7 @@ class MupdfDocumentHandler {
 
 		let pages = new Array(pageCount)
 		for (let i = 0; i < pageCount; ++i) {
-			const page = new MupdfPageViewer(mupdfWorker, i, defaultSize, handler._dpi(), handler.title)
+			const page = new MupdfPageViewer(mupdfWorker, i+1, defaultSize, handler._dpi(), handler.title)
 			pages[i] = page
 			pagesDiv.appendChild(page.rootNode)
 			handler.pageObserver.observe(page.rootNode)
@@ -588,7 +581,7 @@ class MupdfDocumentHandler {
 	_updateView() {
 		const dpi = this._dpi()
 		for (const page of this.activePages) {
-			this.pages[page.pageNumber].render(dpi, this.searchNeedle)
+			this.pages[page.pageNumber-1].render(dpi, this.searchNeedle)
 		}
 	}
 
@@ -597,9 +590,10 @@ class MupdfDocumentHandler {
 		return ((this.zoomLevel * 96) / 100) | 0
 	}
 
+	// note: pageNumber is NOT zero indexed
 	goToPage(pageNumber) {
-		pageNumber = Math.max(0, Math.min(pageNumber, this.pages.length - 1))
-		this.pages[pageNumber].rootNode.scrollIntoView()
+		pageNumber = Math.max(0, Math.min(pageNumber, this.pages.length))
+		this.pages[pageNumber-1].rootNode.scrollIntoView()
 	}
 
 	zoomIn() {
@@ -714,7 +708,8 @@ class MupdfDocumentHandler {
 		for (let item of outline) {
 			let itemNode = document.createElement("li")
 			let aNode = document.createElement("a")
-			// TODO - document the "+ 1" better
+			// Note: the item.page object IS zero-indexed, 
+			// therfore we add 1 for the correct page number
 			aNode.href = `#page${item.page + 1}`
 			aNode.textContent = item.title
 			itemNode.appendChild(aNode)
@@ -845,8 +840,9 @@ class MupdfDocumentViewer {
 		this.placeholderDiv.replaceChildren(errorDiv)
 	}
 
+	// Note pageNumber is NOT zero indexed here
 	goToPage(pageNumber) {
-		this.documentHandler?.goToPage(pageNumber)
+		this.documentHandler?.goToPage(pageNumber-1)
 	}
 
 	toggleFullscreen() {

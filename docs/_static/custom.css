@@ -1,0 +1,443 @@
+/* add custom CSS as required */
+html {
+    /* sets "Inter" as the priority font */
+    --pst-font-family-base-system: "Inter", -apple-system, BlinkMacSystemFont, Segoe UI,
+    "Helvetica Neue", Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+    Segoe UI Symbol;
+    --pst-font-family-monospace-system: "SFMono-Regular", Menlo, Consolas, Monaco,
+    Liberation Mono, Lucida Console, monospace;
+
+    /* for links, -secondary is hover style */
+    --pst-color-primary: #007aff !important;
+    --pst-color-secondary: #007aff !important;
+}
+
+/* this is because on the live site the background of tables was coming out white everytime
+
+Not a problem in light mode, but in dark mode, it is ...
+
+This is probably related to a CSS clash with the Zendesk widget doing something it
+thinks is **!important**, therefore we very specifically scope these table elements to
+ensure their bg colors remain faithful - tranparent is what we need here */
+main table, main table tr, main table td, main table th {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+.footer-item .theme-version {
+    display: none;
+}
+
+footer .footer-item .copyright {
+    font-size: 14px;
+    font-weight: 200;
+}
+
+/* see:  https://pydata-sphinx-theme.readthedocs.io/en/stable/user_guide/styling.html#color-variables */
+html[data-theme="light"] {
+    --pst-color-background: #FFF;
+    --pst-color-on-background: #FFF;
+
+    .feedback, footer .footer-item .copyright, footer .footer-item .copyright a {
+        color:#555;
+    }
+
+    .prev-next-title {
+        color:#000 !important;
+    }
+
+    .feedback-btns button, #feedbackArea .feedback-text {
+        color: #000;
+        border: solid 1px #000;
+    }
+
+    .feedback-btns button:hover {
+        background-color: #000;
+        color: #fff;
+    }
+
+    #feedbackArea .close-btn {
+        color: #000;
+    }
+}
+
+html[data-theme="dark"] {
+    --pst-color-background: #000;
+    --pst-color-on-background: #000;
+
+    .feedback, footer .footer-item .copyright, footer .footer-item .copyright a {
+        color:#BBBDBE;
+    }
+
+    .prev-next-title {
+        color:#fff !important;
+    }
+
+    .feedback-btns button, #feedbackArea .feedback-text {
+        color: #fff;
+        border: solid 1px #fff;
+    }
+
+    .feedback-btns button:hover {
+        background-color: #fff;
+        color: #000;
+    }
+
+    #feedbackArea .close-btn {
+        color: #fff;
+    }
+}
+
+.hide-me {
+    display:none;
+}
+
+/* Landing elements colors against bokeh background and theme */
+.landing-page p, .landing-page li, .landing-page h1, .landing-page h2, .landing-page p.prev-next-title {
+    color:#fff !important;
+}
+
+@keyframes move {
+    100% {
+        transform: translate3d(0, 0, 1px) rotate(360deg);
+    }
+}
+
+.bokeh-background {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: #000;
+    overflow: hidden;
+}
+
+.bokeh-background span {
+    width: 20vmin;
+    height: 20vmin;
+    border-radius: 20vmin;
+    backface-visibility: hidden;
+    position: absolute;
+    animation: move;
+    animation-duration: 23;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.bokeh-background span:nth-child(0) {
+    color: #007aff;
+    top: 48%;
+    left: 76%;
+    animation-duration: 137s;
+    animation-delay: -140s;
+    transform-origin: -9vw -2vh;
+    box-shadow: 34vmin 0 4.2517200498211825vmin currentColor;
+}
+.bokeh-background span:nth-child(1) {
+    color: #004d65;
+    top: 54%;
+    left: 36%;
+    animation-duration: 319s;
+    animation-delay: -298s;
+    transform-origin: -23vw 18vh;
+    box-shadow: -34vmin 0 4.384657204813343vmin currentColor;
+}
+.bokeh-background span:nth-child(2) {
+    color: #004d65;
+    top: 100%;
+    left: 42%;
+    animation-duration: 252s;
+    animation-delay: -231s;
+    transform-origin: 10vw 25vh;
+    box-shadow: 34vmin 0 4.4843519294881915vmin currentColor;
+}
+.bokeh-background span:nth-child(3) {
+    color: #007aff;
+    top: 77%;
+    left: 70%;
+    animation-duration: 116s;
+    animation-delay: -51s;
+    transform-origin: 4vw 9vh;
+    box-shadow: -34vmin 0 4.586730105894027vmin currentColor;
+}
+.bokeh-background span:nth-child(4) {
+    color: #002e7a;
+    top: 41%;
+    left: 79%;
+    animation-duration: 16s;
+    animation-delay: -260s;
+    transform-origin: -3vw -10vh;
+    box-shadow: -34vmin 0 4.840175053686629vmin currentColor;
+}
+.bokeh-background span:nth-child(5) {
+    color: #002e7a;
+    top: 64%;
+    left: 65%;
+    animation-duration: 109s;
+    animation-delay: -130s;
+    transform-origin: -18vw 5vh;
+    box-shadow: 34vmin 0 5.004786087908902vmin currentColor;
+}
+.bokeh-background span:nth-child(6) {
+    color: #004d65;
+    top: 13%;
+    left: 9%;
+    animation-duration: 332s;
+    animation-delay: -238s;
+    transform-origin: 8vw 18vh;
+    box-shadow: -34vmin 0 4.894420544116487vmin currentColor;
+}
+.bokeh-background span:nth-child(7) {
+    color: #00364a;
+    top: 5%;
+    left: 12%;
+    animation-duration: 188s;
+    animation-delay: -267s;
+    transform-origin: 24vw -16vh;
+    box-shadow: 34vmin 0 5.06167722799893vmin currentColor;
+}
+.bokeh-background span:nth-child(8) {
+    color: #00364a;
+    top: 96%;
+    left: 90%;
+    animation-duration: 100s;
+    animation-delay: -263s;
+    transform-origin: -19vw 6vh;
+    box-shadow: 34vmin 0 4.267218406615401vmin currentColor;
+}
+.bokeh-background span:nth-child(9) {
+    color: #004d65;
+    top: 25%;
+    left: 11%;
+    animation-duration: 100s;
+    animation-delay: -119s;
+    transform-origin: 19vw -14vh;
+    box-shadow: 34vmin 0 4.4197807180488775vmin currentColor;
+}
+.background span:nth-child(10) {
+    color: #002e7a;
+    top: 74%;
+    left: 20%;
+    animation-duration: 14s;
+    animation-delay: -54s;
+    transform-origin: -4vw -19vh;
+    box-shadow: -34vmin 0 4.771920017484345vmin currentColor;
+}
+.bokeh-background span:nth-child(11) {
+    color: #002e7a;
+    top: 56%;
+    left: 12%;
+    animation-duration: 306s;
+    animation-delay: -328s;
+    transform-origin: 18vw 1vh;
+    box-shadow: -34vmin 0 4.899441666329294vmin currentColor;
+}
+
+
+#main-content {
+    z-index:1;
+}
+
+.bd-sidebar-primary {
+    max-width:250px;
+}
+
+.prev-next-title {
+    text-decoration: none !important;
+}
+
+.prev-next-title:hover {
+    text-decoration: underline !important;
+}
+
+#pst-back-to-top {
+    width: 140px !important;
+    left: calc(100vw - 160px);
+}
+
+#feedbackHolder {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin: 40px 0 200px;
+}
+
+.feedback-btns {
+    display: flex;
+    gap: 16px;
+}
+
+.feedback-btns button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border:0;
+    border-radius:5px;
+    font-size:16px;
+    font-weight:500;
+    padding: 0 15px;
+    cursor:pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 30px;
+    background-color: transparent;
+    padding: 0 16px 0 16px;
+}
+
+.feedback-btns button.selected, .feedback-btns button.selected:hover  {
+    background: #007aff;
+}
+
+#feedbackArea {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    width: 350px;
+    height: 120px;
+}
+
+#feedbackArea .feedback-text {
+    background: transparent;
+    width: 100%;
+    height: 100%;
+}
+
+#feedbackArea .feedback-text:focus {
+    outline: none;
+}
+
+#feedbackArea .textarea-btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+#feedbackArea .close-btn {
+    background-color: transparent;
+    border: none;
+}
+
+#feedbackArea .close-btn:hover {
+    color: #007aff;
+}
+
+input[type=submit] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  text-decoration: none;
+  margin: 10px 0 0 0;
+  padding: 5px 20px;
+  cursor: pointer;
+  background: #007aff;
+  border-radius: 20px;
+  text-align: center;
+  color: #fff;
+}
+
+.navbar {
+    border-bottom:  2px solid rgba(255, 255, 255, 0.08);
+}
+
+a {
+    color: #007aff;
+}
+
+a:visited {
+    color: #007aff;
+}
+
+a:hover, a:visited:hover {
+    /*color: #d02c20;*/
+}
+
+/* because the theme put in a block background color for images for some reason! */
+img {
+    background-color: transparent !important;
+}
+
+/* positions the start of the top bar navigation links */
+.navbar-header-items__start {
+    width: 240px;
+}
+
+
+/* API pages */
+.example-tag, .post-tag, .get-tag, .put-tag {
+    margin: 0;
+    font-family: monospace;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 600;
+}
+
+.put-tag {
+    color: black;
+}
+
+.example-tag {
+    background-color: #777;
+}
+
+.example-tag:after {
+    content: "EXAMPLE";
+}
+
+.post-tag {
+    background-color: #1fc752;
+}
+
+.post-tag:after {
+    content: "POST";
+}
+
+.get-tag {
+    background-color: #007aff;
+}
+
+.get-tag:after {
+    content: "GET";
+}
+
+.put-tag {
+    background-color: #FDE048;
+}
+
+.put-tag:after {
+    content: "PUT";
+}
+
+
+/* all h1 headers */
+h1 {
+    font-family: "Lora";
+    font-size: 40px;
+    font-weight: 700;
+}
+
+button.cta {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border:0;
+    border-radius:5px;
+
+    font-weight:500;
+    min-height:40px;
+    line-height:40px;
+    padding: 0 15px;
+    color:#fff;
+    cursor:pointer;
+    margin: 10px 0;
+    padding: 20px;
+    font-size: 20px;
+    width:auto;
+    background-image: linear-gradient(to right, #007aff, #007aff, #007aff, #007aff, #007aff);
+}
+
+button.cta:hover {
+    background:#ea5842;
+}

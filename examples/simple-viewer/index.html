@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<!--
+Copyright (C) 2022, 2024 Artifex Software, Inc.
+
+This file is part of MuPDF.
+
+MuPDF is free software: you can redistribute it and/or modify it under the
+terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option)
+any later version.
+
+MuPDF is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License
+along with MuPDF. If not, see <https://www.gnu.org/licenses/agpl-3.0.en.html>
+
+Alternative licensing terms are available from the licensor.
+For commercial licensing, see <https://www.artifex.com/> or contact
+Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
+CA 94129, USA, for further information.
+-->
+
+<title>MuPDF.js</title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+<link rel="shortcut icon" href="mupdf-icon.png">
+<link rel="stylesheet" href="style.css">
+
+<body>
+
+	<header id="menubar-panel">
+		<details>
+			<summary>File</summary>
+			<menu>
+				<li onclick="document.getElementById('open-file-input').click()">Open File...
+			</menu>
+		</details>
+		<details>
+			<summary>Edit</summary>
+			<menu>
+				<li onclick="show_search_panel()">Search...
+			</menu>
+		</details>
+		<details>
+			<summary>View</summary>
+			<menu>
+				<li onclick="toggle_fullscreen()">Fullscreen
+				<li onclick="toggle_outline_panel()">Outline
+				<li onclick="zoom_to(48)">50%
+				<li onclick="zoom_to(72)">75% (72 dpi)
+				<li onclick="zoom_to(96)">100% (96 dpi)
+				<li onclick="zoom_to(120)">125%
+				<li onclick="zoom_to(144)">150%
+				<li onclick="zoom_to(192)">200%
+			</menu>
+		</details>
+	</header>
+
+	<aside id="outline-panel" style="display:none">
+		<ul id="outline">
+			<!-- outline inserted here -->
+		</ul>
+	</aside>
+
+	<main id="page-panel">
+			<div id="message">
+				Loading MuPDF.js...
+			</div>
+			<div id="pages">
+				<!-- pages inserted here -->
+			</div>
+	</main>
+
+	<footer id="search-panel" style="display:none">
+		<input
+			id="search-input"
+			type="search"
+			size="40"
+			placeholder="Search..."
+		>
+		<button onclick="run_search(-1)">Prev</button>
+		<button onclick="run_search(1)">Next</button>
+		<div id="search-status" style="flex-grow:1"></div>
+		<button onclick="hide_search_panel()">X</button>
+	</footer>
+
+	<!-- hidden input for file dialog -->
+	<input
+		style="display: none"
+		id="open-file-input"
+		type="file"
+		accept=".pdf,application/pdf"
+		onchange="open_document_from_file(event.target.files[0])"
+	>
+
+</body>
+
+<script src="viewer.js"></script>

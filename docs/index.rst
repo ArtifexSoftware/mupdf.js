@@ -29,7 +29,7 @@ Welcome to MuPDF.js
 **MuPDF** with **JavaScript**.
 
 - Fast rendering of **PDF** files
-- Search **PDF** files
+- Extract text and search **PDF** files
 - **PDF** editing & annotations
 - Get **PDF** metadata information
 - Manage **PDF** passwords

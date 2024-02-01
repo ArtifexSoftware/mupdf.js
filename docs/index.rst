@@ -34,6 +34,7 @@ Welcome to MuPDF.js
 - Get **PDF** metadata information
 - Manage **PDF** passwords
 - Support for basic **CJK** (Chinese, Japanese, Korean) fonts
+- And more!
 
 
 Developer documentation to help you get started 
@@ -49,6 +50,7 @@ Developer documentation to help you get started
 
     getting-started/index.rst
     how-to-guide/index.rst
+    api/index.rst
 
 
 .. include:: footer.rst

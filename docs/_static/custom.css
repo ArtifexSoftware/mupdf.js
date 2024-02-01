@@ -441,3 +441,13 @@ button.cta {
 button.cta:hover {
     background:#ea5842;
 }
+
+.wasm_tag {
+    font-family: monospace;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-weight: 600;
+    background-color: #2c5cbd;
+}

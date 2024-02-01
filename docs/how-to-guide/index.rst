@@ -6,10 +6,7 @@ How To Guide
 ===================
 
 
-Table of Contents
--------------------
-
-
+*Coming Soon!*
 
 
 

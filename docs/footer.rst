@@ -14,7 +14,7 @@
             <textarea id="maths-test-answer" rows="1" cols="5"></textarea>
          </div>
 
-         <form method="post" target="feedback_print_popup" action="https://artifex.com/contributor/pdfco-process-feedback.php" onsubmit="submitFeedback();">
+         <form method="post" target="feedback_print_popup" action="https://artifex.com/contributor/mupdfjs-process-feedback.php" onsubmit="submitFeedback();">
              <input type="hidden" name="url" id="feedback-doc-url-page">
              <input type="hidden" name="page" id="feedback-page-ref">
              <input type="hidden" name="helpful" id="feedback-helpful">
@@ -98,14 +98,14 @@
          for (var i=0;i<footerItem.length;i++) {
             const copyright = footerItem[i].getElementsByClassName("copyright");
             for (var j=0;j<copyright.length;j++) {
-               copyright[j].innerHTML = "&copy; Copyright 2023 <a href='https://pdf.co?utm_source=developer&utm_medium=footer-cta' target=_blank>Artifex Software, Inc d/b/a PDF.co</a> — All Rights Reserved";
+               copyright[j].innerHTML = "&copy; Copyright 2023 <a href='https://artifex.com' target=_blank>Artifex Software, Inc</a> — All Rights Reserved";
             }
          }
 
          const footerItemEnd = document.getElementsByClassName("footer-items__end");
          for (var i=0;i<footerItemEnd.length;i++) {
             const endItem = footerItemEnd[i];
-            endItem.innerHTML = "<a href='https://support.bytescout.com/hc/en-us' target='new'>Support</a>";
+            endItem.innerHTML = "<a href='https://discord.gg/zpyAHM7XtF' target='new'>Support</a>";
          }
 
 
@@ -128,6 +128,11 @@
 
 .. external links
 
-
-
 .. _MuPDF & JavaScript: https://mupdf.readthedocs.io/en/latest/mupdf-js.html
+.. _Node JS & NPM: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+.. _Git: https://git-scm.com
+.. _Python: https://www.python.org
+.. _MuPDF.js repository on Github: https://github.com/ArtifexSoftware/mupdf.js
+.. _http://localhost:8000/test.html: http://localhost:8000/test.html
+.. _Wasm: 
+.. _WebAssembly: https://webassembly.org

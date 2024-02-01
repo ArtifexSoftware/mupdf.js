@@ -43,34 +43,46 @@ onmessage = async function (event) {
 	}
 }
 
-var openDocument = null
+var document_next_id = 1
+var document_map = {} // open mupdf.Document handles
 
 methods.openDocumentFromBuffer = function (buffer, magic) {
-	if (openDocument)
-		openDocument.destroy()
-	openDocument = mupdf.Document.openDocument(buffer, magic)
+	let doc_id = document_next_id++
+	document_map[doc_id] = mupdf.Document.openDocument(buffer, magic)
+	return doc_id
 }
 
-methods.documentTitle = function () {
-	return openDocument.getMetaData(Document.META_INFO_TITLE)
+methods.closeDocument = function (doc_id) {
+	let doc = document_map[doc_id]
+	doc.destroy()
+	delete document_map[doc_id]
 }
 
-methods.documentOutline = function () {
-	return openDocument.loadOutline()
+methods.documentTitle = function (doc_id) {
+	let doc = document_map[doc_id]
+	return doc.getMetaData(Document.META_INFO_TITLE)
 }
 
-methods.countPages = function () {
-	return openDocument.countPages()
+methods.documentOutline = function (doc_id) {
+	let doc = document_map[doc_id]
+	return doc.loadOutline()
 }
 
-methods.getPageSize = function (pageNumber) {
-	let page = openDocument.loadPage(pageNumber)
+methods.countPages = function (doc_id) {
+	let doc = document_map[doc_id]
+	return doc.countPages()
+}
+
+methods.getPageSize = function (doc_id, page_number) {
+	let doc = document_map[doc_id]
+	let page = doc.loadPage(page_number)
 	let bounds = page.getBounds()
 	return { width: bounds[2] - bounds[0], height: bounds[3] - bounds[1] }
 }
 
-methods.getPageLinks = function (pageNumber) {
-	let page = openDocument.loadPage(pageNumber)
+methods.getPageLinks = function (doc_id, page_number) {
+	let doc = document_map[doc_id]
+	let page = doc.loadPage(page_number)
 	let links = page.getLinks()
 
 	return links.map((link) => {
@@ -80,7 +92,7 @@ methods.getPageLinks = function (pageNumber) {
 		if (link.isExternal())
 			href = link.getURI()
 		else
-			href = `#page${openDocument.resolveLink(link) + 1}`
+			href = `#page${doc.resolveLink(link) + 1}`
 
 		return {
 			x: x0,
@@ -92,14 +104,16 @@ methods.getPageLinks = function (pageNumber) {
 	})
 }
 
-methods.getPageText = function (pageNumber) {
-	let page = openDocument.loadPage(pageNumber)
+methods.getPageText = function (doc_id, page_number) {
+	let doc = document_map[doc_id]
+	let page = doc.loadPage(page_number)
 	let text = page.toStructuredText(1).asJSON()
 	return JSON.parse(text)
 }
 
-methods.search = function (pageNumber, needle) {
-	let page = openDocument.loadPage(pageNumber)
+methods.search = function (doc_id, page_number, needle) {
+	let doc = document_map[doc_id]
+	let page = doc.loadPage(page_number)
 	const hits = page.search(needle)
 	let result = []
 	for (let hit of hits) {
@@ -116,8 +130,9 @@ methods.search = function (pageNumber, needle) {
 	return result
 }
 
-methods.getPageAnnotations = function (pageNumber, dpi) {
-	let page = openDocument.loadPage(pageNumber)
+methods.getPageAnnotations = function (doc_id, page_number, dpi) {
+	let doc = document_map[doc_id]
+	let page = doc.loadPage(page_number)
 
 	if (page == null) {
 		return []
@@ -139,11 +154,13 @@ methods.getPageAnnotations = function (pageNumber, dpi) {
 	})
 }
 
-methods.drawPageAsPixmap = function (pageNumber, dpi) {
+methods.drawPageAsPixmap = function (doc_id, page_number, dpi) {
 	const doc_to_screen = mupdf.Matrix.scale(dpi / 72, dpi / 72)
 
-	let page = openDocument.loadPage(pageNumber)
+	let doc = document_map[doc_id]
+	let page = doc.loadPage(page_number)
 	let bbox = Rect.transform(page.getBounds(), doc_to_screen)
+
 	let pixmap = new mupdf.Pixmap(mupdf.ColorSpace.DeviceRGB, bbox, true)
 	pixmap.clear(255)
 
@@ -151,14 +168,12 @@ methods.drawPageAsPixmap = function (pageNumber, dpi) {
 	page.run(device, Matrix.identity)
 	device.close()
 
-	let pixArray = pixmap.getPixels()
-	let pixW = pixmap.getWidth()
-	let pixH = pixmap.getHeight()
-
-	let imageData = new ImageData(pixArray.slice(), pixW, pixH)
+	// TODO: do we need to make a copy with slice() ?
+	let imageData = new ImageData(pixmap.getPixels().slice(), pixmap.getWidth(), pixmap.getHeight())
 
 	pixmap.destroy()
 
+	// TODO: do we need to pass image data as transferable to avoid copying?
 	return imageData
 }
 

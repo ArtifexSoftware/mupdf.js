@@ -174,21 +174,11 @@ worker.onmessage = function (event) {
 	}
 }
 
-function toggle_fullscreen() {
-	// Safari on iPhone doesn't support Fullscreen
-	if (typeof document.documentElement.requestFullscreen !== "function")
-		return
-	if (document.fullscreenElement)
-		document.exitFullscreen()
-	else
-		document.documentElement.requestFullscreen()
-}
-
-
 // PAGE VIEW
 
 class PageView {
-	constructor(pageNumber, defaultSize, dpi) {
+	constructor(doc, pageNumber, defaultSize, dpi) {
+		this.doc = doc
 		this.pageNumber = pageNumber // 0-based
 		this.size = defaultSize
 		this.sizeIsDefault = true
@@ -290,12 +280,12 @@ class PageView {
 			this.renderIsOngoing = true
 
 			if (this.sizeIsDefault) {
-				this.size = await worker.getPageSize(this.pageNumber)
+				this.size = await worker.getPageSize(this.doc, this.pageNumber)
 				this.sizeIsDefault = false
 				this._updateSize(dpi)
 			}
 
-			this.renderPromise = worker.drawPageAsPixmap(this.pageNumber, dpi * devicePixelRatio)
+			this.renderPromise = worker.drawPageAsPixmap(this.doc, this.pageNumber, dpi * devicePixelRatio)
 			let imageData = await this.renderPromise
 
 			// if render was aborted, return early
@@ -346,7 +336,7 @@ class PageView {
 		this.rootNode.appendChild(textNode)
 
 		try {
-			this.textPromise = worker.getPageText(this.pageNumber)
+			this.textPromise = worker.getPageText(this.doc, this.pageNumber)
 
 			this.textResultObject = await this.textPromise
 			this._applyPageText(this.textResultObject, dpi)
@@ -414,7 +404,7 @@ class PageView {
 		this.rootNode.appendChild(linksNode)
 
 		try {
-			this.linksPromise = worker.getPageLinks(this.pageNumber)
+			this.linksPromise = worker.getPageLinks(this.doc, this.pageNumber)
 
 			this.linksResultObject = await this.linksPromise
 			this._applyPageLinks(this.linksResultObject, dpi)
@@ -468,7 +458,7 @@ class PageView {
 		try {
 			if (this.searchNeedle !== "") {
 				console.log("SEARCH", this.pageNumber, JSON.stringify(this.searchNeedle))
-				this.searchPromise = worker.search(this.pageNumber, this.searchNeedle)
+				this.searchPromise = worker.search(this.doc, this.pageNumber, this.searchNeedle)
 				this.searchResultObject = await this.searchPromise
 			} else {
 				this.searchResultObject = []
@@ -508,6 +498,7 @@ class PageView {
 
 // DOCUMENT VIEW
 
+var current_doc = 0
 var current_zoom = 96
 
 var page_list = null // all pages in document
@@ -652,6 +643,16 @@ window.addEventListener("keydown", function (event) {
 	}
 })
 
+function toggle_fullscreen() {
+	// Safari on iPhone doesn't support Fullscreen
+	if (typeof document.documentElement.requestFullscreen !== "function")
+		return
+	if (document.fullscreenElement)
+		document.exitFullscreen()
+	else
+		document.documentElement.requestFullscreen()
+}
+
 // SEARCH
 
 let search_panel = document.getElementById("search-panel")
@@ -768,7 +769,9 @@ function close_document() {
 	hide_outline_panel()
 	hide_search_panel()
 
-	if (page_list) {
+	if (current_doc) {
+		worker.closeDocument(current_doc)
+		current_doc = 0
 		document.getElementById("outline").replaceChildren()
 		document.getElementById("pages").replaceChildren()
 		for (let page of page_list)
@@ -780,25 +783,25 @@ function close_document() {
 }
 
 async function open_document_from_buffer(buffer, magic, title) {
-	await worker.openDocumentFromBuffer(buffer, magic)
+	current_doc = await worker.openDocumentFromBuffer(buffer, magic)
 
-	document.title = await worker.documentTitle() || title
+	document.title = await worker.documentTitle(current_doc) || title
 
-	var page_count = await worker.countPages()
+	var page_count = await worker.countPages(current_doc)
 
 	// Use second page as default page size (the cover page is often differently sized)
-	var page_size = await worker.getPageSize(page_count > 1 ? 2 : 1)
+	var page_size = await worker.getPageSize(current_doc, page_count > 1 ? 2 : 1)
 
 	page_list = []
 	for (let i = 0; i < page_count; ++i)
-		page_list[i] = new PageView(i, page_size, current_zoom)
+		page_list[i] = new PageView(current_doc, i, page_size, current_zoom)
 
 	for (let page of page_list) {
 		document.getElementById("pages").appendChild(page.rootNode)
 		page_observer.observe(page.rootNode)
 	}
 
-	var outline = await worker.documentOutline()
+	var outline = await worker.documentOutline(current_doc)
 	if (outline) {
 		build_outline(document.getElementById("outline"), outline)
 		show_outline_panel()

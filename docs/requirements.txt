@@ -1,0 +1,6 @@
+# define sphinx versioning
+sphinx==5.3.0
+readthedocs-sphinx-search==0.1.1
+pydata_sphinx_theme
+sphinx_design
+sphinx_copybutton

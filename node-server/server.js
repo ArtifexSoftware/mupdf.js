@@ -13,11 +13,11 @@ app.listen(PORT, () => {
     console.log(`Server started on ${PORT}`)
 })
 
-app.get("/api/", (req,res) => {
+app.get("/mupdfjs/", (req,res) => {
     res.json({"result":"Hello World!"})
 })
 
-app.get("/api/openFile/", (req,res) => {
+app.get("/mupdfjs/openFile/", (req,res) => {
     console.log(`requesting: ${req.query.pdf}`)
     const data = fs.readFileSync(req.query.pdf)
     document = mupdf.Document.openDocument(data, "application/pdf")
@@ -30,7 +30,7 @@ app.get("/api/openFile/", (req,res) => {
             })
 })
 
-app.get("/api/countPages/", (req,res) => {
+app.get("/mupdfjs/countPages/", (req,res) => {
     if (document != null) {
         res.json({"result":document.countPages()})
     } else {

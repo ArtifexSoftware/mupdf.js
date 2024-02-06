@@ -9,11 +9,11 @@ npm install
 Start the server:
 
 ```bash
-nodemon run dev
+npm run dev
 ```
 
 ## Test the server
 
-Visit: http://localhost:8080/api/
+Visit: http://localhost:8080/mupdfjs/
 
 You should see the "Hello World!" message.

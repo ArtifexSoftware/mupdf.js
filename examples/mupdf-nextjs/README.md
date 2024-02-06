@@ -1,5 +1,11 @@
 # Getting Started
 
+Install dependencies:
+
+```bash
+npm install
+```
+
 ## Start the MuPDF Server
 
 Ensure that the `node-server` is running.

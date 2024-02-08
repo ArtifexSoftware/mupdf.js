@@ -22,6 +22,10 @@
 // CA 94129, USA, for further information.
 */
 
+* {
+	box-sizing: border-box;
+}
+
 /* APPEARANCE */
 
 html {
@@ -41,17 +45,15 @@ footer {
 }
 
 aside {
-	font-size: 12px;
+	background-color: white;
+	border-right: 1px solid black;
 }
 
-aside ul {
-	margin: 0;
-	padding-left: 20px;
-}
-
-aside a {
-	color: black;
-	text-decoration: none;
+#message {
+	text-align: center;
+	font-size: 24pt;
+	font-weight: bold;
+	color: silver;
 }
 
 details[open] > summary {
@@ -111,8 +113,6 @@ aside {
 	grid-column: 1;
 	grid-row: 2;
 	overflow-y: auto;
-	background-color: white;
-	border-right: 1px solid black;
 	width: 250px;
 }
 
@@ -147,14 +147,28 @@ menu li {
 	cursor: pointer;
 }
 
-/* PAGES */
+/* OUTLINE */
 
-#message {
-	text-align: center;
-	font-size: 24pt;
-	font-weight: bold;
-	color: silver;
+#outline {
+	font-size: 12px;
 }
+
+#outline ul {
+	margin: 0;
+	padding-left: 20px;
+}
+
+#outline a {
+	color: black;
+	text-decoration: none;
+}
+
+#outline a:hover {
+	color: blue;
+	text-decoration: underline;
+}
+
+/* PAGES */
 
 #pages {
 	margin: 0 auto;
@@ -167,25 +181,31 @@ div.page {
 	box-shadow: 0px 2px 8px #0004;
 }
 
-div.page canvas {
+div.page * {
 	position: absolute;
+}
+
+div.page canvas {
 	user-select: none;
 }
 
-div.links { position:absolute; }
-div.links a { position:absolute; }
-div.links a:hover { outline: 1px dotted blue; }
-
-div.text { position:absolute; }
 div.text span {
-	position:absolute;
-	white-space:pre;
-	line-height:1;
-	color:transparent;
-}
-div.text ::selection {
-	background: rgba(0, 10, 240, 0.4);
+	white-space: pre;
+	line-height: 1;
+	color: transparent;
 }
 
-div.searchHitList { position:absolute; }
-div.searchHit { position:absolute; pointer-events:none; outline: 1px solid hotpink; background-color: lightpink; mix-blend-mode: multiply; }
+div.text ::selection {
+	background: hsla(220, 100%, 50%, 0.2);
+}
+
+div.link a:hover {
+	border: 1px dotted blue;
+}
+
+div.search > div {
+	pointer-events: none;
+	border: 1px solid hotpink;
+	background-color: lightpink;
+	mix-blend-mode: multiply;
+}

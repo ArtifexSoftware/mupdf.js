@@ -37,6 +37,22 @@ function array_insert(array, index, item) {
 	array[index] = item
 }
 
+function set_has(set, item) {
+	let a = 0
+	let b = set.length - 1
+	while (a <= b) {
+		let m = (a + b) >> 1
+		let x = set[m]
+		if (item < x)
+			b = m - 1
+		else if (item > x)
+			a = m + 1
+		else
+			return true
+	}
+	return false
+}
+
 function set_add(set, item) {
 	let a = 0
 	let b = set.length - 1
@@ -78,11 +94,6 @@ function show_message(msg) {
 
 function clear_message() {
 	document.getElementById("message").textContent = ""
-}
-
-function die(error) {
-	show_message(error.name + ": " + error.message)
-	console.error(error)
 }
 
 // MENU BAR
@@ -168,7 +179,7 @@ worker.onmessage = function (event) {
 		break
 
 	default:
-		error = new Error(`Invalid message '${type}'`)
+		error = new Error(`Invalid message: ${type}`)
 		worker._promise_map.get(id).reject(error)
 		break
 	}
@@ -177,185 +188,169 @@ worker.onmessage = function (event) {
 // PAGE VIEW
 
 class PageView {
-	constructor(doc, pageNumber, defaultSize, dpi) {
+	constructor(doc, pageNumber, defaultSize, zoom) {
 		this.doc = doc
 		this.pageNumber = pageNumber // 0-based
 		this.size = defaultSize
-		this.sizeIsDefault = true
 
-		const rootNode = document.createElement("div")
-		rootNode.classList.add("page")
-		rootNode.id = "page" + (pageNumber+1)
-		rootNode.pageNumber = pageNumber
-		rootNode.page = this
+		this.loadPromise = false
+		this.drawPromise = false
 
-		const canvasNode = document.createElement("canvas")
-		rootNode.appendChild(canvasNode)
+		this.rootNode = document.createElement("div")
+		this.rootNode.id = "page" + (pageNumber + 1)
+		this.rootNode.className = "page"
+		this.rootNode.page = this
 
-		this.rootNode = rootNode
-		this.canvasNode = canvasNode
-		this.canvasCtx = canvasNode.getContext("2d")
-		this._updateSize(dpi)
+		this.canvasNode = document.createElement("canvas")
+		this.canvasCtx = this.canvasNode.getContext("2d")
+		this.rootNode.appendChild(this.canvasNode)
 
-		this.renderPromise = null
-		this.queuedRenderArgs = null
+		this.textData = null
+		this.textNode = document.createElement("div")
+		this.textNode.className = "text"
+		this.rootNode.appendChild(this.textNode)
 
-		this.textNode = null
-		this.textPromise = null
-		this.textResultObject = null
+		this.linkData = null
+		this.linkNode = document.createElement("div")
+		this.linkNode.className = "link"
+		this.rootNode.appendChild(this.linkNode)
 
-		this.linksNode = null
-		this.linksPromise = null
-		this.linksResultObject = null
+		this.needle = null
+		this.loadNeedle = null
+		this.showNeedle = null
 
-		this.searchHitsNode = null
-		this.searchPromise = null
-		this.searchResultObject = null
-		this.lastSearchNeedle = null
-		this.searchNeedle = null
+		this.searchData = null
+		this.searchNode = document.createElement("div")
+		this.searchNode.className = "search"
+		this.rootNode.appendChild(this.searchNode)
+
+		this.zoom = zoom
+		this._updateSize()
 	}
 
-	// TODO - move searchNeedle out
-	render(dpi, searchNeedle) {
-		// TODO: only render if changed
-		// TODO - error handling
-		this._loadPageImg({ dpi })
-		this._loadPageText(dpi)
-		this._loadPageLinks(dpi)
-		this._loadPageSearch(dpi, searchNeedle)
-	}
-
-	// TODO - update child nodes
-	setZoom(zoomLevel) {
-		this._updateSize(zoomLevel)
-	}
-
-	setSearchNeedle(searchNeedle = null) {
-		this.searchNeedle = searchNeedle
-	}
-
-	// TODO - this is destructive and makes other method get null ref errors
-	showError(functionName, error) {
-		console.error(`mupdf.${functionName}: ${error.message}:\n${error.stack}`)
-
-		let div = document.createElement("div")
-		div.classList.add("error")
-		div.textContent = error.name + ": " + error.message
-		this.rootNode.replaceChildren(div)
-	}
-
-
-	// --- INTERNAL METHODS ---
-
-	// TODO - remove dpi param
-	_updateSize(dpi) {
-		// We use the `foo | 0` notation to convert dimensions to integers.
+	// Update page element size for current zoom level.
+	_updateSize() {
+		// We use the `foo | 0` notation to round down floating point numbers to integers.
 		// This matches the conversion done in `mupdf.js` when `Pixmap.withBbox`
 		// calls `libmupdf._wasm_new_pixmap_with_bbox`.
-		this.rootNode.style.width = (((this.size.width * dpi) / 72) | 0) + "px"
-		this.rootNode.style.height = (((this.size.height * dpi) / 72) | 0) + "px"
-		this.canvasNode.style.width = (((this.size.width * dpi) / 72) | 0) + "px"
-		this.canvasNode.style.height = (((this.size.height * dpi) / 72) | 0) + "px"
+		this.rootNode.style.width = (((this.size.width * this.zoom) / 72) | 0) + "px"
+		this.rootNode.style.height = (((this.size.height * this.zoom) / 72) | 0) + "px"
+		this.canvasNode.style.width = (((this.size.width * this.zoom) / 72) | 0) + "px"
+		this.canvasNode.style.height = (((this.size.height * this.zoom) / 72) | 0) + "px"
 	}
 
-	async _loadPageImg(renderArgs) {
-		if (this.renderPromise != null || this.renderIsOngoing) {
-			// If a render is ongoing, we mark the current arguments as queued
-			// to be processed when the render ends.
-			// This also erases any previous queued render arguments.
-			this.queuedRenderArgs = renderArgs
+	setZoom(zoom) {
+		if (this.zoom !== zoom) {
+			this.zoom = zoom
+			this._updateSize()
+		}
+	}
+
+	setSearch(needle) {
+		if (this.needle !== needle)
+			this.needle = needle
+	}
+
+	async _load() {
+		console.log("LOADING", this.pageNumber)
+
+		this.size = await worker.getPageSize(this.doc, this.pageNumber)
+		this.textData = await worker.getPageText(this.doc, this.pageNumber)
+		this.linkData = await worker.getPageLinks(this.doc, this.pageNumber)
+
+		this._updateSize()
+	}
+
+	async _loadSearch() {
+		if (this.loadNeedle !== this.needle) {
+			this.loadNeedle = this.needle
+			if (!this.needle)
+				this.searchData = null
+			else
+				this.searchData = await worker.search(this.doc, this.pageNumber, this.needle)
+		}
+	}
+
+	async _show() {
+		if (!this.loadPromise)
+			this.loadPromise = this._load()
+		await this.loadPromise
+
+		// Render image if zoom factor has changed!
+		if (this.canvasNode.zoom !== this.zoom)
+			this._render()
+
+		// (Re-)create HTML nodes if zoom factor has changed
+		if (this.textNode.zoom !== this.zoom)
+			this._showText()
+
+		// (Re-)create HTML nodes if zoom factor has changed
+		if (this.linkNode.zoom !== this.zoom)
+			this._showLinks()
+
+		// Reload search hits if the needle has changed.
+		// TODO: race condition with multiple queued searches
+		if (this.loadNeedle !== this.needle)
+			await this._loadSearch()
+
+		// (Re-)create HTML nodes if search changed or zoom factor changed
+		if (this.showNeedle !== this.needle || this.searchNode.zoom !== this.zoom)
+			this._showSearch()
+	}
+
+	async _render() {
+		// Remember zoom value when we start rendering.
+		let zoom = this.zoom
+
+		// If the current image node was rendered with the same arguments we skip the render.
+		if (this.canvasNode.zoom === this.zoom)
+			return
+
+		if (this.drawPromise) {
+			// If a render is ongoing, don't queue a new render immediately!
+			// When the on-going render finishes, we check the page zoom value.
+			// If it is stale, we immediately queue a new render.
+			console.log("BUSY DRAWING", this.pageNumber)
 			return
 		}
-		if (this.canvasNode?.renderArgs != null) {
-			// If the current image node was rendered with the same arguments
-			// we skip the render.
-			if (renderArgs.dpi === this.canvasNode.renderArgs.dpi)
-				return
-		}
 
-		let { dpi } = renderArgs
+		console.log("DRAWING", this.pageNumber, zoom)
 
-		try {
-			// FIXME - find better system for skipping duplicate renders
-			this.renderIsOngoing = true
+		this.canvasNode.zoom = this.zoom
 
-			if (this.sizeIsDefault) {
-				this.size = await worker.getPageSize(this.doc, this.pageNumber)
-				this.sizeIsDefault = false
-				this._updateSize(dpi)
-			}
+		this.drawPromise = worker.drawPageAsPixmap(this.doc, this.pageNumber, zoom * devicePixelRatio)
 
-			this.renderPromise = worker.drawPageAsPixmap(this.doc, this.pageNumber, dpi * devicePixelRatio)
-			let imageData = await this.renderPromise
+		let imageData = await this.drawPromise
+		if (imageData == null)
+			return
 
-			// if render was aborted, return early
-			if (imageData == null)
-				return
+		this.drawPromise = null
 
-			this.canvasNode.renderArgs = renderArgs
+		if (this.zoom === zoom) {
+			// Render is still valid. Use it!
+			console.log("FRESH IMAGE", this.pageNumber)
 			this.canvasNode.width = imageData.width
 			this.canvasNode.height = imageData.height
 			this.canvasCtx.putImageData(imageData, 0, 0)
-		} catch (error) {
-			this.showError("_loadPageImg", error)
-		} finally {
-			this.renderPromise = null
-			this.renderIsOngoing = false
-		}
-
-		if (this.queuedRenderArgs != null) {
-			// TODO - Error handling
-			this._loadPageImg(this.queuedRenderArgs)
-			this.queuedRenderArgs = null
+		} else {
+			// Uh-oh. This render is already stale. Try again!
+			console.log("STALE IMAGE", this.pageNumber)
+			if (set_has(page_visible, this.pageNumber))
+				this._render()
 		}
 	}
 
-	_invalidatePageImg() {
-		if (this.canvasNode)
-			this.canvasNode.renderArgs = null
-	}
+	_showText() {
+		this.textNode.zoom = this.zoom
+		this.textNode.replaceChildren()
 
-	// TODO - replace "dpi" with "scale"?
-	async _loadPageText(dpi) {
-		// TODO - Disable text when editing (conditions to be figured out)
-		if (this.textNode != null && dpi === this.textNode.dpi) {
-			// Text was already rendered at the right scale, nothing to be done
-			return
-		}
-		if (this.textResultObject) {
-			// Text was already returned, just needs to be rescaled
-			this._applyPageText(this.textResultObject, dpi)
-			return
-		}
-
-		let textNode = document.createElement("div")
-		textNode.classList.add("text")
-
-		this.textNode?.remove()
-		this.textNode = textNode
-		this.rootNode.appendChild(textNode)
-
-		try {
-			this.textPromise = worker.getPageText(this.doc, this.pageNumber)
-
-			this.textResultObject = await this.textPromise
-			this._applyPageText(this.textResultObject, dpi)
-		} catch (error) {
-			this.showError("_loadPageText", error)
-		} finally {
-			this.textPromise = null
-		}
-	}
-
-	_applyPageText(textResultObject, dpi) {
-		this.textNode.dpi = dpi
 		let nodes = []
 		let pdf_w = []
 		let html_w = []
 		let text_len = []
-		let scale = dpi / 72
-		this.textNode.replaceChildren()
-		for (let block of textResultObject.blocks) {
+		let scale = this.zoom / 72
+
+		for (let block of this.textData.blocks) {
 			if (block.type === "text") {
 				for (let line of block.lines) {
 					let text = document.createElement("span")
@@ -374,125 +369,50 @@ class PageView {
 				}
 			}
 		}
+
 		for (let i = 0; i < nodes.length; ++i) {
 			if (text_len[i] > 0)
 				html_w[i] = nodes[i].clientWidth
 		}
+
 		for (let i = 0; i < nodes.length; ++i) {
 			if (text_len[i] > 0)
 				nodes[i].style.letterSpacing = (pdf_w[i] - html_w[i]) / text_len[i] + "px"
 		}
 	}
 
-	async _loadPageLinks(dpi) {
-		if (this.linksNode != null && dpi === this.linksNode.dpi) {
-			// Links were already rendered at the right scale, nothing to be done
-			return
-		}
-		if (this.linksResultObject) {
-			// Links were already returned, just need to be rescaled
-			this._applyPageLinks(this.linksResultObject, dpi)
-			return
-		}
+	_showLinks() {
+		this.linkNode.zoom = this.zoom
+		this.linkNode.replaceChildren()
 
-		let linksNode = document.createElement("div")
-		linksNode.classList.add("links")
-
-		// TODO - Figure out node order
-		this.linksNode?.remove()
-		this.linksNode = linksNode
-		this.rootNode.appendChild(linksNode)
-
-		try {
-			this.linksPromise = worker.getPageLinks(this.doc, this.pageNumber)
-
-			this.linksResultObject = await this.linksPromise
-			this._applyPageLinks(this.linksResultObject, dpi)
-		} catch (error) {
-			this.showError("_loadPageLinks", error)
-		} finally {
-			this.linksPromise = null
-		}
-	}
-
-	_applyPageLinks(linksResultObject, dpi) {
-		let scale = dpi / 72
-		this.linksNode.dpi = dpi
-		this.linksNode.replaceChildren()
-		for (let link of linksResultObject) {
+		let scale = this.zoom / 72
+		for (let link of this.linkData) {
 			let a = document.createElement("a")
 			a.href = link.href
 			a.style.left = link.x * scale + "px"
 			a.style.top = link.y * scale + "px"
 			a.style.width = link.w * scale + "px"
 			a.style.height = link.h * scale + "px"
-			this.linksNode.appendChild(a)
+			this.linkNode.appendChild(a)
 		}
 	}
 
-	async _loadPageSearch(dpi, searchNeedle) {
-		if (
-			this.searchHitsNode != null &&
-			dpi === this.searchHitsNode.dpi &&
-			searchNeedle == this.searchHitsNode.searchNeedle
-		) {
-			// Search results were already rendered at the right scale, nothing to be done
-			return
-		}
-		if (this.searchResultObject && searchNeedle == this.searchHitsNode.searchNeedle) {
-			// Search results were already returned, just need to be rescaled
-			this._applyPageSearch(this.searchResultObject, dpi)
-			return
-		}
+	_showSearch() {
+		this.showNeedle = this.needle
+		this.searchNode.zoom = this.zoom
+		this.searchNode.replaceChildren()
 
-		// TODO - cancel previous load
-
-		let searchHitsNode = document.createElement("div")
-		searchHitsNode.classList.add("searchHitList")
-		this.searchHitsNode?.remove()
-		this.searchHitsNode = searchHitsNode
-		this.rootNode.appendChild(searchHitsNode)
-
-		this.searchNeedle = searchNeedle ?? ""
-
-		try {
-			if (this.searchNeedle !== "") {
-				console.log("SEARCH", this.pageNumber, JSON.stringify(this.searchNeedle))
-				this.searchPromise = worker.search(this.doc, this.pageNumber, this.searchNeedle)
-				this.searchResultObject = await this.searchPromise
-			} else {
-				this.searchResultObject = []
+		if (this.searchData) {
+			let scale = this.zoom / 72
+			for (let bbox of this.searchData) {
+				let div = document.createElement("div")
+				div.style.left = bbox.x * scale + "px"
+				div.style.top = bbox.y * scale + "px"
+				div.style.width = bbox.w * scale + "px"
+				div.style.height = bbox.h * scale + "px"
+				this.searchNode.appendChild(div)
 			}
-
-			this._applyPageSearch(this.searchResultObject, searchNeedle, dpi)
-		} catch (error) {
-			this.showError("_loadPageSearch", error)
-		} finally {
-			this.searchPromise = null
 		}
-	}
-
-	_applyPageSearch(searchResultObject, searchNeedle, dpi) {
-		let scale = dpi / 72
-		this.searchHitsNode.searchNeedle = searchNeedle
-		this.searchHitsNode.dpi = dpi
-		this.searchHitsNode.replaceChildren()
-		for (let bbox of searchResultObject) {
-			let div = document.createElement("div")
-			div.classList.add("searchHit")
-			div.style.left = bbox.x * scale + "px"
-			div.style.top = bbox.y * scale + "px"
-			div.style.width = bbox.w * scale + "px"
-			div.style.height = bbox.h * scale + "px"
-			this.searchHitsNode.appendChild(div)
-		}
-	}
-
-	_getLocalCoords(clientX, clientY) {
-		const canvas = this.canvasNode
-		let x = clientX - canvas.getBoundingClientRect().left - canvas.clientLeft + canvas.scrollLeft
-		let y = clientY - canvas.getBoundingClientRect().top - canvas.clientTop + canvas.scrollTop
-		return { x, y }
 	}
 }
 
@@ -510,10 +430,11 @@ var page_visible = []
 var page_observer = new IntersectionObserver(
 	function (entries) {
 		for (let entry of entries) {
+			let page = entry.target.page
 			if (entry.isIntersecting)
-				set_add(page_visible, entry.target.pageNumber)
+				set_add(page_visible, page.pageNumber)
 			else
-				set_delete(page_visible, entry.target.pageNumber)
+				set_delete(page_visible, page.pageNumber)
 		}
 		queue_update_view()
 	},
@@ -540,7 +461,7 @@ function update_view() {
 	update_view_timer = 0
 
 	for (let i of page_visible)
-		page_list[i].render(current_zoom, current_search_needle)
+		page_list[i]._show()
 }
 
 function find_visible_page() {
@@ -632,7 +553,7 @@ window.addEventListener("keydown", function (event) {
 		// 'G'
 		case 71:
 			show_search_panel()
-			run_search(event.shiftKey ? -1 : 1)
+			run_search(event.shiftKey ? -1 : 1, 1)
 			event.preventDefault()
 			break
 		}
@@ -662,13 +583,8 @@ let search_input = document.getElementById("search-input")
 var current_search_needle = ""
 var current_search_page = 0
 
-search_input.oninput = function (event) {
-	set_search_needle(event.target.value)
-}
-
-search_input.onkeydown = function (event) {
-	if (event.key == "Enter")
-		run_search(event.shiftKey ? -1 : 1)
+search_input.onchange = function (event) {
+	run_search(event.shiftKey ? -1 : 1, 0)
 }
 
 function show_search_panel() {
@@ -686,45 +602,53 @@ function hide_search_panel() {
 }
 
 function set_search_needle(needle) {
-	if (current_search_needle !== needle) {
-		search_status.textContent = ""
-		current_search_needle = needle
-		update_view()
-	}
+	search_status.textContent = ""
+	current_search_needle = needle
+
+	if (!page_list)
+		return
+
+	for (let page of page_list)
+		page.setSearch(current_search_needle)
+
+	queue_update_view()
 }
 
-async function run_search(direction) {
+async function run_search(direction, step) {
 	// start search from visible page
+	set_search_needle(search_input.value)
+
 	current_search_page = find_visible_page()
-	try {
-		let next_page = current_search_page + direction
-		while (next_page >= 0 && next_page < page_list.length) {
 
-			// We run the check once per loop iteration,
-			// in case the search was cancel during the 'await' below.
-			if (current_search_needle === "") {
-				search_status.textContent = ""
-				return
-			}
+	let next_page = current_search_page
+	if (step)
+		next_page += direction
 
-			search_status.textContent = `Searching page ${next_page}.`
-
-			await page_list[next_page]._loadPageSearch(current_zoom, current_search_needle)
-			const hits = page_list[next_page-1].searchResultObject ?? []
-			if (hits.length > 0) {
-				page_list[next_page-1].rootNode.scrollIntoView()
-				current_search_page = next_page
-				search_status.textContent = `${hits.length} hits on page ${next_page}.`
-				return
-			}
-
-			next_page += direction
+	while (next_page >= 0 && next_page < page_list.length) {
+		// We run the check once per loop iteration,
+		// in case the search was cancel during the 'await' below.
+		if (current_search_needle === "") {
+			search_status.textContent = ""
+			return
 		}
 
-		search_status.textContent = "No more search hits."
-	} catch (error) {
-		console.error(error)
+		search_status.textContent = `Searching page ${next_page}.`
+
+		if (page_list[next_page].loadNeedle !== page_list[next_page].needle)
+			await page_list[next_page]._loadSearch()
+
+		const hits = page_list[next_page].searchData
+		if (hits && hits.length > 0) {
+			page_list[next_page].rootNode.scrollIntoView()
+			current_search_page = next_page
+			search_status.textContent = `${hits.length} hits on page ${next_page}.`
+			return
+		}
+
+		next_page += direction
 	}
+
+	search_status.textContent = "No more search hits."
 }
 
 // OUTLINE
@@ -822,7 +746,8 @@ async function open_document_from_file(file) {
 		history.replaceState(null, null, window.location.pathname)
 		await open_document_from_buffer(await file.arrayBuffer(), file.name, file.name)
 	} catch (error) {
-		die(error)
+		show_message(error.name + ": " + error.message)
+		console.error(error)
 	}
 }
 
@@ -835,7 +760,8 @@ async function open_document_from_url(path) {
 			throw new Error("Could not fetch document.")
 		await open_document_from_buffer(await response.arrayBuffer(), path, path)
 	} catch (error) {
-		die(error)
+		show_message(error.name + ": " + error.message)
+		console.error(error)
 	}
 }
 

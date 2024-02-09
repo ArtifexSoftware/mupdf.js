@@ -17,3 +17,13 @@ npm run dev
 Visit: http://localhost:8080/mupdfjs/
 
 You should see the "Hello World!" message.
+
+
+# Just want to test API directly with Node.JS ?
+
+Please do:
+
+```bash
+node test.js
+```
+

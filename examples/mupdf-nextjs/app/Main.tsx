@@ -5,7 +5,7 @@ import Page from './Page'
 export default function Main() {
 
     const [message, setMessage] = useState("Welcome")
-    const [page, setPage] = useState()
+    const [page, setPage] = useState("/images/logo.png")
 
     function loadDocumentPage(pageNumber:number) {
       fetch("http://localhost:8080/mupdfjs/openFile?" + new URLSearchParams({
@@ -15,7 +15,7 @@ export default function Main() {
         response => response.json() 
       ).then(
         data => {
-          setMessage(data.title + " loaded with " + data.pageCount + " pages")
+          setMessage(data.title + " loaded with " + data.pageCount + " pages" + " | Showing page " + String(pageNumber))
           setPage(data.pageImageData)
           console.log(`page= ${page}`)
         }
@@ -25,9 +25,9 @@ export default function Main() {
   return (
 
     <main className="flex flex-col justify-start">
-      <header className="sticky top-0 bg-slate-900">
-          <nav className="flex justify-between">
-              <button onClick={() => loadDocumentPage(1)}>Load page 1 of document</button>
+      <header className="sticky top-0 bg-slate-700">
+          <nav className="flex justify-between p-1.5">
+              <button className="border border-solid border-white rounded p-1.5 bg-sky-600" onClick={() => loadDocumentPage(1)}>Load page 1 of document</button>
               <div>{message}</div>
           </nav>
       </header>

@@ -4,7 +4,7 @@ const cors = require("cors")
 const PORT = 8080
 const mupdf = require("mupdf")
 const fs = require("fs")
-const testDocument = "mupdf_explored.pdf"
+
 var document = null // the mupdf document instance
 
 app.use(cors()) // enables client to talk to server
@@ -13,6 +13,8 @@ app.listen(PORT, () => {
     console.log(`Server started on ${PORT}`)
 })
 
+
+/** Public API  **/
 app.get("/mupdfjs/", (req,res) => {
     res.json({"result":"Hello World!"})
 })
@@ -38,6 +40,8 @@ app.get("/mupdfjs/countPages/", (req,res) => {
     } 
 })
 
+
+/* Private methods */
 // Note: parameter @pageNumber is *not* zero indexed
 function getPageImage(pageNumber, dpi) {
 
@@ -70,6 +74,7 @@ function getPageImage(pageNumber, dpi) {
 }
 
 
+/* Internal API */
 /** taken from lib/mupdf.js */
 function checkType(value, type) {
 	if (typeof type === "string" && typeof value !== type)

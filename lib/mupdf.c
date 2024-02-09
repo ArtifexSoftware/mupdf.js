@@ -1399,6 +1399,7 @@ PDF_ANNOT_GETSET(float, NUMBER, opacity)
 PDF_ANNOT_GETSET(pdf_obj*, POINTER, filespec)
 PDF_ANNOT_GETSET(int, INTEGER, quadding)
 PDF_ANNOT_GETSET(int, INTEGER, is_open)
+PDF_ANNOT_GETSET(int, INTEGER, hidden_for_editing)
 PDF_ANNOT_GETSET(char*, POINTER, icon_name)
 
 PDF_ANNOT_GET(fz_rect*, RECT, rect)

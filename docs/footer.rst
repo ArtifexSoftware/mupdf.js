@@ -136,3 +136,8 @@
 .. _http://localhost:8000/test.html: http://localhost:8000/test.html
 .. _Wasm: 
 .. _WebAssembly: https://webassembly.org
+.. _Node.js: https://nodejs.org/
+
+.. Core API links:
+.. _Document Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#document
+.. _Page Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#page

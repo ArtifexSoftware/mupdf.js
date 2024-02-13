@@ -21,6 +21,8 @@ Getting Started with **NPM** & **Node**
     This assumes you have `Node JS & NPM`_ installed on your system and have a basic knowledge of it!
 
 
+.. _npm_install:
+
 1. **NPM** Install
 ~~~~~~~~~~~~~~~~~~~~
 

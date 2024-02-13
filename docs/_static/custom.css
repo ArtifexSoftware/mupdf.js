@@ -451,3 +451,25 @@ button.cta:hover {
     font-weight: 600;
     background-color: #2c5cbd;
 }
+
+.node-js-logo {
+    display: inline-block;
+    width:50px;
+    height:50px;
+    background:transparent url(node-js-light.svg) center center no-repeat;
+    background-size: 50px 50px;
+}
+
+html[data-theme="light"] {
+    .node-js-logo {
+        display: inline-block;
+        width:50px;
+        height:50px;
+        background:transparent url(node-js-dark.svg) center center no-repeat;
+        background-size: 50px 50px;
+    }
+}
+
+.footnote-list {
+    font-size:13px;
+}

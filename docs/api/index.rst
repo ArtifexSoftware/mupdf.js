@@ -28,9 +28,9 @@ This documentation is tagged with |wasm_tag| for the relevant methods as **MuPDF
 Node.js API
 ---------------------
 
-The **Core API** Web Assembly methods are exposed to **Node**, as such you anything you can do there, you can do in Node.
+The **Core API** Web Assembly methods are exposed to **Node**, as such you anything you can do there, you can do in **Node**.
 
-See `How_To_With_Node_JS` for a "How To" guide with **Node**.
+See :ref:`How to Guide with Node.js <How_To_Guide_With_Node>` for more.
 
 
 ----

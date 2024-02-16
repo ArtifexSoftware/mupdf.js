@@ -54,7 +54,7 @@ Then, on the command line for the project folder, run the test script with `node
 
     node test.js
 
-This will print the `mupdf` object to the output - you are now ready to use it!
+This will print the `mupdf` object to the output - you are now ready to :ref:`use it! <How_To_Guide_With_Node>`
 
 |
 

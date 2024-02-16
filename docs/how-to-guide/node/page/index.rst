@@ -6,13 +6,11 @@
 
 
 
-Page
+Working with Pages
 =========================
 
 Core API
 ----------------------------------
-
-
 
 Please see the Core API methods for the `Page Class`_ for full details on the available **JavaScript** methods.
 

@@ -10,7 +10,7 @@ Node.js
 
 `Node.js`_ is a runtime environment which allows you to run **JavaScript** outside the of the web browser. It is commonly used for server-side **JavaScript** solutions and **RESTful APIs**.
 
-The code samples in this "How To Guide" assume that you are working in the root folder of your project and you have :ref:`Installed MuPDF.js via NPM <npm_install>`.
+The code samples in this **"How To Guide"** assume that you are working in the root folder of your project and you have :ref:`Installed MuPDF.js via NPM <npm_install>`.
 
 Additionally the following requirements should be defined in your **JavaScript** file header:
 
@@ -32,8 +32,6 @@ Table of Contents
 
     loading-files/index.rst
     document/index.rst
-    splitting/index.rst
-    merging/index.rst
     page/index.rst
     annotations/index.rst
 

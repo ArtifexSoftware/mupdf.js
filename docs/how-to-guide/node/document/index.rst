@@ -8,7 +8,7 @@
 Working with Documents
 =========================
 
-The **Document** instance has access to the :ref:`Core JavaScript API <Node_How_To_Guide_Document_Core_API>`.
+A **Document** instance has access to the :ref:`Core JavaScript API <Node_How_To_Guide_Document_Core_API>`.
 
 
 .. _Node_How_To_Guide_Document_Core_API:
@@ -16,9 +16,14 @@ The **Document** instance has access to the :ref:`Core JavaScript API <Node_How_
 Core API
 ----------------------------------
 
-Once you have a **Document** instance you are free to use the **Core JavaScript API** methods as you wish, please see the :ref:`Core_API` methods for the `Document Class`_ for full details.
+Once you have a **Document** instance you are free to use the **Core JavaScript API** methods as you wish, please see the `Document Class`_ methods in the `Core API`_ for *full details*.
 
-Below details some common operations you may need.
+|
+
+----
+
+**Below details some common operations you may need.**
+
 
 Passwords & Security
 --------------------------
@@ -110,10 +115,10 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a document use the `loadPage` 
     
 
 
-Merge Documents
+Merging Documents
 -----------------------------
 
-To merge documents we need to use the core `GraftObject`_ method and copy objects from documents into new **PDF** documents.
+To merge documents we need to use the core `GraftObject`_ method and copy objects from documents into a new **PDF** document (the new document will be the result of the merge).
 
 See the script below for an implementation, this can be found in `examples/tools/pdf-merge.js`.
 
@@ -124,10 +129,12 @@ See the script below for an implementation, this can be found in `examples/tools
    :name: examples/tools/pdf-merge.js
 
 
-Split a Document
+Splitting a Document
 -----------------------------
 
-The following example would split a **PDF** document's pages into separate **PDF** files.
+To split a document we should take the :ref:`pages <Node_How_To_Guide_Page>` we want to use and create new documents from them in the order we require.
+
+The following example would split all of a **PDF** document's :ref:`pages <Node_How_To_Guide_Page>` into separate single page **PDF** files.
 
 |example_tag|
 
@@ -138,15 +145,24 @@ The following example would split a **PDF** document's pages into separate **PDF
         const page = document.loadPage(i)
 
         // create a new blank PDF Document
-        const pdf = new mupdf.PDFDocument()
+        const pdfDocument = new mupdf.PDFDocument()
 
         // insert the page at the start of the document
-        pdf.insertPage(0, page)
+        pdfDocument.insertPage(0, page)
 
-        // save new pdf document
+        // save new pdf document in a buffer
+        const buffer = pdfDocument.saveToBuffer()
         
         i++;
     }
+
+
+Extracting Document Text
+-----------------------------
+
+
+Extracting Document Images
+
 
 
 .. include:: ../../../footer.rst

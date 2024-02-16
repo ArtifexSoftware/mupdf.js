@@ -13,6 +13,8 @@ Local Files
 
 An example of loading a local file using the `mupdf.Document.openDocument` method with a local string to reference the file path.
 
+|example_tag|
+
 .. code-block:: javascript
 
     async function loadLocalFile(url) {
@@ -25,6 +27,8 @@ Remote Files
 ----------------------------------
 
 An example of loading a remote file which waits for the remote data and then uses the `mupdf.Document.openDocument` method with the resulting buffer data.
+
+|example_tag|
 
 .. code-block:: javascript
 

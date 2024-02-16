@@ -113,11 +113,21 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a document use the `loadPage` 
 Merge Documents
 -----------------------------
 
+To merge documents we need to use the core `GraftObject`_ method and copy objects from documents into new **PDF** documents.
+
+See the script below for an implementation, this can be found in `examples/tools/pdf-merge.js`.
+
+
+.. literalinclude:: ../../../../examples/tools/pdf-merge.js
+   :language: javascript
+   :emphasize-lines: 18-25,30
+   :name: examples/tools/pdf-merge.js
+
 
 Split a Document
 -----------------------------
 
-The following exmaple would split a **PDF** document's pages into separate **PDF** files.
+The following example would split a **PDF** document's pages into separate **PDF** files.
 
 |example_tag|
 

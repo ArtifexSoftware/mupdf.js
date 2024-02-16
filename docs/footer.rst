@@ -141,3 +141,4 @@
 .. Core API links:
 .. _Document Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#document
 .. _Page Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#page
+.. _GraftObject: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#graftObject 

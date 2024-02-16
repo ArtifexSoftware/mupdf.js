@@ -24,7 +24,6 @@
 // TODO: DOM
 
 // TODO: PDFWidget
-// TODO: PDFGraftMap
 
 // TODO: WASMDevice with callbacks
 // TODO: PDFPage.process with callbacks
@@ -128,6 +127,7 @@ REFS(outline)
 
 PDF_REFS(annot)
 PDF_REFS(obj)
+PDF_REFS(graft_map)
 
 // --- PLAIN STRUCT ACCESSORS ---
 
@@ -1343,6 +1343,38 @@ void wasm_pdf_redact_page(pdf_page *page, int black_boxes, int image_method)
 {
 	pdf_redact_options opts = { black_boxes, image_method };
 	VOID(pdf_redact_page, page->doc, page, &opts)
+}
+
+// --- PDFGraftMap ---
+
+EXPORT
+pdf_graft_map * wasm_pdf_new_graft_map(pdf_document *doc)
+{
+	POINTER(pdf_new_graft_map, doc)
+}
+
+EXPORT
+pdf_obj * wasm_pdf_graft_mapped_object(pdf_graft_map *map, pdf_obj *obj)
+{
+	POINTER(pdf_graft_mapped_object, map, obj)
+}
+
+EXPORT
+pdf_obj * wasm_pdf_graft_object(pdf_document *dst, pdf_obj *obj)
+{
+	POINTER(pdf_graft_object, dst, obj)
+}
+
+EXPORT
+void wasm_pdf_graft_mapped_page(pdf_graft_map *map, int to, pdf_document *src, int from)
+{
+	VOID(pdf_graft_mapped_page, map, to, src, from)
+}
+
+EXPORT
+void wasm_pdf_graft_page(pdf_document *dst, int to, pdf_document *src, int from)
+{
+	VOID(pdf_graft_page, dst, to, src, from)
 }
 
 // --- PDFAnnotation ---

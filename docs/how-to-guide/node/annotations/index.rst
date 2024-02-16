@@ -13,8 +13,8 @@ Annotations
 
 .. _Node_How_To_Get_All_Annotations:
 
-Get All Annotations
----------------------------------
+Get All Annotations for a Document
+------------------------------------------
 
 The following code queries all the pages of a :ref:`document <Node_How_To_Guide_Document>` to retrieve the annotations on each :ref:`page <Node_How_To_Guide_Page>`.
 

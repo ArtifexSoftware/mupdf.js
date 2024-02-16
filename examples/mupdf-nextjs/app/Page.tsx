@@ -10,7 +10,7 @@ export default function Page(props:any) {
   const imageStyle = {
     borderRadius: '5px',
     border: '1px solid #fff',
-    width:'100%',
+    width:'1200px',
     height:'auto'
   }
 

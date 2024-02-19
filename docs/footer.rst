@@ -142,3 +142,5 @@
 .. _Document Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#document
 .. _Page Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#page
 .. _GraftObject: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#graftObject 
+.. _toPixmap: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#toPixmap
+.. _ColorSpace: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#colorspace

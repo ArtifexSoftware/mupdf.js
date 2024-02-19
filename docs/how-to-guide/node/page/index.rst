@@ -49,8 +49,22 @@ Convert a Page to an Image
 
 To convert pages to images use the `toPixmap` method, after this the `Pixmap` data can be converted to the image format you require.
 
+The parameters for the method define:
 
+- the resolution via a matrix
+- the `ColorSpace`_ for rendering
+- background transparency
+- whether to render any annotations on the page.
 
+See: `toPixmap`_ for full details.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    let pixmap = page.toPixmap(mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB, false, true)
+    let pngImage = pixmap.asPNG()
+    let base64Image = Buffer.from(pngImage, 'binary').toString('base64')
 
 
 

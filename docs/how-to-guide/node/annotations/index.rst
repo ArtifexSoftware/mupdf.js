@@ -5,7 +5,7 @@
 
 
 
-Annotations
+Working with Annotations
 =========================
 
 
@@ -25,7 +25,7 @@ The following code queries all the pages of a :ref:`document <Node_How_To_Guide_
         const page = document.loadPage(i)
         const annots = page.getAnnotations()
         console.log(`Page=${page}, Annotations=${annots}`)
-        i++;
+        i++
     }
 
 

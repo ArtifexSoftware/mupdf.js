@@ -9,6 +9,8 @@
 Working with Pages
 =========================
 
+
+
 A **Page** instance has access to the :ref:`Core JavaScript API <Node_How_To_Guide_Document_Core_API>`.
 
 
@@ -42,12 +44,26 @@ To load a page from a :ref:`document <Node_How_To_Guide_Document>` use the `load
 .. note::
 
     Pages are zero-indexed, thus "Page 1" = index `0`.
+
+
+Getting the Page Bounds
+----------------------------------
+
+To get the bounds of page do the following:
+
+|example_tag|
+
+.. code-block:: javascript
+
+    let rect = page.getBounds()
+
+This returns a numerical array object in the following format: `[ulx,uly,lrx,lry]`.
     
 
 Convert a Page to an Image
 ------------------------------
 
-To convert pages to images use the `toPixmap` method, after this the `Pixmap` data can be converted to the image format you require.
+To convert a page to an image use the `toPixmap` method, after this the `Pixmap`_ data can be converted to the image format you require.
 
 The parameters for the method define:
 
@@ -143,7 +159,7 @@ Initially you should create a page instance with the `addPage <https://mupdf.rea
 Deleting Pages
 -------------------
 
-To delete a page from a document use the `deletePage <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#deletePage>` method on the `Document`_ instance.
+To delete a page from a document use the `deletePage <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#deletePage>`_ method on the `Document`_ instance.
 
 
 |example_tag|
@@ -158,8 +174,9 @@ To delete a page from a document use the `deletePage <https://mupdf.readthedocs.
     The page number is zero-indexed.
 
 
-Adding Pages
----------------
+
+
+
 
 .. include:: ../node-footer.rst
 .. include:: ../../../footer.rst

@@ -139,10 +139,13 @@
 .. _Node.js: https://nodejs.org/
 
 .. Core API links:
+.. _Document:
 .. _Document Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#document
 .. _Page Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#page
 .. _GraftObject: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#graftObject 
 .. _toPixmap: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#toPixmap
 .. _ColorSpace: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#colorspace
 .. _StructuredText: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#structuredtext
+.. _Pixmap: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pixmap
+.. _Link: https://mupdf.readthedocs.io/en/latest/mutool-object-link.html#mutool-object-link
 

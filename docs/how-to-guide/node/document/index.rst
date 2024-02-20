@@ -160,8 +160,55 @@ The following example would split all of a **PDF** document's :ref:`pages <Node_
 Extracting Document Text
 -----------------------------
 
+To get the text for an entire document we can retrieve StructuredText_ objects as `JSON` for each page as follows:
+
+
+|example_tag|
+
+.. code-block:: javascript
+
+    let i = 0
+    while (i < document.countPages()) {
+        const page = document.loadPage(i)
+        const json = page.toStructuredText("preserve-whitespace").asJSON()
+        console.log(`json=${json}`)
+        i++
+    }
+
+StructuredText_ contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the `JSON` returned is *structured* and contains positional data and font data alongside text values, e.g.:
+
+|example_tag|
+
+.. literalinclude:: ../structured-text-example.json
+   :language: json
+
 
 Extracting Document Images
+----------------------------------
+
+
+To get the images for an entire document we can retrieve StructuredText_ objects and `walk <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#walk>`_ through it looking for images as follows:
+
+|example_tag|
+
+.. code-block:: javascript
+
+    let i = 0
+    while (i < document.countPages()) {
+        const page = document.loadPage(i)
+        page.toStructuredText("preserve-images").walk({
+            onImageBlock(bbox, matrix, image) {
+                // Image found!
+                console.log(`onImageBlock, bbox=${bbox}, transform=${transform}, image=${image}`);
+            }
+        })
+        i++
+    }
+
+
+.. note::
+
+    When we obtain StructuredText_ using `toStructuredText` decoding images **does not** happen by default - we have to pass through the `"preserve-images"` parameter. This is because decoding images takes a bit more processing power, so we only do it if requested.
 
 
 

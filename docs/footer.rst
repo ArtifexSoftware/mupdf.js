@@ -144,3 +144,5 @@
 .. _GraftObject: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#graftObject 
 .. _toPixmap: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#toPixmap
 .. _ColorSpace: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#colorspace
+.. _StructuredText: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#structuredtext
+

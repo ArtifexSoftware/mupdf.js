@@ -133,6 +133,7 @@ PDF_REFS(graft_map)
 
 #define GETP(S,T,F) EXPORT T* wasm_ ## S ## _get_ ## F (fz_ ## S *p) { return &p->F; }
 #define GETU(S,T,F,U) EXPORT T wasm_ ## S ## _get_ ## F (fz_ ## S *p) { return p->U; }
+#define GETUP(S,T,F,U) EXPORT T* wasm_ ## S ## _get_ ## F (fz_ ## S *p) { return &p->U; }
 #define GET(S,T,F) EXPORT T wasm_ ## S ## _get_ ## F (fz_ ## S *p) { return p->F; }
 #define SET(S,T,F) EXPORT void wasm_ ## S ## _set_ ## F (fz_ ## S *p, T v) { p->F = v; }
 #define GETSET(S,T,F) GET(S,T,F) SET(S,T,F)
@@ -204,6 +205,8 @@ GET(stext_block, fz_stext_block*, next)
 GET(stext_block, int, type)
 GETP(stext_block, fz_rect, bbox)
 GETU(stext_block, fz_stext_line*, first_line, u.t.first_line)
+GETUP(stext_block, fz_matrix, transform, u.i.transform)
+GETU(stext_block, fz_image*, image, u.i.image)
 
 GET(stext_line, fz_stext_line*, next)
 GET(stext_line, int, wmode)
@@ -449,11 +452,15 @@ fz_pixmap * wasm_new_pixmap_from_display_list(fz_display_list *display_list, fz_
 }
 
 EXPORT
-fz_stext_page * wasm_new_stext_page_from_display_list(fz_display_list *display_list)
+fz_stext_page * wasm_new_stext_page_from_display_list(fz_display_list *display_list, char *option_string)
 {
-	// TODO: parse options
-	fz_stext_options options = { FZ_STEXT_PRESERVE_SPANS };
-	POINTER(fz_new_stext_page_from_display_list, display_list, &options)
+	fz_stext_page *stext = NULL;
+	fz_stext_options options;
+	TRY({
+		fz_parse_stext_options(ctx, &options, option_string);
+		stext = fz_new_stext_page_from_display_list(ctx, display_list, &options);
+	})
+	return stext;
 }
 
 EXPORT
@@ -896,11 +903,15 @@ void wasm_run_page_widgets(fz_page *page, fz_device *dev, fz_matrix *ctm)
 }
 
 EXPORT
-fz_stext_page * wasm_new_stext_page_from_page(fz_page *page)
+fz_stext_page * wasm_new_stext_page_from_page(fz_page *page, char *option_string)
 {
-	// TODO: parse options
-	fz_stext_options options = { FZ_STEXT_PRESERVE_SPANS };
-	POINTER(fz_new_stext_page_from_page, page, &options)
+	fz_stext_page *stext = NULL;
+	fz_stext_options options;
+	TRY({
+		fz_parse_stext_options(ctx, &options, option_string);
+		stext = fz_new_stext_page_from_page(ctx, page, &options);
+	})
+	return stext;
 }
 
 EXPORT

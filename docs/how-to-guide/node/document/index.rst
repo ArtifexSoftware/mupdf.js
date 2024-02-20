@@ -212,6 +212,43 @@ To get the images for an entire document we can retrieve StructuredText_ objects
 
 
 
+
+Searching a Document
+------------------------------------------
+
+To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the `search <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#search>`_ method as follows:
+
+.. code-block:: javascript
+
+    let results = page.search("my search phrase")
+
+
+.. note::
+
+    The resulting array contains numbers which are a sequence of `[ulx, uly, urx, ury, llx, lly, lrx, lry]` which defines each rectangle for each result. These type of rectangles are know as “Quads” or “QuadPoints” in the **PDF** specification.
+
+    For example:
+
+    - `[84,32,94,32,84,46,94,46]` represents one search result with one “QuadPoint”.
+    - `[84,32,94,32,84,46,94,46,158,68,168,68,158,82,168,82]` represents two search results with one “QuadPoint” each.
+    
+
+
+
+Getting Document Links
+------------------------------------------
+
+To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the `getLinks <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#getLinks>`_ method as follows:
+
+.. code-block:: javascript
+
+    let links = page.getLinks()
+
+.. note:: 
+
+    The resulting array contains an array of `Link`_ objects which have their own bounds and `uri` for the link.
+
+
 .. include:: ../../../footer.rst
 
 

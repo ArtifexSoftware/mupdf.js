@@ -4,10 +4,10 @@
   "description": "MuPDF.js",
   "exports": {
     "." : "./lib/mupdf.js",
-    "./wrapper" : "./lib/mupdf-wrapper.js"
+    "./tasks" : "./lib/tasks.js"
   },
   "files": [
-    "lib/mupdf-wrapper.js",
+    "lib/tasks.js",
     "lib/mupdf.js",
     "lib/mupdf-wasm.js",
     "lib/mupdf-wasm.wasm"

@@ -1310,6 +1310,12 @@ fz_matrix * wasm_pdf_page_transform(pdf_page *page)
 }
 
 EXPORT
+void wasm_pdf_set_page_box(pdf_page *page, int which, fz_rect *rect)
+{
+	VOID(pdf_set_page_box, page, which, *rect)
+}
+
+EXPORT
 pdf_annot * wasm_pdf_first_annot(pdf_page *page)
 {
 	POINTER(pdf_first_annot, page)

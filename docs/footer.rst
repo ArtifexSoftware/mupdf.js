@@ -148,4 +148,7 @@
 .. _StructuredText: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#structuredtext
 .. _Pixmap: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pixmap
 .. _Link: https://mupdf.readthedocs.io/en/latest/mutool-object-link.html#mutool-object-link
+.. _PDFObject: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pdfobject
+.. _Rectangle:
+.. _Rectangles: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#rectangles
 

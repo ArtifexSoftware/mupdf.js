@@ -1,9 +1,13 @@
 {
   "name": "mupdf",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "MuPDF.js",
-  "exports": "./lib/mupdf.js",
+  "exports": {
+    "." : "./lib/mupdf.js",
+    "./tasks" : "./lib/tasks.js"
+  },
   "files": [
+    "lib/tasks.js",
     "lib/mupdf.js",
     "lib/mupdf-wasm.js",
     "lib/mupdf-wasm.wasm"

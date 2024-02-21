@@ -129,7 +129,6 @@ To get the images for a page we can retrieve a StructuredText_ object and `walk 
     When we obtain StructuredText_ using `toStructuredText` decoding images **does not** happen by default - we have to pass through the `"preserve-images"` parameter. This is because decoding images takes a bit more processing power, so we only do it if requested.
 
 
-
 Adding Pages
 ---------------
 
@@ -174,7 +173,39 @@ To delete a page from a document use the `deletePage <https://mupdf.readthedocs.
     The page number is zero-indexed.
 
 
+Rotating Pages
+---------------------
 
+Rotating a page involves updating keys on the associated `PDFObject`_ for the page. 
+
+The sample code below retrieves the `PDFObject`_ then assigns a 90 degree clockwise rotation to the page.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    // Get the PDF object corresponding to the page
+    const page_obj = page.getObject()
+
+    // Update the Rotate value
+    page_obj.put("Rotate", rotate + 90)
+
+
+.. note::
+
+    Positive rotation values are clockwise, negative are anti-clockwise.
+
+
+Cropping Pages
+--------------------
+
+To crop a page we just need to set its "CropBox" value with `setPageBox` and an associated Rectangle_.
+
+|example_tag|
+
+.. code-block:: javascript
+    
+    page.setPageBox("CropBox", [ 0, 0, 500, 500 ])
 
 
 

@@ -2,7 +2,10 @@
   "name": "mupdf",
   "version": "0.1.4",
   "description": "MuPDF.js",
-  "exports": "./lib/mupdf-wrapper.js",
+  "exports": {
+    "." : "./lib/mupdf.js",
+    "./wrapper" : "./lib/mupdf-wrapper.js"
+  },
   "files": [
     "lib/mupdf-wrapper.js",
     "lib/mupdf.js",

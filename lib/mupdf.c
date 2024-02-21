@@ -1849,9 +1849,21 @@ pdf_obj * wasm_pdf_dict_get(pdf_obj *obj, pdf_obj *key)
 }
 
 EXPORT
+pdf_obj * wasm_pdf_dict_get_inheritable(pdf_obj *obj, pdf_obj *key)
+{
+	POINTER(pdf_dict_get_inheritable, obj, key)
+}
+
+EXPORT
 pdf_obj * wasm_pdf_dict_gets(pdf_obj *obj, char *key)
 {
 	POINTER(pdf_dict_gets, obj, key)
+}
+
+EXPORT
+pdf_obj * wasm_pdf_dict_gets_inheritable(pdf_obj *obj, char *key)
+{
+	POINTER(pdf_dict_gets_inheritable, obj, key)
 }
 
 EXPORT

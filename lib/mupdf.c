@@ -227,6 +227,8 @@ PDF_GET(embedded_file_params, int, size)
 PDF_GET(embedded_file_params, int, created)
 PDF_GET(embedded_file_params, int, modified)
 
+PDF_GET(page, pdf_obj*, obj)
+
 // --- Buffer ---
 
 EXPORT

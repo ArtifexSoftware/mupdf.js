@@ -56,8 +56,7 @@ console.log(doc.countPages())
 
 ## Documentation
 
-For documentation please refer to: [mupdf.readthedocs.io](https://mupdf.readthedocs.io/en/latest/mupdf-js.html).
-
+For documentation please refer to: [mupdfjs.readthedocs.io](https://mupdfjs.readthedocs.io).
 
 ## Examples
 

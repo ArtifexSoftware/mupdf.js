@@ -122,40 +122,28 @@ To merge documents we need to use the core `GraftObject`_ method and copy object
 
 See the script below for an implementation, this can be found in `examples/tools/pdf-merge.js`.
 
+|example_tag|
 
 .. literalinclude:: ../../../../examples/tools/pdf-merge.js
    :language: javascript
-   :emphasize-lines: 18-25,30
    :name: examples/tools/pdf-merge.js
 
 
 Splitting a Document
 -----------------------------
 
-To split a document we should take the :ref:`pages <Node_How_To_Guide_Page>` we want to use and create new documents from them in the order we require.
+To split a document we can take the :ref:`pages <Node_How_To_Guide_Page>` we want to use and create new documents from them with the `graftPage` method in the order we require.
 
 The following example would split all of a **PDF** document's :ref:`pages <Node_How_To_Guide_Page>` into separate single page **PDF** files.
 
+This script can be found in `examples/tools/split-pages.js`.
+
 |example_tag|
 
-.. code-block:: javascript
-
-    let i = 0
-    while (i < document.countPages()) {
-        const page = document.loadPage(i)
-
-        // create a new blank PDF Document
-        const pdfDocument = new mupdf.PDFDocument()
-
-        // insert the page at the start of the document
-        pdfDocument.insertPage(0, page)
-
-        // save new pdf document in a buffer
-        const buffer = pdfDocument.saveToBuffer()
-        
-        i++;
-    }
-
+.. literalinclude:: ../../../../examples/tools/split-pages.js
+   :language: javascript
+   :emphasize-lines: 16
+   :name: examples/tools/split-pages.js
 
 Extracting Document Text
 -----------------------------
@@ -218,6 +206,9 @@ Searching a Document
 
 To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the `search <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#search>`_ method as follows:
 
+
+|example_tag|
+
 .. code-block:: javascript
 
     let results = page.search("my search phrase")
@@ -227,12 +218,38 @@ To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` an
 
     The resulting array contains numbers which are a sequence of `[ulx, uly, urx, ury, llx, lly, lrx, lry]` which defines each rectangle for each result. These type of rectangles are known as “Quads” or “QuadPoints” in the **PDF** specification.
 
-    For example:
+    For example, the following would represent a search result with two results showing one “QuadPoint” for each result:
 
-    - `[84,32,94,32,84,46,94,46]` represents one search result with one “QuadPoint”.
-    - `[84,32,94,32,84,46,94,46,158,68,168,68,158,82,168,82]` represents two search results with one “QuadPoint” each.
-    
+|example_tag|
 
+.. code-block:: json
+
+    [
+        [
+            [
+                97.44780731201172,
+                32.626708984375,
+                114.12963104248047,
+                32.626708984375,
+                97.44780731201172,
+                46.032958984375,
+                114.12963104248047,
+                46.032958984375
+            ]
+        ],
+        [
+            [
+                62.767799377441406,
+                68.626708984375,
+                79.44963073730469,
+                68.626708984375,
+                62.767799377441406,
+                82.032958984375,
+                79.44963073730469,
+                82.032958984375
+            ]
+        ]
+    ]
 
 
 Getting Document Links

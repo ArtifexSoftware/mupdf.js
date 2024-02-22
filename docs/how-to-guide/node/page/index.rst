@@ -155,6 +155,22 @@ Initially you should create a page instance with the `addPage <https://mupdf.rea
     document.insertPage(-1, page)
 
 
+Copying Pages
+-----------------
+
+To copy a page we can use the `graftPage` method and insert it into a new document.
+
+The following script would copy the last page (`-1`) of another document to the first page (`0`) of a new document:
+
+|example_tag|
+
+.. code-block:: javascript
+
+    let newDocument = new mupdf.PDFDocument()
+    newDocument.graftPage(0, anotherDocument, -1)
+
+
+
 Deleting Pages
 -------------------
 

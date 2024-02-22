@@ -35,7 +35,7 @@ function copyAllPages(dstDoc, srcDoc) {
 		copyPage(dstDoc, srcDoc, k, dstFromSrc)
 }
 
-function pdfmerge() {
+function pdfMerge() {
 	var srcDoc, dstDoc, i, srcBuf, dstBuf
 
 	dstDoc = new mupdf.PDFDocument()
@@ -54,4 +54,4 @@ function pdfmerge() {
 if (scriptArgs.length < 2)
 	console.error("usage: node ./examples/tools/pdf-merge.js output.pdf input1.pdf input2.pdf ...")
 else
-	pdfmerge()
+	pdfMerge()

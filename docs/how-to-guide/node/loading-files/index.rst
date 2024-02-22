@@ -17,7 +17,7 @@ An example of loading a local file using the `mupdf.Document.openDocument` metho
 
 .. code-block:: javascript
 
-    async function loadLocalFile(url) {
+    function loadLocalFile(url) {
         let document = mupdf.Document.openDocument(fs.readFileSync(url), "application/pdf")
     }
 

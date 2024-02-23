@@ -18,7 +18,11 @@ Table of Contents
     node/index.rst
 
 
+.. toctree::
+    :caption: Glossary
+    :maxdepth: 2
 
+    coordinate-system/index.rst
 
 
 .. include:: ../footer.rst

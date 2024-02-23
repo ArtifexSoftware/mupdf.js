@@ -129,6 +129,64 @@ To get the images for a page we can retrieve a StructuredText_ object and `walk 
     When we obtain StructuredText_ using `toStructuredText` decoding images **does not** happen by default - we have to pass through the `"preserve-images"` parameter. This is because decoding images takes a bit more processing power, so we only do it if requested.
 
 
+Adding Images to Pages
+-------------------------------
+
+The following script opens a document called `"test.pdf"` and adds an image called `"cats.jpg"` to it at the bottom of the **PDF** document. It also adds the image to the resources object on the **PDF** file and saves the resulting **PDF**.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    const mupdf = require('mupdf')
+    const fs = require("fs")
+
+    let fileData = fs.readFileSync("test.pdf")
+
+    let document = mupdf.Document.openDocument(fileData, "application/pdf")
+    let page = document.loadPage(0)
+
+    // Get the PDF object corresponding to the page
+    const page_obj = page.getObject()
+
+    var image = document.addImage(new mupdf.Image(fs.readFileSync("cats.jpg")))
+
+    // add image object to page/Resources/XObject/MyCats dictionary (creating nested dictionaries as needed)
+    var res = page_obj.get("Resources")
+    if (!res.isDictionary())
+        page_obj.put("Resources", res = document.newDictionary())
+
+    var res_xobj = res.get("XObject")
+    if (!res_xobj.isDictionary())
+        res.put("XObject", res_xobj = document.newDictionary())
+
+    res_xobj.put("MyCats", image)
+
+    // create drawing operations
+    var extra_contents = document.addStream("q 200 0 0 200 10 10 cm /MyCats Do Q", null)
+
+    // add drawing operations to page contents
+    var page_contents = page_obj.get("Contents")
+    if (page_contents.isArray()) {
+        // Contents is already an array, so append our new buffer object.
+        page_contents.push(extra_contents)
+    } else {
+        // Contents is not an array, so change it into an array
+        // and then append our new buffer object.
+        var new_page_contents = document.newArray()
+        new_page_contents.push(page_contents)
+        new_page_contents.push(extra_contents)
+        page_obj.put("Contents", new_page_contents)
+    }
+
+    // Save the changes to a new file.
+    fs.writeFileSync("output.pdf", document.saveToBuffer("incremental").asUint8Array())
+
+.. note::
+
+    See :ref:`coordinate space and PDFObject <How_To_Guide_Coordinate_System_PDF>` for more about how the image is sized and positioned with the `addStream` method.
+
+
 Adding Pages
 ---------------
 

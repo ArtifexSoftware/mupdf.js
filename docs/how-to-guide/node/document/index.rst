@@ -266,6 +266,17 @@ To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide
     The resulting array contains an array of `Link`_ objects which have their own bounds and `uri` for the link.
 
 
+Embedding Files
+--------------------------
+
+Embedding files uses the `addEmbeddedFile`_ API method on the document instance.
+
+
+
+
+
+
+
 .. include:: ../../../footer.rst
 
 

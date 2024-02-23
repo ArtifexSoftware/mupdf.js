@@ -129,6 +129,13 @@ To get the images for a page we can retrieve a StructuredText_ object and `walk 
     When we obtain StructuredText_ using `toStructuredText` decoding images **does not** happen by default - we have to pass through the `"preserve-images"` parameter. This is because decoding images takes a bit more processing power, so we only do it if requested.
 
 
+Adding Text to Pages
+-------------------------------
+
+TODO 
+
+
+
 Adding Images to Pages
 -------------------------------
 
@@ -192,25 +199,60 @@ Adding Pages
 
 Initially you should create a page instance with the `addPage <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#addPage>`_ method on the `Document`_ instance. Then to add the newly created page to the document tree use the `insertPage <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#insertPage>`_ method.
 
+
+
+Create a Blank Page
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+|example_tag|
+
+
+.. code-block:: javascript
+    
+    // Create a blank document with a blank page
+    let document = new mupdf.PDFDocument()
+
+    // Create resource dictionary
+    let resources = document.addObject({})
+
+    // Add the page to the document and get the page object
+    let page_obj = document.addPage([0,0,300,350], 0, resources, "")
+
+    // Insert the page at the end of the document
+    document.insertPage(-1, page_obj)
+
+
+
+Create a Page with a Font and some Text
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 |example_tag|
 
 .. code-block:: javascript
 
-    // create a page with a font and some text
+    let document = new mupdf.PDFDocument()
+
+    // Create the helvetica font object
     let helvetica = document.newDictionary()
     helvetica.put("Type", document.newName("Font"))
     helvetica.put("Subtype", document.newName("Type1"))
     helvetica.put("Name", document.newName("Helv"))
     helvetica.put("BaseFont", document.newName("Helvetica"))
     helvetica.put("Encoding", document.newName("WinAnsiEncoding"))
+
+    // Create a fonts object and assign the helvetica font
     let fonts = document.newDictionary()
     fonts.put("Helv", helvetica)
+
+    // Create a resources object and assign the fonts
     let resources = document.addObject(document.newDictionary())
     resources.put("Font", fonts)
-    let page = document.addPage([0,0,300,350], 0, resources, "BT /Helv 12 Tf 100 100 Td (MuPDF!)Tj ET")
+
+    // Add the page to the document with some text (MuPDF!) and get the page object
+    let page_obj = document.addPage([0,0,300,350], 0, resources, "BT /Helv 12 Tf 100 100 Td (MuPDF!)Tj ET")
 
     // insert the page at the end of the document
-    document.insertPage(-1, page)
+    document.insertPage(-1, page_obj)
 
 
 Copying Pages

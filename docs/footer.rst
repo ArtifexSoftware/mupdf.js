@@ -151,4 +151,8 @@
 .. _PDFObject: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pdfobject
 .. _Rectangle:
 .. _Rectangles: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#rectangles
+.. _addEmbeddedFile: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#addEmbeddedFile
+.. _PDFPage: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pdfpage
+.. _PDFAnnotation: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#pdfannotation
+.. _createAnnotation: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#createAnnotation
 

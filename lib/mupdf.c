@@ -1939,6 +1939,18 @@ char * wasm_pdf_sprint_obj(pdf_obj *obj, int tight, int ascii)
 	POINTER(pdf_sprint_obj, NULL, 0, &len, obj, tight, ascii)
 }
 
+EXPORT
+fz_buffer * wasm_pdf_load_stream(pdf_obj *obj)
+{
+	POINTER(pdf_load_stream, obj)
+}
+
+EXPORT
+fz_buffer * wasm_pdf_load_raw_stream(pdf_obj *obj)
+{
+	POINTER(pdf_load_raw_stream, obj)
+}
+
 /* PROGRESSIVE FETCH STREAM */
 
 struct fetch_state

@@ -18,6 +18,7 @@ Overview
     :maxdepth: 2
 
     getting-started/index.rst
+    text/index.rst
     embedding-files/index.rst
 
 

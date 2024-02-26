@@ -1433,6 +1433,7 @@ int wasm_pdf_update_annot(pdf_annot *annot)
 #define PDF_ANNOT_GET2(T,R,N) EXPORT T wasm_pdf_annot_ ## N (pdf_annot *annot, int a, int b) { R(pdf_annot_ ## N, annot, a, b) }
 #define PDF_ANNOT_SET(T,N) EXPORT void wasm_pdf_set_annot_ ## N (pdf_annot *annot, T v) { VOID(pdf_set_annot_ ## N, annot, v) }
 #define PDF_ANNOT_GETSET(T,R,N) PDF_ANNOT_GET(T,R,N) PDF_ANNOT_SET(T,N)
+#define PDF_ANNOT_HAS(N) EXPORT int wasm_pdf_annot_has_ ## N (pdf_annot *annot) { INTEGER(pdf_annot_has_ ## N, annot) }
 
 PDF_ANNOT_GET(pdf_obj*, POINTER, obj)
 PDF_ANNOT_GET(int, INTEGER, type)
@@ -1468,6 +1469,20 @@ PDF_ANNOT_GET2(fz_point*, POINT, ink_list_stroke_vertex)
 
 PDF_ANNOT_GET(int, INTEGER, border_dash_count)
 PDF_ANNOT_GET1(float, NUMBER, border_dash_item)
+
+PDF_ANNOT_HAS(rect)
+PDF_ANNOT_HAS(ink_list)
+PDF_ANNOT_HAS(quad_points)
+PDF_ANNOT_HAS(vertices)
+PDF_ANNOT_HAS(line)
+PDF_ANNOT_HAS(interior_color)
+PDF_ANNOT_HAS(line_ending_styles)
+PDF_ANNOT_HAS(border)
+PDF_ANNOT_HAS(border_effect)
+PDF_ANNOT_HAS(icon_name)
+PDF_ANNOT_HAS(open)
+PDF_ANNOT_HAS(author)
+PDF_ANNOT_HAS(filespec)
 
 EXPORT
 char * wasm_pdf_annot_language(pdf_annot *doc)

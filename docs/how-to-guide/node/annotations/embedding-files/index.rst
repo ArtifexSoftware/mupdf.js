@@ -24,12 +24,11 @@ We need to:
 - Create a `file specification object <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#file-specification-object>`_ and add the attached file data to it.
 - Associate the annotation with our newly created file specification object.
 
+The following code exemplifies the steps outlined above:
+
 |example_tag|
 
 .. code-block:: javascript
-
-    const fs = require("fs")
-    const mupdf = require("mupdf")
 
     let embedMe = mupdf.Document.openDocument(fs.readFileSync("embedMe.pdf"), "application/pdf")
     let document = mupdf.Document.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
@@ -53,7 +52,9 @@ We need to:
     fs.writeFileSync("output.pdf", document.saveToBuffer("incremental").asUint8Array())
 
 
+The file attachment will appear as a "push pin" icon by default on the **PDF** document, clicking on the icon will open the attachment.
 
+You can also `change the look of the icon`_ for this annotation (to a paper clip for example) if required.
 
 .. include:: ../../node-footer.rst
 .. include:: ../../../../footer.rst

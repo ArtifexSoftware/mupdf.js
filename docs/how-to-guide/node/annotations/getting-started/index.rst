@@ -43,15 +43,15 @@ For annotation *creation* the list of supported types is as follows:
    * - **Name**
      - **Creation supported**
      - **Notes**
-   * - Text
+   * - :ref:`Text <Node_How_To_Guide_Annotations_Text>`
      - Yes
-     -
+     - This is what a "Note" style annotation looks like.
    * - Link
      - No
      - Please use `Page.createLink <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-run-js-api-page-create-link>`_.
-   * - FreeText
+   * - :ref:`FreeText <Node_How_To_Guide_Annotations_Text>`
      - Yes
-     -
+     - Not to be confused with "Text", free text is displayed straight on the **PDF** page.
    * - Square
      - Yes
      -
@@ -126,6 +126,14 @@ For annotation *creation* the list of supported types is as follows:
      -
 
 
+Annotation Properties
+--------------------------------------------
+
+List the common properties ...
+
+- Setting size and position with `setRect`.
+
+"Cour", "Helv", "TiRo"
 
 
 .. _Node_How_To_Get_All_Annotations:
@@ -148,7 +156,10 @@ The following code queries all the pages of a :ref:`document <Node_How_To_Guide_
     }
 
 
+.. _Node_How_To_Delete_and_Annotation:
 
+Delete an Annotation
+--------------------------
 
 
 

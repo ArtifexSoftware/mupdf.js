@@ -155,4 +155,7 @@
 .. _PDFPage: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pdfpage
 .. _PDFAnnotation: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#pdfannotation
 .. _createAnnotation: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#createAnnotation
+.. _setIcon:
+.. _change the look of the icon: https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-annotation.html#setIcon
+.. _QuadPoints: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setQuadPoints
 

@@ -30,7 +30,7 @@ Table of Contents
     :caption: Node.js
     :maxdepth: 2
 
-    loading-files/index.rst
+    files/index.rst
     document/index.rst
     page/index.rst
     annotations/index.rst

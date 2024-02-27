@@ -33,8 +33,8 @@ The following code exemplifies the steps outlined above:
     let embedMe = mupdf.Document.openDocument(fs.readFileSync("embedMe.pdf"), "application/pdf")
     let document = mupdf.Document.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
 
-    let pdfPage = document.loadPage(0)
-    let annotation = pdfPage.createAnnotation("FileAttachment")
+    let page = document.loadPage(0)
+    let annotation = page.createAnnotation("FileAttachment")
 
     annotation.setRect([50,50,100,100])
 

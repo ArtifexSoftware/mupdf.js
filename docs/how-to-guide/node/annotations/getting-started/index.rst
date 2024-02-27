@@ -41,9 +41,9 @@ For annotation *creation* the list of supported types is as follows:
    * - :ref:`Text <Node_How_To_Guide_Annotations_Text>`
      - Yes
      - This is what a "Note" style annotation looks like.
-   * - Link
+   * - :ref:`Link <Node_How_To_Guide_Annotations_Links>`
      - Yes
-     - Please use `Page.createLink <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-run-js-api-page-create-link>`_.
+     - 
    * - :ref:`FreeText <Node_How_To_Guide_Annotations_Text>`
      - Yes
      - Not to be confused with the "Text" type, "FreeText" is displayed straight on the **PDF** page.

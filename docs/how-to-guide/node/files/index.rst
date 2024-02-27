@@ -5,7 +5,7 @@
 
 
 
-Loading Files
+Working with Files
 ===================
 
 Local Files
@@ -49,6 +49,22 @@ An example of loading a remote file which waits for the remote data and then use
     After loading a file we receive a :ref:`Document instance <Node_How_To_Guide_Document>` in return.
 
 
+
+Saving Files
+-----------------
+
+It is up the application developer to work out exactly how they may want to save their file data, however once we have a document instance we can obtain the data in a buffer and use this to save the new file.
+
+For the simplest implementation, which saves the file locally to the current folder location, use the following:
+
+|example_tag|
+
+.. code-block:: javascript
+
+    fs.writeFileSync("output.pdf", document.saveToBuffer("incremental").asUint8Array())
+
+
+For full details refer to the `saveToBuffer`_ method.
 
 .. include:: ../node-footer.rst
 

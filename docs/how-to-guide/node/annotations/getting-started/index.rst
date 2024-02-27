@@ -22,20 +22,15 @@ For example, assuming you have acquired an instance of a `PDFPage`_, to create a
 
 .. code-block:: javascript
 
-    let annot = pdfPage.createAnnotation("Text")
+    let annotation = page.createAnnotation("Text")
 
 
 Annotation Types
-~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------
 
 For annotation *creation* the list of supported types is as follows:
 
 **Annotation types**
-
-.. note::
-
-    Annotation types are also referred to as "subtypes".
-
 
 .. list-table::
    :header-rows: 1
@@ -47,49 +42,49 @@ For annotation *creation* the list of supported types is as follows:
      - Yes
      - This is what a "Note" style annotation looks like.
    * - Link
-     - No
+     - Yes
      - Please use `Page.createLink <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-run-js-api-page-create-link>`_.
    * - :ref:`FreeText <Node_How_To_Guide_Annotations_Text>`
      - Yes
-     - Not to be confused with "Text", free text is displayed straight on the **PDF** page.
-   * - Square
+     - Not to be confused with the "Text" type, "FreeText" is displayed straight on the **PDF** page.
+   * - :ref:`Square <Node_How_To_Guide_Annotations_Drawing_and_Shapes_Shapes>`
      - Yes
      -
-   * - Circle
+   * - :ref:`Circle <Node_How_To_Guide_Annotations_Drawing_and_Shapes_Shapes>`
      - Yes
      -
-   * - Polygon
+   * - :ref:`Line <Node_How_To_Guide_Annotations_Drawing_and_Shapes_Shapes>`
      - Yes
      -
-   * - PolyLine
+   * - :ref:`Polygon <Node_How_To_Guide_Annotations_Drawing_and_Shapes_Shapes>`
      - Yes
      -
-   * - Highlight
+   * - :ref:`PolyLine <Node_How_To_Guide_Annotations_Drawing_and_Shapes_Shapes>`
      - Yes
      -
-   * - Underline
+   * - :ref:`Highlight <Node_How_To_Guide_Annotations_Decorating_Text>`
      - Yes
-     -
-   * - Squiggly
+     - 
+   * - :ref:`Underline <Node_How_To_Guide_Annotations_Decorating_Text>`
      - Yes
-     -
-   * - StrikeOut
+     - 
+   * - :ref:`Squiggly <Node_How_To_Guide_Annotations_Decorating_Text>`
      - Yes
-     -
+     - 
+   * - :ref:`StrikeOut <Node_How_To_Guide_Annotations_Decorating_Text>`
+     - Yes
+     - 
    * - Redact
      - Yes
      -
    * - Stamp
      - Yes
      -
-   * - Caret
+   * - :ref:`Caret <Node_How_To_Guide_Annotations_Text>`
      - Yes
-     -
-   * - Ink
+     - 
+   * - :ref:`Ink <Node_How_To_Guide_Annotations_Drawing_and_Shapes_Drawing>`
      - Yes
-     -
-   * - Popup
-     - No
      -
    * - FileAttachment
      - Yes
@@ -99,6 +94,9 @@ For annotation *creation* the list of supported types is as follows:
      -
    * - Movie
      - Yes
+     -
+   * - Popup
+     - No
      -
    * - RichMedia
      - No
@@ -124,6 +122,12 @@ For annotation *creation* the list of supported types is as follows:
    * - Projection
      - No
      -
+
+
+.. note::
+
+    Annotation types are also referred to as "subtypes".
+
 
 
 Annotation Properties

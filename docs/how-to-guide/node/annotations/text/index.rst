@@ -68,8 +68,10 @@ This code sample does the following:
 
     For both the `Text` & `Caret` annotations in the example above we only set the upper left `x` and upper right `y` numbers for the `setRect` method (i.e. array in format `[ulx,uly,lrx,lry]`). 
     
-    In this way we are treating it like an `x` & `y` point. This is because an icon is placed at that position to repreent the annotation.
+    In this way we are treating it like an `x` & `y` point. This is because an icon is placed at that position to represent the annotation.
 
+
+.. _Node_How_To_Guide_Annotations_Decorating_Text:
 
 Decorating Text
 -------------------------

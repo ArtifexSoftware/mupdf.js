@@ -307,6 +307,18 @@ fz_font * wasm_new_font_from_buffer(char *name, fz_buffer *buf, int subfont)
 	POINTER(fz_new_font_from_buffer, name, buf, subfont, 0)
 }
 
+EXPORT
+int wasm_encode_character(fz_font *font, int unicode)
+{
+	INTEGER(fz_encode_character, font, unicode)
+}
+
+EXPORT
+float wasm_advance_glyph(fz_font *font, int glyph, int wmode)
+{
+	NUMBER(fz_advance_glyph, font, glyph, wmode)
+}
+
 // --- Image ---
 
 EXPORT
@@ -333,6 +345,12 @@ EXPORT
 fz_pixmap * wasm_new_pixmap_from_page(fz_page *page, fz_matrix *ctm, fz_colorspace *colorspace, int alpha)
 {
 	POINTER(fz_new_pixmap_from_page, page, *ctm, colorspace, alpha)
+}
+
+EXPORT
+fz_pixmap * wasm_new_pixmap_from_page_contents(fz_page *page, fz_matrix *ctm, fz_colorspace *colorspace, int alpha)
+{
+	POINTER(fz_new_pixmap_from_page_contents, page, *ctm, colorspace, alpha)
 }
 
 EXPORT

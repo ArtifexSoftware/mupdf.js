@@ -216,9 +216,9 @@ To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` an
 
 .. note::
 
-    The resulting array contains numbers which are a sequence of `[ulx, uly, urx, ury, llx, lly, lrx, lry]` which defines each rectangle for each result. These type of rectangles are known as “Quads” or “QuadPoints” in the **PDF** specification.
+    The resulting array contains numbers which are a sequence of `[ulx, uly, urx, ury, llx, lly, lrx, lry]` which defines each rectangle for each result. These type of rectangles are known as QuadPoints_ in the **PDF** specification.
 
-    For example, the following would represent a search result with two results showing one “QuadPoint” for each result:
+    For example, the following would represent a search result with two results showing one "QuadPoint" (or "Quad") for each result:
 
 |example_tag|
 

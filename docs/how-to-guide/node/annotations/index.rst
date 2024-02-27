@@ -20,6 +20,7 @@ Overview
     getting-started/index.rst
     text/index.rst
     drawing-and-shapes/index.rst
+    links/index.rst
     embedding-files/index.rst
 
 

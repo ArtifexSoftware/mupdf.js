@@ -141,6 +141,7 @@
 .. Core API links:
 .. _Document:
 .. _Document Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#document
+.. _saveToBuffer: https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-document.html#saveToBuffer
 .. _Page Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#page
 .. _GraftObject: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#graftObject 
 .. _toPixmap: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#toPixmap
@@ -158,4 +159,5 @@
 .. _setIcon:
 .. _change the look of the icon: https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-annotation.html#setIcon
 .. _QuadPoints: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setQuadPoints
-
+.. _Page.createLink: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-run-js-api-page-create-link
+.. _Link Destination Object: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#link-destination-object

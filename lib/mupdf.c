@@ -262,6 +262,12 @@ void wasm_append_buffer(fz_buffer *buf, fz_buffer *src)
 }
 
 EXPORT
+fz_buffer * wasm_slice_buffer(fz_buffer *buf, int start, int end)
+{
+	POINTER(fz_slice_buffer, buf, start, end)
+}
+
+EXPORT
 char * wasm_string_from_buffer(fz_buffer *buf)
 {
 	POINTER(fz_string_from_buffer, buf)
@@ -317,6 +323,30 @@ EXPORT
 float wasm_advance_glyph(fz_font *font, int glyph, int wmode)
 {
 	NUMBER(fz_advance_glyph, font, glyph, wmode)
+}
+
+EXPORT
+int wasm_font_is_monospaced(fz_font *font)
+{
+	INTEGER(fz_font_is_monospaced, font)
+}
+
+EXPORT
+int wasm_font_is_serif(fz_font *font)
+{
+	INTEGER(fz_font_is_serif, font)
+}
+
+EXPORT
+int wasm_font_is_bold(fz_font *font)
+{
+	INTEGER(fz_font_is_bold, font)
+}
+
+EXPORT
+int wasm_font_is_italic(fz_font *font)
+{
+	INTEGER(fz_font_is_italic, font)
 }
 
 // --- Image ---
@@ -872,6 +902,20 @@ void wasm_layout_document(fz_document *doc, float w, float h, float em)
 	VOID(fz_layout_document, doc, w, h, em)
 }
 
+// --- Link ---
+
+EXPORT
+void wasm_link_set_rect(fz_link *link, fz_rect *rect)
+{
+	VOID(fz_set_link_rect, link, *rect);
+}
+
+EXPORT
+void wasm_link_set_uri(fz_link *link, char *uri)
+{
+	VOID(fz_set_link_uri, link, uri);
+}
+
 // --- Page ---
 
 EXPORT
@@ -1127,6 +1171,12 @@ EXPORT
 void wasm_pdf_end_operation(pdf_document *doc)
 {
 	VOID(pdf_end_operation, doc)
+}
+
+EXPORT
+void wasm_pdf_abandon_operation(pdf_document *doc)
+{
+	VOID(pdf_abandon_operation, doc)
 }
 
 EXPORT

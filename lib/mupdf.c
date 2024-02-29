@@ -1373,6 +1373,24 @@ fz_buffer * wasm_pdf_write_document_buffer(pdf_document *doc, char *options)
 }
 
 EXPORT
+int wasm_pdf_js_supported(pdf_document *doc)
+{
+	NUMBER(pdf_js_supported, doc)
+}
+
+EXPORT
+int wasm_pdf_enable_js(pdf_document *doc)
+{
+	NUMBER(pdf_enable_js, doc)
+}
+
+EXPORT
+int wasm_pdf_disable_js(pdf_document *doc)
+{
+	NUMBER(pdf_disable_js, doc)
+}
+
+EXPORT
 int wasm_pdf_rearrange_pages(pdf_document *doc, int *pages, int n)
 {
 	VOID(pdf_rearrange_pages, doc, pages, n)

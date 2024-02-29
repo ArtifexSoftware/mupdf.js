@@ -25,6 +25,20 @@ For example, assuming you have acquired an instance of a `PDFPage`_, to create a
     let annotation = page.createAnnotation("Text")
 
 
+.. _Node_How_To_Guide_Annotations_Getting_Started_Annotation_Deletion:
+
+Delete an Annotation
+--------------------------
+
+To delete an annotation use the `deleteAnnotation`_ method on the `PDFPage`_ class.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    page.deleteAnnotation(annotation)
+
+
 Annotation Types
 --------------------------------------------
 
@@ -90,10 +104,10 @@ For annotation *creation* the list of supported types is as follows:
      - Yes
      -
    * - Sound
-     - Yes
+     - No
      -
    * - Movie
-     - Yes
+     - No
      -
    * - Popup
      - No
@@ -130,14 +144,6 @@ For annotation *creation* the list of supported types is as follows:
 
 
 
-Annotation Properties
---------------------------------------------
-
-List the common properties ...
-
-- Setting size and position with `setRect`.
-
-"Cour", "Helv", "TiRo"
 
 
 .. _Node_How_To_Get_All_Annotations:
@@ -159,11 +165,77 @@ The following code queries all the pages of a :ref:`document <Node_How_To_Guide_
         i++
     }
 
+----
 
-.. _Node_How_To_Delete_and_Annotation:
 
-Delete an Annotation
---------------------------
+Common Annotation Methods
+--------------------------------------------
+
+The following list shows some of the most commonly used methods to work with annotations. This list is *not exhaustive* - see the `PDFAnnotation class`_ for the full **API**. 
+
+
+Get the Annotation Type
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- `getType <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#id42>`_
+
+
+
+Position and Size 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- `getBounds <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#id35>`_
+- `hasRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#hasRect>`_
+- `getRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getRect>`_
+- `hasRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setRect>`_
+
+
+Author
+~~~~~~~~~~
+
+
+- `hasAuthor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#hasAuthor>`_
+- `getAuthor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getAuthor>`_
+- `setAuthor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setAuthor>`_
+
+
+Getting/Setting Annotation Date
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+- `getCreationDate <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getCreationDate>`_
+- `setCreationDate <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setCreationDate>`_
+- `getModificationDate <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getModificationDate>`_
+- `setModificationDate <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setModificationDate>`_
+
+Graphics and Drawing
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Obtain a Pixmap from an annotation**
+
+
+- `toPixmap <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#id37>`_
+
+**Icon properties**
+
+
+- `hasIcon <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#hasIcon>`_
+- `getIcon <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getIcon>`_
+- `setIcon <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setIcon>`_
+
+
+**Color and opacity**
+
+
+- `getColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getColor>`_
+- `setColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setColor>`_
+- `hasInteriorColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#hasInteriorColor>`_
+- `getInteriorColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getInteriorColor>`_
+- `setInteriorColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setInteriorColor>`_
+- `getOpacity <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getOpacity>`_
+- `setOpacity <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setOpacity>`_
+
+
 
 
 

@@ -269,7 +269,8 @@ To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide
 Embedding Files
 --------------------------
 
-Embedding files uses the `addEmbeddedFile`_ API method on the document instance.
+Embedding files uses the :ref:`addEmbeddedFile <Node_How_To_Guide_Annotations_Embedding_Files>` method on the document instance.
+
 
 
 

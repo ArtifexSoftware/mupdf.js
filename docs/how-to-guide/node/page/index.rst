@@ -132,7 +132,45 @@ To get the images for a page we can retrieve a StructuredText_ object and `walk 
 Adding Text to Pages
 -------------------------------
 
-TODO 
+The following script opens a document called `"test.pdf"` and adds text to the bottom of the **PDF** document.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    let document = mupdf.Document.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
+    let page_obj = document.loadPage(0).getObject()
+    let font = document.addSimpleFont(new mupdf.Font("Times-Roman"))
+
+    // add image object to page/Resources/XObject/F1 dictionary (creating nested dictionaries as needed)
+    var res = page_obj.get("Resources")
+    if (!res.isDictionary())
+        page_obj.put("Resources", res = doc.newDictionary())
+
+    var res_font = res.get("Font")
+    if (!res_font.isDictionary())
+        res.put("Font", res_font = doc.newDictionary())
+
+    res_font.put("F1", font)
+
+    // create drawing operations
+    var extra_contents = document.addStream("BT /F1 18 Tf 1 0 0 1 100 100 Tm (Hello, world) Tj ET")
+
+    // add drawing operations to page contents
+    var page_contents = page_obj.get("Contents")
+    if (page_contents.isArray()) {
+        // Contents is already an array, so append our new buffer object.
+        page_contents.push(extra_contents)
+    } else {
+        // Contents is not an array, so change it into an array
+        // and then append our new buffer object.
+        var new_page_contents = document.newArray()
+        new_page_contents.push(page_contents)
+        new_page_contents.push(extra_contents)
+        page_obj.put("Contents", new_page_contents)
+    }
+
+    fs.writeFileSync("output.pdf", document.saveToBuffer("").asUint8Array())
 
 
 
@@ -144,9 +182,6 @@ The following script opens a document called `"test.pdf"` and adds an image call
 |example_tag|
 
 .. code-block:: javascript
-
-    const mupdf = require('mupdf')
-    const fs = require("fs")
 
     let fileData = fs.readFileSync("test.pdf")
 

@@ -74,10 +74,10 @@ For annotation *creation* the list of supported types is as follows:
    * - :ref:`StrikeOut <Node_How_To_Guide_Annotations_Decorating_Text>`
      - Yes
      - 
-   * - Redact
+   * - :ref:`Redact <Node_How_To_Guide_Annotations_Redactions>`
      - Yes
      -
-   * - Stamp
+   * - :ref:`Stamp <Node_How_To_Guide_Annotations_Stamps>`
      - Yes
      -
    * - :ref:`Caret <Node_How_To_Guide_Annotations_Text>`
@@ -86,7 +86,7 @@ For annotation *creation* the list of supported types is as follows:
    * - :ref:`Ink <Node_How_To_Guide_Annotations_Drawing_and_Shapes_Drawing>`
      - Yes
      -
-   * - FileAttachment
+   * - :ref:`FileAttachment <Node_How_To_Guide_Annotations_Embedding_Files>`
      - Yes
      -
    * - Sound

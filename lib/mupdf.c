@@ -1372,6 +1372,12 @@ fz_buffer * wasm_pdf_write_document_buffer(pdf_document *doc, char *options)
 	return buffer;
 }
 
+EXPORT
+int wasm_pdf_rearrange_pages(pdf_document *doc, int *pages, int n)
+{
+	VOID(pdf_rearrange_pages, doc, pages, n)
+}
+
 // --- PDFPage ---
 
 EXPORT

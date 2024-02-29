@@ -467,6 +467,12 @@ fz_pixmap * wasm_convert_pixmap(fz_pixmap *pixmap, fz_colorspace *colorspace, in
 	POINTER(fz_convert_pixmap, pixmap, colorspace, NULL, NULL, fz_default_color_params, keep_alpha)
 }
 
+EXPORT
+fz_pixmap * wasm_warp_pixmap(fz_pixmap *pixmap, fz_point points[4], float w, float h)
+{
+	POINTER(fz_warp_pixmap, pixmap, points, w, h)
+}
+
 // --- Shade ---
 
 EXPORT

@@ -98,7 +98,7 @@
          for (var i=0;i<footerItem.length;i++) {
             const copyright = footerItem[i].getElementsByClassName("copyright");
             for (var j=0;j<copyright.length;j++) {
-               copyright[j].innerHTML = "&copy; Copyright 2023 <a href='https://artifex.com' target=_blank>Artifex Software, Inc</a> — All Rights Reserved";
+               copyright[j].innerHTML = "&copy; Copyright 2024 <a href='https://artifex.com' target=_blank>Artifex Software, Inc</a> — All Rights Reserved";
             }
          }
 
@@ -154,8 +154,10 @@
 .. _Rectangles: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#rectangles
 .. _addEmbeddedFile: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#addEmbeddedFile
 .. _PDFPage: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pdfpage
+.. _PDFAnnotation class:
 .. _PDFAnnotation: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#pdfannotation
 .. _createAnnotation: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#createAnnotation
+.. _deleteAnnotation: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#deleteAnnotation
 .. _setIcon:
 .. _change the look of the icon: https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-annotation.html#setIcon
 .. _QuadPoints: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setQuadPoints

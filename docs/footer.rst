@@ -161,3 +161,5 @@
 .. _QuadPoints: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setQuadPoints
 .. _Page.createLink: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-run-js-api-page-create-link
 .. _Link Destination Object: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#link-destination-object
+.. _icon names: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-pdf-annotation-icon-names
+

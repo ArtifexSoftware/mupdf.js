@@ -20,9 +20,10 @@ Table of Contents
 
 .. toctree::
     :caption: Glossary
-    :maxdepth: 2
+    :maxdepth: 1
 
     coordinate-system/index.rst
+    destroy/index.rst
 
 
 .. include:: ../footer.rst

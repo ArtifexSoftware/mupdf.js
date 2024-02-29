@@ -118,5 +118,11 @@ The following example would add a yellow highlight text annotation over two line
 
 
 
+Redacting Text
+-----------------
+
+Se the section on :ref:`Node_How_To_Guide_Annotations_Redactions` for details.
+
+
 .. include:: ../../node-footer.rst
 .. include:: ../../../../footer.rst

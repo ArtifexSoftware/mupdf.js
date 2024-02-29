@@ -89,6 +89,24 @@ void wasm_free(void *p)
 	fz_free(ctx, p);
 }
 
+EXPORT
+void wasm_enable_icc(void)
+{
+	VOID(fz_enable_icc)
+}
+
+EXPORT
+void wasm_disable_icc(void)
+{
+	VOID(fz_disable_icc)
+}
+
+EXPORT
+void wasm_set_user_css(char *text)
+{
+	VOID(fz_set_user_css, text)
+}
+
 // --- REFERENCE COUNTING ---
 
 #define KEEP_(WNAME,FNAME) EXPORT void * WNAME(void *p) { return FNAME(ctx, p); }

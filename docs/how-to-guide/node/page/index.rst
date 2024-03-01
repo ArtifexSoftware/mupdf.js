@@ -129,6 +129,20 @@ To get the images for a page we can retrieve a StructuredText_ object and `walk 
     When we obtain StructuredText_ using `toStructuredText` decoding images **does not** happen by default - we have to pass through the `"preserve-images"` parameter. This is because decoding images takes a bit more processing power, so we only do it if requested.
 
 
+Extracting Page Annotations
+-----------------------------------
+
+We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from pages by querying with `getAnnotations()`.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    const annots = page.getAnnotations()
+    console.log(`Annotations=${annots}`)
+    
+
+
 Adding Text to Pages
 -------------------------------
 

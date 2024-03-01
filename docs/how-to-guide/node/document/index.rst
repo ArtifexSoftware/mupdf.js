@@ -199,6 +199,22 @@ To get the images for an entire document we can retrieve StructuredText_ objects
     When we obtain StructuredText_ using `toStructuredText` decoding images **does not** happen by default - we have to pass through the `"preserve-images"` parameter. This is because decoding images takes a bit more processing power, so we only do it if requested.
 
 
+Extracting Document Annotations
+-----------------------------------
+
+We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from document pages by querying each page.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    let i = 0
+    while (i < document.countPages()) {
+        const page = document.loadPage(i)
+        const annots = page.getAnnotations()
+        console.log(`Page=${page}, Annotations=${annots}`)
+        i++
+    }
 
 
 Searching a Document

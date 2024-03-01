@@ -39,6 +39,15 @@ The following example creates a redaction area on the page and then `applies the
     fs.writeFileSync("output-redact.pdf", document.saveToBuffer("incremental").asUint8Array())
 
 
+You can also apply all the current redaction annotations on a page at the page-level with:
+
+|example_tag|
+
+.. code-block:: javascript
+
+    page.applyRedactions()
+
+
 .. note::
 
     Redactions are secure and any textual or pixel data is irretrievable.

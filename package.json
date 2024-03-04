@@ -3,8 +3,8 @@
   "version": "0.1.4",
   "description": "MuPDF.js",
   "exports": {
-    "." : "./lib/mupdf.js",
-    "./tasks" : "./lib/tasks.js"
+    ".": "./lib/mupdf.js",
+    "./tasks": "./lib/tasks.js"
   },
   "files": [
     "lib/tasks.js",

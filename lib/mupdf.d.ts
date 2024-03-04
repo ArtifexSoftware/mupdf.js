@@ -1,0 +1,645 @@
+type Matrix = [number, number, number, number, number, number];
+type Rect = [number, number, number, number];
+type Quad = [number, number, number, number, number, number, number, number];
+type Point = [number, number];
+type Color = [number] | [number, number, number] | [number, number, number, number];
+type Rotate = 0 | 90 | 180 | 270;
+type AnyBuffer = Buffer | ArrayBuffer | Uint8Array | string;
+export declare function enableICC(): void;
+export declare function disableICC(): void;
+export declare function setUserCSS(text: any): void;
+export declare const Matrix: {
+    identity: Matrix;
+    scale(sx: number, sy: number): Matrix;
+    translate(tx: number, ty: number): Matrix;
+    rotate(d: number): Matrix;
+    invert(m: Matrix): Matrix;
+    concat(one: Matrix, two: Matrix): Matrix;
+};
+export declare const Rect: {
+    MIN_INF_RECT: number;
+    MAX_INF_RECT: number;
+    isEmpty: (rect: Rect) => boolean;
+    isValid: (rect: Rect) => boolean;
+    isInfinite: (rect: Rect) => boolean;
+    transform: (rect: Rect, matrix: Matrix) => Rect;
+};
+declare class Userdata {
+    static _finalizer: FinalizationRegistry<number>;
+    static readonly _drop: (pointer: number) => void;
+    pointer: number;
+    constructor(pointer: number);
+    destroy(): void;
+    toString(): string;
+    valueOf(): number;
+}
+export declare class Buffer extends Userdata {
+    static readonly _drop: any;
+    constructor(arg?: number | string | ArrayBuffer | Uint8Array);
+    getLength(): number;
+    readByte(at: number): number;
+    write(s: string): void;
+    writeByte(b: number): void;
+    writeLine(s: string): void;
+    writeBuffer(other: AnyBuffer): void;
+    asUint8Array(): Uint8Array;
+    slice(start: number, end: number): Buffer;
+    asString(): string;
+}
+export declare class ColorSpace extends Userdata {
+    static readonly _drop: any;
+    static readonly TYPES: string[];
+    constructor(from: number | ArrayBuffer | Uint8Array | Buffer, name?: string);
+    getName(): string;
+    getType(): string;
+    getNumberOfComponents(): number;
+    isGray(): boolean;
+    isRGB(): boolean;
+    isCMYK(): boolean;
+    isIndexed(): boolean;
+    isLab(): boolean;
+    isDeviceN(): boolean;
+    isSubtractive(): boolean;
+    toString(): string;
+    static readonly DeviceGray: ColorSpace;
+    static readonly DeviceRGB: ColorSpace;
+    static readonly DeviceBGR: ColorSpace;
+    static readonly DeviceCMYK: ColorSpace;
+    static readonly Lab: ColorSpace;
+}
+export declare class Font extends Userdata {
+    static readonly _drop: any;
+    static readonly SIMPLE_ENCODING: string[];
+    static readonly ADOBE_CNS = 0;
+    static readonly ADOBE_GB = 1;
+    static readonly ADOBE_JAPAN = 2;
+    static readonly ADOBE_KOREA = 3;
+    static readonly CJK_ORDERING_BY_LANG: {
+        "Adobe-CNS1": number;
+        "Adobe-GB1": number;
+        "Adobe-Japan1": number;
+        "Adobe-Korea1": number;
+        "zh-Hant": number;
+        "zh-TW": number;
+        "zh-HK": number;
+        "zh-Hans": number;
+        "zh-CN": number;
+        ja: number;
+        ko: number;
+    };
+    constructor(name_or_pointer: number | string, buffer?: AnyBuffer, subfont?: number);
+    getName(): string;
+    encodeCharacter(uni: number | string): number;
+    advanceGlyph(gid: number, wmode?: number): number;
+    isMono(): boolean;
+    isSerif(): boolean;
+    isBold(): boolean;
+    isItalic(): boolean;
+}
+export declare class Image extends Userdata {
+    static readonly _drop: any;
+    constructor(arg1: number | Pixmap | AnyBuffer, arg2?: ColorSpace);
+    getWidth(): number;
+    getHeight(): number;
+    getNumberOfComponents(): number;
+    getBitsPerComponent(): number;
+    getXResolution(): number;
+    getYResolution(): number;
+    getImageMask(): boolean;
+    getColorSpace(): ColorSpace;
+    getMask(): Image;
+    toPixmap(): Pixmap;
+}
+type LineCap = number | "Butt" | "Round" | "Square" | "Triangle";
+type LineJoin = number | "Miter" | "Round" | "Bevel" | "MiterXPS";
+export declare class StrokeState extends Userdata {
+    static readonly _drop: any;
+    static readonly LINE_CAP: string[];
+    static readonly LINE_JOIN: string[];
+    constructor(pointer?: number);
+    getLineCap(): number;
+    setLineCap(j: LineCap): void;
+    getLineJoin(): number;
+    setLineJoin(j: LineJoin): void;
+    getLineWidth(w: any): number;
+    setLineWidth(w: number): void;
+    getMiterLimit(): number;
+    setMiterLimit(m: number): void;
+}
+export declare class Path extends Userdata {
+    static readonly _drop: any;
+    constructor(pointer?: number);
+    getBounds(strokeState: StrokeState, transform: Matrix): Rect;
+    moveTo(x: number, y: number): void;
+    lineTo(x: number, y: number): void;
+    curveTo(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): void;
+    curveToV(cx: number, cy: number, ex: number, ey: number): void;
+    curveToY(cx: number, cy: number, ex: number, ey: number): void;
+    closePath(): void;
+    rect(x1: number, y1: number, x2: number, y2: number): void;
+    transform(matrix: Matrix): void;
+    walk(walker: any): void;
+}
+export declare class Text extends Userdata {
+    static readonly _drop: any;
+    constructor(pointer?: number);
+    getBounds(strokeState: StrokeState, transform: Matrix): Rect;
+    showGlyph(font: Font, trm: Matrix, gid: number, uni: number, wmode?: number): void;
+    showString(font: Font, trm: Matrix, str: string, wmode?: number): void;
+    walk(walker: any): void;
+}
+export declare class DisplayList extends Userdata {
+    static readonly _drop: any;
+    constructor(arg1: number | Rect);
+    getBounds(): Rect;
+    toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha?: boolean): Pixmap;
+    toStructuredText(options?: string): StructuredText;
+    run(device: Device, matrix: Matrix): void;
+    search(needle: string, max_hits?: number): Quad[];
+}
+export declare class Pixmap extends Userdata {
+    static readonly _drop: any;
+    constructor(arg1: number | ColorSpace, bbox?: Rect, alpha?: boolean);
+    getBounds(): Rect;
+    clear(value?: number): void;
+    getWidth(): number;
+    getHeight(): number;
+    getX(): number;
+    getY(): number;
+    getStride(): number;
+    getNumberOfComponents(): number;
+    getAlpha(): number;
+    getXResolution(): number;
+    getYResolution(): number;
+    setResolution(x: number, y: number): void;
+    getColorSpace(): ColorSpace;
+    getPixels(): Uint8ClampedArray;
+    asPNG(): Uint8Array;
+    asPSD(): Uint8Array;
+    asPAM(): Uint8Array;
+    asJPEG(quality: any, invert_cmyk: any): Uint8Array;
+    invert(): void;
+    invertLuminance(): void;
+    gamma(p: number): void;
+    tint(black: number | Color, white: number | Color): void;
+    convertToColorSpace(colorspace: any, keepAlpha?: boolean): Pixmap;
+    warp(points: Point[], width: number, height: number): Pixmap;
+}
+export declare class Shade extends Userdata {
+    static readonly _drop: any;
+    constructor(pointer: any);
+    getBounds(): Rect;
+}
+export declare class StructuredText extends Userdata {
+    static readonly _drop: any;
+    static readonly SELECT_CHARS = 0;
+    static readonly SELECT_WORDS = 1;
+    static readonly SELECT_LINES = 2;
+    walk(walker: any): void;
+    asJSON(scale?: number): string;
+    search(needle: string, max_hits?: number): Quad[];
+}
+type BlendMode = number | "Normal" | "Multiply" | "Screen" | "Overlay" | "Darken" | "Lighten" | "ColorDodge" | "ColorBurn" | "HardLight" | "SoftLight" | "Difference" | "Exclusion" | "Hue" | "Saturation" | "Color" | "Luminosity";
+export declare class Device extends Userdata {
+    static readonly _drop: any;
+    static readonly BLEND_MODES: string[];
+    fillPath(path: Path, evenOdd: boolean, ctm: Matrix, colorspace: ColorSpace, color: Color, alpha: number): void;
+    strokePath(path: Path, stroke: StrokeState, ctm: Matrix, colorspace: ColorSpace, color: Color, alpha: number): void;
+    clipPath(path: Path, evenOdd: boolean, ctm: Matrix): void;
+    clipStrokePath(path: Path, stroke: StrokeState, ctm: Matrix): void;
+    fillText(text: Text, ctm: Matrix, colorspace: ColorSpace, color: Color, alpha: number): void;
+    strokeText(text: Text, stroke: StrokeState, ctm: Matrix, colorspace: ColorSpace, color: Color, alpha: number): void;
+    clipText(text: Text, ctm: Matrix): void;
+    clipStrokeText(text: Text, stroke: StrokeState, ctm: Matrix): void;
+    ignoreText(text: Text, ctm: Matrix): void;
+    fillShade(shade: Shade, ctm: Matrix, alpha: number): void;
+    fillImage(image: Image, ctm: Matrix, alpha: number): void;
+    fillImageMask(image: Image, ctm: Matrix, colorspace: ColorSpace, color: Color, alpha: number): void;
+    clipImageMask(image: Image, ctm: Matrix): void;
+    popClip(): void;
+    beginMask(area: Rect, luminosity: boolean, colorspace: ColorSpace, color: Color): void;
+    endMask(): void;
+    beginGroup(area: any, colorspace: ColorSpace, isolated: boolean, knockout: boolean, blendmode: BlendMode, alpha: number): void;
+    endGroup(): void;
+    beginTile(area: Rect, view: Rect, xstep: number, ystep: number, ctm: Matrix, id: number): any;
+    endTile(): void;
+    beginLayer(name: string): void;
+    endLayer(): void;
+    close(): void;
+}
+export declare class DrawDevice extends Device {
+    constructor(matrix: Matrix, pixmap: Pixmap);
+}
+export declare class DisplayListDevice extends Device {
+    constructor(displayList: DisplayList);
+}
+export declare class DocumentWriter extends Userdata {
+    static readonly _drop: any;
+    constructor(buffer: Buffer, format: string, options: string);
+    beginPage(mediabox: Rect): Device;
+    endPage(): void;
+    close(): void;
+}
+export declare class Document extends Userdata {
+    static readonly _drop: any;
+    static readonly META_FORMAT = "format";
+    static readonly META_ENCRYPTION = "encryption";
+    static readonly META_INFO_AUTHOR = "info:Author";
+    static readonly META_INFO_TITLE = "info:Title";
+    static readonly META_INFO_SUBJECT = "info:Subject";
+    static readonly META_INFO_KEYWORDS = "info:Keywords";
+    static readonly META_INFO_CREATOR = "info:Creator";
+    static readonly META_INFO_PRODUCER = "info:Producer";
+    static readonly META_INFO_CREATIONDATE = "info:CreationDate";
+    static readonly META_INFO_MODIFICATIONDATE = "info:ModDate";
+    static readonly PERMISSION: {
+        print: number;
+        copy: number;
+        edit: number;
+        annotate: number;
+        form: number;
+        accessibility: number;
+        assemble: number;
+        "print-hq": number;
+    };
+    static readonly LINK_DEST: string[];
+    static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream, magic: string): Document;
+    formatLinkURI(dest: any): string;
+    isPDF(): boolean;
+    needsPassword(): boolean;
+    authenticatePassword(password: any): number;
+    hasPermission(flag: any): boolean;
+    getMetaData(key: string): string;
+    setMetaData(key: string, value: string): void;
+    countPages(): number;
+    isReflowable(): boolean;
+    layout(w: number, h: number, em: number): void;
+    loadPage(index: number): PDFPage | Page;
+    loadOutline(): any[];
+    resolveLink(link: string | Link): number;
+    outlineIterator(): OutlineIterator;
+}
+declare class OutlineIterator extends Userdata {
+    static readonly _drop: any;
+    item(): {
+        title: string;
+        uri: string;
+        open: boolean;
+    };
+    next(): any;
+    prev(): any;
+    up(): any;
+    down(): any;
+    delete(): any;
+    insert(item: any): any;
+    update(item: any): void;
+}
+declare class Link extends Userdata {
+    static readonly _drop: any;
+    getBounds(): Rect;
+    setBounds(rect: Rect): void;
+    getURI(): string;
+    setURI(uri: string): void;
+    isExternal(): boolean;
+}
+declare class Page extends Userdata {
+    static readonly _drop: any;
+    isPDF(): boolean;
+    getBounds(): Rect;
+    getLabel(): string;
+    run(device: Device, matrix: Matrix): void;
+    runPageContents(device: Device, matrix: Matrix): void;
+    runPageAnnots(device: Device, matrix: Matrix): void;
+    runPageWidgets(device: Device, matrix: Matrix): void;
+    toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha?: boolean, showExtras?: boolean): Pixmap;
+    toDisplayList(showExtras?: boolean): DisplayList;
+    toStructuredText(options?: string): StructuredText;
+    getLinks(): any[];
+    createLink(bbox: Rect, uri: string): Link;
+    deleteLink(link: Link): void;
+    search(needle: string, max_hits?: number): Quad[];
+}
+export declare class PDFDocument extends Document {
+    constructor(pointer?: number);
+    _fromPDFObjectNew(ptr: number): PDFObject;
+    _fromPDFObjectKeep(ptr: number): PDFObject;
+    _toPDFObject(obj: any): PDFObject;
+    _PDFOBJ(obj: any): number;
+    isPDF(): boolean;
+    getVersion(): number;
+    getLanguage(): string;
+    setLanguage(lang: string): void;
+    countObjects(): number;
+    getTrailer(): PDFObject;
+    createObject(): PDFObject;
+    newNull(): PDFObject;
+    newBoolean(v: boolean): PDFObject;
+    newInteger(v: number): PDFObject;
+    newReal(v: number): PDFObject;
+    newName(v: string): PDFObject;
+    newString(v: string): PDFObject;
+    newIndirect(v: number): PDFObject;
+    newArray(cap?: number): PDFObject;
+    newDictionary(cap?: number): PDFObject;
+    deleteObject(num: number | PDFObject): void;
+    addObject(obj: any): PDFObject;
+    addStream(buf: AnyBuffer, obj: any): PDFObject;
+    addRawStream(buf: AnyBuffer, obj: any): PDFObject;
+    newGraftMap(): PDFGraftMap;
+    graftObject(obj: any): PDFObject;
+    graftPage(to: number, srcDoc: PDFDocument, srcPage: number): void;
+    addSimpleFont(font: Font, encoding?: "Latin" | "Greek" | "Cyrillic"): PDFObject;
+    addCJKFont(font: Font, lang: string | number, wmode?: number, serif?: boolean): PDFObject;
+    addFont(font: Font): PDFObject;
+    addImage(image: Image): PDFObject;
+    loadImage(ref: PDFObject): Image;
+    findPage(index: number): PDFObject;
+    addPage(mediabox: Rect, rotate: Rotate, resources: any, contents: AnyBuffer): PDFObject;
+    insertPage(at: any, obj: any): void;
+    deletePage(at: any): void;
+    isEmbeddedFile(ref: any): any;
+    addEmbeddedFile(filename: any, mimetype: any, contents: any, created: any, modified: any, checksum?: boolean): PDFObject;
+    getEmbeddedFileParams(ref: any): {
+        filename: string;
+        mimetype: string;
+        size: any;
+        creationDate: Date;
+        modificationDate: Date;
+    };
+    getEmbeddedFileContents(ref: any): Buffer;
+    getEmbeddedFiles(): any;
+    saveToBuffer(options: any): Buffer;
+    static readonly PAGE_LABEL_NONE = "\0";
+    static readonly PAGE_LABEL_DECIMAL = "D";
+    static readonly PAGE_LABEL_ROMAN_UC = "R";
+    static readonly PAGE_LABEL_ROMAN_LC = "r";
+    static readonly PAGE_LABEL_ALPHA_UC = "A";
+    static readonly PAGE_LABEL_ALPHA_LC = "a";
+    setPageLabels(index: any, style?: string, prefix?: string, start?: number): void;
+    deletePageLabels(index: any): void;
+    wasRepaired(): any;
+    hasUnsavedChanges(): any;
+    countVersions(): any;
+    countUnsavedVersions(): any;
+    validateChangeHistory(): any;
+    canBeSavedIncrementally(): any;
+    enableJournal(): void;
+    getJournal(): {
+        position: any;
+        steps: any[];
+    };
+    beginOperation(op: any): void;
+    beginImplicitOperation(): void;
+    endOperation(): void;
+    abandonOperation(): void;
+    canUndo(): any;
+    canRedo(): any;
+    undo(): void;
+    redo(): void;
+    isJSSupported(): any;
+    enableJS(): void;
+    disableJS(): void;
+    setJSEventListener(listener: any): void;
+    rearrangePages(pages: any): void;
+}
+declare class PDFPage extends Page {
+    _doc: PDFDocument;
+    _annots: PDFAnnotation[];
+    constructor(doc: any, pointer: any);
+    getObject(): PDFObject;
+    static readonly BOXES: string[];
+    isPDF(): boolean;
+    getTransform(): Matrix;
+    setPageBox(which: any, rect: any): void;
+    toPixmap(matrix: any, colorspace: any, alpha?: boolean, showExtras?: boolean, usage?: string, box?: string): Pixmap;
+    getWidgets(): any[];
+    getAnnotations(): PDFAnnotation[];
+    createAnnotation(type: any): PDFAnnotation;
+    deleteAnnotation(annot: any): void;
+    static readonly REDACT_IMAGE_NONE = 0;
+    static readonly REDACT_IMAGE_REMOVE = 1;
+    static readonly REDACT_IMAGE_PIXELS = 2;
+    applyRedactions(black_boxes?: number, image_method?: number): void;
+    update(): boolean;
+}
+declare class PDFObject extends Userdata {
+    static readonly Null: PDFObject;
+    static readonly _drop: any;
+    _doc: PDFDocument;
+    constructor(doc: any, pointer: any);
+    isNull(): boolean;
+    isIndirect(): any;
+    isBoolean(): any;
+    isInteger(): any;
+    isNumber(): any;
+    isName(): any;
+    isString(): any;
+    isArray(): any;
+    isDictionary(): any;
+    isStream(): any;
+    asIndirect(): any;
+    asBoolean(): any;
+    asNumber(): any;
+    asName(): string;
+    asString(): string;
+    readStream(): Buffer;
+    readRawStream(): Buffer;
+    resolve(): PDFObject;
+    get length(): any;
+    _get(path: any): number;
+    get(...path: any[]): PDFObject;
+    getIndirect(...path: any[]): any;
+    getBoolean(...path: any[]): any;
+    getNumber(...path: any[]): any;
+    getName(...path: any[]): string;
+    getString(...path: any[]): string;
+    getInheritable(key: any): PDFObject;
+    put(key: any, value: any): any;
+    push(value: any): any;
+    delete(key: any): void;
+    valueOf(): any;
+    toString(tight?: boolean, ascii?: boolean): string;
+    forEach(fn: any): void;
+    asJS(seen?: any): any;
+}
+export declare class PDFGraftMap extends Userdata {
+    static readonly _drop: any;
+    _doc: PDFDocument;
+    constructor(doc: any, pointer: any);
+    graftObject(obj: any): PDFObject;
+    graftPage(to: any, srcDoc: any, srcPage: any): void;
+}
+export declare class PDFAnnotation extends Userdata {
+    static readonly _drop: any;
+    _doc: PDFDocument;
+    static readonly TYPES: string[];
+    static readonly LINE_ENDING: string[];
+    static readonly LINE_ENDING_NONE = 0;
+    static readonly LINE_ENDING_SQUARE = 1;
+    static readonly LINE_ENDING_CIRCLE = 2;
+    static readonly LINE_ENDING_DIAMOND = 3;
+    static readonly LINE_ENDING_OPEN_ARROW = 4;
+    static readonly LINE_ENDING_CLOSED_ARROW = 5;
+    static readonly LINE_ENDING_BUTT = 6;
+    static readonly LINE_ENDING_R_OPEN_ARROW = 7;
+    static readonly LINE_ENDING_R_CLOSED_ARROW = 8;
+    static readonly LINE_ENDING_SLASH = 9;
+    static readonly BORDER_STYLE: string[];
+    static readonly BORDER_STYLE_SOLID = 0;
+    static readonly BORDER_STYLE_DASHED = 1;
+    static readonly BORDER_STYLE_BEVELED = 2;
+    static readonly BORDER_STYLE_INSET = 3;
+    static readonly BORDER_STYLE_UNDERLINE = 4;
+    static readonly BORDER_EFFECT: string[];
+    static readonly BORDER_EFFECT_NONE = 0;
+    static readonly BORDER_EFFECT_CLOUDY = 1;
+    static readonly IS_INVISIBLE: number;
+    static readonly IS_HIDDEN: number;
+    static readonly IS_PRINT: number;
+    static readonly IS_NO_ZOOM: number;
+    static readonly IS_NO_ROTATE: number;
+    static readonly IS_NO_VIEW: number;
+    static readonly IS_READ_ONLY: number;
+    static readonly IS_LOCKED: number;
+    static readonly IS_TOGGLE_NO_VIEW: number;
+    static readonly IS_LOCKED_CONTENTS: number;
+    constructor(doc: any, pointer: any);
+    getObject(): PDFObject;
+    getBounds(): Rect;
+    run(device: Device, matrix: Matrix): void;
+    toPixmap(matrix: any, colorspace: any, alpha?: boolean): Pixmap;
+    toDisplayList(): DisplayList;
+    update(): boolean;
+    getType(): string;
+    getLanguage(): string;
+    setLanguage(lang: any): void;
+    getFlags(): any;
+    setFlags(flags: any): any;
+    getContents(): string;
+    setContents(text: any): void;
+    getAuthor(): string;
+    setAuthor(text: any): void;
+    getCreationDate(): Date;
+    setCreationDate(date: any): void;
+    getModificationDate(): Date;
+    setModificationDate(date: any): void;
+    hasRect(): any;
+    hasInkList(): any;
+    hasQuadPoints(): any;
+    hasVertices(): any;
+    hasLine(): any;
+    hasInteriorColor(): any;
+    hasLineEndingStyles(): any;
+    hasBorder(): any;
+    hasBorderEffect(): any;
+    hasIcon(): any;
+    hasOpen(): any;
+    hasAuthor(): any;
+    hasFilespec(): any;
+    getRect(): Rect;
+    setRect(rect: any): void;
+    getPopup(): Rect;
+    setPopup(rect: any): void;
+    getIsOpen(): boolean;
+    setIsOpen(isOpen: any): void;
+    getHiddenForEditing(): boolean;
+    setHiddenForEditing(isHidden: any): void;
+    getIcon(): string;
+    setIcon(text: any): void;
+    getOpacity(): any;
+    setOpacity(opacity: any): void;
+    getQuadding(): any;
+    setQuadding(quadding: any): void;
+    getLine(): Point[];
+    setLine(a: any, b: any): void;
+    getLineEndingStyles(): {
+        start: string;
+        end: string;
+    };
+    setLineEndingStyles(start: any, end: any): any;
+    getColor(): Color;
+    getInteriorColor(): Color;
+    setColor(color: any): void;
+    setInteriorColor(color: any): void;
+    getBorderWidth(): any;
+    setBorderWidth(value: any): any;
+    getBorderStyle(): string;
+    setBorderStyle(value: any): any;
+    getBorderEffect(): string;
+    setBorderEffect(value: any): any;
+    getBorderEffectIntensity(): any;
+    setBorderEffectIntensity(value: any): any;
+    getBorderDashCount(): any;
+    getBorderDashItem(idx: any): any;
+    clearBorderDash(): any;
+    addBorderDashItem(v: any): any;
+    getBorderDashPattern(): any[];
+    setBorderDashPattern(list: any): void;
+    setDefaultAppearance(fontName: any, size: any, color: any): void;
+    getDefaultAppearance(): {
+        font: string;
+        size: any;
+        color: Color;
+    };
+    getFileSpec(): PDFObject;
+    setFileSpec(fs: any): any;
+    getQuadPoints(): any[];
+    clearQuadPoints(): void;
+    addQuadPoint(quad: any): void;
+    setQuadPoints(quadlist: any): void;
+    getVertices(): any[];
+    clearVertices(): void;
+    addVertex(vertex: any): void;
+    setVertices(vertexlist: any): void;
+    getInkList(): any[];
+    clearInkList(): void;
+    addInkListStroke(): void;
+    addInkListStrokeVertex(v: any): void;
+    setInkList(inklist: any): void;
+    setAppearanceFromDisplayList(appearance: any, state: any, transform: any, list: any): void;
+    setAppearance(appearance: any, state: any, transform: any, bbox: any, resources: any, contents: any): void;
+    applyRedaction(black_boxes?: number, image_method?: number): void;
+}
+export declare class PDFWidget extends PDFAnnotation {
+    static readonly TYPES: string[];
+    static readonly FIELD_IS_READ_ONLY = 1;
+    static readonly FIELD_IS_REQUIRED: number;
+    static readonly FIELD_IS_NO_EXPORT: number;
+    static readonly TX_FIELD_IS_MULTILINE: number;
+    static readonly TX_FIELD_IS_PASSWORD: number;
+    static readonly TX_FIELD_IS_COMB: number;
+    static readonly BTN_FIELD_IS_NO_TOGGLE_TO_OFF: number;
+    static readonly BTN_FIELD_IS_RADIO: number;
+    static readonly BTN_FIELD_IS_PUSHBUTTON: number;
+    static readonly CH_FIELD_IS_COMBO: number;
+    static readonly CH_FIELD_IS_EDIT: number;
+    static readonly CH_FIELD_IS_SORT: number;
+    static readonly CH_FIELD_IS_MULTI_SELECT: number;
+    getFieldType(): string;
+    isButton(): boolean;
+    isPushButton(): boolean;
+    isCheckbox(): boolean;
+    isRadioButton(): boolean;
+    isText(): boolean;
+    isChoice(): boolean;
+    isListBox(): boolean;
+    isComboBox(): boolean;
+    getFieldFlags(): any;
+    isMultiline(): boolean;
+    isPassword(): boolean;
+    isComb(): boolean;
+    isReadOnly(): boolean;
+    getLabel(): string;
+    getName(): string;
+    getValue(): string;
+    setTextValue(value: any): any;
+    getMaxLen(): any;
+    setChoiceValue(value: any): any;
+    getOptions(isExport?: boolean): void;
+    toggle(): void;
+}
+declare class Stream extends Userdata {
+    static readonly _drop: any;
+    constructor(url: any, contentLength: any, block_size: any, prefetch: any);
+}
+export {};

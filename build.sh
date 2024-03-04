@@ -26,3 +26,6 @@ emcc -o lib/mupdf-wasm.js -I $MUPDF_DIR/include lib/mupdf.c \
 	 $MUPDF_DIR/build/wasm/release/libmupdf.a \
 	 $MUPDF_DIR/build/wasm/release/libmupdf-third.a
 echo
+
+echo BUILDING TYPESCRIPT
+tsc -d -m commonjs -t es2021 lib/mupdf.ts

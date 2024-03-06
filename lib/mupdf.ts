@@ -1254,7 +1254,7 @@ interface StructuredTextWalker {
 	endTextBlock?(): void
 }
 
-export class StructuredText extends Userdata {
+class StructuredText extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_stext_page
 
 	static readonly SELECT_CHARS = 0
@@ -1643,8 +1643,8 @@ export class Document extends Userdata {
 		)
 	}
 
-	isPDF() {
-		return false
+	isPDF(): this is PDFDocument {
+		return this instanceof PDFDocument
 	}
 
 	needsPassword() {
@@ -1824,8 +1824,8 @@ class Link extends Userdata {
 class Page extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_page
 
-	isPDF() {
-		return false
+	isPDF(): this is PDFPage {
+		return this instanceof PDFPage
 	}
 
 	getBounds() {
@@ -1925,6 +1925,10 @@ export class PDFDocument extends Document {
 		super(pointer)
 	}
 
+	static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream) {
+		return Document.openDocument(from, "application/pdf") as PDFDocument
+	}
+
 	loadPage(index: number) {
 		return super.loadPage(index) as PDFPage
 	}
@@ -1977,10 +1981,6 @@ export class PDFDocument extends Document {
 	_PDFOBJ(obj) {
 		// Note: We have to create a PDFObject instance for garbage collection.
 		return this._toPDFObject(obj).pointer
-	}
-
-	isPDF() {
-		return true
 	}
 
 	getVersion(): number {
@@ -2329,10 +2329,6 @@ class PDFPage extends Page {
 		"TrimBox",
 		"ArtBox"
 	]
-
-	isPDF() {
-		return true
-	}
 
 	getTransform() {
 		return fromMatrix(libmupdf._wasm_pdf_page_transform(this.pointer))

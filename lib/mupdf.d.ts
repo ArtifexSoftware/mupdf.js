@@ -198,7 +198,7 @@ interface StructuredTextWalker {
     endLine?(): void;
     endTextBlock?(): void;
 }
-export declare class StructuredText extends Userdata {
+declare class StructuredText extends Userdata {
     static readonly _drop: any;
     static readonly SELECT_CHARS = 0;
     static readonly SELECT_WORDS = 1;
@@ -273,7 +273,7 @@ export declare class Document extends Userdata {
     static readonly LINK_DEST: string[];
     static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream, magic: string): Document;
     formatLinkURI(dest: any): string;
-    isPDF(): boolean;
+    isPDF(): this is PDFDocument;
     needsPassword(): boolean;
     authenticatePassword(password: any): number;
     hasPermission(flag: any): boolean;
@@ -317,7 +317,7 @@ declare class Link extends Userdata {
 }
 declare class Page extends Userdata {
     static readonly _drop: any;
-    isPDF(): boolean;
+    isPDF(): this is PDFPage;
     getBounds(): Rect;
     getLabel(): string;
     run(device: Device, matrix: Matrix): void;
@@ -334,12 +334,12 @@ declare class Page extends Userdata {
 }
 export declare class PDFDocument extends Document {
     constructor(pointer?: number);
+    static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream): PDFDocument;
     loadPage(index: number): PDFPage;
     _fromPDFObjectNew(ptr: number): PDFObject;
     _fromPDFObjectKeep(ptr: number): PDFObject;
     _toPDFObject(obj: any): PDFObject;
     _PDFOBJ(obj: any): number;
-    isPDF(): boolean;
     getVersion(): number;
     getLanguage(): string;
     setLanguage(lang: string): void;
@@ -424,7 +424,6 @@ declare class PDFPage extends Page {
     constructor(doc: PDFDocument, pointer: number);
     getObject(): PDFObject;
     static readonly BOXES: string[];
-    isPDF(): boolean;
     getTransform(): Matrix;
     setPageBox(which: PDFPageBox, rect: Rect): void;
     toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha?: boolean, showExtras?: boolean, usage?: string, box?: PDFPageBox): Pixmap;

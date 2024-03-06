@@ -97,7 +97,7 @@ html_theme_options = {
     "logo": {
         "text": "",
         "image_dark": "_static/sidebar-logo-light.svg",
-        "alt_text": "developer.pdf.co",
+        "alt_text": "mupdf.js",
     },
     "icon_links": [
         {

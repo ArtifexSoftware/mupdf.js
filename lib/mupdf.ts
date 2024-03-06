@@ -571,17 +571,21 @@ class Userdata {
 	constructor(pointer: number) {
 		if (typeof pointer !== "number")
 			throw new Error("invalid pointer: " + typeof pointer)
-		let ctor = this.constructor as typeof Userdata
-		if (!ctor._finalizer)
-			ctor._finalizer = new FinalizationRegistry(ctor._drop)
-		ctor._finalizer.register(this, pointer, this)
+		if (pointer !== 0) {
+			let ctor = this.constructor as typeof Userdata
+			if (!ctor._finalizer)
+				ctor._finalizer = new FinalizationRegistry(ctor._drop)
+			ctor._finalizer.register(this, pointer, this)
+		}
 		this.pointer = pointer
 	}
 
 	destroy() {
-		let ctor = this.constructor as typeof Userdata
-		ctor._finalizer.unregister(this)
-		ctor._drop(this.pointer)
+		if (this.pointer !== 0) {
+			let ctor = this.constructor as typeof Userdata
+			ctor._finalizer.unregister(this)
+			ctor._drop(this.pointer)
+		}
 		this.pointer = 0
 	}
 
@@ -2414,9 +2418,9 @@ class PDFPage extends Page {
 }
 
 class PDFObject extends Userdata {
-	static readonly Null = new PDFObject(null, 0)
-
 	static readonly _drop = libmupdf._wasm_pdf_drop_obj
+
+	static readonly Null = new PDFObject(null, 0)
 
 	_doc: PDFDocument
 

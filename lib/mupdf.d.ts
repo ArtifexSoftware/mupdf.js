@@ -438,8 +438,8 @@ declare class PDFPage extends Page {
     update(): boolean;
 }
 declare class PDFObject extends Userdata {
-    static readonly Null: PDFObject;
     static readonly _drop: any;
+    static readonly Null: PDFObject;
     _doc: PDFDocument;
     constructor(doc: PDFDocument, pointer: number);
     isNull(): boolean;

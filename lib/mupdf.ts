@@ -1925,6 +1925,10 @@ export class PDFDocument extends Document {
 		super(pointer)
 	}
 
+	loadPage(index: number) {
+		return super.loadPage(index) as PDFPage
+	}
+
 	// PDFObject instances are always bound to a document, so the WASM/JS value interface lives here.
 
 	// Wrap a pdf_obj in a Userdata object. The pointer must be newly created or we already own it.

@@ -334,6 +334,7 @@ declare class Page extends Userdata {
 }
 export declare class PDFDocument extends Document {
     constructor(pointer?: number);
+    loadPage(index: number): PDFPage;
     _fromPDFObjectNew(ptr: number): PDFObject;
     _fromPDFObjectKeep(ptr: number): PDFObject;
     _toPDFObject(obj: any): PDFObject;

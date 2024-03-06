@@ -156,7 +156,7 @@ The following script opens a document called `"test.pdf"` and adds text to the b
     let page_obj = document.loadPage(0).getObject()
     let font = document.addSimpleFont(new mupdf.Font("Times-Roman"))
 
-    // add image object to page/Resources/XObject/F1 dictionary (creating nested dictionaries as needed)
+    // add object to page/Resources/XObject/F1 dictionary (creating nested dictionaries as needed)
     var res = page_obj.get("Resources")
     if (!res.isDictionary())
         page_obj.put("Resources", res = doc.newDictionary())

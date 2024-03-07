@@ -1,28 +1,33 @@
 {
-  "name": "mupdf",
-  "version": "0.1.4",
-  "description": "MuPDF.js",
-  "exports": {
-    ".": "./lib/mupdf.js",
-    "./tasks": "./lib/tasks.js"
-  },
-  "files": [
-    "lib/tasks.js",
-    "lib/mupdf.js",
-    "lib/mupdf-wasm.js",
-    "lib/mupdf-wasm.wasm"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ArtifexSoftware/mupdf.js.git"
-  },
-  "keywords": [
-    "mupdf",
-    "pdf",
-    "wasm",
-    "webassembly",
-    "artifex"
-  ],
-  "author": "Artifex Software, Inc.",
-  "license": "AGPL-3.0-or-later"
+	"name": "mupdf",
+	"version": "0.1.4",
+	"description": "MuPDF.js",
+	"exports": {
+		".": {
+			"types": "./lib/mupdf.d.ts",
+			"default": "./lib/mupdf.js"
+		}
+	},
+	"files": [
+		"lib/mupdf.js",
+		"lib/mupdf.d.ts",
+		"lib/mupdf-wasm.js",
+		"lib/mupdf-wasm.wasm"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ArtifexSoftware/mupdf.js.git"
+	},
+	"keywords": [
+		"mupdf",
+		"pdf",
+		"wasm",
+		"webassembly",
+		"artifex"
+	],
+	"author": "Artifex Software, Inc.",
+	"license": "AGPL-3.0-or-later",
+	"devDependencies": {
+		"typescript": "^5.4.2"
+	}
 }

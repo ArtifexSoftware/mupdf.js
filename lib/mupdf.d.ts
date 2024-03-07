@@ -41,7 +41,14 @@ declare class Userdata {
 }
 export declare class Buffer extends Userdata {
     static readonly _drop: any;
-    constructor(arg?: number | string | ArrayBuffer | Uint8Array);
+    /** New empty Buffer. */
+    constructor();
+    /** New Buffer initialized with string contents as UTF-8. */
+    constructor(data: string);
+    /** New Buffer initialized with typed array contents. */
+    constructor(data: ArrayBuffer | Uint8Array);
+    /** PRIVATE */
+    constructor(pointer: number);
     getLength(): number;
     readByte(at: number): number;
     write(s: string): void;
@@ -55,7 +62,8 @@ export declare class Buffer extends Userdata {
 export declare class ColorSpace extends Userdata {
     static readonly _drop: any;
     static readonly COLORSPACE_TYPES: string[];
-    constructor(from: number | ArrayBuffer | Uint8Array | Buffer, name?: string);
+    constructor(profile: AnyBuffer, name: string);
+    constructor(pointer: number);
     getName(): string;
     getType(): string;
     getNumberOfComponents(): number;
@@ -93,7 +101,8 @@ export declare class Font extends Userdata {
         ja: number;
         ko: number;
     };
-    constructor(name_or_pointer: number | string, buffer?: AnyBuffer, subfont?: number);
+    constructor(name: string, data: AnyBuffer, subfont: number);
+    constructor(pointer: number);
     getName(): string;
     encodeCharacter(uni: number | string): number;
     advanceGlyph(gid: number, wmode?: number): number;
@@ -104,7 +113,9 @@ export declare class Font extends Userdata {
 }
 export declare class Image extends Userdata {
     static readonly _drop: any;
-    constructor(arg1: number | Pixmap | AnyBuffer, arg2?: ColorSpace);
+    constructor(pointer: number);
+    constructor(data: AnyBuffer);
+    constructor(pixmap: Pixmap, colorspace: ColorSpace);
     getWidth(): number;
     getHeight(): number;
     getNumberOfComponents(): number;
@@ -156,7 +167,8 @@ export declare class Text extends Userdata {
 }
 export declare class DisplayList extends Userdata {
     static readonly _drop: any;
-    constructor(arg1: number | Rect);
+    constructor(pointer: number);
+    constructor(mediabox: Rect);
     getBounds(): Rect;
     toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha?: boolean): Pixmap;
     toStructuredText(options?: string): StructuredText;
@@ -165,7 +177,8 @@ export declare class DisplayList extends Userdata {
 }
 export declare class Pixmap extends Userdata {
     static readonly _drop: any;
-    constructor(arg1: number | ColorSpace, bbox?: Rect, alpha?: boolean);
+    constructor(pointer: number);
+    constructor(colorspace: ColorSpace, bbox: Rect, alpha: boolean);
     getBounds(): Rect;
     clear(value?: number): void;
     getWidth(): number;
@@ -339,8 +352,9 @@ export declare class Page extends Userdata {
     search(needle: string, max_hits?: number): Quad[];
 }
 export declare class PDFDocument extends Document {
-    constructor(pointer?: number);
-    static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream): PDFDocument;
+    constructor();
+    constructor(data: Buffer | ArrayBuffer | Uint8Array);
+    constructor(pointer: number);
     loadPage(index: number): PDFPage;
     _fromPDFObjectNew(ptr: number): PDFObject;
     _fromPDFObjectKeep(ptr: number): PDFObject;

@@ -606,6 +606,18 @@ class Userdata {
 export class Buffer extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_buffer
 
+	/** New empty Buffer. */
+	constructor()
+
+	/** New Buffer initialized with string contents as UTF-8. */
+	constructor(data: string)
+
+	/** New Buffer initialized with typed array contents. */
+	constructor(data: ArrayBuffer | Uint8Array)
+
+	/** PRIVATE */
+	constructor(pointer: number)
+
 	constructor(arg?: number | string | ArrayBuffer | Uint8Array) {
 		if (typeof arg === "undefined")
 			super(libmupdf._wasm_new_buffer(1024))
@@ -683,14 +695,20 @@ export class ColorSpace extends Userdata {
 		"Separation"
 	]
 
-	constructor(from: number | ArrayBuffer | Uint8Array | Buffer, name?: string) {
+	// Create ColorSpace from ICC profile.
+	constructor(profile: AnyBuffer, name: string)
+
+	// PRIVATE
+	constructor(pointer: number)
+
+	constructor(from: number | AnyBuffer, name?: string) {
 		let pointer = 0
+
 		if (typeof from === "number")
 			pointer = from
-		if (from instanceof ArrayBuffer || from instanceof Uint8Array)
-			from = new Buffer(from)
-		if (from instanceof Buffer)
-			pointer = libmupdf._wasm_new_icc_colorspace(STRING(name), from.pointer) as number
+		else
+			pointer = libmupdf._wasm_new_icc_colorspace(STRING(name), BUFFER(from))
+
 		super(pointer)
 	}
 
@@ -753,13 +771,19 @@ export class Font extends Userdata {
 		"ko": 3,
 	}
 
-	constructor(name_or_pointer: number | string, buffer?: AnyBuffer, subfont=0) {
+	// Create new Font from a font file.
+	constructor(name: string, data: AnyBuffer, subfont: number)
+
+	// PRIVATE
+	constructor(pointer: number)
+
+	constructor(name_or_pointer: number | string, data?: AnyBuffer, subfont=0) {
 		let pointer = 0
 		if (typeof name_or_pointer === "number") {
 			pointer = libmupdf._wasm_keep_font(name_or_pointer)
 		} else {
-			if (buffer)
-				pointer = libmupdf._wasm_new_font_from_buffer(STRING(name_or_pointer), BUFFER(buffer), subfont)
+			if (data)
+				pointer = libmupdf._wasm_new_font_from_buffer(STRING(name_or_pointer), BUFFER(data), subfont)
 			else
 				pointer = libmupdf._wasm_new_base14_font(STRING(name_or_pointer))
 		}
@@ -800,9 +824,10 @@ export class Font extends Userdata {
 export class Image extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_image
 
-	// Image(pointer)
-	// Image(AnyBuffer)
-	// Image(Pixmap, ColorSpace)
+	constructor(pointer: number)
+	constructor(data: AnyBuffer)
+	constructor(pixmap: Pixmap, colorspace: ColorSpace)
+
 	constructor(arg1: number | Pixmap | AnyBuffer, arg2?: ColorSpace) {
 		let pointer = 0
 		if (typeof arg1 === "number")
@@ -1041,6 +1066,9 @@ export class Text extends Userdata {
 export class DisplayList extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_display_list
 
+	constructor(pointer: number)
+	constructor(mediabox: Rect)
+
 	constructor(arg1: number | Rect) {
 		let pointer = 0
 		if (typeof arg1 === "number") {
@@ -1087,6 +1115,9 @@ export class DisplayList extends Userdata {
 
 export class Pixmap extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_pixmap
+
+	constructor(pointer: number)
+	constructor(colorspace: ColorSpace, bbox: Rect, alpha: boolean)
 
 	constructor(arg1: number | ColorSpace, bbox?: Rect, alpha = false) {
 		if (typeof arg1 === "number") {
@@ -1919,17 +1950,26 @@ export class Page extends Userdata {
 // === PDFDocument ===
 
 export class PDFDocument extends Document {
-	constructor(pointer?: number) {
-		if (typeof pointer === "undefined")
-			pointer = libmupdf._wasm_pdf_create_document()
-		super(pointer)
-	}
+	// Create a new empty document
+	constructor()
 
-	static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream) {
-		let doc = Document.openDocument(from, "application/pdf")
-		if (doc instanceof PDFDocument)
-			return doc
-		throw new Error("not a PDF document")
+	// Open an existing document
+	constructor(data: Buffer | ArrayBuffer | Uint8Array)
+
+	// PRIVATE
+	constructor(pointer: number)
+
+	constructor(arg1?: number | Buffer | ArrayBuffer | Uint8Array) {
+		if (typeof arg1 === "undefined")
+			super(libmupdf._wasm_pdf_create_document())
+		else if (typeof arg1 === "number")
+			super(arg1)
+		else {
+			let doc = Document.openDocument(arg1, "application/pdf") as PDFDocument
+			if (doc instanceof PDFDocument)
+				return doc
+			throw new Error("not a PDF document")
+		}
 	}
 
 	loadPage(index: number) {
@@ -2315,6 +2355,7 @@ export class PDFPage extends Page {
 	_annots: PDFAnnotation[]
 	_widgets: PDFWidget[]
 
+	// PRIVATE
 	constructor(doc: PDFDocument, pointer: number) {
 		super(pointer)
 		this._doc = doc
@@ -2427,6 +2468,7 @@ export class PDFObject extends Userdata {
 
 	_doc: PDFDocument
 
+	// PRIVATE
 	constructor(doc: PDFDocument, pointer: number) {
 		super(libmupdf._wasm_pdf_keep_obj(pointer))
 		this._doc = doc
@@ -2584,6 +2626,7 @@ export class PDFGraftMap extends Userdata {
 
 	_doc: PDFDocument
 
+	// PRIVATE
 	constructor(doc: PDFDocument, pointer: number) {
 		super(pointer)
 		this._doc = doc
@@ -2714,6 +2757,7 @@ export class PDFAnnotation extends Userdata {
 	static readonly IS_TOGGLE_NO_VIEW = 1 << (9 - 1)
 	static readonly IS_LOCKED_CONTENTS = 1 << (10 - 1)
 
+	// PRIVATE
 	constructor(doc: PDFDocument, pointer: number) {
 		super(pointer)
 		this._doc = doc

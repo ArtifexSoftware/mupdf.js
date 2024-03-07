@@ -123,8 +123,8 @@ export declare class Image extends Userdata {
     getXResolution(): number;
     getYResolution(): number;
     getImageMask(): boolean;
-    getColorSpace(): ColorSpace;
-    getMask(): Image;
+    getColorSpace(): ColorSpace | null;
+    getMask(): Image | null;
     toPixmap(): Pixmap;
 }
 type LineCap = number | "Butt" | "Round" | "Square" | "Triangle";
@@ -155,7 +155,7 @@ export declare class Path extends Userdata {
     closePath(): void;
     rect(x1: number, y1: number, x2: number, y2: number): void;
     transform(matrix: Matrix): void;
-    walk(walker: any): void;
+    walk(_walker: any): void;
 }
 export declare class Text extends Userdata {
     static readonly _drop: any;
@@ -163,7 +163,7 @@ export declare class Text extends Userdata {
     getBounds(strokeState: StrokeState, transform: Matrix): Rect;
     showGlyph(font: Font, trm: Matrix, gid: number, uni: number, wmode?: number): void;
     showString(font: Font, trm: Matrix, str: string, wmode?: number): void;
-    walk(walker: any): void;
+    walk(_walker: any): void;
 }
 export declare class DisplayList extends Userdata {
     static readonly _drop: any;
@@ -173,7 +173,7 @@ export declare class DisplayList extends Userdata {
     toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha?: boolean): Pixmap;
     toStructuredText(options?: string): StructuredText;
     run(device: Device, matrix: Matrix): void;
-    search(needle: string, max_hits?: number): Quad[];
+    search(needle: string, max_hits?: number): Quad[][];
 }
 export declare class Pixmap extends Userdata {
     static readonly _drop: any;
@@ -191,7 +191,7 @@ export declare class Pixmap extends Userdata {
     getXResolution(): number;
     getYResolution(): number;
     setResolution(x: number, y: number): void;
-    getColorSpace(): ColorSpace;
+    getColorSpace(): ColorSpace | null;
     getPixels(): Uint8ClampedArray;
     asPNG(): Uint8Array;
     asPSD(): Uint8Array;
@@ -224,7 +224,7 @@ export declare class StructuredText extends Userdata {
     static readonly SELECT_LINES = 2;
     walk(walker: StructuredTextWalker): void;
     asJSON(scale?: number): string;
-    search(needle: string, max_hits?: number): Quad[];
+    search(needle: string, max_hits?: number): Quad[][];
 }
 type BlendMode = number | "Normal" | "Multiply" | "Screen" | "Overlay" | "Darken" | "Lighten" | "ColorDodge" | "ColorBurn" | "HardLight" | "SoftLight" | "Difference" | "Exclusion" | "Hue" | "Saturation" | "Color" | "Luminosity";
 export declare class Device extends Userdata {
@@ -296,28 +296,30 @@ export declare class Document extends Userdata {
     needsPassword(): boolean;
     authenticatePassword(password: any): number;
     hasPermission(flag: any): boolean;
-    getMetaData(key: string): string;
+    getMetaData(key: string): string | undefined;
     setMetaData(key: string, value: string): void;
     countPages(): number;
     isReflowable(): boolean;
     layout(w: number, h: number, em: number): void;
     loadPage(index: number): PDFPage | Page;
-    loadOutline(): any[];
+    loadOutline(): OutlineItem[] | null;
     resolveLink(link: string | Link): number;
     outlineIterator(): OutlineIterator;
 }
 interface OutlineItem {
-    title: string;
-    uri: string;
+    title: string | undefined;
+    uri: string | undefined;
     open: boolean;
+    down?: OutlineItem[];
+    page?: number;
 }
 export declare class OutlineIterator extends Userdata {
     static readonly _drop: any;
     item(): {
-        title: string;
-        uri: string;
+        title: string | undefined;
+        uri: string | undefined;
         open: boolean;
-    };
+    } | null;
     next(): number;
     prev(): number;
     up(): number;
@@ -346,10 +348,10 @@ export declare class Page extends Userdata {
     toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha?: boolean, showExtras?: boolean): Pixmap;
     toDisplayList(showExtras?: boolean): DisplayList;
     toStructuredText(options?: string): StructuredText;
-    getLinks(): any[];
+    getLinks(): Link[];
     createLink(bbox: Rect, uri: string): Link;
     deleteLink(link: Link): void;
-    search(needle: string, max_hits?: number): Quad[];
+    search(needle: string, max_hits?: number): Quad[][];
 }
 export declare class PDFDocument extends Document {
     constructor();
@@ -400,7 +402,7 @@ export declare class PDFDocument extends Document {
         creationDate: Date;
         modificationDate: Date;
     };
-    getEmbeddedFileContents(ref: PDFObject): Buffer;
+    getEmbeddedFileContents(ref: PDFObject): Buffer | null;
     getEmbeddedFiles(): any;
     saveToBuffer(options?: string): Buffer;
     static readonly PAGE_LABEL_NONE = "\0";
@@ -433,14 +435,14 @@ export declare class PDFDocument extends Document {
     isJSSupported(): boolean;
     enableJS(): void;
     disableJS(): void;
-    setJSEventListener(listener: any): void;
+    setJSEventListener(_listener: any): void;
     rearrangePages(pages: number[]): void;
 }
 type PDFPageBox = "MediaBox" | "CropBox" | "BleedBox" | "TrimBox" | "ArtBox";
 export declare class PDFPage extends Page {
     _doc: PDFDocument;
-    _annots: PDFAnnotation[];
-    _widgets: PDFWidget[];
+    _annots: PDFAnnotation[] | null;
+    _widgets: PDFWidget[] | null;
     constructor(doc: PDFDocument, pointer: number);
     getObject(): PDFObject;
     static readonly BOXES: string[];
@@ -492,7 +494,7 @@ export declare class PDFObject extends Userdata {
     put(key: any, value: any): any;
     push(value: any): any;
     delete(key: any): void;
-    valueOf(): string | number | boolean | this;
+    valueOf(): string | number | boolean | this | null;
     toString(tight?: boolean, ascii?: boolean): string;
     forEach(fn: (val: PDFObject, key: number | string, self: PDFObject) => void): void;
     asJS(seen?: {

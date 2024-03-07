@@ -28,4 +28,4 @@ emcc -o lib/mupdf-wasm.js -I $MUPDF_DIR/include lib/mupdf.c \
 echo
 
 echo BUILDING TYPESCRIPT
-tsc -d -m commonjs -t es2021 lib/mupdf.ts
+npx tsc -p .

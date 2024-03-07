@@ -1,6 +1,26 @@
 {
 	"compilerOptions": {
-		"target": "es2021",
-		"module": "commonjs"
-	}
+		"target": "es2022",
+		"module": "commonjs",
+		"declaration": true,
+
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"strictPropertyInitialization": true,
+		"noImplicitThis": true,
+		"useUnknownInCatchVariables": true,
+		"alwaysStrict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"exactOptionalPropertyTypes": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"noPropertyAccessFromIndexSignature": true,
+	},
+	"files": [
+		"./lib/mupdf.ts",
+	]
 }

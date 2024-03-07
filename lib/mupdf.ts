@@ -150,14 +150,14 @@ type Color = [number] | [number, number, number] | [number, number, number, numb
 
 type Rotate = 0 | 90 | 180 | 270
 
-class TryLaterError extends Error {
+export class TryLaterError extends Error {
 	constructor(message) {
 		super(message)
 		this.name = "TryLaterError"
 	}
 }
 
-class AbortError extends Error {
+export class AbortError extends Error {
 	constructor(message) {
 		super(message)
 		this.name = "AbortError"
@@ -1254,7 +1254,7 @@ interface StructuredTextWalker {
 	endTextBlock?(): void
 }
 
-class StructuredText extends Userdata {
+export class StructuredText extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_stext_page
 
 	static readonly SELECT_CHARS = 0
@@ -1748,7 +1748,7 @@ interface OutlineItem {
 	open: boolean,
 }
 
-class OutlineIterator extends Userdata {
+export class OutlineIterator extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_outline_iterator
 
 	item() {
@@ -1795,7 +1795,7 @@ class OutlineIterator extends Userdata {
 	}
 }
 
-class Link extends Userdata {
+export class Link extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_link
 
 	getBounds() {
@@ -1821,7 +1821,7 @@ class Link extends Userdata {
 	}
 }
 
-class Page extends Userdata {
+export class Page extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_page
 
 	isPDF(): this is PDFPage {
@@ -1926,7 +1926,10 @@ export class PDFDocument extends Document {
 	}
 
 	static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream) {
-		return Document.openDocument(from, "application/pdf") as PDFDocument
+		let doc = Document.openDocument(from, "application/pdf")
+		if (doc instanceof PDFDocument)
+			return doc
+		throw new Error("not a PDF document")
 	}
 
 	loadPage(index: number) {
@@ -2307,7 +2310,7 @@ export class PDFDocument extends Document {
 
 type PDFPageBox = "MediaBox" | "CropBox" | "BleedBox" | "TrimBox" | "ArtBox"
 
-class PDFPage extends Page {
+export class PDFPage extends Page {
 	_doc: PDFDocument
 	_annots: PDFAnnotation[]
 	_widgets: PDFWidget[]
@@ -2417,7 +2420,7 @@ class PDFPage extends Page {
 	}
 }
 
-class PDFObject extends Userdata {
+export class PDFObject extends Userdata {
 	static readonly _drop = libmupdf._wasm_pdf_drop_obj
 
 	static readonly Null = new PDFObject(null, 0)
@@ -3313,7 +3316,7 @@ export class PDFWidget extends PDFAnnotation {
 	// TODO: sign()
 }
 
-class Stream extends Userdata {
+export class Stream extends Userdata {
 	static readonly _drop = libmupdf._wasm_drop_stream
 	constructor(url: string, contentLength: number, block_size: number, prefetch: number) {
 		super(libmupdf._wasm_open_stream_from_url(STRING(url), contentLength, block_size, prefetch))

@@ -4,6 +4,12 @@ type Quad = [number, number, number, number, number, number, number, number];
 type Point = [number, number];
 type Color = [number] | [number, number, number] | [number, number, number, number];
 type Rotate = 0 | 90 | 180 | 270;
+export declare class TryLaterError extends Error {
+    constructor(message: any);
+}
+export declare class AbortError extends Error {
+    constructor(message: any);
+}
 type AnyBuffer = Buffer | ArrayBuffer | Uint8Array | string;
 export declare function enableICC(): void;
 export declare function disableICC(): void;
@@ -198,7 +204,7 @@ interface StructuredTextWalker {
     endLine?(): void;
     endTextBlock?(): void;
 }
-declare class StructuredText extends Userdata {
+export declare class StructuredText extends Userdata {
     static readonly _drop: any;
     static readonly SELECT_CHARS = 0;
     static readonly SELECT_WORDS = 1;
@@ -292,7 +298,7 @@ interface OutlineItem {
     uri: string;
     open: boolean;
 }
-declare class OutlineIterator extends Userdata {
+export declare class OutlineIterator extends Userdata {
     static readonly _drop: any;
     item(): {
         title: string;
@@ -307,7 +313,7 @@ declare class OutlineIterator extends Userdata {
     insert(item: OutlineItem): number;
     update(item: OutlineItem): void;
 }
-declare class Link extends Userdata {
+export declare class Link extends Userdata {
     static readonly _drop: any;
     getBounds(): Rect;
     setBounds(rect: Rect): void;
@@ -315,7 +321,7 @@ declare class Link extends Userdata {
     setURI(uri: string): void;
     isExternal(): boolean;
 }
-declare class Page extends Userdata {
+export declare class Page extends Userdata {
     static readonly _drop: any;
     isPDF(): this is PDFPage;
     getBounds(): Rect;
@@ -417,7 +423,7 @@ export declare class PDFDocument extends Document {
     rearrangePages(pages: number[]): void;
 }
 type PDFPageBox = "MediaBox" | "CropBox" | "BleedBox" | "TrimBox" | "ArtBox";
-declare class PDFPage extends Page {
+export declare class PDFPage extends Page {
     _doc: PDFDocument;
     _annots: PDFAnnotation[];
     _widgets: PDFWidget[];
@@ -437,7 +443,7 @@ declare class PDFPage extends Page {
     applyRedactions(black_boxes?: number, image_method?: number): void;
     update(): boolean;
 }
-declare class PDFObject extends Userdata {
+export declare class PDFObject extends Userdata {
     static readonly _drop: any;
     static readonly Null: PDFObject;
     _doc: PDFDocument;
@@ -642,7 +648,7 @@ export declare class PDFWidget extends PDFAnnotation {
     getOptions(isExport?: boolean): string[];
     toggle(): void;
 }
-declare class Stream extends Userdata {
+export declare class Stream extends Userdata {
     static readonly _drop: any;
     constructor(url: string, contentLength: number, block_size: number, prefetch: number);
 }

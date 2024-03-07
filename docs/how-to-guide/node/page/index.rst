@@ -343,7 +343,7 @@ Rotating Pages
 
 Rotating a page involves updating keys on the associated `PDFObject`_ for the page. 
 
-The sample code below retrieves the `PDFObject`_ then assigns a 90 degree clockwise rotation to the page.
+The sample code below retrieves the `PDFObject`_ , then gets the current rotation value, then adds a 90 degree clockwise rotation it.
 
 |example_tag|
 
@@ -351,6 +351,9 @@ The sample code below retrieves the `PDFObject`_ then assigns a 90 degree clockw
 
     // Get the PDF object corresponding to the page
     const page_obj = page.getObject()
+
+    // get the current page rotation
+    var rotate = page_obj.getInheritable("Rotate")
 
     // Update the Rotate value
     page_obj.put("Rotate", rotate + 90)

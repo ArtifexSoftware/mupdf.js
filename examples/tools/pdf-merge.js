@@ -6,8 +6,9 @@
 // For a real use, you should use map.graftPage() instead of creating and grafting
 // the page objects yourself.
 
-const fs = require("fs")
-const mupdf = require("mupdf")
+import * as fs from "fs"
+import * as mupdf from "mupdf"
+
 const scriptArgs = process.argv.slice(2)
 
 function copyPage(dstDoc, srcDoc, pageNumber, dstFromSrc) {

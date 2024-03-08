@@ -10,5 +10,5 @@
 
     .. code-block:: javascript
 
-        const mupdf = require("mupdf")
-        const fs = require("fs")
+        import * as fs from "fs"
+        import * as mupdf from "mupdf"

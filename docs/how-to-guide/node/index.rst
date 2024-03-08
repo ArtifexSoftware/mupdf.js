@@ -16,9 +16,8 @@ Additionally the following requirements should be defined in your **JavaScript**
 
 .. code-block:: javascript
 
-    const mupdf = require("mupdf")
-    const fs = require("fs")
-
+    import * as fs from "fs"
+    import * as mupdf from "mupdf"
 
 ----
 
@@ -30,6 +29,7 @@ Table of Contents
     :caption: Node.js
     :maxdepth: 2
 
+    typescript/index.rst
     files/index.rst
     document/index.rst
     page/index.rst

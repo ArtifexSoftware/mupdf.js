@@ -1,7 +1,7 @@
 // This example splits the pages of an input PDF into a separate PDF for each page
 
-const mupdf = require('mupdf')
-const fs = require("fs")
+import * as fs from "fs"
+import * as mupdf from "mupdf"
 const scriptArgs = process.argv.slice(2)
 
 function splitPDFPages() {

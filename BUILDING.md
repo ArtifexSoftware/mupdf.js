@@ -1,67 +1,77 @@
 # Building MuPDF.js from source
 
-The **WebAssembly** build has only been tested on **Linux** & **MacOS** at the moment. If you use
-any other platform then you are on your own 🙂.
+The WebAssembly build has only been tested on Linux & MacOS at the moment. If you use
+any other platform then you are on your own!
 
+## Dependencies
 
-## Dependencies 
+This project has two dependencies that MUST be resolved FIRST!
 
 ### Emscripten
 
-In order to build you will need to install the **Emscripten SDK** in
-`/opt/emsdk`. If you install it elsewhere, you will need to edit the `build.sh`
-script to point to the appropriate location.
+You need to install the Emscripten SDK in `/opt/emsdk`.
+If you install it elsewhere, you will need to edit the `build.sh` script to point to the appropriate location.
 
-**See:**
+We have only tested against EMSDK version 3.1.55. Use another version at your own peril!
 
-[https://emscripten.org/docs/getting_started/downloads.html](https://emscripten.org/docs/getting_started/downloads.html)
+https://emscripten.org/docs/getting_started/downloads.html
 
+	/opt/emsdk/emsdk install 3.1.55
+	/opt/emsdk/emsdk activate 3.1.55
 
 ### MuPDF Submodule
 
-This project needs the main **MuPDF** library to be checked out as `libmupdf`.
-If the build fails, ensure that you either cloned this repository recursively,
-or run: 
+This project needs the main MuPDF library to be checked out as `libmupdf`.
+If the build fails, ensure that you either cloned this repository recursively, or run:
 
-```bash
-git submodule update --init --recursive
-```
+	git submodule update --init --recursive
 
-## Running a Build
+## Building
 
-To build the **WebAssembly** library. On the command line simply run:
+The following command will download and install all the NPM project dependencies,
+and also compile the WebAssembly and Typescript files:
 
-```bash
-make
-```
+	npm install
 
----
+To re-build the library:
 
-The results of the build are the files:
+	npm run prepare
 
-- `lib/mupdf-wasm.wasm`
-- `lib/mupdf-wasm.js`
+The results of the build are put into the `dist` directory:
 
-These files are not intended for direct use, but only to be used via `lib/mupdf.js` which provides the **MuPDF.js** module.
+- `dist/mupdf-wasm.wasm`
+- `dist/mupdf-wasm.js`
+- `dist/mupdf.d.ts`
+- `dist/mupdf.js`
 
-The `mupdf-wasm.wasm` binary is quite large, because it contains not only the
-**MuPDF** library code, but also the 14 core **PDF** fonts, various **CJK** mapping
-resources, and **ICC** profiles.
+The `mupdf-wasm.wasm` file is quite large, because it contains not only the
+MuPDF library code, but also the 14 core PDF fonts, various CJK mapping
+resources, and ICC profiles.
 
 In order to keep it as small as possible, it is built with a minimal feature set
-that excludes the more refined **CJK** fonts, **PDF** scripting, **XPS** format, and **EPUB** format support.
+that excludes the more refined CJK fonts, PDF scripting, XPS format, and EPUB format support.
 
+## Installing and Running
 
----
+The main module is the `mupdf.js` file.
 
-Separate from the build files in `lib/` is the file `mupdf.js` which is a module that provides a usable **Javascript API** on top of the **MuPDF Wasm** binary. This library works both in [Node.js](https://nodejs.org) and in browsers.
+### Use the MuPDF.js module in a browser
 
+To use MuPDF.js directly in the browser, put the `dist/mupdf-wasm.wasm`,
+`dist/mupdf-wasm.js`, and `dist/mupdf.js` somewhere on your site, and import
+the `mupdf.js` module.
 
-## Cleaning a Build
+There's an example of using MuPDF.js in the browser with a WebWorker in `examples/simple-viewer`.
 
-To clean the **WebAssembly** library. On the command line simply run:
+### Use the MuPDF.js module in Node
 
-```bash
-make clean
-```
+You can `npm pack` and `npm install` the project in another directory.
 
+You can also run the examples directly from here.
+
+## Editing
+
+The main source files are:
+
+- `src/mupdf.c`
+- `src/mupdf.ts`

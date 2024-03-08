@@ -37,11 +37,11 @@ This will then install the dependency you need to work with **MuPDF.js** in your
 2. Create a Test File 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-To verify your installation you can create a file, e.g. `test.js` with the following script:
+To verify your installation you can create a file, e.g. `test.mjs` with the following script:
 
 .. code-block:: javascript
 
-    const mupdf = require("mupdf")
+    import * as mupdf from "mupdf"
     console.log(mupdf)
 
 
@@ -52,7 +52,7 @@ Then, on the command line for the project folder, run the test script with `node
 
 .. code-block:: bash
 
-    node test.js
+    node test.mjs
 
 This will print the `mupdf` object to the output - you are now ready to :ref:`use it! <How_To_Guide_With_Node>`
 
@@ -102,13 +102,17 @@ This will then create the `libmupdf` folder which is required to build the **MuP
 3. Build the **MuPDF** libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. note:: 
+    
+    Check the `BUILDING.md <https://github.com/ArtifexSoftware/mupdf.js/blob/master/BUILDING.md>`_ file for full details!
+
 On the root of your checkout run:
 
 .. code-block:: bash
 
     make
 
-This will then update the `lib` folder with the required **Wasm** library and associated **JavaScript** file.
+This will then create the `dist` folder with the required **Wasm** library and associated **TypeScript** & **JavaScript** files.
 
 4. Create a Simple **HTML** & **JS** Test Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,12 +136,7 @@ Just to try things out we can create a couple of test files to see if we can see
 
     "use strict"
 
-    // Import the Wasm module.
-    globalThis.__filename = "lib/mupdf-wasm.js"
-    importScripts("lib/mupdf-wasm.js")
-
-    // Import the MuPDF bindings.
-    importScripts("lib/mupdf.js")
+    import * as mupdf from "../../dist/mupdf.js"
 
     for (var i in mupdf) {
         console.log(`mupdf=${mupdf[i]}`)

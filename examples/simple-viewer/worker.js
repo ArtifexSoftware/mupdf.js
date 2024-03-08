@@ -20,18 +20,9 @@
 // Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
 // CA 94129, USA, for further information.
 
-/* global mupdf */
-
 "use strict"
 
-// Import the WASM module.
-globalThis.exports = {}
-globalThis.__filename = "../../lib/mupdf-wasm.js"
-importScripts("../../lib/mupdf-wasm.js")
-
-// Import the MuPDF bindings.
-var mupdf = globalThis.exports = {}
-importScripts("../../lib/mupdf.js")
+import * as mupdf from "../../dist/mupdf.js"
 
 const methods = {}
 
@@ -62,7 +53,7 @@ methods.closeDocument = function (doc_id) {
 
 methods.documentTitle = function (doc_id) {
 	let doc = document_map[doc_id]
-	return doc.getMetaData(Document.META_INFO_TITLE)
+	return doc.getMetaData(mupdf.Document.META_INFO_TITLE)
 }
 
 methods.documentOutline = function (doc_id) {

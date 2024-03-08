@@ -22,7 +22,9 @@
 
 "use strict"
 
-// TODO: use overload signatures for class constructors
+import libmupdf_wasm from "./mupdf-wasm.js"
+
+const libmupdf = await libmupdf_wasm()
 
 // TODO: branded opaque type for pointer values (especially in constructors)
 
@@ -151,27 +153,18 @@ type Color = [number] | [number, number, number] | [number, number, number, numb
 type Rotate = 0 | 90 | 180 | 270
 
 export class TryLaterError extends Error {
-	constructor(message) {
+	constructor(message: string) {
 		super(message)
 		this.name = "TryLaterError"
 	}
 }
 
 export class AbortError extends Error {
-	constructor(message) {
+	constructor(message: string) {
 		super(message)
 		this.name = "AbortError"
 	}
 }
-
-// If running in Node.js environment
-// TODO: import libmupdf = require("./mupdf-wasm.js")
-declare function require(name: string): any
-var libmupdf
-if (typeof require === "function")
-	libmupdf = require("./mupdf-wasm.js")()
-else
-	libmupdf = libmupdf()
 
 libmupdf._wasm_init_context()
 
@@ -183,19 +176,19 @@ var _wasm_color = libmupdf._wasm_malloc(4 * 4) >> 2
 var _wasm_quad = libmupdf._wasm_malloc(4 * 8) >> 2
 var _wasm_string = [ 0, 0 ]
 
-function checkType(value, type) {
+function checkType(value: any, type: any) {
 	if (typeof type === "string" && typeof value !== type)
 		throw new TypeError("expected " + type)
 	if (typeof type === "function" && !(value instanceof type))
 		throw new TypeError("expected " + type.name)
 }
 
-function checkPoint(value): asserts value is Point {
+function checkPoint(value: any): asserts value is Point {
 	if (!Array.isArray(value) || value.length !== 2)
 		throw new TypeError("expected point")
 }
 
-function checkRect(value): asserts value is Rect {
+function checkRect(value: any): asserts value is Rect {
 	if (!Array.isArray(value) || value.length !== 4)
 		throw new TypeError("expected rectangle")
 }
@@ -562,8 +555,9 @@ export const Rect = {
 	},
 }
 
-class Userdata {
-	static _finalizer: FinalizationRegistry<number>
+abstract class Userdata {
+	private static _finalizer: FinalizationRegistry<number>
+
 	static readonly _drop: (pointer: number) => void
 
 	pointer: number

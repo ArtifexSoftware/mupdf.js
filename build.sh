@@ -14,14 +14,15 @@ make -j4 -C $MUPDF_DIR build=release OS=wasm XCFLAGS="$MUPDF_OPTS" libs
 echo
 
 echo BUILDING MUPDF WASM
-emcc -o lib/mupdf-wasm.js -I $MUPDF_DIR/include lib/mupdf.c \
+mkdir -p dist
+emcc -o dist/mupdf-wasm.js -I $MUPDF_DIR/include src/mupdf.c \
 	--no-entry \
 	-sABORTING_MALLOC=0 \
 	-sALLOW_MEMORY_GROWTH=1 \
-	-sMODULARIZE=1 \
 	-sNODEJS_CATCH_EXIT=0 \
-	-sWASM_ASYNC_COMPILATION=0 \
-	-sEXPORT_NAME='"libmupdf"' \
+	-sMODULARIZE=1 \
+	-sEXPORT_ES6=1 \
+	-sEXPORT_NAME='"libmupdf_wasm"' \
 	-sEXPORTED_RUNTIME_METHODS='["ccall","UTF8ToString","lengthBytesUTF8","stringToUTF8"]' \
 	 $MUPDF_DIR/build/wasm/release/libmupdf.a \
 	 $MUPDF_DIR/build/wasm/release/libmupdf-third.a

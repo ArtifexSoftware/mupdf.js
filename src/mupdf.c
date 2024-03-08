@@ -1414,6 +1414,12 @@ void wasm_pdf_rearrange_pages(pdf_document *doc, int n, int *pages)
 	VOID(pdf_rearrange_pages, doc, n, pages)
 }
 
+EXPORT
+void wasm_pdf_bake_document(pdf_document *doc, int bake_annots, int bake_widgets)
+{
+	VOID(pdf_bake_document, doc, bake_annots, bake_widgets)
+}
+
 // --- PDFPage ---
 
 EXPORT

@@ -20,16 +20,9 @@
 // Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
 // CA 94129, USA, for further information.
 
-/* global mupdf */
-
 "use strict"
 
-// Import the WASM module.
-globalThis.__filename = "../../lib/mupdf-wasm.js"
-importScripts("../../lib/mupdf-wasm.js")
-
-// Import the MuPDF bindings.
-importScripts("../../lib/mupdf.js")
+import * as mupdf from "../../dist/mupdf.js"
 
 const methods = {}
 
@@ -60,7 +53,7 @@ methods.closeDocument = function (doc_id) {
 
 methods.documentTitle = function (doc_id) {
 	let doc = document_map[doc_id]
-	return doc.getMetaData(Document.META_INFO_TITLE)
+	return doc.getMetaData(mupdf.Document.META_INFO_TITLE)
 }
 
 methods.documentOutline = function (doc_id) {
@@ -107,7 +100,7 @@ methods.getPageLinks = function (doc_id, page_number) {
 methods.getPageText = function (doc_id, page_number) {
 	let doc = document_map[doc_id]
 	let page = doc.loadPage(page_number)
-	let text = page.toStructuredText(1).asJSON()
+	let text = page.toStructuredText().asJSON()
 	return JSON.parse(text)
 }
 
@@ -142,7 +135,7 @@ methods.getPageAnnotations = function (doc_id, page_number, dpi) {
 	const doc_to_screen = [ dpi = 72, 0, 0, dpi / 72, 0, 0 ]
 
 	return annotations.map((annotation) => {
-		const [ x0, y0, x1, y1 ] = Matrix.transformRect(annotation.getBounds())
+		const [ x0, y0, x1, y1 ] = mupdf.Matrix.transformRect(annotation.getBounds())
 		return {
 			x: x0,
 			y: y0,
@@ -159,13 +152,13 @@ methods.drawPageAsPixmap = function (doc_id, page_number, dpi) {
 
 	let doc = document_map[doc_id]
 	let page = doc.loadPage(page_number)
-	let bbox = Rect.transform(page.getBounds(), doc_to_screen)
+	let bbox = mupdf.Rect.transform(page.getBounds(), doc_to_screen)
 
 	let pixmap = new mupdf.Pixmap(mupdf.ColorSpace.DeviceRGB, bbox, true)
 	pixmap.clear(255)
 
 	let device = new mupdf.DrawDevice(doc_to_screen, pixmap)
-	page.run(device, Matrix.identity)
+	page.run(device, mupdf.Matrix.identity)
 	device.close()
 
 	// TODO: do we need to make a copy with slice() ?

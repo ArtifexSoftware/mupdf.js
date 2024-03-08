@@ -136,7 +136,7 @@ window.addEventListener("blur", function () {
 
 // BACKGROUND WORKER
 
-const worker = new Worker("worker.js")
+const worker = new Worker("worker.js", { type: "module" })
 
 worker._promise_id = 1
 worker._promise_map = new Map()

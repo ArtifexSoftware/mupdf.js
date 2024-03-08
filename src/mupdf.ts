@@ -2335,10 +2335,14 @@ export class PDFDocument extends Document {
 		for (let i = 0; i < n; ++i)
 			libmupdf.HEAPU32[ptr + i] = pages[i]
 		try {
-			libmupdf._wasm_rearrange_pages(this.pointer, n, ptr << 2)
+			libmupdf._wasm_pdf_rearrange_pages(this.pointer, n, ptr << 2)
 		} finally {
 			libmupdf._wasm_free(ptr)
 		}
+	}
+
+	bake(bakeAnnots = true, bakeWidgets = true) {
+		libmupdf._wasm_pdf_bake_document(this.pointer, bakeAnnots, bakeWidgets)
 	}
 }
 

@@ -8,7 +8,7 @@ npm install
 
 ## Start the MuPDF Server
 
-Ensure that the `node-server` is running.
+Ensure that the `rest-server` is running (See: `examples/rest-server`).
 
 ## Start MuPDF NextJS
 

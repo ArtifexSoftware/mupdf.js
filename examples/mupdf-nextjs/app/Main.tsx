@@ -10,7 +10,7 @@ export default function Main() {
     function loadDocumentPage(pageNumber:number) {
       fetch("http://localhost:8080/mupdfjs/openFile?" + new URLSearchParams({
         pageNumber: String(pageNumber),
-        pdf: 'test.pdf', // note this file exists in the root of the "node-server" folder for convenience
+        pdf: 'test.pdf', // note this file exists in the root of the "examples/rest-server" folder for convenience
       })).then(
         response => response.json() 
       ).then(

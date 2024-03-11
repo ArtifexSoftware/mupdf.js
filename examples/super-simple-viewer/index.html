@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<title>MuPDF Simplest Demo</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<style>
+body {
+	background-color: dimgray;
+	color: white;
+	margin: 24px;
+}
+#uiPanel {
+	margin: 24px;
+	text-align: center;
+}
+#uiPages {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 24px;
+}
+img {
+	display: block;
+	box-shadow: 1px 1px 8px #0008;
+}
+</style>
+
+<script type="module">
+
+"use strict"
+
+import * as mupdf from "../../dist/mupdf.js"
+
+function renderPage(doc, i) {
+	console.log("RENDER PAGE", i+1)
+	let z = 96 / 72
+	let page = doc.loadPage(i)
+	let png = page.toPixmap([z,0,0,z,0,0], mupdf.ColorSpace.DeviceRGB).asPNG()
+	let img = new Image()
+	img.src = URL.createObjectURL(new Blob([png], { type: "image/png" }))
+	window.uiPages.appendChild(img)
+}
+
+window.openFile = async function openFile(file) {
+	console.log("OPEN DOCUMENT", file.name)
+
+	window.uiPages.replaceChildren()
+	window.uiButton.disabled = true
+
+	let doc = mupdf.Document.openDocument(await file.arrayBuffer(), file.name)
+
+	document.title = doc.getMetaData(mupdf.Document.META_INFO_TITLE) || file.name
+
+	// Fire off page renders on the timer to avoid blocking the browser.
+	let n = doc.countPages()
+	for (let i = 0; i < n; ++i)
+		setTimeout(() => renderPage(doc, i), 0)
+
+	setTimeout(() => window.uiButton.disabled = false)
+}
+
+</script>
+
+<body>
+	<div id="uiPanel">
+		<input id="uiButton" type="file" id="open-file-input" accept=".pdf,.xps,application/pdf" onchange="openFile(event.target.files[0])">
+	</div>
+
+	<div id="uiPages">
+		<!-- images will be inserted here -->
+	</div>
+</body>
+
+</html>

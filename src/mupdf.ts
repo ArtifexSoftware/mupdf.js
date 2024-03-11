@@ -2389,14 +2389,14 @@ export class PDFPage extends Page {
 		box = ENUM(box, PDFPage.BOXES)
 		let result
 		if (showExtras)
-			result = libmupdf._wasm_pdf_new_pixmap_from_page_with_usage(this,
+			result = libmupdf._wasm_pdf_new_pixmap_from_page_with_usage(this.pointer,
 				MATRIX(matrix),
 				colorspace.pointer,
 				alpha,
 				STRING(usage),
 				box)
 		else
-			result = libmupdf._wasm_pdf_new_pixmap_from_page_contents_with_usage(this,
+			result = libmupdf._wasm_pdf_new_pixmap_from_page_contents_with_usage(this.pointer,
 				MATRIX(matrix),
 				colorspace.pointer,
 				alpha,

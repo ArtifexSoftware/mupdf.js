@@ -217,6 +217,21 @@ We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from d
     }
 
 
+"Baking" a Document
+---------------------------
+
+If you need to "bake" your document's annotations and/or widgets you can use the `bake` method as follows:
+
+|example_tag|
+
+.. code-block:: javascript
+
+    document.bake()
+
+.. note::
+    
+    See the :ref:`bake method in the core MuPDF JavaScript API <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#bake>` for full explanation & details.
+
 Searching a Document
 ------------------------------------------
 

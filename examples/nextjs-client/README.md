@@ -1,3 +1,5 @@
+This is a NextJS Client app which uses the REST API supplied by `examples/rest-server`.
+
 # Getting Started
 
 Install dependencies:

@@ -76,7 +76,7 @@ async function loadRemoteFile(url: string) {
 }
 
 // Saving the document to a local file
-app.post('/mupdfjs/savePdf', (req: Request, res: Response) => {
+app.post('/mupdfjs/savePDF', (req: Request, res: Response) => {
   if (document == null) {
     res.status(404).json({ result: 'No document' })
     return

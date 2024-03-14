@@ -230,7 +230,7 @@ If you need to "bake" your document's annotations and/or widgets you can use the
 
 .. note::
     
-    See the :ref:`bake method in the core MuPDF JavaScript API <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#bake>` for full explanation & details.
+    See the :ref:`bake method in the core MuPDF JavaScript API <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#bake>`_ for full explanation & details.
 
 Searching a Document
 ------------------------------------------

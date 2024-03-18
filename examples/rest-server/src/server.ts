@@ -122,10 +122,7 @@ app.get(
     )
     const image = getPageImage(document, pageNumber, 300)
     const annotations = page.getAnnotations()
-    const links = page.getLinks().map((link: any) => ({
-      bounds: link.bounds,
-      uri: link.uri,
-    }))
+    const links = page.getLinks()
     res.json({
       pageNumber,
       text,

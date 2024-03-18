@@ -1,9 +1,8 @@
 import * as fs from 'fs'
 const mupdf: any = require('mupdf')
 
-const data: Buffer = fs.readFileSync('test.pdf')
+const data: Buffer = fs.readFileSync('public/test.pdf')
 
-// documentの型をanyとして定義
 let document: any = null
 
 function loadDocument(): void {

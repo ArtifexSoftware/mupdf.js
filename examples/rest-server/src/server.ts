@@ -1,10 +1,18 @@
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import fs from 'fs'
+import multer from 'multer'
 const mupdf = require('mupdf')
 
 const app = express()
 const PORT = 8080
+const upload = multer({ storage: multer.memoryStorage() })
+
+// Set up a simple in-memory document storage
+const testData = fs.readFileSync('public/test.pdf')
+const documentsStorage: { [key: string]: MuPDFDocument } = {
+  '1652922957123': mupdf.Document.openDocument(testData, 'application/pdf'),
+}
 
 interface MuPDFDocument {
   countPages: () => number
@@ -16,86 +24,128 @@ interface MuPDFDocument {
   setMetaData: (key: string, value: string) => void
 }
 
-interface MuPDFPage {
-  getBounds: () => any
-}
-
 app.use(cors())
-
-// Serve static files from the 'public' directory
-// http://localhost:8080/public/test.pdf will serve the file 'public/test.pdf'
-app.use('/public', express.static('public'))
 app.use(express.json())
-
 app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`)
 })
 
-app.get('/mupdfjs', (req: Request, res: Response) => {
-  res.json({ result: 'Hello World!' })
-})
-
-// MuPDF document
-let document: MuPDFDocument | null = null
-// MuPDF page
-const page: MuPDFPage | null = null
-
-/////// Working with Files ///////
-
-// Open a local PDF file
-app.get('/mupdfjs/openLocalFile', (req: Request, res: Response) => {
-  const data = fs.readFileSync(req.query.pdf as string)
-  document = mupdf.Document.openDocument(data, 'application/pdf')
-  res.json({
-    result: 'success',
-    title: req.query.pdf,
-    pageImageData: getPageImage(req.query.pageNumber as string, 300),
-    pageCount: document?.countPages(),
+// GET /documents
+app.get('/documents', (req: Request, res: Response) => {
+  const documents = Object.keys(documentsStorage).map((docId) => {
+    const document = documentsStorage[docId]
+    return {
+      docId,
+      fileName: document.getMetaData('info:Title') || 'Untitled',
+      pageCount: document.countPages(),
+    }
   })
+  res.json(documents)
 })
 
-// Open a remote PDF file (using a URL, ex: http://localhost:8080/public/test.pdf)
-app.get('/mupdfjs/openRemoteFile', async (req: Request, res: Response) => {
-  await loadRemoteFile(req.query.url as string)
-  res.json({
-    result: 'success',
-    title: req.query.url,
-    pageImageData: getPageImage(req.query.pageNumber as string, 300),
-    pageCount: document?.countPages(),
-  })
-})
-
-async function loadRemoteFile(url: string) {
-  const response = await fetch(url)
-  if (!response.ok) {
-    console.error(`Cannot fetch document: ${response.statusText}`)
-    return
+// POST /documents
+app.post('/documents', upload.single('file'), (req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).send('File is required')
   }
-  const data = await response.arrayBuffer()
-  document = mupdf.Document.openDocument(data, url)
-}
-
-// Saving the document to a local file
-app.post('/mupdfjs/savePDF', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  fs.writeFileSync(
-    'output.pdf',
-    document.saveToBuffer('incremental').asUint8Array()
-  )
-  res.send({ message: 'Document saved successfully' })
+  const buffer = req.file.buffer
+  const docId = Date.now().toString()
+  const document = mupdf.Document.openDocument(buffer, 'application/pdf')
+  documentsStorage[docId] = document
+  res.json({ docId })
 })
 
-function getPageImage(pageNumber: string, dpi: number): string | undefined {
-  const pageNum = Number(pageNumber)
-  console.log(`getPageImage: ${pageNum}`)
+// GET /documents/{docId}
+app.get('/documents/:docId', (req: Request, res: Response) => {
+  const docId = req.params.docId
+  const document = documentsStorage[docId]
+  if (document) {
+    const metadata = {
+      title: document.getMetaData('info:Title') || 'Untitled',
+      format: document.getMetaData('format'),
+      subject: document.getMetaData('info:Subject'),
+      creator: document.getMetaData('info:Creator'),
+      producer: document.getMetaData('info:Producer'),
+      creationDate: document.getMetaData('info:CreationDate'),
+      modificationDate: document.getMetaData('info:ModDate'),
+    }
+    res.json(metadata)
+  } else {
+    res.sendStatus(404)
+  }
+})
+
+// DELETE /documents/{docId}
+app.delete('/documents/:docId', (req: Request, res: Response) => {
+  const docId = req.params.docId
+  if (documentsStorage[docId]) {
+    delete documentsStorage[docId]
+    res.sendStatus(204)
+  } else {
+    res.sendStatus(404)
+  }
+})
+
+// GET /documents/{docId}/pages
+app.get('/documents/:docId/pages', async (req: Request, res: Response) => {
+  const docId = req.params.docId
+  const document = documentsStorage[docId]
+  if (!document) {
+    return res.status(404).send({ error: 'Document not found.' })
+  }
+  const pageCount = document.countPages()
+  const pages = []
+  for (let i = 0; i < pageCount; i++) {
+    const page = document.loadPage(i)
+    pages.push({
+      pageNumber: i + 1,
+      text: JSON.parse(page.toStructuredText('preserve-whitespace').asJSON()),
+    })
+  }
+  res.json(pages)
+})
+
+// GET /documents/{docId}/pages/{pageNumber}
+app.get(
+  '/documents/:docId/pages/:pageNumber',
+  async (req: Request, res: Response) => {
+    const docId = req.params.docId
+    const pageNumber = Number(req.params.pageNumber)
+    const document = documentsStorage[docId]
+    if (!document) {
+      return res.status(404).send({ error: 'Document not found.' })
+    }
+
+    const page = document.loadPage(pageNumber - 1)
+    const text = JSON.parse(
+      page.toStructuredText('preserve-whitespace').asJSON()
+    )
+    const image = getPageImage(document, pageNumber, 300)
+    const annotations = page.getAnnotations()
+    const links = page.getLinks().map((link: any) => ({
+      bounds: link.bounds,
+      uri: link.uri,
+    }))
+    res.json({
+      pageNumber,
+      text,
+      image,
+      annotations,
+      links,
+    })
+  }
+)
+
+function getPageImage(
+  document: MuPDFDocument,
+  pageNumber: number,
+  dpi: number
+): string | undefined {
   if (document == null) {
     return
   }
   const docToScreen = mupdf.Matrix.scale(dpi / 72, dpi / 72)
-  const page = document.loadPage(pageNum - 1)
+  const page = document.loadPage(pageNumber - 1)
   const pixmap = page.toPixmap(
     docToScreen,
     mupdf.ColorSpace.DeviceRGB,
@@ -107,213 +157,3 @@ function getPageImage(pageNumber: string, dpi: number): string | undefined {
   const base64Image = Buffer.from(img, 'binary').toString('base64')
   return 'data:image/png;base64, ' + base64Image
 }
-
-/////// Working with Documents ///////
-app.get('/mupdfjs/needsPassword', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  const needsPassword = document.needsPassword()
-  res.json({ needsPassword })
-})
-
-app.post('/mupdfjs/authenticatePassword', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  console.log(req.body)
-  const password = req.body.password
-  const auth = document.authenticatePassword(password)
-  if (auth) {
-    res.json({ result: 'Authentication successful' })
-  } else {
-    res.status(401).json({ result: 'Authentication failed' })
-  }
-})
-
-app.get('/mupdfjs/metadata', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  const format = document.getMetaData('format')
-  const modificationDate = document.getMetaData('info:ModDate')
-  const author = document.getMetaData('info:Author')
-  const creator = document.getMetaData('info:Creator')
-  const title = document.getMetaData('info:Title')
-  const subject = document.getMetaData('info:Subject')
-  const producer = document.getMetaData('info:Producer')
-  const keywords = document.getMetaData('info:Keywords')
-  const creationDate = document.getMetaData('info:CreationDate')
-
-  res.json({
-    format,
-    modificationDate,
-    author,
-    creator,
-    title,
-    subject,
-    producer,
-    keywords,
-    creationDate,
-  })
-})
-
-// TODO: Implement the metadata update
-app.post('/mupdfjs/metadata', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  const metadata = req.body
-  try {
-    Object.keys(metadata).forEach((key) => {
-      console.log(document)
-      console.log(key)
-      document?.setMetaData(key, metadata[key])
-    })
-    res.json({ result: 'Metadata updated successfully' })
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Failed to update metadata' })
-  }
-})
-
-app.get('/mupdfjs/countPages', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  res.json({ result: document.countPages() })
-})
-
-// TODO: The following endpoints are not implemented yet
-app.post('/mupdfjs/merge', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  res.json({ result: '' })
-})
-
-// TODO: The following endpoints are not implemented yet
-app.post('/mupdfjs/split', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  res.json({ result: '' })
-})
-
-app.get('/mupdfjs/text', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  try {
-    const allText = []
-    for (let i = 0; i < document.countPages(); i++) {
-      const page = document.loadPage(i)
-      const json = page.toStructuredText('preserve-whitespace').asJSON()
-      allText.push(JSON.parse(json))
-    }
-    res.json({ result: allText })
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Failed to extract text from document' })
-  }
-})
-
-app.get('/mupdfjs/images', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  try {
-    const allImages = []
-    for (let i = 0; i < document.countPages(); i++) {
-      const page = document.loadPage(i)
-      const images: { bbox: any; matrix: any; image: any }[] = []
-      page.toStructuredText('preserve-images').walk({
-        onImageBlock: (bbox: any, matrix: any, image: any) => {
-          images.push({ bbox, matrix, image })
-        },
-      })
-      allImages.push({ page: i, images })
-    }
-    res.json({ result: allImages })
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Failed to extract images from document' })
-  }
-})
-
-app.get('/mupdfjs/annotations', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-
-  try {
-    const allAnnotations = []
-    for (let i = 0; i < document.countPages(); i++) {
-      const page = document.loadPage(i)
-      const annots = page.getAnnotations()
-      allAnnotations.push({ page: i, annotations: annots })
-    }
-
-    res.json({ result: allAnnotations })
-  } catch (error) {
-    console.error(error)
-    res
-      .status(500)
-      .json({ error: 'Failed to extract annotations from document' })
-  }
-})
-
-app.get('/mupdfjs/search', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  const searchPhrase = req.query.phrase
-  if (!searchPhrase) {
-    res.status(400).json({ error: 'Search phrase is required' })
-    return
-  }
-  try {
-    const searchResults = []
-    for (let i = 0; i < document.countPages(); i++) {
-      const page = document.loadPage(i)
-      const results = page.search(searchPhrase)
-      if (results && results.length > 0) {
-        searchResults.push({ page: i, results })
-      }
-    }
-    res.json({ result: searchResults })
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Failed to search the document' })
-  }
-})
-
-app.get('/mupdfjs/links', (req: Request, res: Response) => {
-  if (document == null) {
-    res.status(404).json({ result: 'No document' })
-    return
-  }
-  try {
-    const allLinks = []
-    for (let i = 0; i < document.countPages(); i++) {
-      const page = document.loadPage(i)
-      const links = page.getLinks()
-      allLinks.push({ page: i, links })
-    }
-    res.json({ result: allLinks })
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Failed to extract links from document' })
-  }
-})

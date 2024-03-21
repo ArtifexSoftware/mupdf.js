@@ -100,6 +100,7 @@ app.get('/documents/:docId/pages', async (req: Request, res: Response) => {
     pages.push({
       pageNumber: i + 1,
       text: JSON.parse(page.toStructuredText('preserve-whitespace').asJSON()),
+      image: getPageImage(document, i + 1, 100),
     })
   }
   res.json(pages)

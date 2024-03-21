@@ -626,9 +626,9 @@ void wasm_show_glyph(fz_text *text, fz_font *font, fz_matrix *trm, int gid, int 
 }
 
 EXPORT
-void wasm_show_string(fz_text *text, fz_font *font, fz_matrix *trm, char *string, int wmode)
+fz_matrix *wasm_show_string(fz_text *text, fz_font *font, fz_matrix *trm, char *string, int wmode)
 {
-	VOID(fz_show_string, text, font, *trm, string, wmode, 0, 0, FZ_LANG_UNSET)
+	MATRIX(fz_show_string, text, font, *trm, string, wmode, 0, 0, FZ_LANG_UNSET)
 }
 
 // --- Device ---

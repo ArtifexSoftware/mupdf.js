@@ -215,7 +215,7 @@ function BUFFER(input: AnyBuffer) {
 	return toBuffer(input).pointer
 }
 
-function ENUM(value: string, list: string[]) {
+function ENUM<T>(value: T, list: readonly T[]): number {
 	if (typeof value === "number") {
 		if (value >= 0 && value < list.length)
 			return value
@@ -928,7 +928,7 @@ export class StrokeState extends Userdata {
 	}
 
 	setLineCap(j: LineCap) {
-		let jj = ENUM(j, StrokeState.LINE_CAP)
+		let jj = ENUM<LineCap>(j, StrokeState.LINE_CAP)
 		libmupdf._wasm_stroke_state_set_start_cap(this.pointer, jj)
 		libmupdf._wasm_stroke_state_set_dash_cap(this.pointer, jj)
 		libmupdf._wasm_stroke_state_set_end_cap(this.pointer, jj)
@@ -939,7 +939,7 @@ export class StrokeState extends Userdata {
 	}
 
 	setLineJoin(j: LineJoin) {
-		let jj = ENUM(j, StrokeState.LINE_JOIN)
+		let jj = ENUM<LineJoin>(j, StrokeState.LINE_JOIN)
 		libmupdf._wasm_stroke_state_set_linejoin(this.pointer, jj)
 	}
 
@@ -1531,8 +1531,8 @@ export class Device extends Userdata {
 	beginGroup(area: Rect, colorspace: ColorSpace, isolated: boolean, knockout: boolean, blendmode: BlendMode, alpha: number) {
 		checkRect(area)
 		checkType(colorspace, ColorSpace)
-		let bm = ENUM(blendmode, Device.BLEND_MODES)
-		libmupdf._wasm_begin_group(this.pointer, RECT(area), colorspace.pointer, isolated, knockout, bm, alpha)
+		let blendmode_ix = ENUM<BlendMode>(blendmode, Device.BLEND_MODES)
+		libmupdf._wasm_begin_group(this.pointer, RECT(area), colorspace.pointer, isolated, knockout, blendmode_ix, alpha)
 	}
 
 	endGroup() {
@@ -1609,6 +1609,16 @@ export class DocumentWriter extends Userdata {
 
 // === Document ===
 
+type DocumentPermission =
+	"print" |
+	"copy" |
+	"edit" |
+	"annotate" |
+	"form" |
+	"accessibility" |
+	"assemble" |
+	"print-hq"
+
 export class Document extends Userdata {
 	static override readonly _drop = libmupdf._wasm_drop_document
 
@@ -1623,7 +1633,7 @@ export class Document extends Userdata {
 	static readonly META_INFO_CREATIONDATE = "info:CreationDate"
 	static readonly META_INFO_MODIFICATIONDATE = "info:ModDate"
 
-	static readonly PERMISSION: Record<string,number> = {
+	static readonly PERMISSION: Record<DocumentPermission,number> = {
 		"print": "p".charCodeAt(0),
 		"copy": "c".charCodeAt(0),
 		"edit": "e".charCodeAt(0),
@@ -1634,7 +1644,7 @@ export class Document extends Userdata {
 		"print-hq": "h".charCodeAt(0),
 	}
 
-	static readonly LINK_DEST = [
+	static readonly LINK_DEST: LinkDestType[] = [
 		"Fit",
 		"FitB",
 		"FitH",
@@ -1665,13 +1675,12 @@ export class Document extends Userdata {
 		return new Document(pointer)
 	}
 
-	// TODO: add LinkDest type
-	formatLinkURI(dest: any) {
+	formatLinkURI(dest: LinkDest) {
 		return fromStringFree(
 			libmupdf._wasm_format_link_uri(this.pointer,
 				dest.chapter | 0,
 				dest.page | 0,
-				ENUM(dest.type, Document.LINK_DEST),
+				ENUM<LinkDestType>(dest.type, Document.LINK_DEST),
 				+dest.x,
 				+dest.y,
 				+dest.width,
@@ -1693,11 +1702,9 @@ export class Document extends Userdata {
 		return libmupdf._wasm_authenticate_password(this.pointer, STRING(password))
 	}
 
-	// TODO: Document.Permission enum
-	hasPermission(flag: string | number) {
-		if (typeof flag === "string")
-			flag = Document.PERMISSION[flag] as number
-		return !!libmupdf._wasm_has_permission(this.pointer, flag)
+	hasPermission(perm: DocumentPermission) {
+		let perm_ix = Document.PERMISSION[perm]
+		return !!libmupdf._wasm_has_permission(this.pointer, perm_ix)
 	}
 
 	getMetaData(key: string) {
@@ -1839,6 +1846,27 @@ export class OutlineIterator extends Userdata {
 	update(item: OutlineItem) {
 		libmupdf._wasm_outline_iterator_update(this.pointer, STRING_OPT(item.title), STRING2_OPT(item.uri), item.open)
 	}
+}
+
+type LinkDestType =
+	"Fit" |
+	"FitB" |
+	"FitH" |
+	"FitBH" |
+	"FitV" |
+	"FitBV" |
+	"FitR" |
+	"XYZ"
+
+interface LinkDest {
+	type: LinkDestType,
+	chapter: number,
+	page: number,
+	x: number,
+	y: number,
+	width: number,
+	height: number,
+	zoom: number,
 }
 
 export class Link extends Userdata {
@@ -2115,7 +2143,7 @@ export class PDFDocument extends Document {
 
 	addSimpleFont(font: Font, encoding: FontSimpleEncoding = "Latin") {
 		checkType(font, Font)
-		var encoding_ix = ENUM(encoding, Font.SIMPLE_ENCODING)
+		var encoding_ix = ENUM<FontSimpleEncoding>(encoding, Font.SIMPLE_ENCODING)
 		return this._fromPDFObjectNew(libmupdf._wasm_pdf_add_simple_font(this.pointer, font.pointer, encoding_ix))
 	}
 
@@ -2161,7 +2189,7 @@ export class PDFDocument extends Document {
 		)
 	}
 
-	insertPage(at: number, obj: any) {
+	insertPage(at: number, obj: PDFObject) {
 		checkType(at, "number")
 		libmupdf._wasm_pdf_insert_page(this.pointer, at, this._PDFOBJ(obj))
 	}
@@ -2220,7 +2248,6 @@ export class PDFDocument extends Document {
 		return null
 	}
 
-	// TODO: return type signature
 	getEmbeddedFiles() {
 		function _getEmbeddedFilesRec(result: any[string], N: PDFObject) {
 			var i, n
@@ -2398,7 +2425,7 @@ export class PDFPage extends Page {
 	}
 
 	setPageBox(box: PDFPageBox, rect: Rect) {
-		let box_ix = ENUM(box, PDFPage.BOXES)
+		let box_ix = ENUM<PDFPageBox>(box, PDFPage.BOXES)
 		checkRect(rect)
 		libmupdf._wasm_pdf_set_page_box(this.pointer, box_ix, RECT(rect))
 	}
@@ -2406,7 +2433,7 @@ export class PDFPage extends Page {
 	override toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha = false, showExtras = true, usage = "View", box: PDFPageBox = "CropBox") {
 		checkMatrix(matrix)
 		checkType(colorspace, ColorSpace)
-		let box_ix = ENUM(box, PDFPage.BOXES)
+		let box_ix = ENUM<PDFPageBox>(box, PDFPage.BOXES)
 		let result
 		if (showExtras)
 			result = libmupdf._wasm_pdf_new_pixmap_from_page_with_usage(this.pointer,
@@ -2450,7 +2477,7 @@ export class PDFPage extends Page {
 	}
 
 	createAnnotation(type: PDFAnnotationType) {
-		let type_ix = ENUM(type, PDFAnnotation.ANNOT_TYPES)
+		let type_ix = ENUM<PDFAnnotationType>(type, PDFAnnotation.ANNOT_TYPES)
 		let annot = new PDFAnnotation(this._doc, libmupdf._wasm_pdf_create_annot(this.pointer, type_ix))
 		if (this._annots)
 			this._annots.push(annot)
@@ -2546,7 +2573,6 @@ export class PDFObject extends Userdata {
 	getString(...path: PDFObjectPath): string { return fromString(libmupdf._wasm_pdf_to_text_string(this._get(path))) }
 
 	getInheritable(key: string | PDFObject) {
-		// TODO: key as array
 		if (key instanceof PDFObject)
 			return this._doc._fromPDFObjectKeep(libmupdf._wasm_pdf_dict_get_inheritable(this.pointer, key.pointer))
 		return this._doc._fromPDFObjectKeep(libmupdf._wasm_pdf_dict_gets_inheritable(this.pointer, STRING(key)))
@@ -2998,8 +3024,8 @@ export class PDFAnnotation extends Userdata {
 	}
 
 	setLineEndingStyles(start: PDFAnnotationLineEndingStyle, end: PDFAnnotationLineEndingStyle) {
-		let start_ix = ENUM(start, PDFAnnotation.LINE_ENDING)
-		let end_ix = ENUM(end, PDFAnnotation.LINE_ENDING)
+		let start_ix = ENUM<PDFAnnotationLineEndingStyle>(start, PDFAnnotation.LINE_ENDING)
+		let end_ix = ENUM<PDFAnnotationLineEndingStyle>(end, PDFAnnotation.LINE_ENDING)
 		return libmupdf._wasm_pdf_set_annot_line_ending_styles(this.pointer, start_ix, end_ix)
 	}
 
@@ -3035,7 +3061,7 @@ export class PDFAnnotation extends Userdata {
 	}
 
 	setBorderStyle(value: PDFAnnotationBorderStyle) {
-		let value_ix = ENUM(value, PDFAnnotation.BORDER_STYLE)
+		let value_ix = ENUM<PDFAnnotationBorderStyle>(value, PDFAnnotation.BORDER_STYLE)
 		return libmupdf._wasm_pdf_set_annot_border_style(this.pointer, value_ix)
 	}
 
@@ -3044,7 +3070,7 @@ export class PDFAnnotation extends Userdata {
 	}
 
 	setBorderEffect(value: PDFAnnotationBorderEffect) {
-		let value_ix = ENUM(value, PDFAnnotation.BORDER_EFFECT)
+		let value_ix = ENUM<PDFAnnotationBorderEffect>(value, PDFAnnotation.BORDER_EFFECT)
 		return libmupdf._wasm_pdf_set_annot_border_effect(this.pointer, value_ix)
 	}
 
@@ -3106,8 +3132,7 @@ export class PDFAnnotation extends Userdata {
 		return this._doc._fromPDFObjectKeep(libmupdf._wasm_pdf_annot_filespec(this.pointer))
 	}
 
-	// TODO: restrict to PDFObject only?
-	setFileSpec(fs: any) {
+	setFileSpec(fs: PDFObject) {
 		return libmupdf._wasm_pdf_set_annot_filespec(this.pointer, this._doc._PDFOBJ(fs))
 	}
 

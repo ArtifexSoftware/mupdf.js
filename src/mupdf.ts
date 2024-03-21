@@ -53,12 +53,12 @@ export class AbortError extends Error {
 libmupdf._wasm_init_context()
 
 // To pass Rect and Matrix as pointer arguments
-var _wasm_point = libmupdf._wasm_malloc(4 * 4) >> 2
-var _wasm_rect = libmupdf._wasm_malloc(4 * 8) >> 2
-var _wasm_matrix = libmupdf._wasm_malloc(4 * 6) >> 2
-var _wasm_color = libmupdf._wasm_malloc(4 * 4) >> 2
-var _wasm_quad = libmupdf._wasm_malloc(4 * 8) >> 2
-var _wasm_string = [ 0, 0 ]
+const _wasm_point = libmupdf._wasm_malloc(4 * 4) >> 2
+const _wasm_rect = libmupdf._wasm_malloc(4 * 8) >> 2
+const _wasm_matrix = libmupdf._wasm_malloc(4 * 6) >> 2
+const _wasm_color = libmupdf._wasm_malloc(4 * 4) >> 2
+const _wasm_quad = libmupdf._wasm_malloc(4 * 8) >> 2
+const _wasm_string: [ number, number ] = [ 0, 0 ]
 
 function checkType(value: any, type: any) {
 	if (typeof type === "string" && typeof value !== type)
@@ -131,7 +131,7 @@ function allocateUTF8(str: string) {
 
 function STRING_N(s: string, i: number) {
 	if (_wasm_string[i]) {
-		libmupdf._wasm_free(_wasm_string[i])
+		libmupdf._wasm_free(_wasm_string[i] as number)
 		_wasm_string[i] = 0
 	}
 	return _wasm_string[i] = allocateUTF8(s)
@@ -205,8 +205,22 @@ function QUAD(q: Quad) {
 
 function COLOR(c?: Color) {
 	if (typeof c !== "undefined") {
-		for (let i = 0; i < c.length && i < 4; ++i)
-			libmupdf.HEAPF32[_wasm_color + i] = c[i]
+		switch (c.length) {
+		case 1:
+			libmupdf.HEAPF32[_wasm_color + 0] = c[0]
+			break
+		case 3:
+			libmupdf.HEAPF32[_wasm_color + 0] = c[0]
+			libmupdf.HEAPF32[_wasm_color + 1] = c[1]
+			libmupdf.HEAPF32[_wasm_color + 2] = c[2]
+			break
+		case 4:
+			libmupdf.HEAPF32[_wasm_color + 0] = c[0]
+			libmupdf.HEAPF32[_wasm_color + 1] = c[1]
+			libmupdf.HEAPF32[_wasm_color + 2] = c[2]
+			libmupdf.HEAPF32[_wasm_color + 3] = c[3]
+			break
+		}
 	}
 	return _wasm_color << 2
 }
@@ -214,20 +228,20 @@ function COLOR(c?: Color) {
 function fromColor(n: number): Color {
 	if (n === 1)
 		return [
-			libmupdf.HEAPF32[_wasm_color]
+			libmupdf.HEAPF32[_wasm_color] as number
 		]
 	if (n === 3)
 		return [
-			libmupdf.HEAPF32[_wasm_color + 0],
-			libmupdf.HEAPF32[_wasm_color + 1],
-			libmupdf.HEAPF32[_wasm_color + 2],
+			libmupdf.HEAPF32[_wasm_color + 0] as number,
+			libmupdf.HEAPF32[_wasm_color + 1] as number,
+			libmupdf.HEAPF32[_wasm_color + 2] as number,
 		]
 	if (n === 4)
 		return [
-			libmupdf.HEAPF32[_wasm_color + 0],
-			libmupdf.HEAPF32[_wasm_color + 1],
-			libmupdf.HEAPF32[_wasm_color + 2],
-			libmupdf.HEAPF32[_wasm_color + 3],
+			libmupdf.HEAPF32[_wasm_color + 0] as number,
+			libmupdf.HEAPF32[_wasm_color + 1] as number,
+			libmupdf.HEAPF32[_wasm_color + 2] as number,
+			libmupdf.HEAPF32[_wasm_color + 3] as number,
 		]
 	throw new TypeError("invalid number of components for Color: " + n)
 }
@@ -245,44 +259,44 @@ function fromStringFree(ptr: Pointer): string {
 function fromPoint(ptr: Pointer): Point {
 	ptr = ptr >> 2
 	return [
-		libmupdf.HEAPF32[ptr + 0],
-		libmupdf.HEAPF32[ptr + 1],
+		libmupdf.HEAPF32[ptr + 0] as number,
+		libmupdf.HEAPF32[ptr + 1] as number,
 	]
 }
 
 function fromRect(ptr: Pointer): Rect {
 	ptr = ptr >> 2
 	return [
-		libmupdf.HEAPF32[ptr + 0],
-		libmupdf.HEAPF32[ptr + 1],
-		libmupdf.HEAPF32[ptr + 2],
-		libmupdf.HEAPF32[ptr + 3],
+		libmupdf.HEAPF32[ptr + 0] as number,
+		libmupdf.HEAPF32[ptr + 1] as number,
+		libmupdf.HEAPF32[ptr + 2] as number,
+		libmupdf.HEAPF32[ptr + 3] as number,
 	]
 }
 
 function fromMatrix(ptr: Pointer): Matrix {
 	ptr = ptr >> 2
 	return [
-		libmupdf.HEAPF32[ptr + 0],
-		libmupdf.HEAPF32[ptr + 1],
-		libmupdf.HEAPF32[ptr + 2],
-		libmupdf.HEAPF32[ptr + 3],
-		libmupdf.HEAPF32[ptr + 4],
-		libmupdf.HEAPF32[ptr + 5],
+		libmupdf.HEAPF32[ptr + 0] as number,
+		libmupdf.HEAPF32[ptr + 1] as number,
+		libmupdf.HEAPF32[ptr + 2] as number,
+		libmupdf.HEAPF32[ptr + 3] as number,
+		libmupdf.HEAPF32[ptr + 4] as number,
+		libmupdf.HEAPF32[ptr + 5] as number,
 	]
 }
 
 function fromQuad(ptr: Pointer): Quad {
 	ptr = ptr >> 2
 	return [
-		libmupdf.HEAPF32[ptr + 0],
-		libmupdf.HEAPF32[ptr + 1],
-		libmupdf.HEAPF32[ptr + 2],
-		libmupdf.HEAPF32[ptr + 3],
-		libmupdf.HEAPF32[ptr + 4],
-		libmupdf.HEAPF32[ptr + 5],
-		libmupdf.HEAPF32[ptr + 6],
-		libmupdf.HEAPF32[ptr + 7],
+		libmupdf.HEAPF32[ptr + 0] as number,
+		libmupdf.HEAPF32[ptr + 1] as number,
+		libmupdf.HEAPF32[ptr + 2] as number,
+		libmupdf.HEAPF32[ptr + 3] as number,
+		libmupdf.HEAPF32[ptr + 4] as number,
+		libmupdf.HEAPF32[ptr + 5] as number,
+		libmupdf.HEAPF32[ptr + 6] as number,
+		libmupdf.HEAPF32[ptr + 7] as number,
 	]
 }
 
@@ -304,9 +318,9 @@ export function setUserCSS(text: string) {
 	libmupdf._wasm_set_user_css(STRING(text))
 }
 
-type SearchFunction = (searchThis: {}, needle: Pointer, marks: Pointer, hits: Pointer, max_hits: number) => number
+type SearchFunction = (...args:number[]) => number
 
-function runSearch(searchFun: SearchFunction, searchThis: {}, needle: string, max_hits = 500) {
+function runSearch(searchFun: SearchFunction, searchThis: number, needle: string, max_hits = 500) {
 	checkType(needle, "string")
 	let hits = 0
 	let marks = 0
@@ -525,7 +539,7 @@ export class Buffer extends Userdata {
 
 	readByte(at: number) {
 		let data = libmupdf._wasm_buffer_get_data(this.pointer)
-		return libmupdf.HEAPU8[data + at]
+		return libmupdf.HEAPU8[data + at] as number
 	}
 
 	write(s: string) {
@@ -1148,11 +1162,17 @@ export class Pixmap extends Userdata {
 	}
 
 	tint(black: number | Color, white: number | Color) {
-		if (black instanceof Array && black.length === 3)
-			black = ( ( (black[0] * 255) << 16 ) | ( (black[1] * 255) << 8 ) | ( (black[2] * 255) ) )
-		if (white instanceof Array && white.length === 3)
+		let black_hex = 0x000000
+		let white_hex = 0xffffff
+		if (typeof black === "number")
+			black_hex = black
+		else if (black instanceof Array && black.length === 3)
+			black_hex = ( ( (black[0] * 255) << 16 ) | ( (black[1] * 255) << 8 ) | ( (black[2] * 255) ) )
+		if (typeof white === "number")
+			white_hex = white
+		else if (white instanceof Array && white.length === 3)
 			white = ( ( (white[0] * 255) << 16 ) | ( (white[1] * 255) << 8 ) | ( (white[2] * 255) ) )
-		libmupdf._wasm_tint_pixmap(this.pointer, black, white)
+		libmupdf._wasm_tint_pixmap(this.pointer, black_hex, white_hex)
 	}
 
 	convertToColorSpace(colorspace: ColorSpace, keepAlpha=false) {
@@ -1166,7 +1186,7 @@ export class Pixmap extends Userdata {
 		checkQuad(quad)
 		checkType(width, "number")
 		checkType(height, "number")
-		return new Pixmap(libmupdf._wasm_wrap_pixmap(this.pointer, QUAD(quad), width, height))
+		return new Pixmap(libmupdf._wasm_warp_pixmap(this.pointer, QUAD(quad), width, height))
 	}
 }
 
@@ -1672,7 +1692,7 @@ export class Document extends Userdata {
 
 	resolveLink(link: string | Link) {
 		if (link instanceof Link)
-			return libmupdf._wasm_resolve_link(this.pointer, libmupdf._wasm_link_get_uri(link))
+			return libmupdf._wasm_resolve_link(this.pointer, libmupdf._wasm_link_get_uri(link.pointer))
 		return libmupdf._wasm_resolve_link(this.pointer, STRING(link))
 	}
 
@@ -1688,8 +1708,6 @@ interface OutlineItem {
 	down?: OutlineItem[],
 	page?: number,
 }
-
-type OutlineIteratorResult = -1 | 0 | 1
 
 export class OutlineIterator extends Userdata {
 	static override readonly _drop = libmupdf._wasm_drop_outline_iterator
@@ -1708,32 +1726,32 @@ export class OutlineIterator extends Userdata {
 				title: title_ptr ? fromString(title_ptr) : undefined,
 				uri: uri_ptr ? fromString(uri_ptr) : undefined,
 				open: !!is_open,
-			}
+			} as OutlineItem
 		}
 		return null
 	}
 
-	next(): OutlineIteratorResult {
+	next() {
 		return libmupdf._wasm_outline_iterator_next(this.pointer)
 	}
 
-	prev(): OutlineIteratorResult {
+	prev() {
 		return libmupdf._wasm_outline_iterator_prev(this.pointer)
 	}
 
-	up(): OutlineIteratorResult {
+	up() {
 		return libmupdf._wasm_outline_iterator_up(this.pointer)
 	}
 
-	down(): OutlineIteratorResult {
+	down() {
 		return libmupdf._wasm_outline_iterator_down(this.pointer)
 	}
 
-	delete(): OutlineIteratorResult {
+	delete() {
 		return libmupdf._wasm_outline_iterator_delete(this.pointer)
 	}
 
-	insert(item: OutlineItem): OutlineIteratorResult {
+	insert(item: OutlineItem) {
 		return libmupdf._wasm_outline_iterator_insert(this.pointer, STRING_OPT(item.title), STRING2_OPT(item.uri), item.open)
 	}
 
@@ -1863,8 +1881,8 @@ export class Page extends Userdata {
 		let links: Link[] = []
 		let link = libmupdf._wasm_load_links(this.pointer)
 		while (link) {
-			links.push(new Link(libmupdf._wasm_keep_link(link.pointer)))
-			link = libmupdf._wasm_link_get_next(link.pointer)
+			links.push(new Link(libmupdf._wasm_keep_link(link)))
+			link = libmupdf._wasm_link_get_next(link)
 		}
 		return links
 	}
@@ -1902,7 +1920,7 @@ export class PDFDocument extends Document {
 		else if (typeof arg1 === "number")
 			super(arg1)
 		else {
-			let doc = Document.openDocument(arg1, "application/pdf") as PDFDocument
+			let doc = Document.openDocument(arg1, "application/pdf")
 			if (doc instanceof PDFDocument)
 				return doc
 			throw new Error("not a PDF document")
@@ -2074,7 +2092,7 @@ export class PDFDocument extends Document {
 		contents = toBuffer(contents)
 		return this._fromPDFObjectNew(
 			libmupdf._wasm_pdf_add_page(
-				this,
+				this.pointer,
 				RECT(mediabox),
 				rotate,
 				this._PDFOBJ(resources),
@@ -2126,7 +2144,7 @@ export class PDFDocument extends Document {
 			mimetype:
 				fromString(libmupdf._wasm_pdf_embedded_file_params_get_mimetype(ptr)),
 			size:
-				libmupdf._wasm_pdf_embedded_file_params_get_filename(ptr) as number,
+				libmupdf._wasm_pdf_embedded_file_params_get_filename(ptr),
 			creationDate:
 				new Date(libmupdf._wasm_pdf_embedded_file_params_get_created(ptr) * 1000),
 			modificationDate:
@@ -2210,8 +2228,8 @@ export class PDFDocument extends Document {
 	}
 
 	getJournal() {
-		let position = libmupdf._wasm_pdf_undoredo_state_position(this.pointer) as number
-		let n = libmupdf._wasm_pdf_undoredo_state_count(this.pointer) as number
+		let position = libmupdf._wasm_pdf_undoredo_state_position(this.pointer)
+		let n = libmupdf._wasm_pdf_undoredo_state_count(this.pointer)
 		let steps: string[] = []
 		for (let i = 0; i < n; ++i)
 			steps.push(
@@ -2274,7 +2292,7 @@ export class PDFDocument extends Document {
 		let n = pages.length
 		let ptr = libmupdf._wasm_malloc(n << 2) >> 2
 		for (let i = 0; i < n; ++i)
-			libmupdf.HEAPU32[ptr + i] = pages[i]
+			libmupdf.HEAPU32[ptr + i] = pages[i] || 0
 		try {
 			libmupdf._wasm_pdf_rearrange_pages(this.pointer, n, ptr << 2)
 		} finally {
@@ -2462,7 +2480,7 @@ export class PDFObject extends Userdata {
 	get(...path: PDFObjectPath): PDFObject { return this._doc._fromPDFObjectKeep(this._get(path)) }
 	getIndirect(...path: PDFObjectPath): number { return libmupdf._wasm_pdf_to_num(this._get(path)) }
 	getBoolean(...path: PDFObjectPath): boolean { return !!libmupdf._wasm_pdf_to_bool(this._get(path)) }
-	getNumber(...path: PDFObjectPath): number { return libmupdf._wasm_pdf_to_number(this._get(path)) }
+	getNumber(...path: PDFObjectPath): number { return libmupdf._wasm_pdf_to_real(this._get(path)) }
 	getName(...path: PDFObjectPath): string { return fromString(libmupdf._wasm_pdf_to_name(this._get(path))) }
 	getString(...path: PDFObjectPath): string { return fromString(libmupdf._wasm_pdf_to_text_string(this._get(path))) }
 
@@ -2740,7 +2758,7 @@ export class PDFAnnotation extends Userdata {
 
 	getType() {
 		let type = libmupdf._wasm_pdf_annot_type(this.pointer)
-		return PDFAnnotation.ANNOT_TYPES[type] as PDFAnnotationType
+		return PDFAnnotation.ANNOT_TYPES[type] || "Text"
 	}
 
 	getLanguage() {
@@ -3017,7 +3035,7 @@ export class PDFAnnotation extends Userdata {
 
 	getDefaultAppearance() {
 		let font = fromString(libmupdf._wasm_pdf_annot_default_appearance_font(this.pointer))
-		let size = libmupdf._wasm_pdf_annot_default_appearance_size(this.pointer) as number
+		let size = libmupdf._wasm_pdf_annot_default_appearance_size(this.pointer)
 		let color = fromColor(libmupdf._wasm_pdf_annot_default_appearance_color(this.pointer, COLOR()))
 		return { font, size, color }
 	}

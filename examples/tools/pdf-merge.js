@@ -12,9 +12,8 @@ import * as mupdf from "mupdf"
 const scriptArgs = process.argv.slice(2)
 
 function copyPage(dstDoc, srcDoc, pageNumber, dstFromSrc) {
-	var srcPage, dstPage
-	srcPage = srcDoc.findPage(pageNumber)
-	dstPage = dstDoc.newDictionary()
+	var srcPage = srcDoc.findPage(pageNumber)
+	var dstPage = dstDoc.newDictionary()
 	dstPage.put("Type", dstDoc.newName("Page"))
 	if (srcPage.get("MediaBox"))
 		dstPage.put("MediaBox", dstFromSrc.graftObject(srcPage.get("MediaBox")))
@@ -36,18 +35,16 @@ function copyAllPages(dstDoc, srcDoc) {
 }
 
 function pdfmerge() {
-	var srcDoc, dstDoc, i, srcBuf, dstBuf
-
-	dstDoc = new mupdf.PDFDocument()
-	for (i = 1; i < scriptArgs.length; ++i) {
+	var dstDoc = new mupdf.PDFDocument()
+	for (var i = 1; i < scriptArgs.length; ++i) {
 		console.log("OPEN", scriptArgs[i])
-		srcBuf = fs.readFileSync(scriptArgs[i])
-		srcDoc = mupdf.Document.openDocument(srcBuf, "application/pdf")
+		var srcBuf = fs.readFileSync(scriptArgs[i])
+		var srcDoc = new mupdf.PDFDocument(srcBuf)
 		copyAllPages(dstDoc, srcDoc)
 	}
 
 	console.log("SAVE", scriptArgs[0])
-	dstBuf = dstDoc.saveToBuffer("compress")
+	var dstBuf = dstDoc.saveToBuffer("compress")
 	fs.writeFileSync(scriptArgs[0], dstBuf.asUint8Array())
 }
 

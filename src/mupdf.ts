@@ -26,6 +26,8 @@ import libmupdf_wasm from "./mupdf-wasm.js"
 
 const libmupdf = await libmupdf_wasm()
 
+libmupdf._wasm_init_context()
+
 type Pointer = number
 
 type Matrix = [number, number, number, number, number, number]
@@ -36,21 +38,124 @@ type Color = [number] | [number, number, number] | [number, number, number, numb
 
 type Rotate = 0 | 90 | 180 | 270
 
-export class TryLaterError extends Error {
-	constructor(message: string) {
-		super(message)
-		this.name = "TryLaterError"
-	}
+export const Matrix = {
+	identity: [ 1, 0, 0, 1, 0, 0 ] as Matrix,
+	scale(sx: number, sy: number) {
+		return [ sx, 0, 0, sy, 0, 0 ]
+	},
+	translate(tx: number, ty: number) {
+		return [ 1, 0, 0, 1, tx, ty ]
+	},
+	rotate(d: number) {
+		while (d < 0)
+			d += 360
+		while (d >= 360)
+			d -= 360
+		let s = Math.sin((d * Math.PI) / 180)
+		let c = Math.cos((d * Math.PI) / 180)
+		return [ c, s, -s, c, 0, 0 ]
+	},
+	invert(m: Matrix) {
+		checkMatrix(m)
+		let det = m[0] * m[3] - m[1] * m[2]
+		if (det > -1e-23 && det < 1e-23)
+			return m
+		let rdet = 1 / det
+		let inva = m[3] * rdet
+		let invb = -m[1] * rdet
+		let invc = -m[2] * rdet
+		let invd = m[0] * rdet
+		let inve = -m[4] * inva - m[5] * invc
+		let invf = -m[4] * invb - m[5] * invd
+		return [ inva, invb, invc, invd, inve, invf ]
+	},
+	concat(one: Matrix, two: Matrix) {
+		checkMatrix(one)
+		checkMatrix(two)
+		return [
+			one[0] * two[0] + one[1] * two[2],
+			one[0] * two[1] + one[1] * two[3],
+			one[2] * two[0] + one[3] * two[2],
+			one[2] * two[1] + one[3] * two[3],
+			one[4] * two[0] + one[5] * two[2] + two[4],
+			one[4] * two[1] + one[5] * two[3] + two[5],
+		]
+	},
 }
 
-export class AbortError extends Error {
-	constructor(message: string) {
-		super(message)
-		this.name = "AbortError"
-	}
+export const Rect = {
+	MIN_INF_RECT: 0x80000000,
+	MAX_INF_RECT: 0x7fffff80,
+	isEmpty: function (rect: Rect) {
+		checkRect(rect)
+		return rect[0] >= rect[2] || rect[1] >= rect[3]
+	},
+	isValid: function (rect: Rect) {
+		checkRect(rect)
+		return rect[0] <= rect[2] && rect[1] <= rect[3]
+	},
+	isInfinite: function (rect: Rect) {
+		checkRect(rect)
+		return (
+			rect[0] === Rect.MIN_INF_RECT &&
+			rect[1] === Rect.MIN_INF_RECT &&
+			rect[2] === Rect.MAX_INF_RECT &&
+			rect[3] === Rect.MAX_INF_RECT
+		)
+	},
+	transform: function (rect: Rect, matrix: Matrix) {
+		checkRect(rect)
+		checkMatrix(matrix)
+		var t
+
+		if (Rect.isInfinite(rect))
+			return rect
+		if (!Rect.isValid(rect))
+			return rect
+
+		var ax0 = rect[0] * matrix[0]
+		var ax1 = rect[2] * matrix[0]
+		if (ax0 > ax1)
+			t = ax0, ax0 = ax1, ax1 = t
+
+		var cy0 = rect[1] * matrix[2]
+		var cy1 = rect[3] * matrix[2]
+		if (cy0 > cy1)
+			t = cy0, cy0 = cy1, cy1 = t
+
+		ax0 += cy0 + matrix[4]
+		ax1 += cy1 + matrix[4]
+
+		var bx0 = rect[0] * matrix[1]
+		var bx1 = rect[2] * matrix[1]
+		if (bx0 > bx1)
+			t = bx0, bx0 = bx1, bx1 = t
+
+		var dy0 = rect[1] * matrix[3]
+		var dy1 = rect[3] * matrix[3]
+		if (dy0 > dy1)
+			t = dy0, dy0 = dy1, dy1 = t
+
+		bx0 += dy0 + matrix[5]
+		bx1 += dy1 + matrix[5]
+
+		return [ ax0, bx0, ax1, bx1 ]
+	},
 }
 
-libmupdf._wasm_init_context()
+export function enableICC() {
+	libmupdf._wasm_enable_icc()
+}
+
+export function disableICC() {
+	libmupdf._wasm_disable_icc()
+}
+
+export function setUserCSS(text: string) {
+	libmupdf._wasm_set_user_css(STRING(text))
+}
+
+/* -------------------------------------------------------------------------- */
 
 // To pass Rect and Matrix as pointer arguments
 const _wasm_point = libmupdf._wasm_malloc(4 * 4) >> 2
@@ -92,21 +197,17 @@ function checkColor(value: any): asserts value is Color {
 		throw new TypeError("expected color array")
 }
 
+/** The types that can be automatically converted into a Buffer object */
 type AnyBuffer = Buffer | ArrayBuffer | Uint8Array | string
 
-function toBuffer(input: AnyBuffer) {
-	if (input instanceof Buffer)
-		return input
-	if (input instanceof ArrayBuffer || input instanceof Uint8Array)
-		return new Buffer(input)
-	if (typeof input === "string")
-		return new Buffer(input)
-	throw new TypeError("expected buffer")
-}
-
 function BUFFER(input: AnyBuffer) {
-	// Note: We have to create a Buffer instance for garbage collection.
-	return toBuffer(input).pointer
+	if (input instanceof Buffer)
+		return input.pointer
+	if (input instanceof ArrayBuffer || input instanceof Uint8Array)
+		return new Buffer(input).pointer
+	if (typeof input === "string")
+		return new Buffer(input).pointer
+	throw new TypeError("expected buffer")
 }
 
 function ENUM<T>(value: T, list: readonly T[]): number {
@@ -225,6 +326,8 @@ function COLOR(c?: Color) {
 	return _wasm_color << 2
 }
 
+/* -------------------------------------------------------------------------- */
+
 function fromColor(n: number): Color {
 	if (n === 1)
 		return [
@@ -306,17 +409,7 @@ function fromBuffer(ptr: Pointer): Uint8Array {
 	return libmupdf.HEAPU8.slice(data, data + size)
 }
 
-export function enableICC() {
-	libmupdf._wasm_enable_icc()
-}
-
-export function disableICC() {
-	libmupdf._wasm_disable_icc()
-}
-
-export function setUserCSS(text: string) {
-	libmupdf._wasm_set_user_css(STRING(text))
-}
+/* -------------------------------------------------------------------------- */
 
 type SearchFunction = (...args:number[]) => number
 
@@ -349,110 +442,7 @@ function runSearch(searchFun: SearchFunction, searchThis: number, needle: string
 	}
 }
 
-export const Matrix = {
-	identity: [ 1, 0, 0, 1, 0, 0 ] as Matrix,
-	scale(sx: number, sy: number) {
-		return [ sx, 0, 0, sy, 0, 0 ]
-	},
-	translate(tx: number, ty: number) {
-		return [ 1, 0, 0, 1, tx, ty ]
-	},
-	rotate(d: number) {
-		while (d < 0)
-			d += 360
-		while (d >= 360)
-			d -= 360
-		let s = Math.sin((d * Math.PI) / 180)
-		let c = Math.cos((d * Math.PI) / 180)
-		return [ c, s, -s, c, 0, 0 ]
-	},
-	invert(m: Matrix) {
-		checkMatrix(m)
-		let det = m[0] * m[3] - m[1] * m[2]
-		if (det > -1e-23 && det < 1e-23)
-			return m
-		let rdet = 1 / det
-		let inva = m[3] * rdet
-		let invb = -m[1] * rdet
-		let invc = -m[2] * rdet
-		let invd = m[0] * rdet
-		let inve = -m[4] * inva - m[5] * invc
-		let invf = -m[4] * invb - m[5] * invd
-		return [ inva, invb, invc, invd, inve, invf ]
-	},
-	concat(one: Matrix, two: Matrix) {
-		checkMatrix(one)
-		checkMatrix(two)
-		return [
-			one[0] * two[0] + one[1] * two[2],
-			one[0] * two[1] + one[1] * two[3],
-			one[2] * two[0] + one[3] * two[2],
-			one[2] * two[1] + one[3] * two[3],
-			one[4] * two[0] + one[5] * two[2] + two[4],
-			one[4] * two[1] + one[5] * two[3] + two[5],
-		]
-	},
-}
-
-export const Rect = {
-	MIN_INF_RECT: 0x80000000,
-	MAX_INF_RECT: 0x7fffff80,
-	isEmpty: function (rect: Rect) {
-		checkRect(rect)
-		return rect[0] >= rect[2] || rect[1] >= rect[3]
-	},
-	isValid: function (rect: Rect) {
-		checkRect(rect)
-		return rect[0] <= rect[2] && rect[1] <= rect[3]
-	},
-	isInfinite: function (rect: Rect) {
-		checkRect(rect)
-		return (
-			rect[0] === Rect.MIN_INF_RECT &&
-			rect[1] === Rect.MIN_INF_RECT &&
-			rect[2] === Rect.MAX_INF_RECT &&
-			rect[3] === Rect.MAX_INF_RECT
-		)
-	},
-	transform: function (rect: Rect, matrix: Matrix) {
-		checkRect(rect)
-		checkMatrix(matrix)
-		var t
-
-		if (Rect.isInfinite(rect))
-			return rect
-		if (!Rect.isValid(rect))
-			return rect
-
-		var ax0 = rect[0] * matrix[0]
-		var ax1 = rect[2] * matrix[0]
-		if (ax0 > ax1)
-			t = ax0, ax0 = ax1, ax1 = t
-
-		var cy0 = rect[1] * matrix[2]
-		var cy1 = rect[3] * matrix[2]
-		if (cy0 > cy1)
-			t = cy0, cy0 = cy1, cy1 = t
-
-		ax0 += cy0 + matrix[4]
-		ax1 += cy1 + matrix[4]
-
-		var bx0 = rect[0] * matrix[1]
-		var bx1 = rect[2] * matrix[1]
-		if (bx0 > bx1)
-			t = bx0, bx0 = bx1, bx1 = t
-
-		var dy0 = rect[1] * matrix[3]
-		var dy1 = rect[3] * matrix[3]
-		if (dy0 > dy1)
-			t = dy0, dy0 = dy1, dy1 = t
-
-		bx0 += dy0 + matrix[5]
-		bx1 += dy1 + matrix[5]
-
-		return [ ax0, bx0, ax1, bx1 ]
-	},
-}
+/* -------------------------------------------------------------------------- */
 
 abstract class Userdata {
 	private static _finalizer: FinalizationRegistry<number>
@@ -1492,8 +1482,6 @@ export class DisplayListDevice extends Device {
 	}
 }
 
-// === DocumentWriter ===
-
 export class DocumentWriter extends Userdata {
 	static override readonly _drop = libmupdf._wasm_drop_document_writer
 
@@ -1520,8 +1508,6 @@ export class DocumentWriter extends Userdata {
 		libmupdf._wasm_close_document_writer(this.pointer)
 	}
 }
-
-// === Document ===
 
 type DocumentPermission =
 	"print" |
@@ -1902,7 +1888,7 @@ export class Page extends Userdata {
 	}
 }
 
-// === PDFDocument ===
+/* -------------------------------------------------------------------------- */
 
 export class PDFDocument extends Document {
 	// Create a new empty document
@@ -2089,7 +2075,6 @@ export class PDFDocument extends Document {
 	addPage(mediabox: Rect, rotate: Rotate, resources: any, contents: AnyBuffer) {
 		checkRect(mediabox)
 		checkType(rotate, "number")
-		contents = toBuffer(contents)
 		return this._fromPDFObjectNew(
 			libmupdf._wasm_pdf_add_page(
 				this.pointer,
@@ -3317,6 +3302,22 @@ export class PDFWidget extends PDFAnnotation {
 	// TODO: previewSignature()
 	// TODO: clearSignature()
 	// TODO: sign()
+}
+
+/* -------------------------------------------------------------------------- */
+
+export class TryLaterError extends Error {
+	constructor(message: string) {
+		super(message)
+		this.name = "TryLaterError"
+	}
+}
+
+export class AbortError extends Error {
+	constructor(message: string) {
+		super(message)
+		this.name = "AbortError"
+	}
 }
 
 export class Stream extends Userdata {

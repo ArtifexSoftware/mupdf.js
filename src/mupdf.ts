@@ -28,6 +28,58 @@ const libmupdf = await libmupdf_wasm()
 
 libmupdf._wasm_init_context()
 
+/*
+--------------------------------------------------------------------------------
+
+How to call into WASM and convert values between JS and WASM (libmupdf) worlds:
+
+Passing values into WASM needs to either copy primitive values into WASM memory
+or passing around pointer values.
+
+	Wrap and/or copy non-Userdata values into WASM:
+
+		STRING(stringValue)
+		STRING2(stringValue) -- if you need to pass more than one string
+		MATRIX(matrixArray)
+		RECT(rectArray)
+		BUFFER(bufferValue)
+		etc.
+
+	Look up an enum value by string:
+
+		ENUM<EnumType>(string, listOfValidValues)
+
+	Pass the pointer when the value is a Userdata object:
+
+		userdataObject.pointer
+
+Convert WASM pointer into a JS value (for simple types like strings and matrices).
+
+	fromType(pointer)
+
+Wrap a WASM pointer in a new Userdata object (for complex types):
+
+	new Wrapper(pointer)
+
+PDFObjects are always bound to a PDFDocument, so must be accessed via a document:
+
+	doc._fromPDFObjectNew(new_ptr)
+	doc._fromPDFObjectKeep(borrowed_ptr)
+	doc._PDFOBJ(value)
+
+Type checking of input arguments at runtime.
+
+	checkType(value, "string")
+	checkType(value, Class)
+	checkRect(value)
+	checkMatrix(value)
+
+	This code needs to work type safely from plain Javascript too,
+	so do NOT rely on Typescript to do all the type checking.
+
+--------------------------------------------------------------------------------
+*/
+
 type Pointer = number
 
 type Matrix = [number, number, number, number, number, number]

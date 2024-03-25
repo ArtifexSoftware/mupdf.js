@@ -41,6 +41,8 @@ static fz_point out_point;
 static fz_rect out_rect;
 static fz_quad out_quad;
 
+typedef int boolean;
+
 #define EXPORT EMSCRIPTEN_KEEPALIVE
 
 #define TRY(CODE) { fz_try(ctx) CODE fz_catch(ctx) wasm_rethrow(ctx); }
@@ -48,6 +50,7 @@ static fz_quad out_quad;
 // Simple wrappers for one-line functions...
 #define POINTER(F, ...) void* p; TRY({ p = (void*)F(ctx, ## __VA_ARGS__); }) return p;
 #define INTEGER(F, ...) int p; TRY({ p = F(ctx, ## __VA_ARGS__); }) return p;
+#define BOOLEAN(F, ...) boolean p; TRY({ p = F(ctx, ## __VA_ARGS__); }) return p;
 #define NUMBER(F, ...) float p; TRY({ p = F(ctx, ## __VA_ARGS__); }) return p;
 #define MATRIX(F, ...) TRY({ out_matrix = F(ctx, ## __VA_ARGS__); }) return &out_matrix;
 #define POINT(F, ...) TRY({ out_point = F(ctx, ## __VA_ARGS__); }) return &out_point;
@@ -109,17 +112,19 @@ void wasm_set_user_css(char *text)
 
 // --- REFERENCE COUNTING ---
 
-#define KEEP_(WNAME,FNAME) EXPORT void * WNAME(void *p) { return FNAME(ctx, p); }
-#define DROP_(WNAME,FNAME) EXPORT void WNAME(void *p) { FNAME(ctx, p); }
+#define KEEP_(T,WNAME,FNAME) EXPORT T * WNAME(T *p) { return FNAME(ctx, p); }
+#define DROP_(T,WNAME,FNAME) EXPORT void WNAME(T *p) { FNAME(ctx, p); }
 
-#define KEEP(NAME) KEEP_(wasm_keep_ ## NAME, fz_keep_ ## NAME)
-#define DROP(NAME) DROP_(wasm_drop_ ## NAME, fz_drop_ ## NAME)
+#define KEEP(NAME) KEEP_(fz_ ## NAME, wasm_keep_ ## NAME, fz_keep_ ## NAME)
+#define DROP(NAME) DROP_(fz_ ## NAME, wasm_drop_ ## NAME, fz_drop_ ## NAME)
 
-#define REFS(NAME) KEEP(NAME) DROP(NAME)
+#define REFS(NAME) \
+	KEEP(NAME) \
+	DROP(NAME)
 
 #define PDF_REFS(NAME) \
-        KEEP_(wasm_pdf_keep_ ## NAME, pdf_keep_ ## NAME) \
-        DROP_(wasm_pdf_drop_ ## NAME, pdf_drop_ ## NAME)
+        KEEP_(pdf_ ## NAME, wasm_pdf_keep_ ## NAME, pdf_keep_ ## NAME) \
+        DROP_(pdf_ ## NAME, wasm_pdf_drop_ ## NAME, pdf_drop_ ## NAME)
 
 REFS(buffer)
 REFS(stream)
@@ -149,15 +154,15 @@ PDF_REFS(graft_map)
 
 // --- PLAIN STRUCT ACCESSORS ---
 
-#define GETP(S,T,F) EXPORT T* wasm_ ## S ## _get_ ## F (fz_ ## S *p) { return &p->F; }
-#define GETU(S,T,F,U) EXPORT T wasm_ ## S ## _get_ ## F (fz_ ## S *p) { return p->U; }
-#define GETUP(S,T,F,U) EXPORT T* wasm_ ## S ## _get_ ## F (fz_ ## S *p) { return &p->U; }
-#define GET(S,T,F) EXPORT T wasm_ ## S ## _get_ ## F (fz_ ## S *p) { return p->F; }
-#define SET(S,T,F) EXPORT void wasm_ ## S ## _set_ ## F (fz_ ## S *p, T v) { p->F = v; }
+#define GETP(S,T,F) EXPORT T* wasm_ ## S ## _get_ ## F(fz_ ## S *p) { return &p->F; }
+#define GETU(S,T,F,U) EXPORT T wasm_ ## S ## _get_ ## F(fz_ ## S *p) { return p->U; }
+#define GETUP(S,T,F,U) EXPORT T* wasm_ ## S ## _get_ ## F(fz_ ## S *p) { return &p->U; }
+#define GET(S,T,F) EXPORT T wasm_ ## S ## _get_ ## F(fz_ ## S *p) { return p->F; }
+#define SET(S,T,F) EXPORT void wasm_ ## S ## _set_ ## F(fz_ ## S *p, T v) { p->F = v; }
 #define GETSET(S,T,F) GET(S,T,F) SET(S,T,F)
 
-#define PDF_GET(S,T,F) EXPORT T wasm_pdf_ ## S ## _get_ ## F (pdf_ ## S *p) { return p->F; }
-#define PDF_SET(S,T,F) EXPORT void wasm_pdf_ ## S ## _set_ ## F (pdf_ ## S *p, T v) { p->F = v; }
+#define PDF_GET(S,T,F) EXPORT T wasm_pdf_ ## S ## _get_ ## F(pdf_ ## S *p) { return p->F; }
+#define PDF_SET(S,T,F) EXPORT void wasm_pdf_ ## S ## _set_ ## F(pdf_ ## S *p, T v) { p->F = v; }
 
 GET(buffer, void*, data)
 GET(buffer, int, len)
@@ -198,7 +203,7 @@ GET(image, int, n)
 GET(image, int, bpc)
 GET(image, int, xres)
 GET(image, int, yres)
-GET(image, int, imagemask)
+GET(image, boolean, imagemask)
 GET(image, fz_colorspace*, colorspace)
 GET(image, fz_image*, mask)
 
@@ -206,11 +211,11 @@ GET(outline, char*, title)
 GET(outline, char*, uri)
 GET(outline, fz_outline*, next)
 GET(outline, fz_outline*, down)
-GET(outline, int, is_open)
+GET(outline, boolean, is_open)
 
 GET(outline_item, char*, title)
 GET(outline_item, char*, uri)
-GET(outline_item, int, is_open)
+GET(outline_item, boolean, is_open)
 
 GETP(link, fz_rect, rect)
 GET(link, char*, uri)
@@ -390,31 +395,31 @@ fz_pixmap * wasm_get_pixmap_from_image(fz_image *image)
 }
 
 EXPORT
-fz_pixmap * wasm_new_pixmap_from_page(fz_page *page, fz_matrix *ctm, fz_colorspace *colorspace, int alpha)
+fz_pixmap * wasm_new_pixmap_from_page(fz_page *page, fz_matrix *ctm, fz_colorspace *colorspace, boolean alpha)
 {
 	POINTER(fz_new_pixmap_from_page, page, *ctm, colorspace, alpha)
 }
 
 EXPORT
-fz_pixmap * wasm_new_pixmap_from_page_contents(fz_page *page, fz_matrix *ctm, fz_colorspace *colorspace, int alpha)
+fz_pixmap * wasm_new_pixmap_from_page_contents(fz_page *page, fz_matrix *ctm, fz_colorspace *colorspace, boolean alpha)
 {
 	POINTER(fz_new_pixmap_from_page_contents, page, *ctm, colorspace, alpha)
 }
 
 EXPORT
-fz_pixmap * wasm_pdf_new_pixmap_from_page_with_usage(pdf_page *page, fz_matrix *ctm, fz_colorspace *colorspace, int alpha, char *usage, fz_box_type box)
+fz_pixmap * wasm_pdf_new_pixmap_from_page_with_usage(pdf_page *page, fz_matrix *ctm, fz_colorspace *colorspace, boolean alpha, char *usage, int box)
 {
 	POINTER(pdf_new_pixmap_from_page_with_usage, page, *ctm, colorspace, alpha, usage, box)
 }
 
 EXPORT
-fz_pixmap * wasm_pdf_new_pixmap_from_page_contents_with_usage(pdf_page *page, fz_matrix *ctm, fz_colorspace *colorspace, int alpha, char *usage, fz_box_type box)
+fz_pixmap * wasm_pdf_new_pixmap_from_page_contents_with_usage(pdf_page *page, fz_matrix *ctm, fz_colorspace *colorspace, boolean alpha, char *usage, int box)
 {
 	POINTER(pdf_new_pixmap_from_page_contents_with_usage, page, *ctm, colorspace, alpha, usage, box)
 }
 
 EXPORT
-fz_pixmap * wasm_new_pixmap_with_bbox(fz_colorspace *colorspace, fz_rect *bbox, int alpha)
+fz_pixmap * wasm_new_pixmap_with_bbox(fz_colorspace *colorspace, fz_rect *bbox, boolean alpha)
 {
 	POINTER(fz_new_pixmap_with_bbox, colorspace, fz_irect_from_rect(*bbox), NULL, alpha)
 }
@@ -474,19 +479,19 @@ fz_buffer * wasm_new_buffer_from_pixmap_as_psd(fz_pixmap *pix)
 }
 
 EXPORT
-fz_buffer * wasm_new_buffer_from_pixmap_as_jpeg(fz_pixmap *pix, int quality, int invert_cmyk)
+fz_buffer * wasm_new_buffer_from_pixmap_as_jpeg(fz_pixmap *pix, int quality, boolean invert_cmyk)
 {
 	POINTER(fz_new_buffer_from_pixmap_as_jpeg, pix, fz_default_color_params, quality, invert_cmyk)
 }
 
 EXPORT
-fz_pixmap * wasm_convert_pixmap(fz_pixmap *pixmap, fz_colorspace *colorspace, int keep_alpha)
+fz_pixmap * wasm_convert_pixmap(fz_pixmap *pixmap, fz_colorspace *colorspace, boolean keep_alpha)
 {
 	POINTER(fz_convert_pixmap, pixmap, colorspace, NULL, NULL, fz_default_color_params, keep_alpha)
 }
 
 EXPORT
-fz_pixmap * wasm_warp_pixmap(fz_pixmap *pixmap, fz_point points[4], float w, float h)
+fz_pixmap * wasm_warp_pixmap(fz_pixmap *pixmap, fz_point *points, float w, float h)
 {
 	POINTER(fz_warp_pixmap, pixmap, points, w, h)
 }
@@ -520,7 +525,7 @@ void wasm_run_display_list(fz_display_list *display_list, fz_device *dev, fz_mat
 }
 
 EXPORT
-fz_pixmap * wasm_new_pixmap_from_display_list(fz_display_list *display_list, fz_matrix *ctm, fz_colorspace *colorspace, int alpha)
+fz_pixmap * wasm_new_pixmap_from_display_list(fz_display_list *display_list, fz_matrix *ctm, fz_colorspace *colorspace, boolean alpha)
 {
 	POINTER(fz_new_pixmap_from_display_list, display_list, *ctm, colorspace, alpha)
 }
@@ -626,9 +631,9 @@ void wasm_show_glyph(fz_text *text, fz_font *font, fz_matrix *trm, int gid, int 
 }
 
 EXPORT
-void wasm_show_string(fz_text *text, fz_font *font, fz_matrix *trm, char *string, int wmode)
+fz_matrix *wasm_show_string(fz_text *text, fz_font *font, fz_matrix *trm, char *string, int wmode)
 {
-	VOID(fz_show_string, text, font, *trm, string, wmode, 0, 0, FZ_LANG_UNSET)
+	MATRIX(fz_show_string, text, font, *trm, string, wmode, 0, 0, FZ_LANG_UNSET)
 }
 
 // --- Device ---
@@ -652,7 +657,7 @@ void wasm_close_device(fz_device *dev)
 }
 
 EXPORT
-void wasm_fill_path(fz_device *dev, fz_path *path, int evenOdd, fz_matrix *ctm, fz_colorspace *colorspace, float *color, float alpha)
+void wasm_fill_path(fz_device *dev, fz_path *path, boolean evenOdd, fz_matrix *ctm, fz_colorspace *colorspace, float *color, float alpha)
 {
 	VOID(fz_fill_path, dev, path, evenOdd, *ctm, colorspace, color, alpha, fz_default_color_params)
 }
@@ -664,7 +669,7 @@ void wasm_stroke_path(fz_device *dev, fz_path *path, fz_stroke_state *stroke, fz
 }
 
 EXPORT
-void wasm_clip_path(fz_device *dev, fz_path *path, int evenOdd, fz_matrix *ctm)
+void wasm_clip_path(fz_device *dev, fz_path *path, boolean evenOdd, fz_matrix *ctm)
 {
 	VOID(fz_clip_path, dev, path, evenOdd, *ctm, fz_infinite_rect)
 }
@@ -736,7 +741,7 @@ void wasm_pop_clip(fz_device *dev)
 }
 
 EXPORT
-void wasm_begin_mask(fz_device *dev, fz_rect *area, int luminosity, fz_colorspace *colorspace, float *color)
+void wasm_begin_mask(fz_device *dev, fz_rect *area, boolean luminosity, fz_colorspace *colorspace, float *color)
 {
 	VOID(fz_begin_mask, dev, *area, luminosity, colorspace, color, fz_default_color_params)
 }
@@ -748,7 +753,7 @@ void wasm_end_mask(fz_device *dev)
 }
 
 EXPORT
-void wasm_begin_group(fz_device *dev, fz_rect *area, fz_colorspace *colorspace, int isolated, int knockout, int blendmode, float alpha)
+void wasm_begin_group(fz_device *dev, fz_rect *area, fz_colorspace *colorspace, boolean isolated, boolean knockout, int blendmode, float alpha)
 {
 	VOID(fz_begin_group, dev, *area, colorspace, isolated, knockout, blendmode, alpha)
 }
@@ -1072,14 +1077,14 @@ fz_outline_item * wasm_outline_iterator_item(fz_outline_iterator *iter)
 }
 
 EXPORT
-int wasm_outline_iterator_insert(fz_outline_iterator *iter, char *title, char *uri, int is_open)
+int wasm_outline_iterator_insert(fz_outline_iterator *iter, char *title, char *uri, boolean is_open)
 {
 	fz_outline_item item = { title, uri, is_open };
 	INTEGER(fz_outline_iterator_insert, iter, &item)
 }
 
 EXPORT
-void wasm_outline_iterator_update(fz_outline_iterator *iter, char *title, char *uri, int is_open)
+void wasm_outline_iterator_update(fz_outline_iterator *iter, char *title, char *uri, boolean is_open)
 {
 	fz_outline_item item = { title, uri, is_open };
 	VOID(fz_outline_iterator_update, iter, &item)
@@ -1292,7 +1297,7 @@ pdf_obj * wasm_pdf_add_simple_font(pdf_document *doc, fz_font *font, int encodin
 }
 
 EXPORT
-pdf_obj * wasm_pdf_add_cjk_font(pdf_document *doc, fz_font *font, int ordering, int wmode, int serif)
+pdf_obj * wasm_pdf_add_cjk_font(pdf_document *doc, fz_font *font, int ordering, int wmode, boolean serif)
 {
 	POINTER(pdf_add_cjk_font, doc, font, ordering, wmode, serif)
 }
@@ -1362,7 +1367,7 @@ pdf_embedded_file_params * wasm_pdf_get_embedded_file_params(pdf_obj *ref)
 }
 
 EXPORT
-pdf_obj * wasm_pdf_add_embedded_file(pdf_document *doc, char *filename, char *mimetype, fz_buffer *contents, int created, int modified, int checksum)
+pdf_obj * wasm_pdf_add_embedded_file(pdf_document *doc, char *filename, char *mimetype, fz_buffer *contents, int created, int modified, boolean checksum)
 {
 	POINTER(pdf_add_embedded_file, doc, filename, mimetype, contents, created, modified, checksum)
 }
@@ -1415,7 +1420,7 @@ void wasm_pdf_rearrange_pages(pdf_document *doc, int n, int *pages)
 }
 
 EXPORT
-void wasm_pdf_bake_document(pdf_document *doc, int bake_annots, int bake_widgets)
+void wasm_pdf_bake_document(pdf_document *doc, boolean bake_annots, boolean bake_widgets)
 {
 	VOID(pdf_bake_document, doc, bake_annots, bake_widgets)
 }
@@ -1533,7 +1538,7 @@ void wasm_pdf_run_annot(pdf_annot *annot, fz_device *dev, fz_matrix *ctm)
 }
 
 EXPORT
-fz_pixmap * wasm_pdf_new_pixmap_from_annot(pdf_annot *annot, fz_matrix *ctm, fz_colorspace *colorspace, int alpha)
+fz_pixmap * wasm_pdf_new_pixmap_from_annot(pdf_annot *annot, fz_matrix *ctm, fz_colorspace *colorspace, boolean alpha)
 {
 	POINTER(pdf_new_pixmap_from_annot, annot, *ctm, colorspace, NULL, alpha)
 }
@@ -1550,12 +1555,12 @@ int wasm_pdf_update_annot(pdf_annot *annot)
 	INTEGER(pdf_update_annot, annot)
 }
 
-#define PDF_ANNOT_GET(T,R,N) EXPORT T wasm_pdf_annot_ ## N (pdf_annot *annot) { R(pdf_annot_ ## N, annot) }
-#define PDF_ANNOT_GET1(T,R,N) EXPORT T wasm_pdf_annot_ ## N (pdf_annot *annot, int idx) { R(pdf_annot_ ## N, annot, idx) }
-#define PDF_ANNOT_GET2(T,R,N) EXPORT T wasm_pdf_annot_ ## N (pdf_annot *annot, int a, int b) { R(pdf_annot_ ## N, annot, a, b) }
-#define PDF_ANNOT_SET(T,N) EXPORT void wasm_pdf_set_annot_ ## N (pdf_annot *annot, T v) { VOID(pdf_set_annot_ ## N, annot, v) }
+#define PDF_ANNOT_GET(T,R,N) EXPORT T wasm_pdf_annot_ ## N(pdf_annot *annot) { R(pdf_annot_ ## N, annot) }
+#define PDF_ANNOT_GET1(T,R,N) EXPORT T wasm_pdf_annot_ ## N(pdf_annot *annot, int idx) { R(pdf_annot_ ## N, annot, idx) }
+#define PDF_ANNOT_GET2(T,R,N) EXPORT T wasm_pdf_annot_ ## N(pdf_annot *annot, int a, int b) { R(pdf_annot_ ## N, annot, a, b) }
+#define PDF_ANNOT_SET(T,N) EXPORT void wasm_pdf_set_annot_ ## N(pdf_annot *annot, T v) { VOID(pdf_set_annot_ ## N, annot, v) }
 #define PDF_ANNOT_GETSET(T,R,N) PDF_ANNOT_GET(T,R,N) PDF_ANNOT_SET(T,N)
-#define PDF_ANNOT_HAS(N) EXPORT int wasm_pdf_annot_has_ ## N (pdf_annot *annot) { INTEGER(pdf_annot_has_ ## N, annot) }
+#define PDF_ANNOT_HAS(N) EXPORT int wasm_pdf_annot_has_ ## N(pdf_annot *annot) { INTEGER(pdf_annot_has_ ## N, annot) }
 
 PDF_ANNOT_GET(pdf_obj*, POINTER, obj)
 PDF_ANNOT_GET(int, INTEGER, type)
@@ -1572,8 +1577,8 @@ PDF_ANNOT_GETSET(float, NUMBER, border_effect_intensity)
 PDF_ANNOT_GETSET(float, NUMBER, opacity)
 PDF_ANNOT_GETSET(pdf_obj*, POINTER, filespec)
 PDF_ANNOT_GETSET(int, INTEGER, quadding)
-PDF_ANNOT_GETSET(int, INTEGER, is_open)
-PDF_ANNOT_GETSET(int, INTEGER, hidden_for_editing)
+PDF_ANNOT_GETSET(boolean, BOOLEAN, is_open)
+PDF_ANNOT_GETSET(boolean, BOOLEAN, hidden_for_editing)
 PDF_ANNOT_GETSET(char*, POINTER, icon_name)
 
 PDF_ANNOT_GET(fz_rect*, RECT, rect)
@@ -1817,15 +1822,13 @@ int wasm_pdf_annot_default_appearance_color(pdf_annot *annot, float *color)
 }
 
 EXPORT
-void wasm_pdf_set_annot_appearance_from_display_list(pdf_annot *annot,
-	char *appearance, char *state, fz_matrix *ctm, fz_display_list *list)
+void wasm_pdf_set_annot_appearance_from_display_list(pdf_annot *annot, char *appearance, char *state, fz_matrix *ctm, fz_display_list *list)
 {
 	VOID(pdf_set_annot_appearance_from_display_list, annot, appearance, state, *ctm, list)
 }
 
 EXPORT
-void wasm_pdf_set_annot_appearance(pdf_annot *annot,
-	char *appearance, char *state, fz_matrix *ctm, fz_rect *bbox, pdf_obj *resources, fz_buffer *contents)
+void wasm_pdf_set_annot_appearance(pdf_annot *annot, char *appearance, char *state, fz_matrix *ctm, fz_rect *bbox, pdf_obj *resources, fz_buffer *contents)
 {
 	VOID(pdf_set_annot_appearance, annot, appearance, state, *ctm, *bbox, resources, contents)
 }
@@ -1885,9 +1888,9 @@ int wasm_pdf_annot_choice_field_option_count(pdf_annot *widget)
 }
 
 EXPORT
-char * wasm_pdf_annot_choice_field_option(pdf_annot *widget, int export, int i)
+char * wasm_pdf_annot_choice_field_option(pdf_annot *widget, boolean is_export, int i)
 {
-	POINTER(pdf_choice_field_option, pdf_annot_obj(ctx, widget), export, i)
+	POINTER(pdf_choice_field_option, pdf_annot_obj(ctx, widget), is_export, i)
 }
 
 EXPORT
@@ -1898,13 +1901,14 @@ int wasm_pdf_toggle_widget(pdf_annot *widget)
 
 // --- PDFObject ---
 
-#define PDF_IS(N) EXPORT int wasm_pdf_is_ ## N (pdf_obj *obj) { INTEGER(pdf_is_ ## N, obj) }
-#define PDF_TO(T,R,N) EXPORT T wasm_pdf_to_ ## N (pdf_obj *obj) { R(pdf_to_ ## N, obj) }
-#define PDF_NEW(N,T) EXPORT pdf_obj* wasm_pdf_new_ ## N (pdf_document *doc, T v) { POINTER(pdf_new_ ## N, doc, v) }
-#define PDF_NEW2(N,T1,T2) EXPORT pdf_obj* wasm_pdf_new_ ## N (pdf_document *doc, T1 v1, T2 v2) { POINTER(pdf_new_ ## N, doc, v1, v2) }
+#define PDF_IS(N) EXPORT int wasm_pdf_is_ ## N(pdf_obj *obj) { INTEGER(pdf_is_ ## N, obj) }
+#define PDF_TO(T,R,N) EXPORT T wasm_pdf_to_ ## N(pdf_obj *obj) { R(pdf_to_ ## N, obj) }
+#define PDF_NEW(N,T) EXPORT pdf_obj* wasm_pdf_new_ ## N(pdf_document *doc, T v) { POINTER(pdf_new_ ## N, doc, v) }
+#define PDF_NEW2(N,T1,T2) EXPORT pdf_obj* wasm_pdf_new_ ## N(pdf_document *doc, T1 v1, T2 v2) { POINTER(pdf_new_ ## N, doc, v1, v2) }
 
 PDF_IS(indirect)
 PDF_IS(bool)
+PDF_IS(int)
 PDF_IS(number)
 PDF_IS(name)
 PDF_IS(string)
@@ -1938,7 +1942,7 @@ pdf_obj * wasm_pdf_new_dict(pdf_document *doc, int cap)
 }
 
 EXPORT
-pdf_obj * wasm_pdf_new_bool(int v)
+pdf_obj * wasm_pdf_new_bool(boolean v)
 {
 	return v ? PDF_TRUE : PDF_FALSE;
 }
@@ -1965,6 +1969,12 @@ EXPORT
 pdf_obj * wasm_pdf_new_text_string(char *v)
 {
 	POINTER(pdf_new_text_string, v)
+}
+
+EXPORT
+pdf_obj * wasm_pdf_new_string(char *ptr, int len)
+{
+	POINTER(pdf_new_string, ptr, len)
 }
 
 EXPORT
@@ -2070,7 +2080,7 @@ void wasm_pdf_array_delete(pdf_obj *obj, int key)
 }
 
 EXPORT
-char * wasm_pdf_sprint_obj(pdf_obj *obj, int tight, int ascii)
+char * wasm_pdf_sprint_obj(pdf_obj *obj, boolean tight, boolean ascii)
 {
 	size_t len;
 	POINTER(pdf_sprint_obj, NULL, 0, &len, obj, tight, ascii)
@@ -2088,9 +2098,27 @@ fz_buffer * wasm_pdf_load_raw_stream(pdf_obj *obj)
 	POINTER(pdf_load_raw_stream, obj)
 }
 
+EXPORT
+void wasm_pdf_update_object(pdf_document *doc, int num, pdf_obj *obj)
+{
+	VOID(pdf_update_object, doc, num, obj)
+}
+
+EXPORT
+void wasm_pdf_update_stream(pdf_document *doc, pdf_obj *ref, fz_buffer *buf, int raw)
+{
+	VOID(pdf_update_stream, doc, ref, buf, raw)
+}
+
+EXPORT
+char * wasm_pdf_to_string(pdf_obj *obj, size_t *size)
+{
+	POINTER(pdf_to_string, obj, size)
+}
+
 /* PROGRESSIVE FETCH STREAM */
 
-struct fetch_state
+typedef struct fetch_state
 {
 	int block_shift;
 	int block_size;
@@ -2098,15 +2126,15 @@ struct fetch_state
 	int map_length; // Content-Length in blocks
 	uint8_t *content; // Array buffer with bytes
 	uint8_t *map; // Map of which blocks have been requested and loaded.
-};
+} fetch_state;
 
-EM_JS(void, js_open_fetch, (struct fetch_state *state, char *url, int content_length, int block_shift, int prefetch), {
+EM_JS(void, js_open_fetch, (fetch_state *state, char *url, int content_length, int block_shift, int prefetch), {
 	libmupdf.fetchOpen(state, UTF8ToString(url), content_length, block_shift, prefetch);
 });
 
 static void fetch_close(fz_context *ctx, void *state_)
 {
-	struct fetch_state *state = state_;
+	fetch_state *state = state_;
 	fz_free(ctx, state->content);
 	fz_free(ctx, state->map);
 	state->content = NULL;
@@ -2120,7 +2148,7 @@ static void fetch_close(fz_context *ctx, void *state_)
 
 static void fetch_seek(fz_context *ctx, fz_stream *stm, int64_t offset, int whence)
 {
-	struct fetch_state *state = stm->state;
+	fetch_state *state = stm->state;
 	stm->wp = stm->rp = state->content;
 	if (whence == SEEK_END)
 		stm->pos = state->content_length + offset;
@@ -2136,7 +2164,7 @@ static void fetch_seek(fz_context *ctx, fz_stream *stm, int64_t offset, int when
 
 static int fetch_next(fz_context *ctx, fz_stream *stm, size_t len)
 {
-	struct fetch_state *state = stm->state;
+	fetch_state *state = stm->state;
 
 	int block = stm->pos >> state->block_shift;
 	int start = block << state->block_shift;
@@ -2166,7 +2194,7 @@ static int fetch_next(fz_context *ctx, fz_stream *stm, size_t len)
 }
 
 EXPORT
-void wasm_on_data_fetched(struct fetch_state *state, int block, uint8_t *data, int size)
+void wasm_on_data_fetched(fetch_state *state, int block, uint8_t *data, int size)
 {
 	if (state->content) {
 		memcpy(state->content + (block << state->block_shift), data, size);
@@ -2178,7 +2206,7 @@ EXPORT
 fz_stream *wasm_open_stream_from_url(char *url, int content_length, int block_size, int prefetch)
 {
 	fz_stream *stream = NULL;
-	struct fetch_state *state = NULL;
+	fetch_state *state = NULL;
 
 	fz_var(stream);
 	fz_var(state);

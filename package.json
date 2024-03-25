@@ -1,6 +1,6 @@
 {
   "name": "mupdf",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "MuPDF.js",
   "author": "Artifex Software, Inc.",
   "license": "AGPL-3.0-or-later",
@@ -11,6 +11,7 @@
     "webassembly",
     "artifex"
   ],
+  "homepage": "https://mupdfjs.readthedocs.io/en/latest/",
   "repository": {
     "type": "git",
     "url": "https://github.com/ArtifexSoftware/mupdf.js.git"

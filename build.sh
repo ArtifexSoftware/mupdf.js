@@ -29,4 +29,5 @@ emcc -o dist/mupdf-wasm.js -I $MUPDF_DIR/include src/mupdf.c \
 echo
 
 echo BUILDING TYPESCRIPT
+cat src/mupdf.c | sed '/#include/d' | emcc -E - | node src/gen-wasm-type.js > src/mupdf-wasm.d.ts
 npx tsc -p .

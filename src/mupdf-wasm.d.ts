@@ -483,6 +483,7 @@ interface Libmupdf {
 	_wasm_pdf_load_raw_stream(obj: Pointer): Pointer,
 	_wasm_pdf_update_object(doc: Pointer, num: number, obj: Pointer): void,
 	_wasm_pdf_update_stream(doc: Pointer, ref: Pointer, buf: Pointer, raw: number): void,
+	_wasm_pdf_to_string(obj: Pointer, size: Pointer): Pointer,
 	_wasm_on_data_fetched(state: Pointer, block: number, data: Pointer, size: number): void,
 	_wasm_open_stream_from_url(url: Pointer, content_length: number, block_size: number, prefetch: number): Pointer,
 }

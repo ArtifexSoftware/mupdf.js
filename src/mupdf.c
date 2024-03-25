@@ -2104,6 +2104,12 @@ void wasm_pdf_update_stream(pdf_document *doc, pdf_obj *ref, fz_buffer *buf, int
 	VOID(pdf_update_stream, doc, ref, buf, raw)
 }
 
+EXPORT
+char * wasm_pdf_to_string(pdf_obj *obj, size_t *size)
+{
+	POINTER(pdf_to_string, obj, size)
+}
+
 /* PROGRESSIVE FETCH STREAM */
 
 typedef struct fetch_state

@@ -210,6 +210,7 @@ export function setUserCSS(text: string) {
 /* -------------------------------------------------------------------------- */
 
 // To pass Rect and Matrix as pointer arguments
+const _wasm_int = libmupdf._wasm_malloc(4)
 const _wasm_point = libmupdf._wasm_malloc(4 * 4) >> 2
 const _wasm_rect = libmupdf._wasm_malloc(4 * 8) >> 2
 const _wasm_matrix = libmupdf._wasm_malloc(4 * 6) >> 2
@@ -2487,6 +2488,12 @@ export class PDFObject extends Userdata {
 	asNumber(): number { return libmupdf._wasm_pdf_to_real(this.pointer) }
 	asName() { return fromString(libmupdf._wasm_pdf_to_name(this.pointer)) }
 	asString() { return fromString(libmupdf._wasm_pdf_to_text_string(this.pointer)) }
+
+	asByteString() {
+		let ptr = libmupdf._wasm_pdf_to_string(this.pointer, _wasm_int)
+		let len = libmupdf.HEAPU32[_wasm_int >> 2] as number
+		return libmupdf.HEAPU8.slice(ptr, ptr + len)
+	}
 
 	readStream() { return new Buffer(libmupdf._wasm_pdf_load_stream(this.pointer)) }
 	readRawStream() { return new Buffer(libmupdf._wasm_pdf_load_raw_stream(this.pointer)) }

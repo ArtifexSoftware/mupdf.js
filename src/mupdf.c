@@ -2092,6 +2092,18 @@ fz_buffer * wasm_pdf_load_raw_stream(pdf_obj *obj)
 	POINTER(pdf_load_raw_stream, obj)
 }
 
+EXPORT
+void wasm_pdf_update_object(pdf_document *doc, int num, pdf_obj *obj)
+{
+	VOID(pdf_update_object, doc, num, obj)
+}
+
+EXPORT
+void wasm_pdf_update_stream(pdf_document *doc, pdf_obj *ref, fz_buffer *buf, int raw)
+{
+	VOID(pdf_update_stream, doc, ref, buf, raw)
+}
+
 /* PROGRESSIVE FETCH STREAM */
 
 typedef struct fetch_state

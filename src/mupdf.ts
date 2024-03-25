@@ -2491,6 +2491,24 @@ export class PDFObject extends Userdata {
 	readStream() { return new Buffer(libmupdf._wasm_pdf_load_stream(this.pointer)) }
 	readRawStream() { return new Buffer(libmupdf._wasm_pdf_load_raw_stream(this.pointer)) }
 
+	writeObject(obj: any) {
+		if (!this.isIndirect())
+			throw new TypeError("can only call PDFObject.writeObject on an indirect reference")
+		libmupdf._wasm_pdf_update_object(this._doc.pointer, this.asIndirect(), this._doc._PDFOBJ(obj))
+	}
+
+	writeStream(buf: AnyBuffer) {
+		if (!this.isIndirect())
+			throw new TypeError("can only call PDFObject.writeStream on an indirect reference")
+		libmupdf._wasm_pdf_update_stream(this._doc.pointer, this.pointer, BUFFER(buf), 0)
+	}
+
+	writeRawStream(buf: AnyBuffer) {
+		if (!this.isIndirect())
+			throw new TypeError("can only call PDFObject.writeRawStream on an indirect reference")
+		libmupdf._wasm_pdf_update_stream(this._doc.pointer, this.pointer, BUFFER(buf), 1)
+	}
+
 	resolve() {
 		return this._doc._fromPDFObjectKeep(libmupdf._wasm_pdf_resolve_indirect(this.pointer))
 	}

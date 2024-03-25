@@ -234,6 +234,23 @@ html[data-theme="dark"] {
     box-shadow: -34vmin 0 4.899441666329294vmin currentColor;
 }
 
+/* turns off bokeh background for light themes */
+html[data-theme="light"] {
+
+    .bokeh-background {
+        background: #fff;
+    }
+
+    .bokeh-background span {
+        display: none;
+    }
+
+    /* Landing elements colors against bokeh background and theme */
+    .landing-page p, .landing-page li, .landing-page h1, .landing-page h2, .landing-page p.prev-next-title {
+        color:#000 !important;
+    }
+
+}
 
 #main-content {
     z-index:1;

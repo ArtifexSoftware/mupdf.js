@@ -2052,6 +2052,18 @@ export class PDFDocument extends Document {
 	newName(v: string) { return this._fromPDFObjectNew(libmupdf._wasm_pdf_new_name(STRING(v))) }
 	newString(v: string) { return this._fromPDFObjectNew(libmupdf._wasm_pdf_new_text_string(STRING(v))) }
 
+	newByteString(v: Uint8Array) {
+		checkType(v, Uint8Array)
+		let len = v.byteLength
+		let ptr = libmupdf._wasm_malloc(len)
+		libmupdf.HEAPU8.set(v, ptr)
+		try {
+			return this._fromPDFObjectNew(libmupdf._wasm_pdf_new_string(ptr, len))
+		} finally {
+			libmupdf._wasm_free(ptr)
+		}
+	}
+
 	newIndirect(v: number) { return this._fromPDFObjectNew(libmupdf._wasm_pdf_new_indirect(this.pointer, v)) }
 	newArray(cap=8) { return this._fromPDFObjectNew(libmupdf._wasm_pdf_new_array(this.pointer, cap)) }
 	newDictionary(cap=8) { return this._fromPDFObjectNew(libmupdf._wasm_pdf_new_dict(this.pointer, cap)) }

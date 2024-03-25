@@ -461,6 +461,7 @@ interface Libmupdf {
 	_wasm_pdf_new_real(v: number): Pointer,
 	_wasm_pdf_new_name(v: Pointer): Pointer,
 	_wasm_pdf_new_text_string(v: Pointer): Pointer,
+	_wasm_pdf_new_string(ptr: Pointer, len: number): Pointer,
 	_wasm_pdf_resolve_indirect(obj: Pointer): Pointer,
 	_wasm_pdf_array_len(obj: Pointer): Pointer,
 	_wasm_pdf_array_get(obj: Pointer, idx: number): Pointer,

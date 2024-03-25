@@ -1972,6 +1972,12 @@ pdf_obj * wasm_pdf_new_text_string(char *v)
 }
 
 EXPORT
+pdf_obj * wasm_pdf_new_string(char *ptr, int len)
+{
+	POINTER(pdf_new_string, ptr, len)
+}
+
+EXPORT
 pdf_obj * wasm_pdf_resolve_indirect(pdf_obj *obj)
 {
 	POINTER(pdf_resolve_indirect, obj)

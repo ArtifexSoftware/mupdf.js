@@ -25,7 +25,8 @@ By using the following **JavaScript** methods you should be able to create and m
 - `PDFAnnotation.addInkList <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#addInkList>`_
 - `PDFAnnotation.addInkListStroke <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#addInkListStroke>`_
 - `PDFAnnotation.addInkListStrokeVertex <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#addInkListStrokeVertex>`_
-
+- `PDFAnnotation.getBorderWidth <https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-annotation.html#getBorderWidth>`_
+- `PDFAnnotation.setBorderWidth <https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-annotation.html#setBorderWidth>`_
 
 |example_tag|
 

@@ -56,7 +56,7 @@ exclude_patterns = ["_build", "build"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
-default_role = "any"
+default_role = "code"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -97,7 +97,7 @@ html_theme_options = {
     "logo": {
         "text": "",
         "image_dark": "_static/sidebar-logo-light.svg",
-        "alt_text": "developer.pdf.co",
+        "alt_text": "mupdf.js",
     },
     "icon_links": [
         {

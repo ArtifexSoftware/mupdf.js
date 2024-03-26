@@ -37,6 +37,20 @@ node test.mjs
 
 If all is well, this will print the `mupdf` module object to the console.
 
+### Using Typescript
+
+The mupdf module has Typescript support.
+In order to use this you need to create a `tsconfig.json` file
+to tell `tsc` and Visual Studio Code to use nodenext module resolution:
+
+```json
+{
+    "compilerOptions": {
+        "module": "nodenext"
+    }
+}
+```
+
 ### Loading a document
 
 The following example demonstrates how to load a document and then print out the page count.

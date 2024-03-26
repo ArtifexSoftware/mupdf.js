@@ -125,7 +125,7 @@ Just to try things out we can create a couple of test files to see if we can see
 
     <html>
         <script>
-            const worker = new Worker("worker.js")
+            const worker = new Worker("worker.js", { type: "module" });
         </script>
     </html>
 

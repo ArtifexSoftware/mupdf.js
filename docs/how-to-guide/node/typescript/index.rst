@@ -6,20 +6,27 @@
 Developing with TypeScript
 ======================================
 
-If you are using **TypeScript** for your development you should note the following:
-
-- Install `@types/node <https://www.npmjs.com/package/@types/node>`_ for the type definitions
-- To ensure you can work with the `mupdf` module either work with `mts` files in **TypeScript** or add to your `package.json` the following:
+If you are using **TypeScript** for your development you should create a `tsconfig.json` file at the root of your project with the minimal configuration:
 
 .. code-block:: json
 
-    "type":"module"
+    {
+        "compilerOptions": {
+            "module": "nodenext"
+        }
+    }
 
-- When compiling the **TypeScript** to **JavaScript** use `nodenext`, for example assuming you have a file called `test/mjs` then do the following:
+- To ensure you can work with the `mupdf` module either work with `mts` files in **TypeScript** or use `ts` files and add to your `package.json` the following:
+
+.. code-block:: json
+
+    "type": "module"
+
+- When compiling the **TypeScript** to **JavaScript** use the following to trigger the compiler:
 
 .. code-block:: shell
 
-    tsc -m nodenext test.mts
+    tsc
 
 
 IDE auto-completion

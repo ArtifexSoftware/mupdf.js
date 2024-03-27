@@ -56,5 +56,17 @@ The file attachment will appear as a "push pin" icon by default on the **PDF** d
 
 You can also `change the look of the icon`_ for this annotation (to a paper clip for example) if required.
 
+Removing an Embedded File
+------------------------------
+
+To remove an embedded file, retrieve the required "FileAttachment" annotation and set it to `null`.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    annotation.setFileSpec(null)
+
+
 .. include:: ../../node-footer.rst
 .. include:: ../../../../footer.rst

@@ -3,6 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import Page from "./_components/Page";
 
+type SearchResult = {
+  page: number;
+  results: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  }[];
+  pageWidth: number;
+  pageHeight: number;
+};
+
 export default function Home() {
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
@@ -10,7 +22,20 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(0);
   const fileInputRef = useRef(null);
   const dropzoneRef = useRef(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([] as SearchResult[]);
 
+  const handleSearch = async () => {
+    const res = await fetch(
+      `http://localhost:8080/documents/${selectedDocument}/search?query=${searchQuery}`
+    );
+    const data = await res.json();
+    setSearchResults(data);
+  };
+
+  const handleSearchInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
   useEffect(() => {
     fetchDocuments();
   }, []);
@@ -101,6 +126,10 @@ export default function Home() {
     }
   };
 
+  const currentSearchResults = searchResults.find(
+    (result) => result.page === currentPage + 1
+  );
+
   return (
     <main
       className="flex flex-col min-h-screen bg-gray-900"
@@ -112,6 +141,20 @@ export default function Home() {
         <nav className="container mx-auto flex justify-between items-center py-4">
           <div>
             <h1 className="text-white text-xl font-bold">Simple PDF Viewer</h1>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="text"
+              className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-l-md focus:ring-2 "
+              value={searchQuery}
+              onChange={handleSearchInputChange}
+            />
+            <button
+              className="px-4 py-2 text-white bg-blue-600 border border-blue-600 rounded-r-md hover:bg-blue-700 focus:ring-2 focus:bg-blue-600"
+              onClick={handleSearch}
+            >
+              Search
+            </button>
           </div>
           <div>
             <button
@@ -162,18 +205,13 @@ export default function Home() {
         </div>
         <div className="w-4/5 p-4">
           {selectedDocument && (
-            <>
-              <div className="mb-8">
-                <h2 className="text-lg font-bold mb-4">
-                  {
-                    documents.find((doc) => doc.docId === selectedDocument)
-                      ?.fileName
-                  }
-                </h2>
-              </div>
-              <div className="relative">
-                <Page page={pages[currentPage]?.image} />
-                <div className="absolute top-1/3 transform -translate-y-1/2 flex justify-between w-full">
+            <div className="flex justify-center items-center">
+              <Page
+                page={pages[currentPage]?.image}
+                pageNumber={currentPage}
+                searchResults={currentSearchResults}
+              />
+              {/* <div className="absolute top-1/3 transform -translate-y-1/2 flex justify-between w-full">
                   <button
                     className="bg-opacity-50 p-2 rounded-full"
                     onClick={handlePreviousPage}
@@ -188,9 +226,8 @@ export default function Home() {
                   >
                     &gt;
                   </button>
-                </div>
-              </div>
-            </>
+                </div> */}
+            </div>
           )}
         </div>
       </div>

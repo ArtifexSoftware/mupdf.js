@@ -161,3 +161,48 @@ function getPageImage(
   const base64Image = Buffer.from(img, 'binary').toString('base64')
   return 'data:image/png;base64, ' + base64Image
 }
+
+// GET /documents/{docId}/search?query={query}
+app.get('/documents/:docId/search', (req: Request, res: Response) => {
+  const docId = req.params.docId
+  const query = req.query.query as string
+  const document = documentsStorage[docId]
+  if (!document) {
+    return res.status(404).send({ error: 'Document not found.' })
+  }
+  const results = []
+  const pageCount = document.countPages()
+  for (let i = 0; i < pageCount; i++) {
+    const page = document.loadPage(i)
+    const pageWidth = page.getBounds()[2] - page.getBounds()[0]
+    const pageHeight = page.getBounds()[3] - page.getBounds()[1]
+    const text = JSON.parse(
+      page.toStructuredText('preserve-whitespace').asJSON()
+    )
+    const matches = searchText(text, query)
+    results.push({
+      page: i + 1,
+      results: matches,
+      pageWidth,
+      pageHeight,
+    })
+  }
+  res.json(results)
+})
+
+function searchText(text: any, query: string): any[] {
+  if (!query.trim()) {
+    return []
+  }
+
+  const matches: any[] = []
+  text.blocks.forEach((block: any) => {
+    block.lines.forEach((line: any) => {
+      const lineText = line.text
+      if (lineText.toLowerCase().includes(query.toLowerCase())) {
+        matches.push({ text: lineText, bbox: line.bbox })
+      }
+    })
+  })
+  return matches
+}

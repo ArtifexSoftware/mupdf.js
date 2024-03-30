@@ -1543,7 +1543,7 @@ export class DocumentWriter extends Userdata {
 			libmupdf._wasm_new_document_writer_with_buffer(
 				BUFFER(buffer),
 				STRING(format),
-				STRING(options)
+				STRING2(options)
 			)
 		)
 	}

@@ -18,6 +18,9 @@
 
    <div class="page-spacer" style="margin:40px 0 20px;"><hr/></div>
 
+.. |node_js_logo| raw:: html
+
+   <div class="node-js-logo"></div>
 
 .. meta::
    :description: MuPDF.js Developer documentation.

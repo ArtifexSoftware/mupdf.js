@@ -187,9 +187,7 @@ export default function Home() {
                 }`}
                 onClick={() => handleDocumentClick(doc.docId)}
               >
-                <div>
-                  {doc.fileName} ({doc.pageCount} pages)
-                </div>
+                <div>{doc.fileName}</div>
                 <button
                   className="text-red-600 hover:text-red-800"
                   onClick={(event) => {
@@ -204,6 +202,32 @@ export default function Home() {
           </ul>
         </div>
         <div className="w-4/5 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <h2 className="text-lg font-bold mr-4">Pages</h2>
+              {selectedDocument && (
+                <div className="flex items-center">
+                  <button
+                    className="bg-gray-700 text-white px-2 py-1 rounded-l-md"
+                    onClick={handlePreviousPage}
+                    disabled={currentPage === 0}
+                  >
+                    &lt;
+                  </button>
+                  <span className="bg-gray-700 text-white px-4 py-1">
+                    {currentPage + 1} / {pages.length}
+                  </span>
+                  <button
+                    className="bg-gray-700 text-white px-2 py-1 rounded-r-md"
+                    onClick={handleNextPage}
+                    disabled={currentPage === pages.length - 1}
+                  >
+                    &gt;
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
           {selectedDocument && (
             <div className="flex justify-center items-center">
               <Page
@@ -211,22 +235,6 @@ export default function Home() {
                 pageNumber={currentPage}
                 searchResults={currentSearchResults}
               />
-              {/* <div className="absolute top-1/3 transform -translate-y-1/2 flex justify-between w-full">
-                  <button
-                    className="bg-opacity-50 p-2 rounded-full"
-                    onClick={handlePreviousPage}
-                    disabled={currentPage === 0}
-                  >
-                    &lt;
-                  </button>
-                  <button
-                    className="bg-opacity-50 p-2 rounded-full"
-                    onClick={handleNextPage}
-                    disabled={currentPage === pages.length - 1}
-                  >
-                    &gt;
-                  </button>
-                </div> */}
             </div>
           )}
         </div>

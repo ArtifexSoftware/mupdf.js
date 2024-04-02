@@ -24,6 +24,7 @@ export default function Home() {
   const dropzoneRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([] as SearchResult[]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSearch = async () => {
     const res = await fetch(
@@ -47,6 +48,7 @@ export default function Home() {
   }
 
   const handleFileUpload = async (file: File) => {
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("file", file);
     try {
@@ -59,25 +61,28 @@ export default function Home() {
         console.log("Upload Success:", data);
         fetchDocuments();
         setSelectedDocument(data.docId);
-        fetchPages(data.docId);
+        await fetchPages(data.docId);
       } else {
         console.error("Upload Failed:", res.statusText);
       }
     } catch (error) {
       console.error("Upload Failed:", error);
     }
+    setIsLoading(false);
   };
 
   const fetchPages = async (docId) => {
+    setIsLoading(true);
     const res = await fetch(`http://localhost:8080/documents/${docId}/pages`);
     const data = await res.json();
     setPages(data);
     setCurrentPage(0);
+    setIsLoading(false);
   };
 
   const handleDocumentClick = async (docId) => {
     setSelectedDocument(docId);
-    fetchPages(docId);
+    await fetchPages(docId);
   };
 
   const handleDocumentDelete = async (docId) => {
@@ -137,6 +142,11 @@ export default function Home() {
       onDrop={handleDrop}
       ref={dropzoneRef}
     >
+      {isLoading && (
+        <div className="fixed top-0 left-0 w-screen h-screen bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      )}
       <header className="bg-gray-700">
         <nav className="container mx-auto flex justify-between items-center py-4">
           <div>

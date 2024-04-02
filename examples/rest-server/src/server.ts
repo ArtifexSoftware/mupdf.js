@@ -2,7 +2,7 @@ import cors from 'cors'
 import express, { Request, Response } from 'express'
 import fs from 'fs'
 import multer from 'multer'
-const mupdf = require('mupdf')
+import * as mupdf from "mupdf"
 
 const app = express()
 const PORT = 8080
@@ -10,7 +10,7 @@ const upload = multer({ storage: multer.memoryStorage() })
 
 // Set up a simple in-memory document storage
 const testData = fs.readFileSync('public/test.pdf')
-const documentsStorage: { [key: string]: MuPDFDocument } = {
+const documentsStorage: { [key: string]: mupdf.Document } = {
   '1652922957123': mupdf.Document.openDocument(testData, 'application/pdf'),
 }
 
@@ -117,7 +117,7 @@ app.get(
       return res.status(404).send({ error: 'Document not found.' })
     }
 
-    const page = document.loadPage(pageNumber - 1)
+    const page:mupdf.PDFPage = document.loadPage(pageNumber - 1) as mupdf.PDFPage
     const text = JSON.parse(
       page.toStructuredText('preserve-whitespace').asJSON()
     )
@@ -141,16 +141,20 @@ app.get(
 )
 
 function getPageImage(
-  document: MuPDFDocument,
+  document: mupdf.Document,
   pageNumber: number,
   dpi: number
 ): string | undefined {
   if (document == null) {
     return
   }
-  const docToScreen = mupdf.Matrix.scale(dpi / 72, dpi / 72)
+  // TODO, requires fix in API for a Matrix type to be returned
+  // const docToScreen = mupdf.Matrix.scale(dpi / 72, dpi / 72)
+  
+  // until then we have to use an identity Matrix as it returns the correct type
+  const docToScreen = mupdf.Matrix.identity
   const page = document.loadPage(pageNumber - 1)
-  const pixmap = page.toPixmap(
+  const pixmap = page.toPixmap( 
     docToScreen,
     mupdf.ColorSpace.DeviceRGB,
     false,
@@ -158,8 +162,8 @@ function getPageImage(
   )
   const img = pixmap.asPNG()
   pixmap.destroy()
-  const base64Image = Buffer.from(img, 'binary').toString('base64')
-  return 'data:image/png;base64, ' + base64Image
+  const base64String = Buffer.from(img).toString('base64')
+  return 'data:image/png;base64, ' + base64String
 }
 
 // GET /documents/{docId}/search?query={query}

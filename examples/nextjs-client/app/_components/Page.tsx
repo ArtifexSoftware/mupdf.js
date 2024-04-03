@@ -35,11 +35,11 @@ export default function Page({ page, pageNumber, searchResults }: PageProps) {
       const { width, height } = imgRef.current;
       const { pageWidth, pageHeight, results } = searchResults;
       setBoxes(
-        results.map(({ bbox }) => ({
-          x: (bbox.x / pageWidth) * width,
-          y: (bbox.y / pageHeight) * height,
-          w: (bbox.w / pageWidth) * width,
-          h: (bbox.h / pageHeight) * height,
+        results.map(({ x, y, w, h }) => ({
+          x: (x / pageWidth) * width,
+          y: (y / pageHeight) * height,
+          w: (w / pageWidth) * width,
+          h: (h / pageHeight) * height,
         }))
       );
     }

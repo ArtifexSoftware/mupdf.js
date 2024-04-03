@@ -15,13 +15,25 @@ type SearchResult = {
   pageHeight: number;
 };
 
+type Document = {
+  docId: string;
+  fileName: string;
+  pageCount: number;
+};
+
+type Page = {
+  pageNumber: number;
+  text: any;
+  image: string;
+};
+
 export default function Home() {
-  const [documents, setDocuments] = useState([]);
-  const [selectedDocument, setSelectedDocument] = useState(null);
-  const [pages, setPages] = useState([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
+  const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const fileInputRef = useRef(null);
-  const dropzoneRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropzoneRef = useRef<HTMLElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([] as SearchResult[]);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +46,9 @@ export default function Home() {
     setSearchResults(data);
   };
 
-  const handleSearchInputChange = (event) => {
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setSearchQuery(event.target.value);
   };
   useEffect(() => {
@@ -71,7 +85,7 @@ export default function Home() {
     setIsLoading(false);
   };
 
-  const fetchPages = async (docId) => {
+  const fetchPages = async (docId: string) => {
     setIsLoading(true);
     const res = await fetch(`http://localhost:8080/documents/${docId}/pages`);
     const data = await res.json();
@@ -80,12 +94,12 @@ export default function Home() {
     setIsLoading(false);
   };
 
-  const handleDocumentClick = async (docId) => {
+  const handleDocumentClick = async (docId: string) => {
     setSelectedDocument(docId);
     await fetchPages(docId);
   };
 
-  const handleDocumentDelete = async (docId) => {
+  const handleDocumentDelete = async (docId: string) => {
     try {
       const res = await fetch(`http://localhost:8080/documents/${docId}`, {
         method: "DELETE",
@@ -116,13 +130,13 @@ export default function Home() {
     }
   };
 
-  const handleDragOver = (event) => {
+  const handleDragOver = (event: React.DragEvent<HTMLElement>) => {
     event.preventDefault();
     event.stopPropagation();
     event.dataTransfer.dropEffect = "copy";
   };
 
-  const handleDrop = (event) => {
+  const handleDrop = (event: React.DragEvent<HTMLElement>) => {
     event.preventDefault();
     event.stopPropagation();
     const file = event.dataTransfer.files[0];
@@ -175,7 +189,11 @@ export default function Home() {
               <input
                 type="file"
                 ref={fileInputRef}
-                onChange={(event) => handleFileUpload(event.target.files[0])}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  if (event.target.files?.length) {
+                    handleFileUpload(event.target.files[0]);
+                  }
+                }}
                 style={{ display: "none" }}
                 accept=".pdf"
               />

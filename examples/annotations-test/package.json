@@ -1,0 +1,15 @@
+{
+  "name": "muwasm-playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -p 8080"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mupdf": "^0.2.0",
+    "http-server": "^14.1.1"
+  }
+}

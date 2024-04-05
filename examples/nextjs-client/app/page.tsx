@@ -96,7 +96,7 @@ export default function Home() {
         console.log("Upload Success:", data);
         fetchDocuments();
         setSelectedDocument(data.docId);
-        await fetchPages(data.docId);
+        await fetchPages(data.docId, 0);
       } else {
         console.error("Upload Failed:", res.statusText);
       }
@@ -106,7 +106,7 @@ export default function Home() {
     setIsLoading(false);
   };
 
-  const fetchPages = async (docId: string) => {
+  const fetchPages = async (docId: string, currentPageNumber: number) => {
     setIsLoading(true);
     try {
       const res = await fetch(`http://localhost:8080/documents/${docId}/pages`);
@@ -115,7 +115,7 @@ export default function Home() {
       }
       const data = await res.json();
       setPages(data);
-      setCurrentPage(0);
+      setCurrentPage(currentPageNumber);
     } catch (error) {
       console.error("Failed to fetch pages:", error);
     } finally {
@@ -125,7 +125,7 @@ export default function Home() {
 
   const handleDocumentClick = async (docId: string) => {
     setSelectedDocument(docId);
-    await fetchPages(docId);
+    await fetchPages(docId, 0);
   };
 
   const handleDocumentDelete = async (docId: string) => {
@@ -221,6 +221,33 @@ export default function Home() {
       fetchDocuments();
     } catch (error) {
       console.error("Merge Failed:", error);
+    }
+  };
+
+  const handleRotatePage = async (rotation: number) => {
+    if (!selectedDocument) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:8080/documents/${selectedDocument}/pages/${
+          currentPage + 1
+        }/rotate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ rotation }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Rotate request failed");
+      }
+
+      await fetchPages(selectedDocument, currentPage);
+    } catch (error) {
+      console.error("Rotate failed:", error);
     }
   };
 
@@ -516,6 +543,46 @@ export default function Home() {
                   >
                     &gt;
                   </button>
+                  <div className="flex items-center">
+                    <button
+                      className="bg-gray-700 text-white px-2 py-1 rounded-md ml-2"
+                      onClick={() => handleRotatePage(90)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m15 15 6-6m0 0-6-6m6 6H9a6 6 0 0 0 0 12h3"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      className="bg-gray-700 text-white px-2 py-1 rounded-md ml-2"
+                      onClick={() => handleRotatePage(-90)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

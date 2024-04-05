@@ -2,7 +2,7 @@ import cors from 'cors'
 import express, { Request, Response } from 'express'
 import fs from 'fs'
 import multer from 'multer'
-import * as mupdf from "mupdf"
+import * as mupdf from 'mupdf'
 
 const app = express()
 const PORT = 8080
@@ -12,16 +12,6 @@ const upload = multer({ storage: multer.memoryStorage() })
 const testData = fs.readFileSync('public/test.pdf')
 const documentsStorage: { [key: string]: mupdf.Document } = {
   '1652922957123': mupdf.Document.openDocument(testData, 'application/pdf'),
-}
-
-interface MuPDFDocument {
-  countPages: () => number
-  loadPage: (pageNumber: number) => any
-  saveToBuffer: (incremental: string) => any
-  needsPassword: () => number
-  authenticatePassword: (password: string) => number
-  getMetaData: (key: string) => string
-  setMetaData: (key: string, value: string) => void
 }
 
 app.use(cors())
@@ -117,7 +107,9 @@ app.get(
       return res.status(404).send({ error: 'Document not found.' })
     }
 
-    const page:mupdf.PDFPage = document.loadPage(pageNumber - 1) as mupdf.PDFPage
+    const page: mupdf.PDFPage = document.loadPage(
+      pageNumber - 1
+    ) as mupdf.PDFPage
     const text = JSON.parse(
       page.toStructuredText('preserve-whitespace').asJSON()
     )
@@ -150,11 +142,11 @@ function getPageImage(
   }
   // TODO, requires fix in API for a Matrix type to be returned
   // const docToScreen = mupdf.Matrix.scale(dpi / 72, dpi / 72)
-  
+
   // until then we have to use an identity Matrix as it returns the correct type
   const docToScreen = mupdf.Matrix.identity
   const page = document.loadPage(pageNumber - 1)
-  const pixmap = page.toPixmap( 
+  const pixmap = page.toPixmap(
     docToScreen,
     mupdf.ColorSpace.DeviceRGB,
     false,
@@ -210,3 +202,56 @@ function searchText(text: any, query: string): any[] {
   })
   return matches
 }
+
+// GET /documents/{docId}/split
+app.post('/documents/:docId/split', (req: Request, res: Response) => {
+  const docId = req.params.docId
+  const startPage = req.body.startPage
+  const endPage = req.body.endPage
+  const document = documentsStorage[docId]
+  if (!document) {
+    return res.status(404).send({ error: 'Document not found.' })
+  }
+
+  const pdfDocument = document as mupdf.PDFDocument
+  const newDoc = new mupdf.PDFDocument()
+  for (let i = startPage - 1; i < endPage; i++) {
+    newDoc.graftPage(i - startPage + 1, pdfDocument, i)
+  }
+
+  const newDocId = Date.now().toString()
+  documentsStorage[newDocId] = newDoc
+
+  res.json({ docId: newDocId })
+})
+
+// GET /documents/{docId1}/merge/{docId2}
+app.post('/documents/:docId1/merge/:docId2', (req: Request, res: Response) => {
+  const docId1 = req.params.docId1
+  const docId2 = req.params.docId2
+  const doc1 = documentsStorage[docId1]
+  const doc2 = documentsStorage[docId2]
+  if (!doc1 || !doc2) {
+    return res.status(404).send({ error: 'One or both documents not found.' })
+  }
+
+  const pdfDoc1 = doc1 as mupdf.PDFDocument
+  const pdfDoc2 = doc2 as mupdf.PDFDocument
+
+  const newDoc = new mupdf.PDFDocument()
+  let i = 0
+  while (i < pdfDoc1.countPages()) {
+    newDoc.graftPage(i, pdfDoc1, i)
+    i++
+  }
+  i = 0
+  while (i < pdfDoc2.countPages()) {
+    newDoc.graftPage(newDoc.countPages(), pdfDoc2, i)
+    i++
+  }
+
+  const newDocId = Date.now().toString()
+  documentsStorage[newDocId] = newDoc
+
+  res.json({ docId: newDocId })
+})

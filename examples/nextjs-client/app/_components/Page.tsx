@@ -1,16 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-
-export type SearchResult = {
-  page: number;
-  results: {
-    bbox: { x: number; y: number; w: number; h: number };
-    text: string;
-  }[];
-  pageWidth: number;
-  pageHeight: number;
-};
+import { SearchResult } from "../page";
 
 type PageProps = {
   page: string;

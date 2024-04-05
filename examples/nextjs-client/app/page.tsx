@@ -3,13 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import Page from "./_components/Page";
 
-type SearchResult = {
+export type SearchResult = {
   page: number;
   results: {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
+    bbox: { x: number; y: number; w: number; h: number };
+    text: string;
   }[];
   pageWidth: number;
   pageHeight: number;
@@ -44,11 +42,22 @@ export default function Home() {
   const [selectedMergeDocIds, setSelectedMergeDocIds] = useState<string[]>([]);
 
   const handleSearch = async () => {
-    const res = await fetch(
-      `http://localhost:8080/documents/${selectedDocument}/search?query=${searchQuery}`
-    );
-    const data = await res.json();
-    setSearchResults(data);
+    if (searchQuery === "") {
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://localhost:8080/documents/${selectedDocument}/search?query=${searchQuery}`
+      );
+      if (!res.ok) {
+        throw new Error("Search request failed");
+      }
+      const data = await res.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
   };
 
   const handleSearchInputChange = (
@@ -61,9 +70,16 @@ export default function Home() {
   }, []);
 
   async function fetchDocuments() {
-    const res = await fetch("http://localhost:8080/documents");
-    const data = await res.json();
-    setDocuments(data);
+    try {
+      const res = await fetch("http://localhost:8080/documents");
+      if (!res.ok) {
+        throw new Error("Failed to fetch documents");
+      }
+      const data = await res.json();
+      setDocuments(data);
+    } catch (error) {
+      console.error("Failed to fetch documents:", error);
+    }
   }
 
   const handleFileUpload = async (file: File) => {
@@ -92,11 +108,19 @@ export default function Home() {
 
   const fetchPages = async (docId: string) => {
     setIsLoading(true);
-    const res = await fetch(`http://localhost:8080/documents/${docId}/pages`);
-    const data = await res.json();
-    setPages(data);
-    setCurrentPage(0);
-    setIsLoading(false);
+    try {
+      const res = await fetch(`http://localhost:8080/documents/${docId}/pages`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch pages");
+      }
+      const data = await res.json();
+      setPages(data);
+      setCurrentPage(0);
+    } catch (error) {
+      console.error("Failed to fetch pages:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDocumentClick = async (docId: string) => {
@@ -169,13 +193,13 @@ export default function Home() {
         }
       );
 
-      if (res.ok) {
-        const data = await res.json();
-        console.log("Split Success:", data);
-        fetchDocuments();
-      } else {
-        console.error("Split Failed:", res.statusText);
+      if (!res.ok) {
+        throw new Error("Split request failed");
       }
+
+      const data = await res.json();
+      console.log("Split Success:", data);
+      fetchDocuments();
     } catch (error) {
       console.error("Split Failed:", error);
     }
@@ -189,14 +213,12 @@ export default function Home() {
           method: "POST",
         }
       );
-
-      if (res.ok) {
-        const data = await res.json();
-        console.log("Merge Success:", data);
-        fetchDocuments();
-      } else {
-        console.error("Merge Failed:", res.statusText);
+      if (!res.ok) {
+        throw new Error("Merge request failed");
       }
+      const data = await res.json();
+      console.log("Merge Success:", data);
+      fetchDocuments();
     } catch (error) {
       console.error("Merge Failed:", error);
     }

@@ -255,3 +255,24 @@ app.post('/documents/:docId1/merge/:docId2', (req: Request, res: Response) => {
 
   res.json({ docId: newDocId })
 })
+
+// POST /documents/{docId}/pages/{pageNumber}/rotate
+app.post(
+  '/documents/:docId/pages/:pageNumber/rotate',
+  (req: Request, res: Response) => {
+    const docId = req.params.docId
+    const pageNumber = Number(req.params.pageNumber)
+    const rotation = req.body.rotation
+    const document = documentsStorage[docId]
+    if (!document) {
+      return res.status(404).send({ error: 'Document not found.' })
+    }
+
+    const page = document.loadPage(pageNumber - 1) as mupdf.PDFPage
+    const pageObj = page.getObject()
+    const currentRotation = pageObj.getInheritable('Rotate') || 0
+    pageObj.put('Rotate', (currentRotation + rotation) % 360)
+
+    res.sendStatus(200)
+  }
+)

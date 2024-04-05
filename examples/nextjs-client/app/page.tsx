@@ -182,6 +182,13 @@ export default function Home() {
   const handleDocumentSplit = async (startPage: number, endPage: number) => {
     if (!selectedDocument) return;
 
+    if (endPage < startPage) {
+      alert(
+        "End page number must be greater than or equal to start page number."
+      );
+      return;
+    }
+
     try {
       const res = await fetch(
         `http://localhost:8080/documents/${selectedDocument}/split`,

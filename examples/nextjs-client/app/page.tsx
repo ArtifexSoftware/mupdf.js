@@ -125,6 +125,7 @@ export default function Home() {
 
   const handleDocumentClick = async (docId: string) => {
     setSelectedDocument(docId);
+    setSearchResults([]);
     await fetchPages(docId, 0);
   };
 

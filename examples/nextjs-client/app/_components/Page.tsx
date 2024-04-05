@@ -27,6 +27,8 @@ export default function Page({ page, pageNumber, searchResults }: PageProps) {
           h: (bbox.h / pageHeight) * height,
         }))
       );
+    } else {
+      setBoxes([]);
     }
   }, [searchResults, imgRef]);
 

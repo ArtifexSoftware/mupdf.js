@@ -1580,6 +1580,7 @@ PDF_ANNOT_GETSET(int, INTEGER, quadding)
 PDF_ANNOT_GETSET(boolean, BOOLEAN, is_open)
 PDF_ANNOT_GETSET(boolean, BOOLEAN, hidden_for_editing)
 PDF_ANNOT_GETSET(char*, POINTER, icon_name)
+PDF_ANNOT_GETSET(int, INTEGER, intent)
 
 PDF_ANNOT_GET(fz_rect*, RECT, rect)
 PDF_ANNOT_GET(fz_rect*, RECT, popup)

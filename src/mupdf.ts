@@ -92,13 +92,13 @@ type Rotate = 0 | 90 | 180 | 270
 
 export const Matrix = {
 	identity: [ 1, 0, 0, 1, 0, 0 ] as Matrix,
-	scale(sx: number, sy: number) {
+	scale(sx: number, sy: number): Matrix {
 		return [ sx, 0, 0, sy, 0, 0 ]
 	},
-	translate(tx: number, ty: number) {
+	translate(tx: number, ty: number): Matrix {
 		return [ 1, 0, 0, 1, tx, ty ]
 	},
-	rotate(d: number) {
+	rotate(d: number): Matrix {
 		while (d < 0)
 			d += 360
 		while (d >= 360)
@@ -107,7 +107,7 @@ export const Matrix = {
 		let c = Math.cos((d * Math.PI) / 180)
 		return [ c, s, -s, c, 0, 0 ]
 	},
-	invert(m: Matrix) {
+	invert(m: Matrix): Matrix {
 		checkMatrix(m)
 		let det = m[0] * m[3] - m[1] * m[2]
 		if (det > -1e-23 && det < 1e-23)
@@ -121,7 +121,7 @@ export const Matrix = {
 		let invf = -m[4] * invb - m[5] * invd
 		return [ inva, invb, invc, invd, inve, invf ]
 	},
-	concat(one: Matrix, two: Matrix) {
+	concat(one: Matrix, two: Matrix): Matrix {
 		checkMatrix(one)
 		checkMatrix(two)
 		return [
@@ -155,7 +155,7 @@ export const Rect = {
 			rect[3] === Rect.MAX_INF_RECT
 		)
 	},
-	transform: function (rect: Rect, matrix: Matrix) {
+	transform: function (rect: Rect, matrix: Matrix): Rect {
 		checkRect(rect)
 		checkMatrix(matrix)
 		var t

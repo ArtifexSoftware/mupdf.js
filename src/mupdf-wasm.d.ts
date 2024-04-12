@@ -374,6 +374,8 @@ interface Libmupdf {
 	_wasm_pdf_set_annot_hidden_for_editing(annot: Pointer, v: boolean): void,
 	_wasm_pdf_annot_icon_name(annot: Pointer): Pointer,
 	_wasm_pdf_set_annot_icon_name(annot: Pointer, v: Pointer): void,
+	_wasm_pdf_annot_intent(annot: Pointer): number,
+	_wasm_pdf_set_annot_intent(annot: Pointer, v: number): void,
 	_wasm_pdf_annot_rect(annot: Pointer): Pointer,
 	_wasm_pdf_annot_popup(annot: Pointer): Pointer,
 	_wasm_pdf_annot_quad_point_count(annot: Pointer): number,

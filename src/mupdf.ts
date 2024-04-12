@@ -2724,6 +2724,18 @@ type PDFAnnotationBorderStyle = "Solid" | "Dashed" | "Beveled" | "Inset" | "Unde
 
 type PDFAnnotationBorderEffect = "None" | "Cloudy"
 
+type PDFAnnotationIntent =
+	null |
+	"FreeTextCallout" |
+	"FreeTextTypeWriter" |
+	"LineArrow" |
+	"LineDimension" |
+	"PloyLine" |
+	"PolygonCloud" |
+	"PolygonDimension" |
+	"StampImage" |
+	"StampSnapshot"
+
 export class PDFAnnotation extends Userdata {
 	static override readonly _drop = libmupdf._wasm_pdf_drop_annot
 
@@ -2777,6 +2789,19 @@ export class PDFAnnotation extends Userdata {
 	static readonly BORDER_STYLE: PDFAnnotationBorderStyle[] = [ "Solid", "Dashed", "Beveled", "Inset", "Underline" ]
 
 	static readonly BORDER_EFFECT: PDFAnnotationBorderEffect[] = [ "None", "Cloudy" ]
+
+	static readonly INTENT: PDFAnnotationIntent[] = [
+		null,
+		"FreeTextCallout",
+		"FreeTextTypeWriter",
+		"LineArrow",
+		"LineDimension",
+		"PloyLine",
+		"PolygonCloud",
+		"PolygonDimension",
+		"StampImage",
+		"StampSnapshot"
+	]
 
 	// Bit masks for getFlags and setFlags
 	static readonly IS_INVISIBLE = 1 << (1 - 1)
@@ -3098,6 +3123,15 @@ export class PDFAnnotation extends Userdata {
 		this.clearBorderDash()
 		for (let v of list)
 			this.addBorderDashItem(v)
+	}
+
+	getIntent(): PDFAnnotationIntent {
+		return PDFAnnotation.INTENT[libmupdf._wasm_pdf_annot_intent(this.pointer)] || null
+	}
+
+	setIntent(value: PDFAnnotationIntent) {
+		let value_ix = ENUM<PDFAnnotationIntent>(value, PDFAnnotation.INTENT)
+		return libmupdf._wasm_pdf_set_annot_intent(this.pointer, value_ix)
 	}
 
 	setDefaultAppearance(fontName: string, size: number, color: Color) {

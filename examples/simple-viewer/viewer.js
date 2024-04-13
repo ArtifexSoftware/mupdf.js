@@ -707,6 +707,18 @@ function close_document() {
 }
 
 async function open_document_from_buffer(buffer, magic, title) {
+	if (!worker.isInitialized) {
+	  await new Promise((resolve) => {
+	    worker.addEventListener("message", function listener(event) {
+	      if (event.data[0] === "INIT") {
+	        worker.removeEventListener("message", listener);
+	        worker.isInitialized = true;
+	        resolve();
+	      }
+	    });
+	  });
+	}
+
 	current_doc = await worker.openDocumentFromBuffer(buffer, magic)
 
 	document.title = await worker.documentTitle(current_doc) || title

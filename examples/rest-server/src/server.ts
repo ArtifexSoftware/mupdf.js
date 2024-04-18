@@ -147,7 +147,7 @@ app.get('/document/annotations', (req: Request, res: Response) => {
   const result = []
   let i = 0
   while (i < document.countPages()) {
-    const page = document.loadPage(i) as mupdf.PDFPage // TODO: Type inference isn't working.
+    const page = document.loadPage(i) as mupdf.PDFPage
     const annots = page.getAnnotations()
     result.push(...annots)
     i++
@@ -161,7 +161,7 @@ app.post('/document/bake', (req: Request, res: Response) => {
   if (!document) {
     return res.status(404).send('No document found')
   }
-  const pdfDocument = document as mupdf.PDFDocument // TODO: Type inference isn't working.
+  const pdfDocument = document as mupdf.PDFDocument
   pdfDocument.bake()
   res.sendStatus(200)
 })
@@ -212,7 +212,7 @@ app.post(
     if (!document) {
       return res.status(404).send('No document found')
     }
-    const pdfDocument = document as mupdf.PDFDocument // TODO: Type inference isn't working.
+    const pdfDocument = document as mupdf.PDFDocument
 
     if (!req.file) {
       return res.status(400).send('File is required')
@@ -221,7 +221,7 @@ app.post(
     const embedMe = mupdf.Document.openDocument(
       req.file.buffer,
       'application/pdf'
-    ) as mupdf.PDFDocument // TODO: Type inference isn't working.
+    ) as mupdf.PDFDocument
     const page = pdfDocument.loadPage(0)
     const annotation = page.createAnnotation('FileAttachment')
 
@@ -286,7 +286,7 @@ app.get(
     }
 
     const pageNumber = parseInt(req.params.pageNumber)
-    const page = document.loadPage(pageNumber) as mupdf.PDFPage // TODO: Type inference isn't working.
+    const page = document.loadPage(pageNumber) as mupdf.PDFPage
     const json = page.toStructuredText('preserve-whitespace').asJSON()
 
     res.json(json)
@@ -326,12 +326,12 @@ app.post(
     }
 
     const pageNumber = parseInt(req.params.pageNumber)
-    const page = document.loadPage(pageNumber) as mupdf.PDFPage // TODO: Type inference isn't working.
+    const page = document.loadPage(pageNumber) as mupdf.PDFPage
     const pageObj = page.getObject()
 
     const { text, x, y, fontFamily, fontSize } = req.body
 
-    const pdfDocument = document as mupdf.PDFDocument // TODO: Type inference isn't working.
+    const pdfDocument = document as mupdf.PDFDocument
 
     const font = pdfDocument.addSimpleFont(new mupdf.Font(fontFamily))
 
@@ -345,19 +345,8 @@ app.post(
 
     resFonts.put('F1', font)
 
-    // const extra_contents = pdfDocument.addStream(
-    //   `BT /F1 ${fontSize} Tf 1 0 0 1 ${x} ${y} Tm (${text}) Tj ET`
-    // )
-
-    // const pageContents = pageObj.get('Contents')
-    // if (pageContents.isArray()) {
-    //   pageContents.push(extra_contents)
-    // } else {
-    //   const newPageContents = pdfDocument.newArray()
-    //   newPageContents.push(pageContents)
-    //   newPageContents.push(extra_contents)
-    //   pageObj.put('Contents', newPageContents)
-    // }
+    // TODO: .addStream API type is not correct
+    // const extra_contents = pdfDocument.addStream()
 
     res.sendStatus(200)
   }
@@ -371,7 +360,7 @@ app.post(
     if (!document) {
       return res.status(404).send('No document found')
     }
-    const pdfDocument = document as mupdf.PDFDocument // TODO: Type inference isn't working.
+    const pdfDocument = document as mupdf.PDFDocument
 
     const pageNumber = parseInt(req.params.pageNumber)
     const page = pdfDocument.loadPage(pageNumber)
@@ -394,19 +383,8 @@ app.post(
 
     resXobj.put('Image', image)
 
-    // const extra_contents = pdfDocument.addStream(
-    //   `q ${width} 0 0 ${height} ${x} ${y} cm /Image Do Q`
-    // )
-
-    // const pageContents = pageObj.get('Contents')
-    // if (pageContents.isArray()) {
-    //   pageContents.push(extra_contents)
-    // } else {
-    //   const newPageContents = pdfDocument.newArray()
-    //   newPageContents.push(pageContents)
-    //   newPageContents.push(extra_contents)
-    //   pageObj.put('Contents', newPageContents)
-    // }
+    // TODO: .addStream API type is not correct
+    // const extra_contents = pdfDocument.addStream()
 
     res.sendStatus(200)
   }
@@ -417,7 +395,7 @@ app.post('/document/page/:pageNumber/copy', (req: Request, res: Response) => {
   if (!document) {
     return res.status(404).send('No document found')
   }
-  const pdfDocument = document as mupdf.PDFDocument // TODO: Type inference isn't working.
+  const pdfDocument = document as mupdf.PDFDocument
 
   const pageNumber = parseInt(req.params.pageNumber)
 
@@ -436,7 +414,7 @@ app.delete(
     if (!document) {
       return res.status(404).send('No document found')
     }
-    const pdfDocument = document as mupdf.PDFDocument // TODO: Type inference isn't working.
+    const pdfDocument = document as mupdf.PDFDocument
 
     const pageNumber = parseInt(req.params.pageNumber)
     pdfDocument.deletePage(pageNumber)
@@ -452,7 +430,7 @@ app.post('/document/page/:pageNumber/rotate', (req: Request, res: Response) => {
   }
 
   const pageNumber = parseInt(req.params.pageNumber)
-  const page = document.loadPage(pageNumber) as mupdf.PDFPage // TODO: Type inference isn't working.
+  const page = document.loadPage(pageNumber) as mupdf.PDFPage
   const pageObj = page.getObject()
 
   const { degrees } = req.body
@@ -469,7 +447,7 @@ app.post('/document/page/:pageNumber/crop', (req: Request, res: Response) => {
   }
 
   const pageNumber = parseInt(req.params.pageNumber)
-  const page = document.loadPage(pageNumber) as mupdf.PDFPage // TODO: Type inference isn't working.
+  const page = document.loadPage(pageNumber) as mupdf.PDFPage
 
   const { x, y, width, height } = req.body
   page.setPageBox('CropBox', [x, y, x + width, y + height])
@@ -483,7 +461,7 @@ app.post('/document/split', (req: Request, res: Response) => {
     return res.status(404).send('No document found')
   }
 
-  const pdfDocument = document as mupdf.PDFDocument // TODO: Type inference isn't working.
+  const pdfDocument = document as mupdf.PDFDocument
 
   const splitDocuments: any[] = []
 
@@ -506,7 +484,6 @@ app.post(
     if (!req.files || (Array.isArray(req.files) && req.files.length < 2)) {
       return res.status(400).send('At least two files are required')
     }
-
     const dstDoc = new mupdf.PDFDocument()
 
     for (const file of req.files as Express.Multer.File[]) {

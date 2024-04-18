@@ -3,7 +3,7 @@
 This is a build of [MuPDF](https://mupdf.com) for **JavaScript** and **TypeScript**,
 using the speed and performance of **WebAssembly**.
 
-The MuPDF.js library can be used both in browsers and in Node.js.
+The **MuPDF.js** library can be used both in browsers and in Node.js.
 
 ## Features
 
@@ -12,6 +12,7 @@ The MuPDF.js library can be used both in browsers and in Node.js.
 - Create and edit PDF annotations
 - Access and fill out PDF forms
 - Edit PDF documents
+- Supports basic CJK (Chinese, Japanese, Korean) fonts
 
 ## Installing
 

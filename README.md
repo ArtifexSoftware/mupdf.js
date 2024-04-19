@@ -93,3 +93,4 @@ You can build the MuPDF.js library from source by referring to [BUILDING.md](htt
 
 To contribute please open up (or help answer!) an Issue on our **Github** board and create a Pull Request (PR) for review.
 Find us on **Discord** at [#mupdf-js](https://discord.gg/zpyAHM7XtF) to chat with us directly.
+

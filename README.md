@@ -78,4 +78,3 @@ From here you can then try adding code to the main library file `mupdf.js` or ad
 
 
 To contribute please open up (or help answer!) an Issue on our **Github** board and create a Pull Request (PR) for review. Find us on **Discord** at [#mupdf-js](https://discord.gg/zpyAHM7XtF) to chat with us directly.
-

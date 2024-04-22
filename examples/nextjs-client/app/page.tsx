@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+const testDocument = "http://localhost:8080/test.pdf"
+
 const apiEndpoints = [
   {
     name: "Check Needs Password",
@@ -39,8 +41,8 @@ const apiEndpoints = [
     method: "POST",
     defaultBody: {
       urls: [
-        "http://localhost:8080/test.pdf",
-        "http://localhost:8080/test.pdf",
+        testDocument,
+        testDocument,
       ],
     },
   },
@@ -84,7 +86,7 @@ const apiEndpoints = [
     name: "Embed File",
     endpoint: "/document/embed-file",
     method: "POST",
-    defaultBody: { embedUrl: "http://localhost:8080/test.pdf" },
+    defaultBody: { embedUrl: testDocument },
   },
   {
     name: "Get Page Bounds",
@@ -189,12 +191,12 @@ export default function Home() {
 
     if (method !== "GET") {
       requestOptions.body = JSON.stringify({
-        url: "http://localhost:8080/test.pdf",
+        url: testDocument,
         ...body,
       });
     } else {
       const queryParams = new URLSearchParams({
-        url: "http://localhost:8080/test.pdf",
+        url: testDocument,
         ...body,
       }).toString();
       url += `?${queryParams}`;
@@ -259,7 +261,7 @@ export default function Home() {
             {selectedEndpoint.method} {selectedEndpoint.endpoint}
             <br />
             <br />
-            PDF URL: http://localhost:8080/test.pdf
+            PDF URL: {testDocument}
             {requestBody && (
               <>
                 <br />

@@ -6,6 +6,13 @@ Install:
 npm install
 ```
 
+Build:
+
+```bash
+npm run build
+```
+
+
 Start the server:
 
 ```bash

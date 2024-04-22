@@ -1991,8 +1991,13 @@ export class PDFDocument extends Document {
 			return obj
 		if (obj === null || obj === undefined)
 			return this.newNull()
-		if (typeof obj === "string")
-			return this.newString(obj)
+		if (typeof obj === "string") {
+			// if a JS string is surrounded by parens, convert it to a PDF string
+			if (obj.startsWith("(") && obj.endsWith(")"))
+				return this.newString(obj.slice(1, -1))
+			// otherwise treat it as a name
+			return this.newName(obj)
+		}
 		if (typeof obj === "number") {
 			if (obj === (obj | 0))
 				return this.newInteger(obj)
@@ -2003,13 +2008,13 @@ export class PDFDocument extends Document {
 		if (obj instanceof Array) {
 			let result = this.newArray(obj.length)
 			for (let item of obj)
-				result.push(this._PDFOBJ(item))
+				result.push(item)
 			return result
 		}
 		if (obj instanceof Object) {
 			let result = this.newDictionary()
 			for (let key in obj)
-				result.put(key, this._PDFOBJ(obj[key]))
+				result.put(key, obj[key])
 			return result
 		}
 		throw new TypeError("cannot convert value to PDFObject")

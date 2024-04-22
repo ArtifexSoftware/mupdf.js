@@ -1,4 +1,4 @@
-# A Node Server for MuPDF.js
+# A Sample Node Server for MuPDF.js
 
 Install:
 
@@ -6,24 +6,20 @@ Install:
 npm install
 ```
 
+Build:
+
+```bash
+npm run build
+```
+
+
 Start the server:
 
 ```bash
-npm run dev
+npm run build
 ```
 
-## Test the server
-
-Visit: http://localhost:8080/mupdfjs/
-
-You should see the "Hello World!" message.
-
-
-# Just want to test API directly with Node.JS ?
-
-Please do:
-
 ```bash
-node test.js
+npm run start
 ```
 

@@ -1,5 +1,5 @@
 import cors from 'cors'
-import express, { Request, Response } from 'express'
+import express from 'express'
 import * as fs from 'fs'
 import * as mupdf from 'mupdf'
 import path from 'path'
@@ -7,6 +7,9 @@ import path from 'path'
 const app = express()
 const PORT = 8080
 const HOST = 'http://localhost'
+
+// cache fetched documents in memory for at least 5 minutes
+const FETCH_CACHE_EXPIRES = 5 * 60 * 1000
 
 app.use(cors())
 app.use(express.json())
@@ -16,15 +19,41 @@ app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`)
 })
 
+const fetch_cache: Map<string, { promise: Promise<Response>, expires: number }> = new Map()
+function cached_fetch(url: string): Promise<Response> {
+  let item = fetch_cache.get(url)
+  if (!item) fetch_cache.set(url, item = { promise: fetch(url), expires: Date.now() + FETCH_CACHE_EXPIRES })
+  return item.promise
+}
+
+const response_cache: Map<string, { promise: Promise<ArrayBuffer>, expires: number }> = new Map()
+function cached_response_arrayBuffer(url: string, res: Response): Promise<ArrayBuffer> {
+  let item = response_cache.get(url)
+  if (!item) response_cache.set(url, item = { promise: res.arrayBuffer(), expires: Date.now() + FETCH_CACHE_EXPIRES })
+  return item.promise
+}
+
+setInterval(function () {
+  let now = Date.now()
+  fetch_cache.forEach((value, key, map) => {
+    if (value.expires > now)
+      map.delete(key)
+  })
+  response_cache.forEach((value, key, map) => {
+    if (value.expires > now)
+      map.delete(key)
+  })
+}, FETCH_CACHE_EXPIRES)
+
 // Helper function to load document from URL
 async function loadDocumentFromUrl(url: string): Promise<mupdf.Document> {
-  const response = await fetch(url)
-  const buffer = await response.arrayBuffer()
-  return mupdf.Document.openDocument(new Uint8Array(buffer), 'application/pdf')
+  const response = await cached_fetch(url)
+  const buffer = await cached_response_arrayBuffer(url, response)
+  return mupdf.Document.openDocument(buffer, 'application/pdf')
 }
 
 // GET /document/needs-password
-app.get('/document/needs-password', async (req: Request, res: Response) => {
+app.get('/document/needs-password', async (req: express.Request, res: express.Response) => {
   const { url } = req.query
   if (!url) {
     return res.status(400).send('URL is required')
@@ -38,7 +67,7 @@ app.get('/document/needs-password', async (req: Request, res: Response) => {
 // POST /document/authenticate-password
 app.post(
   '/document/authenticate-password',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url, password } = req.body
     if (!url || !password) {
       return res.status(400).send('URL and password are required')
@@ -51,7 +80,7 @@ app.post(
 )
 
 // GET /document/metadata
-app.get('/document/metadata', async (req: Request, res: Response) => {
+app.get('/document/metadata', async (req: express.Request, res: express.Response) => {
   const { url } = req.query
   if (!url) {
     return res.status(400).send('URL is required')
@@ -67,7 +96,7 @@ app.get('/document/metadata', async (req: Request, res: Response) => {
 
 // TODO: SetMetaData is not working
 // POST /document/metadata
-app.post('/document/metadata', async (req: Request, res: Response) => {
+app.post('/document/metadata', async (req: express.Request, res: express.Response) => {
   const { url, key, value } = req.body
   if (!url || !key || !value) {
     return res.status(400).send('URL, key, and value are required')
@@ -82,7 +111,7 @@ app.post('/document/metadata', async (req: Request, res: Response) => {
 })
 
 // GET /document/page-count
-app.get('/document/page-count', async (req: Request, res: Response) => {
+app.get('/document/page-count', async (req: express.Request, res: express.Response) => {
   const { url } = req.query
   if (!url) {
     return res.status(400).send('URL is required')
@@ -94,7 +123,7 @@ app.get('/document/page-count', async (req: Request, res: Response) => {
 })
 
 // GET /document/page/:pageNumber
-app.get('/document/page/:pageNumber', async (req: Request, res: Response) => {
+app.get('/document/page/:pageNumber', async (req: express.Request, res: express.Response) => {
   const { url } = req.query
   if (!url) {
     return res.status(400).send('URL is required')
@@ -107,7 +136,7 @@ app.get('/document/page/:pageNumber', async (req: Request, res: Response) => {
 })
 
 // GET /document/structured-text
-app.get('/document/structured-text', async (req: Request, res: Response) => {
+app.get('/document/structured-text', async (req: express.Request, res: express.Response) => {
   const { url } = req.query
   if (!url) {
     return res.status(400).send('URL is required')
@@ -127,7 +156,7 @@ app.get('/document/structured-text', async (req: Request, res: Response) => {
 })
 
 // GET /document/images
-app.get('/document/images', async (req: Request, res: Response) => {
+app.get('/document/images', async (req: express.Request, res: express.Response) => {
   const { url } = req.query
   if (!url) {
     return res.status(400).send('URL is required')
@@ -154,7 +183,7 @@ app.get('/document/images', async (req: Request, res: Response) => {
 })
 
 // GET /document/annotations
-app.get('/document/annotations', async (req: Request, res: Response) => {
+app.get('/document/annotations', async (req: express.Request, res: express.Response) => {
   const { url } = req.query
   if (!url) {
     return res.status(400).send('URL is required')
@@ -174,7 +203,7 @@ app.get('/document/annotations', async (req: Request, res: Response) => {
 })
 
 // POST /document/bake
-app.post('/document/bake', async (req: Request, res: Response) => {
+app.post('/document/bake', async (req: express.Request, res: express.Response) => {
   const { url } = req.body
   if (!url) {
     return res.status(400).send('URL is required')
@@ -190,7 +219,7 @@ app.post('/document/bake', async (req: Request, res: Response) => {
 })
 
 // POST /document/search
-app.post('/document/search', async (req: Request, res: Response) => {
+app.post('/document/search', async (req: express.Request, res: express.Response) => {
   const { url, searchTerm } = req.body
   if (!url || !searchTerm) {
     return res.status(400).send('URL and searchTerm are required')
@@ -210,7 +239,7 @@ app.post('/document/search', async (req: Request, res: Response) => {
 })
 
 // GET /document/links
-app.get('/document/links', async (req: Request, res: Response) => {
+app.get('/document/links', async (req: express.Request, res: express.Response) => {
   const { url } = req.query
   if (!url) {
     return res.status(400).send('URL is required')
@@ -230,7 +259,7 @@ app.get('/document/links', async (req: Request, res: Response) => {
 })
 
 // POST /document/embed-file
-app.post('/document/embed-file', async (req: Request, res: Response) => {
+app.post('/document/embed-file', async (req: express.Request, res: express.Response) => {
   const { url, embedUrl } = req.body
   if (!url || !embedUrl) {
     return res.status(400).send('URL and embedUrl are required')
@@ -265,7 +294,7 @@ app.post('/document/embed-file', async (req: Request, res: Response) => {
 // GET /document/page/:pageNumber/bounds
 app.get(
   '/document/page/:pageNumber/bounds',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url } = req.query
     if (!url) {
       return res.status(400).send('URL is required')
@@ -283,7 +312,7 @@ app.get(
 // GET /document/page/:pageNumber/pixmap
 app.get(
   '/document/page/:pageNumber/pixmap',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url } = req.query
     if (!url) {
       return res.status(400).send('URL is required')
@@ -308,7 +337,7 @@ app.get(
 // GET /document/page/:pageNumber/structured-text
 app.get(
   '/document/page/:pageNumber/structured-text',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url } = req.query
     if (!url) {
       return res.status(400).send('URL is required')
@@ -326,7 +355,7 @@ app.get(
 // GET /document/page/:pageNumber/images
 app.get(
   '/document/page/:pageNumber/images',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url } = req.query
     if (!url) {
       return res.status(400).send('URL is required')
@@ -355,7 +384,7 @@ app.get(
 // POST /document/page/:pageNumber/add-text
 app.post(
   '/document/page/:pageNumber/add-text',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url, text, x, y, fontFamily, fontSize } = req.body
     if (!url || !text || !x || !y || !fontFamily || !fontSize) {
       return res
@@ -395,7 +424,7 @@ app.post(
 // POST /document/page/:pageNumber/add-image
 app.post(
   '/document/page/:pageNumber/add-image',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url, imageUrl, x, y, width, height } = req.body
     if (!url || !imageUrl || !x || !y || !width || !height) {
       return res
@@ -440,7 +469,7 @@ app.post(
 // POST /document/page/:pageNumber/copy
 app.post(
   '/document/page/:pageNumber/copy',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url } = req.body
     if (!url) {
       return res.status(400).send('URL is required')
@@ -462,7 +491,7 @@ app.post(
 // DELETE /document/page/:pageNumber/delete
 app.delete(
   '/document/page/:pageNumber/delete',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url } = req.body
     if (!url) {
       return res.status(400).send('URL is required')
@@ -482,7 +511,7 @@ app.delete(
 // POST /document/page/:pageNumber/rotate
 app.post(
   '/document/page/:pageNumber/rotate',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url, degrees } = req.body
     if (!url || !degrees) {
       return res.status(400).send('URL and degrees are required')
@@ -508,7 +537,7 @@ app.post(
 // POST /document/page/:pageNumber/crop
 app.post(
   '/document/page/:pageNumber/crop',
-  async (req: Request, res: Response) => {
+  async (req: express.Request, res: express.Response) => {
     const { url, x, y, width, height } = req.body
 
     if (!url || x === undefined || y === undefined || !width || !height) {
@@ -531,7 +560,7 @@ app.post(
 )
 
 // POST /document/split
-app.post('/document/split', async (req: Request, res: Response) => {
+app.post('/document/split', async (req: express.Request, res: express.Response) => {
   const { url } = req.body
   if (!url) {
     return res.status(400).send('URL is required')
@@ -554,7 +583,7 @@ app.post('/document/split', async (req: Request, res: Response) => {
 })
 
 // POST /document/merge
-app.post('/document/merge', async (req: Request, res: Response) => {
+app.post('/document/merge', async (req: express.Request, res: express.Response) => {
   const { urls } = req.body
   if (!urls || !Array.isArray(urls) || urls.length < 2) {
     return res.status(400).send('At least two URLs are required')

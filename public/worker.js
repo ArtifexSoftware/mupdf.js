@@ -23,7 +23,7 @@
 
 "use strict"
 
-import * as mupdf from "/mupdf.js"
+import * as mupdf from "./mupdf.js"
 
 const methods = {}
 

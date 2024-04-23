@@ -719,7 +719,7 @@ async function open_document_from_buffer(buffer, magic, title) {
 	page_count = await worker.countPages(current_doc)
 
 	// Use second page as default page size (the cover page is often differently sized)
-	var page_size = await worker.getPageSize(current_doc, page_count > 1 ? 2 : 1)
+	var page_size = await worker.getPageSize(current_doc, page_count > 1 ? 1 : 0)
 
 	page_list = []
 	for (let i = 0; i < page_count; ++i)

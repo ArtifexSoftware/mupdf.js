@@ -19,27 +19,27 @@ app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`)
 })
 
-const fetch_cache: Map<string, { promise: Promise<Response>, expires: number }> = new Map()
-function cached_fetch(url: string): Promise<Response> {
-  let item = fetch_cache.get(url)
-  if (!item) fetch_cache.set(url, item = { promise: fetch(url), expires: Date.now() + FETCH_CACHE_EXPIRES })
+const fetchCache: Map<string, { promise: Promise<Response>, expires: number }> = new Map()
+function cachedCetch(url: string): Promise<Response> {
+  let item = fetchCache.get(url)
+  if (!item) fetchCache.set(url, item = { promise: fetch(url), expires: Date.now() + FETCH_CACHE_EXPIRES })
   return item.promise
 }
 
-const response_cache: Map<string, { promise: Promise<ArrayBuffer>, expires: number }> = new Map()
-function cached_response_arrayBuffer(url: string, res: Response): Promise<ArrayBuffer> {
-  let item = response_cache.get(url)
-  if (!item) response_cache.set(url, item = { promise: res.arrayBuffer(), expires: Date.now() + FETCH_CACHE_EXPIRES })
+const responseCache: Map<string, { promise: Promise<ArrayBuffer>, expires: number }> = new Map()
+function cachedResponseArrayBuffer(url: string, res: Response): Promise<ArrayBuffer> {
+  let item = responseCache.get(url)
+  if (!item) responseCache.set(url, item = { promise: res.arrayBuffer(), expires: Date.now() + FETCH_CACHE_EXPIRES })
   return item.promise
 }
 
 setInterval(function () {
   let now = Date.now()
-  fetch_cache.forEach((value, key, map) => {
+  fetchCache.forEach((value, key, map) => {
     if (value.expires > now)
       map.delete(key)
   })
-  response_cache.forEach((value, key, map) => {
+  responseCache.forEach((value, key, map) => {
     if (value.expires > now)
       map.delete(key)
   })
@@ -47,8 +47,8 @@ setInterval(function () {
 
 // Helper function to load document from URL
 async function loadDocumentFromUrl(url: string): Promise<mupdf.Document> {
-  const response = await cached_fetch(url)
-  const buffer = await cached_response_arrayBuffer(url, response)
+  const response = await cachedCetch(url)
+  const buffer = await cachedResponseArrayBuffer(url, response)
   return mupdf.Document.openDocument(buffer, 'application/pdf')
 }
 

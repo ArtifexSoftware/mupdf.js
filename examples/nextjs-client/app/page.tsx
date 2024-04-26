@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const testDocument = "http://localhost:8080/test.pdf"
+const testDocument = "http://localhost:8080/test.pdf";
 
 const apiEndpoints = [
   {
@@ -40,10 +40,7 @@ const apiEndpoints = [
     endpoint: "/document/merge",
     method: "POST",
     defaultBody: {
-      urls: [
-        testDocument,
-        testDocument,
-      ],
+      urls: [testDocument, testDocument],
     },
   },
   {
@@ -90,7 +87,7 @@ const apiEndpoints = [
   },
   {
     name: "Get Page Bounds",
-    endpoint: "/document/page/4/bounds",
+    endpoint: "/document/page/1/bounds",
     method: "GET",
     defaultBody: {},
   },

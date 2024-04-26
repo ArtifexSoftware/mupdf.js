@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Annotations</title>
+</head>
+<body>
+<div>Testing Annotations ...</div>
+
+<div id="doc"></div>
+<div id="debug"></div>
+</body>
+
+<script>
+    const worker = new Worker('mupdf-worker.js', { type: "module" });
+    worker.onmessage = function (event) {
+
+        if (event.data[0]== "image") {
+            const image = document.createElement('img');
+            image.src = URL.createObjectURL(new Blob([event.data[1]], { type: 'image/png' }));
+            image.style.border = '1px solid black';
+            document.getElementById("doc").appendChild(image);
+        } else {
+            document.getElementById("debug").innerHTML += event.data[1];
+            document.getElementById("debug").innerHTML += "<br/>";
+        }
+        
+
+    };
+</script>
+</html>

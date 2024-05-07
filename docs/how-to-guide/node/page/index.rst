@@ -168,7 +168,7 @@ The following script opens a document called `"test.pdf"` and adds text to the b
     res_font.put("F1", font)
 
     // create drawing operations
-    var extra_contents = document.addStream("BT /F1 18 Tf 1 0 0 1 100 100 Tm (Hello, world) Tj ET")
+    var extra_contents = document.addStream("BT /F1 18 Tf 1 0 0 1 100 100 Tm (Hello, world) Tj ET", {})
 
     // add drawing operations to page contents
     var page_contents = page_obj.get("Contents")

@@ -249,6 +249,7 @@ interface Libmupdf {
 	_wasm_load_outline(doc: Pointer<"any_document">): Pointer<"fz_outline">,
 	_wasm_outline_get_page(doc: Pointer<"any_document">, outline: Pointer<"fz_outline">): number,
 	_wasm_layout_document(doc: Pointer<"any_document">, w: number, h: number, em: number): void,
+	_wasm_is_document_reflowable(doc: Pointer<"any_document">): boolean,
 	_wasm_link_set_rect(link: Pointer<"fz_link">, rect: Pointer<"fz_rect">): void,
 	_wasm_link_set_uri(link: Pointer<"fz_link">, uri: Pointer<"char">): void,
 	_wasm_bound_page(page: Pointer<"any_page">): Pointer<"fz_rect">,

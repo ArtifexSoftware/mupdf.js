@@ -931,6 +931,12 @@ void wasm_layout_document(fz_document *doc, float w, float h, float em)
 	VOID(fz_layout_document, doc, w, h, em)
 }
 
+EXPORT
+boolean wasm_is_document_reflowable(fz_document *doc)
+{
+	BOOLEAN(fz_is_document_reflowable, doc)
+}
+
 // --- Link ---
 
 EXPORT

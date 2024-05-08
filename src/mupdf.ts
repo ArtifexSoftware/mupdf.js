@@ -1692,8 +1692,7 @@ export class Document extends Userdata<"any_document"> {
 	}
 
 	isReflowable() {
-		// TODO: No HTML/EPUB support in WASM.
-		return false
+		libmupdf._wasm_is_document_reflowable(this.pointer)
 	}
 
 	layout(w: number, h: number, em: number) {

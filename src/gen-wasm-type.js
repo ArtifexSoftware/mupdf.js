@@ -6,10 +6,12 @@ import fs from "fs"
 
 console.log(`export default libmupdf_wasm
 declare function libmupdf_wasm(): Promise<Libmupdf>
-type Pointer = number
+declare const _brand: unique symbol
+export type Pointer<B> = number & { readonly [_brand]: B }
+export { libmupdf_wasm }
 interface Libmupdf {
-	UTF8ToString(ptr: Pointer): string,
-	stringToUTF8(str: string, outPtr: Pointer, maxBytesToWrite: number): number,
+	UTF8ToString(ptr: Pointer<"char">): string,
+	stringToUTF8(str: string, outPtr: Pointer<"char">, maxBytesToWrite: number): number,
 	lengthBytesUTF8(str: string): number,
 	HEAP8: Int8Array,
 	HEAP16: Int16Array,
@@ -26,6 +28,21 @@ const TYPE = {
 	int: "number",
 	float: "number",
 	double: "number",
+	fz_document: "any_document",
+	pdf_document: "any_document",
+	fz_page: "any_page",
+	pdf_page: "any_page",
+}
+
+const PTR_TYPE = {
+	size_t: "int",
+	int: "int",
+	float: "float",
+	double: "double",
+	fz_document: "any_document",
+	pdf_document: "any_document",
+	fz_page: "any_page",
+	pdf_page: "any_page",
 }
 
 let lines = fs.readFileSync(0, "utf-8").split("\n")
@@ -42,6 +59,10 @@ for (let line of lines) {
 	}
 }
 
+function map_ptr_type(raw) {
+	return "Pointer<\"" + (PTR_TYPE[raw] || raw) + "\">"
+}
+
 function map_type(raw) {
 	return TYPE[raw] || raw
 }
@@ -50,9 +71,11 @@ function parse_type_name(str) {
 	let is_ptr = str.includes("*")
 	let list = str.replaceAll("*", "").split(/ +/g)
 	let name = list.pop()
-	let type = map_type(list.join(" "))
+	let type
 	if (is_ptr)
-		type = "Pointer"
+		type = map_ptr_type(list.join(" "))
+	else
+		type = map_type(list.join(" "))
 	return [ type, name ]
 }
 
@@ -63,6 +86,7 @@ function parse_function_signature(line) {
 	line = line.replaceAll("const ", " ")
 	line = line.replaceAll("unsigned ", " ")
 	line = line.replaceAll("signed ", " ")
+	line = line.trim()
 
 	let [ret, args] = line.split("(")
 	args = args.replace(")", "").split(",").map(x => x.trim())

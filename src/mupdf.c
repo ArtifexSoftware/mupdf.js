@@ -491,9 +491,9 @@ fz_pixmap * wasm_convert_pixmap(fz_pixmap *pixmap, fz_colorspace *colorspace, bo
 }
 
 EXPORT
-fz_pixmap * wasm_warp_pixmap(fz_pixmap *pixmap, fz_point *points, float w, float h)
+fz_pixmap * wasm_warp_pixmap(fz_pixmap *pixmap, fz_quad *points, float w, float h)
 {
-	POINTER(fz_warp_pixmap, pixmap, points, w, h)
+	POINTER(fz_warp_pixmap, pixmap, (fz_point*)points, w, h)
 }
 
 // --- Shade ---
@@ -1261,7 +1261,7 @@ int wasm_pdf_xref_len(pdf_document *doc)
 }
 
 EXPORT
-fz_image * wasm_pdf_lookup_page_obj(pdf_document *doc, int index)
+pdf_obj * wasm_pdf_lookup_page_obj(pdf_document *doc, int index)
 {
 	POINTER(pdf_lookup_page_obj, doc, index)
 }

@@ -22,11 +22,19 @@
 
 "use strict"
 
-import libmupdf_wasm from "./mupdf-wasm.js"
+import { libmupdf_wasm, Pointer } from "./mupdf-wasm.js"
 
 const libmupdf = await libmupdf_wasm()
 
 libmupdf._wasm_init_context()
+
+function Malloc<T>(size: number) {
+	return libmupdf._wasm_malloc(size) as unknown as Pointer<T>
+}
+
+function Free(ptr: any) {
+	return libmupdf._wasm_free(ptr as Pointer<"void">)
+}
 
 /*
 --------------------------------------------------------------------------------
@@ -79,8 +87,6 @@ Type checking of input arguments at runtime.
 
 --------------------------------------------------------------------------------
 */
-
-type Pointer = number
 
 type Matrix = [number, number, number, number, number, number]
 type Rect = [number, number, number, number]
@@ -210,13 +216,13 @@ export function setUserCSS(text: string) {
 /* -------------------------------------------------------------------------- */
 
 // To pass Rect and Matrix as pointer arguments
-const _wasm_int = libmupdf._wasm_malloc(4)
-const _wasm_point = libmupdf._wasm_malloc(4 * 4) >> 2
-const _wasm_rect = libmupdf._wasm_malloc(4 * 8) >> 2
-const _wasm_matrix = libmupdf._wasm_malloc(4 * 6) >> 2
-const _wasm_color = libmupdf._wasm_malloc(4 * 4) >> 2
-const _wasm_quad = libmupdf._wasm_malloc(4 * 8) >> 2
-const _wasm_string: [ number, number ] = [ 0, 0 ]
+const _wasm_int = Malloc<"int">(4)
+const _wasm_point = Malloc<"fz_point">(4 * 4) >> 2
+const _wasm_rect = Malloc<"fz_rect">(4 * 8) >> 2
+const _wasm_matrix = Malloc<"fz_matrix">(4 * 6) >> 2
+const _wasm_color = Malloc<"number">(4 * 4) >> 2
+const _wasm_quad = Malloc<"fz_quad">(4 * 8) >> 2
+const _wasm_string: [ Pointer<"char">, Pointer<"char"> ] = [ 0 as Pointer<"char">, 0 as Pointer<"char"> ]
 
 function checkType(value: any, type: any) {
 	if (typeof type === "string" && typeof value !== type)
@@ -278,15 +284,15 @@ function ENUM<T>(value: T, list: readonly T[]): number {
 
 function allocateUTF8(str: string) {
 	var size = libmupdf.lengthBytesUTF8(str) + 1
-	var pointer = libmupdf._wasm_malloc(size)
+	var pointer = Malloc<"XXX">(size) as unknown as Pointer<"char">
 	libmupdf.stringToUTF8(str, pointer, size)
 	return pointer
 }
 
 function STRING_N(s: string, i: number) {
 	if (_wasm_string[i]) {
-		libmupdf._wasm_free(_wasm_string[i] as number)
-		_wasm_string[i] = 0
+		Free(_wasm_string[i])
+		_wasm_string[i] = 0 as Pointer<"char">
 	}
 	return _wasm_string[i] = allocateUTF8(s)
 }
@@ -299,24 +305,24 @@ function STRING2(s: string) {
 	return STRING_N(s, 1)
 }
 
-function STRING_OPT(s?: string) {
-	return typeof s === "string" ? STRING_N(s, 0) : 0
+function STRING_OPT(s: string | null | undefined) {
+	return typeof s === "string" ? STRING_N(s, 0) : 0 as Pointer<"char">
 }
 
-function STRING2_OPT(s?: string) {
-	return typeof s === "string" ? STRING_N(s, 1) : 0
+function STRING2_OPT(s: string | null | undefined) {
+	return typeof s === "string" ? STRING_N(s, 1) : 0 as Pointer<"char">
 }
 
 function POINT(p: Point) {
 	libmupdf.HEAPF32[_wasm_point + 0] = p[0]
 	libmupdf.HEAPF32[_wasm_point + 1] = p[1]
-	return _wasm_point << 2
+	return _wasm_point << 2 as Pointer<"fz_point">
 }
 
 function POINT2(p: Point) {
 	libmupdf.HEAPF32[_wasm_point + 2] = p[0]
 	libmupdf.HEAPF32[_wasm_point + 3] = p[1]
-	return (_wasm_point + 2) << 2
+	return (_wasm_point + 2) << 2 as Pointer<"fz_point">
 }
 
 function RECT(r: Rect) {
@@ -324,7 +330,7 @@ function RECT(r: Rect) {
 	libmupdf.HEAPF32[_wasm_rect + 1] = r[1]
 	libmupdf.HEAPF32[_wasm_rect + 2] = r[2]
 	libmupdf.HEAPF32[_wasm_rect + 3] = r[3]
-	return _wasm_rect << 2
+	return _wasm_rect << 2 as Pointer<"fz_rect">
 }
 
 function RECT2(r: Rect) {
@@ -332,7 +338,7 @@ function RECT2(r: Rect) {
 	libmupdf.HEAPF32[_wasm_rect + 5] = r[1]
 	libmupdf.HEAPF32[_wasm_rect + 6] = r[2]
 	libmupdf.HEAPF32[_wasm_rect + 7] = r[3]
-	return (_wasm_rect + 4) << 2
+	return (_wasm_rect + 4) << 2 as Pointer<"fz_rect">
 }
 
 function MATRIX(m: Matrix) {
@@ -342,7 +348,7 @@ function MATRIX(m: Matrix) {
 	libmupdf.HEAPF32[_wasm_matrix + 3] = m[3]
 	libmupdf.HEAPF32[_wasm_matrix + 4] = m[4]
 	libmupdf.HEAPF32[_wasm_matrix + 5] = m[5]
-	return _wasm_matrix << 2
+	return _wasm_matrix << 2 as Pointer<"fz_matrix">
 }
 
 function QUAD(q: Quad) {
@@ -354,7 +360,7 @@ function QUAD(q: Quad) {
 	libmupdf.HEAPF32[_wasm_quad + 5] = q[5]
 	libmupdf.HEAPF32[_wasm_quad + 6] = q[6]
 	libmupdf.HEAPF32[_wasm_quad + 7] = q[7]
-	return _wasm_quad << 2
+	return _wasm_quad << 2 as Pointer<"fz_quad">
 }
 
 function COLOR(c?: Color) {
@@ -376,7 +382,7 @@ function COLOR(c?: Color) {
 			break
 		}
 	}
-	return _wasm_color << 2
+	return _wasm_color << 2 as Pointer<"float">
 }
 
 /* -------------------------------------------------------------------------- */
@@ -402,61 +408,61 @@ function fromColor(n: number): Color {
 	throw new TypeError("invalid number of components for Color: " + n)
 }
 
-function fromString(ptr: Pointer): string {
+function fromString(ptr: Pointer<"char">): string {
 	return libmupdf.UTF8ToString(ptr)
 }
 
-function fromStringFree(ptr: Pointer): string {
+function fromStringFree(ptr: Pointer<"char">): string {
 	let str = libmupdf.UTF8ToString(ptr)
-	libmupdf._wasm_free(ptr)
+	Free(ptr)
 	return str
 }
 
-function fromPoint(ptr: Pointer): Point {
-	ptr = ptr >> 2
+function fromPoint(ptr: Pointer<"fz_point">): Point {
+	let addr = ptr >> 2
 	return [
-		libmupdf.HEAPF32[ptr + 0] as number,
-		libmupdf.HEAPF32[ptr + 1] as number,
+		libmupdf.HEAPF32[addr + 0] as number,
+		libmupdf.HEAPF32[addr + 1] as number,
 	]
 }
 
-function fromRect(ptr: Pointer): Rect {
-	ptr = ptr >> 2
+function fromRect(ptr: Pointer<"fz_rect">): Rect {
+	let addr = ptr >> 2
 	return [
-		libmupdf.HEAPF32[ptr + 0] as number,
-		libmupdf.HEAPF32[ptr + 1] as number,
-		libmupdf.HEAPF32[ptr + 2] as number,
-		libmupdf.HEAPF32[ptr + 3] as number,
+		libmupdf.HEAPF32[addr + 0] as number,
+		libmupdf.HEAPF32[addr + 1] as number,
+		libmupdf.HEAPF32[addr + 2] as number,
+		libmupdf.HEAPF32[addr + 3] as number,
 	]
 }
 
-function fromMatrix(ptr: Pointer): Matrix {
-	ptr = ptr >> 2
+function fromMatrix(ptr: Pointer<"fz_matrix">): Matrix {
+	let addr = ptr >> 2
 	return [
-		libmupdf.HEAPF32[ptr + 0] as number,
-		libmupdf.HEAPF32[ptr + 1] as number,
-		libmupdf.HEAPF32[ptr + 2] as number,
-		libmupdf.HEAPF32[ptr + 3] as number,
-		libmupdf.HEAPF32[ptr + 4] as number,
-		libmupdf.HEAPF32[ptr + 5] as number,
+		libmupdf.HEAPF32[addr + 0] as number,
+		libmupdf.HEAPF32[addr + 1] as number,
+		libmupdf.HEAPF32[addr + 2] as number,
+		libmupdf.HEAPF32[addr + 3] as number,
+		libmupdf.HEAPF32[addr + 4] as number,
+		libmupdf.HEAPF32[addr + 5] as number,
 	]
 }
 
-function fromQuad(ptr: Pointer): Quad {
-	ptr = ptr >> 2
+function fromQuad(ptr: Pointer<"fz_quad">): Quad {
+	let addr = ptr >> 2
 	return [
-		libmupdf.HEAPF32[ptr + 0] as number,
-		libmupdf.HEAPF32[ptr + 1] as number,
-		libmupdf.HEAPF32[ptr + 2] as number,
-		libmupdf.HEAPF32[ptr + 3] as number,
-		libmupdf.HEAPF32[ptr + 4] as number,
-		libmupdf.HEAPF32[ptr + 5] as number,
-		libmupdf.HEAPF32[ptr + 6] as number,
-		libmupdf.HEAPF32[ptr + 7] as number,
+		libmupdf.HEAPF32[addr + 0] as number,
+		libmupdf.HEAPF32[addr + 1] as number,
+		libmupdf.HEAPF32[addr + 2] as number,
+		libmupdf.HEAPF32[addr + 3] as number,
+		libmupdf.HEAPF32[addr + 4] as number,
+		libmupdf.HEAPF32[addr + 5] as number,
+		libmupdf.HEAPF32[addr + 6] as number,
+		libmupdf.HEAPF32[addr + 7] as number,
 	]
 }
 
-function fromBuffer(ptr: Pointer): Uint8Array {
+function fromBuffer(ptr: Pointer<"fz_buffer">): Uint8Array {
 	let data = libmupdf._wasm_buffer_get_data(ptr)
 	let size = libmupdf._wasm_buffer_get_len(ptr)
 	return libmupdf.HEAPU8.slice(data, data + size)
@@ -464,22 +470,28 @@ function fromBuffer(ptr: Pointer): Uint8Array {
 
 /* -------------------------------------------------------------------------- */
 
-type SearchFunction = (...args:number[]) => number
+type SearchFunction = (
+	display_list: any,
+	needle: Pointer<"char">,
+	marks: Pointer<"int">,
+	hits: Pointer<"fz_quad">,
+	hit_max: number
+) => number
 
 function runSearch(searchFun: SearchFunction, searchThis: number, needle: string, max_hits = 500) {
 	checkType(needle, "string")
-	let hits = 0
-	let marks = 0
+	let hits = 0 as Pointer<"fz_quad">
+	let marks = 0 as Pointer<"int">
 	try {
-		hits = libmupdf._wasm_malloc(32 * max_hits)
-		marks = libmupdf._wasm_malloc(4 * max_hits)
-		let n = searchFun(searchThis, STRING(needle), marks, hits, max_hits)
+		hits = Malloc<"fz_quad">(32 * max_hits)
+		marks = Malloc<"int">(4 * max_hits)
+		let n = searchFun(searchThis as any, STRING(needle), marks, hits, max_hits)
 		let outer: Quad[][] = []
 		if (n > 0) {
 			let inner: Quad[] = []
 			for (let i = 0; i < n; ++i) {
 				let mark = libmupdf.HEAP32[(marks>>2) + i]
-				let quad = fromQuad(hits + i * 32)
+				let quad = fromQuad(hits + i * 32 as Pointer<"fz_quad">)
 				if (i > 0 && mark) {
 					outer.push(inner)
 					inner = []
@@ -490,21 +502,21 @@ function runSearch(searchFun: SearchFunction, searchThis: number, needle: string
 		}
 		return outer
 	} finally {
-		libmupdf._wasm_free(marks)
-		libmupdf._wasm_free(hits)
+		Free(marks)
+		Free(hits)
 	}
 }
 
 /* -------------------------------------------------------------------------- */
 
-abstract class Userdata {
+abstract class Userdata<B> {
 	private static _finalizer: FinalizationRegistry<number>
 
-	static readonly _drop: (pointer: Pointer) => void
+	static readonly _drop: (pointer: any) => void
 
-	pointer: Pointer
+	pointer: Pointer<B>
 
-	constructor(pointer: Pointer) {
+	constructor(pointer: Pointer<B>) {
 		if (typeof pointer !== "number")
 			throw new Error("invalid pointer: " + typeof pointer)
 		if (pointer !== 0) {
@@ -522,7 +534,7 @@ abstract class Userdata {
 			ctor._finalizer.unregister(this)
 			ctor._drop(this.pointer)
 		}
-		this.pointer = 0
+		this.pointer = 0 as Pointer<B>
 	}
 
 	// Custom "console.log" formatting for Node
@@ -539,7 +551,7 @@ abstract class Userdata {
 	}
 }
 
-export class Buffer extends Userdata {
+export class Buffer extends Userdata<"fz_buffer"> {
 	static override readonly _drop = libmupdf._wasm_drop_buffer
 
 	/** New empty Buffer. */
@@ -552,9 +564,9 @@ export class Buffer extends Userdata {
 	constructor(data: ArrayBuffer | Uint8Array)
 
 	/** PRIVATE */
-	constructor(pointer: Pointer)
+	constructor(pointer: Pointer<"fz_buffer">)
 
-	constructor(arg?: Pointer | string | ArrayBuffer | Uint8Array) {
+	constructor(arg?: Pointer<"fz_buffer"> | string | ArrayBuffer | Uint8Array) {
 		if (typeof arg === "undefined")
 			super(libmupdf._wasm_new_buffer(1024))
 
@@ -563,14 +575,14 @@ export class Buffer extends Userdata {
 
 		else if (typeof arg === "string") {
 			let data_len = libmupdf.lengthBytesUTF8(arg)
-			let data_ptr = libmupdf._wasm_malloc(data_len + 1)
+			let data_ptr = Malloc<"char">(data_len + 1)
 			libmupdf.stringToUTF8(arg, data_ptr, data_len + 1)
 			super(libmupdf._wasm_new_buffer_from_data(data_ptr, data_len))
 		}
 
 		else if (arg instanceof ArrayBuffer || arg instanceof Uint8Array) {
 			let data_len = arg.byteLength
-			let data_ptr = libmupdf._wasm_malloc(data_len)
+			let data_ptr = Malloc<"char">(data_len)
 			libmupdf.HEAPU8.set(new Uint8Array(arg), data_ptr)
 			super(libmupdf._wasm_new_buffer_from_data(data_ptr, data_len))
 		}
@@ -627,7 +639,7 @@ type ColorSpaceType =
 	"Indexed" |
 	"Separation"
 
-export class ColorSpace extends Userdata {
+export class ColorSpace extends Userdata<"fz_colorspace"> {
 	static override readonly _drop = libmupdf._wasm_drop_colorspace
 
 	static readonly COLORSPACE_TYPES: ColorSpaceType[] = [
@@ -645,9 +657,9 @@ export class ColorSpace extends Userdata {
 	constructor(profile: AnyBuffer, name: string)
 
 	// PRIVATE
-	constructor(pointer: Pointer)
+	constructor(pointer: Pointer<"fz_colorspace">)
 
-	constructor(from: Pointer | AnyBuffer, name?: string) {
+	constructor(from: Pointer<"fz_colorspace"> | AnyBuffer, name?: string) {
 		if (typeof from === "number")
 			super(from)
 		else
@@ -702,7 +714,7 @@ type FontCJKLanguage =
 	"ja" |
 	"ko"
 
-export class Font extends Userdata {
+export class Font extends Userdata<"fz_font"> {
 	static override readonly _drop = libmupdf._wasm_drop_font
 
 	static readonly SIMPLE_ENCODING: FontSimpleEncoding[] = [
@@ -734,10 +746,10 @@ export class Font extends Userdata {
 	constructor(name: string, data: AnyBuffer, subfont: number)
 
 	// PRIVATE
-	constructor(pointer: Pointer)
+	constructor(pointer: Pointer<"fz_font">)
 
-	constructor(name_or_pointer: Pointer | string, data?: AnyBuffer, subfont=0) {
-		let pointer = 0
+	constructor(name_or_pointer: Pointer<"fz_font"> | string, data?: AnyBuffer, subfont=0) {
+		let pointer = 0 as Pointer<"fz_font">
 		if (typeof name_or_pointer === "number") {
 			pointer = libmupdf._wasm_keep_font(name_or_pointer)
 		} else {
@@ -780,21 +792,24 @@ export class Font extends Userdata {
 	}
 }
 
-export class Image extends Userdata {
+export class Image extends Userdata<"fz_image"> {
 	static override readonly _drop = libmupdf._wasm_drop_image
 
-	constructor(pointer: Pointer)
+	constructor(pointer: Pointer<"fz_image">)
 	constructor(data: AnyBuffer)
-	constructor(pixmap: Pixmap, colorspace: ColorSpace)
+	constructor(pixmap: Pixmap, mask?: Image)
 
-	constructor(arg1: Pointer | Pixmap | AnyBuffer, arg2?: ColorSpace) {
-		let pointer = 0
-		if (typeof arg1 === "number")
-			pointer = libmupdf._wasm_keep_image(arg1)
-		else if (arg1 instanceof Pixmap)
-			pointer = libmupdf._wasm_new_image_from_pixmap(arg1.pointer, arg2 ? arg2.pointer : 0)
+	constructor(pixmap_or_buffer: Pointer<"fz_image"> | Pixmap | AnyBuffer, mask?: Image) {
+		let pointer = 0 as Pointer<"fz_image">
+		if (typeof pixmap_or_buffer === "number")
+			pointer = libmupdf._wasm_keep_image(pixmap_or_buffer)
+		else if (pixmap_or_buffer instanceof Pixmap)
+			pointer = libmupdf._wasm_new_image_from_pixmap(
+				pixmap_or_buffer.pointer,
+				mask ? mask.pointer : 0 as Pointer<"fz_image">
+			)
 		else
-			pointer = libmupdf._wasm_new_image_from_buffer(BUFFER(arg1))
+			pointer = libmupdf._wasm_new_image_from_buffer(BUFFER(pixmap_or_buffer))
 		super(pointer)
 	}
 
@@ -850,7 +865,7 @@ type LineJoin = "Miter" | "Round" | "Bevel" | "MiterXPS"
 
 // TODO: convert StrokeState from plain JS object to match mutool run ffi_pushstroke/ffi_tostroke
 
-export class StrokeState extends Userdata {
+export class StrokeState extends Userdata<"fz_stroke_state"> {
 	static override readonly _drop = libmupdf._wasm_drop_stroke_state
 
 	static readonly LINE_CAP: LineCap[] = [
@@ -867,7 +882,7 @@ export class StrokeState extends Userdata {
 		"MiterXPS"
 	]
 
-	constructor(pointer?: Pointer) {
+	constructor(pointer?: Pointer<"fz_stroke_state">) {
 		if (typeof pointer === "number")
 			super(pointer)
 		else
@@ -913,10 +928,10 @@ export class StrokeState extends Userdata {
 	// TODO: dashes
 }
 
-export class Path extends Userdata {
+export class Path extends Userdata<"fz_path"> {
 	static override readonly _drop = libmupdf._wasm_drop_path
 
-	constructor(pointer?: Pointer) {
+	constructor(pointer?: Pointer<"fz_path">) {
 		if (typeof pointer === "number")
 			super(pointer)
 		else
@@ -972,10 +987,10 @@ export class Path extends Userdata {
 	}
 }
 
-export class Text extends Userdata {
+export class Text extends Userdata<"fz_text"> {
 	static override readonly _drop = libmupdf._wasm_drop_text
 
-	constructor(pointer?: Pointer) {
+	constructor(pointer?: Pointer<"fz_text">) {
 		if (typeof pointer === "number")
 			super(pointer)
 		else
@@ -1024,14 +1039,14 @@ export class Text extends Userdata {
 	}
 }
 
-export class DisplayList extends Userdata {
+export class DisplayList extends Userdata<"fz_display_list"> {
 	static override readonly _drop = libmupdf._wasm_drop_display_list
 
-	constructor(pointer: Pointer)
+	constructor(pointer: Pointer<"fz_display_list">)
 	constructor(mediabox: Rect)
 
-	constructor(arg1: Pointer | Rect) {
-		let pointer = 0
+	constructor(arg1: Pointer<"fz_display_list"> | Rect) {
+		let pointer = 0 as Pointer<"fz_display_list">
 		if (typeof arg1 === "number") {
 			pointer = arg1
 		} else {
@@ -1074,13 +1089,13 @@ export class DisplayList extends Userdata {
 	}
 }
 
-export class Pixmap extends Userdata {
+export class Pixmap extends Userdata<"fz_pixmap"> {
 	static override readonly _drop = libmupdf._wasm_drop_pixmap
 
-	constructor(pointer: Pointer)
+	constructor(pointer: Pointer<"fz_pixmap">)
 	constructor(colorspace: ColorSpace, bbox: Rect, alpha: boolean)
 
-	constructor(arg1: Pointer | ColorSpace, bbox?: Rect, alpha = false) {
+	constructor(arg1: Pointer<"fz_pixmap"> | ColorSpace, bbox?: Rect, alpha = false) {
 		if (typeof arg1 === "number") {
 			super(arg1)
 		}
@@ -1090,7 +1105,7 @@ export class Pixmap extends Userdata {
 		}
 		if (arg1 === null) {
 			checkRect(bbox)
-			super(libmupdf._wasm_new_pixmap_with_bbox(0, RECT(bbox), alpha))
+			super(libmupdf._wasm_new_pixmap_with_bbox(0 as Pointer<"fz_colorspace">, RECT(bbox), alpha))
 		}
 	}
 
@@ -1233,7 +1248,7 @@ export class Pixmap extends Userdata {
 	}
 }
 
-export class Shade extends Userdata {
+export class Shade extends Userdata<"fz_shade"> {
 	static override readonly _drop = libmupdf._wasm_drop_shade
 	getBounds() {
 		return fromRect(libmupdf._wasm_bound_shade(this.pointer))
@@ -1249,7 +1264,7 @@ interface StructuredTextWalker {
 	endTextBlock?(): void
 }
 
-export class StructuredText extends Userdata {
+export class StructuredText extends Userdata<"fz_stext_page"> {
 	static override readonly _drop = libmupdf._wasm_drop_stext_page
 
 	static readonly SELECT_CHARS = 0
@@ -1340,7 +1355,7 @@ type BlendMode =
 	"Color" |
 	"Luminosity"
 
-export class Device extends Userdata {
+export class Device extends Userdata<"fz_device"> {
 	static override readonly _drop = libmupdf._wasm_drop_device
 
 	static readonly BLEND_MODES: BlendMode[] = [
@@ -1535,7 +1550,7 @@ export class DisplayListDevice extends Device {
 	}
 }
 
-export class DocumentWriter extends Userdata {
+export class DocumentWriter extends Userdata<"fz_document_writer"> {
 	static override readonly _drop = libmupdf._wasm_drop_document_writer
 
 	constructor(buffer: Buffer, format: string, options: string) {
@@ -1572,7 +1587,7 @@ type DocumentPermission =
 	"assemble" |
 	"print-hq"
 
-export class Document extends Userdata {
+export class Document extends Userdata<"any_document"> {
 	static override readonly _drop = libmupdf._wasm_drop_document
 
 	static readonly META_FORMAT = "format"
@@ -1611,7 +1626,7 @@ export class Document extends Userdata {
 	static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream, magic: string) {
 		checkType(magic, "string")
 
-		let pointer = 0
+		let pointer = 0 as Pointer<"any_document">
 
 		if (from instanceof ArrayBuffer || from instanceof Uint8Array)
 			from = new Buffer(from)
@@ -1622,8 +1637,9 @@ export class Document extends Userdata {
 		else
 			throw new Error("not a Buffer or Stream")
 
-		if (libmupdf._wasm_pdf_document_from_fz_document(pointer))
-			return new PDFDocument(pointer)
+		let pdf = libmupdf._wasm_pdf_document_from_fz_document(pointer)
+		if (pdf)
+			return new PDFDocument(pdf)
 
 		return new Document(pointer)
 	}
@@ -1696,7 +1712,7 @@ export class Document extends Userdata {
 
 	loadOutline() {
 		let doc = this.pointer
-		function to_outline(outline: Pointer) {
+		function to_outline(outline: Pointer<"fz_outline">) {
 			let result: OutlineItem[] = []
 			while (outline) {
 				let title = libmupdf._wasm_outline_get_title(outline)
@@ -1748,7 +1764,7 @@ interface OutlineItem {
 	page?: number,
 }
 
-export class OutlineIterator extends Userdata {
+export class OutlineIterator extends Userdata<"fz_outline_iterator"> {
 	static override readonly _drop = libmupdf._wasm_drop_outline_iterator
 
 	static readonly RESULT_DID_NOT_MOVE = -1
@@ -1820,7 +1836,7 @@ interface LinkDest {
 	zoom: number,
 }
 
-export class Link extends Userdata {
+export class Link extends Userdata<"fz_link"> {
 	static override readonly _drop = libmupdf._wasm_drop_link
 
 	getBounds() {
@@ -1846,7 +1862,7 @@ export class Link extends Userdata {
 	}
 }
 
-export class Page extends Userdata {
+export class Page extends Userdata<"any_page"> {
 	static override readonly _drop = libmupdf._wasm_drop_page
 
 	isPDF() {
@@ -1951,9 +1967,9 @@ export class PDFDocument extends Document {
 	constructor(data: Buffer | ArrayBuffer | Uint8Array)
 
 	// PRIVATE
-	constructor(pointer: Pointer)
+	constructor(pointer: Pointer<"any_document">)
 
-	constructor(arg1?: number | Buffer | ArrayBuffer | Uint8Array) {
+	constructor(arg1?: Pointer<"any_document"> | Buffer | ArrayBuffer | Uint8Array) {
 		if (typeof arg1 === "undefined")
 			super(libmupdf._wasm_pdf_create_document())
 		else if (typeof arg1 === "number")
@@ -1973,14 +1989,14 @@ export class PDFDocument extends Document {
 	// PDFObject instances are always bound to a document, so the WASM/JS value interface lives here.
 
 	// Wrap a pdf_obj in a Userdata object. The pointer must be newly created or we already own it.
-	_fromPDFObjectNew(ptr: number) {
+	_fromPDFObjectNew(ptr: Pointer<"pdf_obj">) {
 		if (ptr === 0)
 			return PDFObject.Null
 		return new PDFObject(this, ptr)
 	}
 
 	// Wrap a pdf_obj in a Userdata object. The pointer must be a borrowed pointer, so we have to take ownership.
-	_fromPDFObjectKeep(ptr: number) {
+	_fromPDFObjectKeep(ptr: Pointer<"pdf_obj">) {
 		if (ptr === 0)
 			return PDFObject.Null
 		return new PDFObject(this, libmupdf._wasm_pdf_keep_obj(ptr))
@@ -2060,12 +2076,12 @@ export class PDFDocument extends Document {
 	newByteString(v: Uint8Array) {
 		checkType(v, Uint8Array)
 		let len = v.byteLength
-		let ptr = libmupdf._wasm_malloc(len)
+		let ptr = Malloc<"char">(len)
 		libmupdf.HEAPU8.set(v, ptr)
 		try {
 			return this._fromPDFObjectNew(libmupdf._wasm_pdf_new_string(ptr, len))
 		} finally {
-			libmupdf._wasm_free(ptr)
+			Free(ptr)
 		}
 	}
 
@@ -2345,13 +2361,13 @@ export class PDFDocument extends Document {
 
 	rearrangePages(pages: number[]) {
 		let n = pages.length
-		let ptr = libmupdf._wasm_malloc(n << 2) >> 2
+		let ptr = Malloc<"int">(n << 2)
 		for (let i = 0; i < n; ++i)
-			libmupdf.HEAPU32[ptr + i] = pages[i] || 0
+			libmupdf.HEAPU32[(ptr >> 2) + i] = pages[i] || 0
 		try {
-			libmupdf._wasm_pdf_rearrange_pages(this.pointer, n, ptr << 2)
+			libmupdf._wasm_pdf_rearrange_pages(this.pointer, n, ptr)
 		} finally {
-			libmupdf._wasm_free(ptr)
+			Free(ptr)
 		}
 	}
 
@@ -2368,7 +2384,7 @@ export class PDFPage extends Page {
 	_widgets: PDFWidget[] | null
 
 	// PRIVATE
-	constructor(doc: PDFDocument, pointer: Pointer) {
+	constructor(doc: PDFDocument, pointer: Pointer<"any_page">) {
 		super(pointer)
 		this._doc = doc
 		this._annots = null
@@ -2476,15 +2492,15 @@ export class PDFPage extends Page {
 
 type PDFObjectPath = Array<number | string | PDFObject>
 
-export class PDFObject extends Userdata {
+export class PDFObject extends Userdata<"pdf_obj"> {
 	static override readonly _drop = libmupdf._wasm_pdf_drop_obj
 
-	static readonly Null = new PDFObject(null as unknown as PDFDocument, 0)
+	static readonly Null = new PDFObject(null as unknown as PDFDocument, 0 as Pointer<"pdf_obj">)
 
 	_doc: PDFDocument
 
 	// PRIVATE
-	constructor(doc: PDFDocument, pointer: Pointer) {
+	constructor(doc: PDFDocument, pointer: Pointer<"pdf_obj">) {
 		super(libmupdf._wasm_pdf_keep_obj(pointer))
 		this._doc = doc
 	}
@@ -2659,13 +2675,13 @@ export class PDFObject extends Userdata {
 	}
 }
 
-export class PDFGraftMap extends Userdata {
+export class PDFGraftMap extends Userdata<"pdf_graft_map"> {
 	static override readonly _drop = libmupdf._wasm_pdf_drop_graft_map
 
 	_doc: PDFDocument
 
 	// PRIVATE
-	constructor(doc: PDFDocument, pointer: Pointer) {
+	constructor(doc: PDFDocument, pointer: Pointer<"pdf_graft_map">) {
 		super(pointer)
 		this._doc = doc
 	}
@@ -2741,7 +2757,7 @@ type PDFAnnotationIntent =
 	"StampImage" |
 	"StampSnapshot"
 
-export class PDFAnnotation extends Userdata {
+export class PDFAnnotation extends Userdata<"pdf_annot"> {
 	static override readonly _drop = libmupdf._wasm_pdf_drop_annot
 
 	_doc: PDFDocument
@@ -2821,7 +2837,7 @@ export class PDFAnnotation extends Userdata {
 	static readonly IS_LOCKED_CONTENTS = 1 << (10 - 1)
 
 	// PRIVATE
-	constructor(doc: PDFDocument, pointer: Pointer) {
+	constructor(doc: PDFDocument, pointer: Pointer<"pdf_annot">) {
 		super(pointer)
 		this._doc = doc
 	}
@@ -3247,8 +3263,8 @@ export class PDFAnnotation extends Userdata {
 		checkType(list, DisplayList)
 		libmupdf._wasm_pdf_set_annot_appearance_from_display_list(
 			this.pointer,
-			appearance ? STRING(appearance) : 0,
-			state ? STRING2(state) : 0,
+			STRING_OPT(appearance),
+			STRING2_OPT(state),
 			MATRIX(transform),
 			list.pointer
 		)
@@ -3259,8 +3275,8 @@ export class PDFAnnotation extends Userdata {
 		checkRect(bbox)
 		libmupdf._wasm_pdf_set_annot_appearance(
 			this.pointer,
-			appearance ? STRING(appearance) : 0,
-			state ? STRING2(state) : 0,
+			STRING_OPT(appearance),
+			STRING2_OPT(state),
 			MATRIX(transform),
 			RECT(bbox),
 			this._doc._PDFOBJ(resources),
@@ -3448,8 +3464,9 @@ export class AbortError extends Error {
 	}
 }
 
-export class Stream extends Userdata {
+export class Stream extends Userdata<"fz_stream"> {
 	static override readonly _drop = libmupdf._wasm_drop_stream
+	// TODO: allow FileSystemSyncAccessHandle here?
 	constructor(url: string, contentLength: number, block_size: number, prefetch: number) {
 		super(libmupdf._wasm_open_stream_from_url(STRING(url), contentLength, block_size, prefetch))
 	}

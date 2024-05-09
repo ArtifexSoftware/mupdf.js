@@ -1,80 +1,99 @@
 # MuPDF.js
 
-This is a build of [MuPDF](https://mupdf.com) for **JavaScript** & [WebAssembly](https://webassembly.org) environments.
+This is a build of [MuPDF](https://mupdf.com) for **JavaScript** and **TypeScript**,
+using the speed and performance of **WebAssembly**.
 
-The **MuPDF.js** library (`lib/mupdf.js`) can be used both in browsers and in [Node.js](https://nodejs.org).
+The **MuPDF.js** library can be used both in browsers and in Node.js.
 
 ## Features
 
-- Fast rendering of **PDF** files
-- Search **PDF** files
-- **PDF** editing & annotations
-- Get **PDF** metadata information
-- Manage **PDF** passwords
+- Render PDF pages to images
+- Search PDF file text contents
+- Create and edit PDF annotations
+- Access and fill out PDF forms
+- Edit PDF documents
 - Supports basic CJK (Chinese, Japanese, Korean) fonts
 
-
-## Getting started using NPM
+## Installing
 
 From the command line, go to the folder you want to work from and run:
 
-```bash
+```
 npm install mupdf
 ```
 
-To verify your installation you can create a file `test.js` with the following script:
+The mupdf module is only available as an ESM module.
+Either use the `.mjs` file extension or change the project type:
 
-```js
-const mupdf = require("mupdf")
-console.log(mupdf)
+```
+npm pkg set type=module
 ```
 
-Then, on the command line, run:
+## Running
 
-```bash
-node test.js
-```
+The following example script demonstrates how to load a document and then print out the page count.
 
-If all is well, this will print the `mupdf` module object to the console.
-
-### Loading a document
-
-The following example demonstrates how to load a document and then print out the page count.
-Ensure you have a `my_document.pdf` file alongside this example before trying it.
+Create a file `count-pages.mjs`:
 
 ```js
-const fs = require("fs")
-const mupdf = require("mupdf")
-var data = fs.readFileSync("my_document.pdf")
-var doc = mupdf.Document.openDocument(data, "application/pdf")
-console.log(doc.countPages())
+import * as process from "node:process"
+import * as fs from "node:fs"
+import * as mupdf from "mupdf"
+
+if (process.argv.length < 3) {
+    console.error("usage: node count-pages.mjs file.pdf");
+    process.exit(1);
+}
+
+const filename = process.argv[2];
+const doc = mupdf.Document.openDocument(fs.readFileSync(filename), "application/pdf");
+const count = doc.countPages();
+
+console.log(`${filename} has ${count} pages.`);
+```
+
+Run the script:
+
+```
+node count-pages.mjs file.pdf
+```
+
+## Running in React
+
+Because the way react serves static files like worker.js. When you try to import a file as a module using the Worker constructor, the browser expects the server to respond with the appropriate MIME type (application/javascript). You have to copy the files from `/node_modules/mupdf/dist/` to `/public`
+
+## Using Typescript
+
+To use TypeScript you need to create a `tsconfig.json` project file to tell the
+compiler and Visual Studio Code to use the "nodenext" module resolution:
+
+```json
+{
+    "compilerOptions": {
+        "module": "nodenext"
+    }
+}
 ```
 
 ## License and Copyright
 
-**MuPDF.js** is available under [open-source AGPL](https://www.gnu.org/licenses/agpl-3.0.html) and commercial license agreements. If you determine you cannot meet the requirements of the **AGPL**, please [contact Artifex](https://artifex.com/contact/mupdf-inquiry.php) for more information regarding a commercial license.
+**MuPDF.js** is available under Open Source [AGPL](https://www.gnu.org/licenses/agpl-3.0.html) and commercial license agreements.
+If you determine you cannot meet the requirements of the AGPL, please [contact Artifex](https://artifex.com/contact/mupdf-inquiry.php) for more information regarding a commercial license.
 
 ## Documentation
 
-For documentation please refer to: [mupdfjs.readthedocs.io](https://mupdfjs.readthedocs.io).
+For documentation please refer to [mupdfjs.readthedocs.io](https://mupdfjs.readthedocs.io).
 
-## Examples
+## Code Examples
 
-Check the [Github repo](https://github.com/ArtifexSoftware/mupdf.js) for example implementations including a simple **PDF Viewer** to help you get started.
-
-
----
+Check out the [example projects](https://github.com/ArtifexSoftware/mupdf.js/tree/master/examples) to help you get started.
+The examples include a simple PDF Viewer that runs mupdf in the browser, several command line scripts, and more! 
 
 ## Getting Started with Local Development
 
-You can build the **MuPDF.js WebAssembly** libraries from source by referring to [BUILDING.md](https://github.com/ArtifexSoftware/mupdf.js/blob/master/BUILDING.md).
-
-From here you can then try adding code to the main library file `mupdf.js` or adding your own **JavaScript** files or implementations.
-
-
+You can build the MuPDF.js library from source by referring to [BUILDING.md](https://github.com/ArtifexSoftware/mupdf.js/blob/master/BUILDING.md).
 
 ## Contributing
 
-
-To contribute please open up (or help answer!) an Issue on our **Github** board and create a Pull Request (PR) for review. Find us on **Discord** at [#mupdf-js](https://discord.gg/zpyAHM7XtF) to chat with us directly.
-
+To contribute please open up (or help answer!) an Issue on our **Github** board and create a Pull Request (PR) for review.
+Find us on **Discord** at [#mupdf-js](https://discord.gg/zpyAHM7XtF) to chat with us directly.

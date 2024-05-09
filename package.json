@@ -1,44 +1,39 @@
 {
-  "name": "mupdf",
-  "version": "0.1.4",
-  "description": "MuPDF.js",
-  "author": "Artifex Software, Inc.",
-  "license": "AGPL-3.0-or-later",
-  "keywords": [
-    "mupdf",
-    "pdf",
-    "wasm",
-    "webassembly",
-    "artifex"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ArtifexSoftware/mupdf.js.git"
+  "name": "react_example",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "mupdf": "^0.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
   },
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/mupdf.d.ts",
-      "default": "./dist/mupdf.js"
-    },
-    "./tasks": {
-      "types": "./dist/tasks.d.ts",
-      "default": "./dist/tasks.js"
-    }
-  },
-  "files": [
-    "dist/mupdf-wasm.js",
-    "dist/mupdf-wasm.wasm",
-    "dist/mupdf.d.ts",
-    "dist/mupdf.js",
-    "dist/tasks.d.ts",
-    "dist/tasks.js"
-  ],
   "scripts": {
-  	"prepare": "bash build.sh"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "devDependencies": {
-    "@types/node": "latest",
-    "typescript": "latest"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

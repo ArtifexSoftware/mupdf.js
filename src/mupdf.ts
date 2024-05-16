@@ -22,7 +22,8 @@
 
 "use strict"
 
-import { libmupdf_wasm, Pointer } from "./mupdf-wasm.js"
+import { Pointer } from "./mupdf-wasm.js"
+import libmupdf_wasm from "./mupdf-wasm.js"
 
 const libmupdf = await libmupdf_wasm()
 

@@ -1,0 +1,16 @@
+{
+  "name": "tests",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "preview": "vite preview",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "mupdf": "^0.2.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vitest": "^1.6.0"
+  }
+}

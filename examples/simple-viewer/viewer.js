@@ -583,7 +583,7 @@ let search_input = document.getElementById("search-input")
 var current_search_needle = ""
 var current_search_page = 0
 
-search_input.onchange = function (event) {
+search_input.oninput = function (event) {
 	run_search(event.shiftKey ? -1 : 1, 0)
 }
 

@@ -1751,6 +1751,24 @@ export class Document extends Userdata<"any_document"> {
 		return libmupdf._wasm_resolve_link(this.pointer, STRING(link))
 	}
 
+	resolveLinkDestination(link: string | Link): LinkDest {
+		let dest: Pointer<"fz_link_dest">
+		if (link instanceof Link)
+			dest = libmupdf._wasm_resolve_link_dest(this.pointer, libmupdf._wasm_link_get_uri(link.pointer))
+		else
+			dest = libmupdf._wasm_resolve_link_dest(this.pointer, STRING(link))
+		return {
+			type: Document.LINK_DEST[libmupdf._wasm_link_dest_get_type(dest)] as LinkDestType,
+			chapter: libmupdf._wasm_link_dest_get_chapter(dest),
+			page: libmupdf._wasm_link_dest_get_page(dest),
+			x: libmupdf._wasm_link_dest_get_x(dest),
+			y: libmupdf._wasm_link_dest_get_y(dest),
+			width: libmupdf._wasm_link_dest_get_w(dest),
+			height: libmupdf._wasm_link_dest_get_h(dest),
+			zoom: libmupdf._wasm_link_dest_get_zoom(dest),
+		}
+	}
+
 	outlineIterator() {
 		return new OutlineIterator(libmupdf._wasm_new_outline_iterator(this.pointer))
 	}

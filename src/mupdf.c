@@ -2142,3 +2142,69 @@ char * wasm_pdf_to_string(pdf_obj *obj, size_t *size)
 {
 	POINTER(pdf_to_string, obj, size)
 }
+
+/* STREAMS */
+
+struct js_stm_state {
+	int id;
+	unsigned char buf[8192];
+};
+
+static void js_stm_drop(fz_context *ctx, void *state_)
+{
+	struct js_stm_state *state = state_;
+	EM_ASM({
+		globalThis.$libmupdf_stm_close($0);
+	}, state->id);
+	fz_free(ctx, state);
+}
+
+static int js_stm_next(fz_context *ctx, fz_stream *stm, size_t len)
+{
+	struct js_stm_state *state = stm->state;
+	int n = EM_ASM_INT(
+		{
+			return globalThis.$libmupdf_stm_read($0, $1, $2, $3);
+		},
+		(int) state->id,
+		(int) stm->pos,
+		(int) state->buf,
+		(int) sizeof state->buf
+	);
+
+	stm->rp = state->buf;
+	stm->wp = state->buf + n;
+	stm->pos += n;
+
+	if (n == 0)
+		return EOF;
+	return *stm->rp++;
+}
+
+static void js_stm_seek(fz_context *ctx, fz_stream *stm, int64_t offset, int whence)
+{
+	struct js_stm_state *state = stm->state;
+	stm->rp = stm->wp = state->buf;
+	stm->pos = EM_ASM_INT(
+		{
+			return globalThis.$libmupdf_stm_seek($0, $1, $2, $3);
+		},
+		(int) state->id,
+		(int) stm->pos,
+		(int) offset,
+		(int) whence
+	);
+}
+
+EXPORT
+fz_stream *wasm_new_stream(int id)
+{
+	fz_stream *stm = NULL;
+	TRY({
+		struct js_stm_state *state = fz_malloc(ctx, sizeof *state);
+		state->id = id;
+		stm = fz_new_stream(ctx, state, js_stm_next, js_stm_drop);
+		stm->seek = js_stm_seek;
+	})
+	return stm;
+}

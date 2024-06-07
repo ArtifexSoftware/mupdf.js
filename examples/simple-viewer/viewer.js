@@ -707,9 +707,7 @@ function close_document() {
 	page_list = null
 }
 
-async function open_document_from_buffer(buffer, magic, title) {
-	current_doc = await worker.openDocumentFromBuffer(buffer, magic)
-
+async function init_document(title) {
 	document.title = await worker.documentTitle(current_doc) || title
 
 	var page_count = await worker.countPages(current_doc)
@@ -740,12 +738,22 @@ async function open_document_from_buffer(buffer, magic, title) {
 	current_search_page = 0
 }
 
+async function open_document_from_buffer(buffer, magic, title) {
+	current_doc = await worker.openDocumentFromBuffer(buffer, magic)
+	await init_document(title)
+}
+
+async function open_document_from_blob(blob, magic, title) {
+	current_doc = await worker.openDocumentFromBlob(blob, magic)
+	await init_document(title)
+}
+
 async function open_document_from_file(file) {
 	close_document()
 	try {
-		show_message("Loading " + file.name)
+		show_message("Opening " + file.name)
 		history.replaceState(null, null, window.location.pathname)
-		await open_document_from_buffer(await file.arrayBuffer(), file.name, file.name)
+		await open_document_from_blob(file, file.name, file.name)
 	} catch (error) {
 		show_message(error.name + ": " + error.message)
 		console.error(error)

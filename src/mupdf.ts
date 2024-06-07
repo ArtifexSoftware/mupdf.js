@@ -3466,3 +3466,63 @@ export class PDFWidget extends PDFAnnotation {
 	// TODO: clearSignature()
 	// TODO: sign()
 }
+
+/* -------------------------------------------------------------------------- */
+
+/* We need a certain level of ugliness to allow callbacks from C to JS */
+
+declare global {
+	function $libmupdf_stm_close(ptr: number): void;
+	function $libmupdf_stm_seek(ptr: number, pos: number, offset: number, whence: number): number;
+	function $libmupdf_stm_read(ptr: number, pos: number, addr: number, size: number): number;
+}
+
+interface StreamHandle {
+	fileSize(): number,
+	read(memory: Uint8Array, offset: number, length: number, position: number): number,
+	close(): void,
+}
+
+var $libmupdf_stm_id = 0
+var $libmupdf_stm_table: Map<number,StreamHandle> = new Map()
+
+globalThis.$libmupdf_stm_close = function (id: number) {
+	let handle = $libmupdf_stm_table.get(id)
+	if (handle) {
+		handle.close()
+		$libmupdf_stm_table.delete(id)
+		return
+	}
+	throw new Error("invalid file handle")
+}
+
+globalThis.$libmupdf_stm_seek = function (id: number, pos: number, offset: number, whence: number) {
+	let handle = $libmupdf_stm_table.get(id)
+	if (handle) {
+		if (whence === 0)
+			return offset
+		if (whence === 1)
+			return pos + offset
+		if (whence === 2)
+			return handle.fileSize() + offset
+		throw new Error("invalid whence argument")
+	}
+	throw new Error("invalid file handle")
+}
+
+globalThis.$libmupdf_stm_read = function (id: number, pos: number, addr: number, size: number) {
+	let handle = $libmupdf_stm_table.get(id)
+	if (handle) {
+		return handle.read(libmupdf.HEAPU8, addr, size, pos)
+	}
+	throw new Error("invalid file handle")
+}
+
+export class Stream extends Userdata<"fz_stream"> {
+	static override readonly _drop = libmupdf._wasm_drop_stream
+	constructor(handle: StreamHandle) {
+		let id = $libmupdf_stm_id++
+		$libmupdf_stm_table.set(id, handle)
+		super(libmupdf._wasm_new_stream(id))
+	}
+}

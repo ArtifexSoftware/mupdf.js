@@ -499,4 +499,5 @@ interface Libmupdf {
 	_wasm_pdf_update_object(doc: Pointer<"any_document">, num: number, obj: Pointer<"pdf_obj">): void,
 	_wasm_pdf_update_stream(doc: Pointer<"any_document">, ref: Pointer<"pdf_obj">, buf: Pointer<"fz_buffer">, raw: number): void,
 	_wasm_pdf_to_string(obj: Pointer<"pdf_obj">, size: Pointer<"int">): Pointer<"char">,
+	_wasm_new_stream(id: number): Pointer<"fz_stream">,
 }

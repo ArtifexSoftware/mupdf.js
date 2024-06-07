@@ -39,6 +39,32 @@ onmessage = async function (event) {
 var document_next_id = 1
 var document_map = {} // open mupdf.Document handles
 
+class WorkerBlobStream {
+	constructor(blob) {
+		this.reader = new FileReaderSync()
+		this.blob = blob
+	}
+	fileSize() {
+		return this.blob.size
+	}
+	read(memory, offset, size, position) {
+		let data = this.reader.readAsArrayBuffer(this.blob.slice(position, position + size))
+		memory.set(new Uint8Array(data), offset)
+		return data.byteLength
+	}
+	close() {
+		this.reader = null
+		this.blob = null
+	}
+}
+
+methods.openDocumentFromBlob = function (blob, magic) {
+	let stm = new mupdf.Stream(new WorkerBlobStream(blob))
+	let doc_id = document_next_id++
+	document_map[doc_id] = mupdf.Document.openDocument(stm, magic)
+	return doc_id
+}
+
 methods.openDocumentFromBuffer = function (buffer, magic) {
 	let doc_id = document_next_id++
 	document_map[doc_id] = mupdf.Document.openDocument(buffer, magic)

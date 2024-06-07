@@ -3466,27 +3466,3 @@ export class PDFWidget extends PDFAnnotation {
 	// TODO: clearSignature()
 	// TODO: sign()
 }
-
-/* -------------------------------------------------------------------------- */
-
-export class TryLaterError extends Error {
-	constructor(message: string) {
-		super(message)
-		this.name = "TryLaterError"
-	}
-}
-
-export class AbortError extends Error {
-	constructor(message: string) {
-		super(message)
-		this.name = "AbortError"
-	}
-}
-
-export class Stream extends Userdata<"fz_stream"> {
-	static override readonly _drop = libmupdf._wasm_drop_stream
-	// TODO: allow FileSystemSyncAccessHandle here?
-	constructor(url: string, contentLength: number, block_size: number, prefetch: number) {
-		super(libmupdf._wasm_open_stream_from_url(STRING(url), contentLength, block_size, prefetch))
-	}
-}

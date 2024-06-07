@@ -65,9 +65,9 @@ wasm_rethrow(fz_context *ctx)
 	int code;
 	const char *message = fz_convert_error(ctx, &code);
 	if (code == FZ_ERROR_TRYLATER)
-		EM_ASM({ throw new libmupdf.TryLaterError(UTF8ToString($0)); }, message);
+		EM_ASM({ throw "TRYLATER"; }, message);
 	else if (code == FZ_ERROR_ABORT)
-		EM_ASM({ throw new libmupdf.AbortError(UTF8ToString($0)); }, message);
+		EM_ASM({ throw "ABORT"; }, message);
 	else
 		EM_ASM({ throw new Error(UTF8ToString($0)); }, message);
 }
@@ -2141,135 +2141,4 @@ EXPORT
 char * wasm_pdf_to_string(pdf_obj *obj, size_t *size)
 {
 	POINTER(pdf_to_string, obj, size)
-}
-
-/* PROGRESSIVE FETCH STREAM */
-
-typedef struct fetch_state
-{
-	int block_shift;
-	int block_size;
-	int content_length; // Content-Length in bytes
-	int map_length; // Content-Length in blocks
-	uint8_t *content; // Array buffer with bytes
-	uint8_t *map; // Map of which blocks have been requested and loaded.
-} fetch_state;
-
-EM_JS(void, js_open_fetch, (fetch_state *state, char *url, int content_length, int block_shift, int prefetch), {
-	libmupdf.fetchOpen(state, UTF8ToString(url), content_length, block_shift, prefetch);
-});
-
-static void fetch_close(fz_context *ctx, void *state_)
-{
-	fetch_state *state = state_;
-	fz_free(ctx, state->content);
-	fz_free(ctx, state->map);
-	state->content = NULL;
-	state->map = NULL;
-	// TODO: wait for all outstanding requests to complete, then free state
-	// fz_free(ctx, state);
-	EM_ASM({
-		libmupdf.fetchClose($0);
-	}, state);
-}
-
-static void fetch_seek(fz_context *ctx, fz_stream *stm, int64_t offset, int whence)
-{
-	fetch_state *state = stm->state;
-	stm->wp = stm->rp = state->content;
-	if (whence == SEEK_END)
-		stm->pos = state->content_length + offset;
-	else if (whence == SEEK_CUR)
-		stm->pos += offset;
-	else
-		stm->pos = offset;
-	if (stm->pos < 0)
-		stm->pos = 0;
-	if (stm->pos > state->content_length)
-		stm->pos = state->content_length;
-}
-
-static int fetch_next(fz_context *ctx, fz_stream *stm, size_t len)
-{
-	fetch_state *state = stm->state;
-
-	int block = stm->pos >> state->block_shift;
-	int start = block << state->block_shift;
-	int end = start + state->block_size;
-	if (end > state->content_length)
-		end = state->content_length;
-
-	if (state->map[block] == 0) {
-		state->map[block] = 1;
-		EM_ASM({
-			libmupdf.fetchRead($0, $1);
-		}, state, block);
-		fz_throw(ctx, FZ_ERROR_TRYLATER, "waiting for data");
-	}
-
-	if (state->map[block] == 1) {
-		fz_throw(ctx, FZ_ERROR_TRYLATER, "waiting for data");
-	}
-
-	stm->rp = state->content + stm->pos;
-	stm->wp = state->content + end;
-	stm->pos = end;
-
-	if (stm->rp < stm->wp)
-		return *stm->rp++;
-	return -1;
-}
-
-EXPORT
-void wasm_on_data_fetched(fetch_state *state, int block, uint8_t *data, int size)
-{
-	if (state->content) {
-		memcpy(state->content + (block << state->block_shift), data, size);
-		state->map[block] = 2;
-	}
-}
-
-EXPORT
-fz_stream *wasm_open_stream_from_url(char *url, int content_length, int block_size, int prefetch)
-{
-	fz_stream *stream = NULL;
-	fetch_state *state = NULL;
-
-	fz_var(stream);
-	fz_var(state);
-
-	fz_try (ctx)
-	{
-		int block_shift = (int)log2(block_size);
-
-		if (block_shift < 10 || block_shift > 24)
-			fz_throw(ctx, FZ_ERROR_GENERIC, "invalid block shift: %d", block_shift);
-
-		state = fz_malloc(ctx, sizeof *state);
-		state->block_shift = block_shift;
-		state->block_size = 1 << block_shift;
-		state->content_length = content_length;
-		state->content = fz_malloc(ctx, state->content_length);
-		state->map_length = content_length / state->block_size + 1;
-		state->map = fz_malloc(ctx, state->map_length);
-		memset(state->map, 0, state->map_length);
-
-		stream = fz_new_stream(ctx, state, fetch_next, fetch_close);
-		// stream->progressive = 1;
-		stream->seek = fetch_seek;
-
-		js_open_fetch(state, url, content_length, block_shift, prefetch);
-	}
-	fz_catch(ctx)
-	{
-		if (state)
-		{
-			fz_free(ctx, state->content);
-			fz_free(ctx, state->map);
-			fz_free(ctx, state);
-		}
-		fz_drop_stream(ctx, stream);
-		wasm_rethrow(ctx);
-	}
-	return stream;
 }

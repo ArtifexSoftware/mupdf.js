@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import mupdf from 'mupdf'
+import * as mupdf from "mupdf";
 
 function App() {
   return (

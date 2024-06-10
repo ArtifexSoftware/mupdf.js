@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const testDocument = "http://localhost:8080/test.pdf"
+const testDocument = "http://localhost:8080/test.pdf";
 
 const apiEndpoints = [
   {
@@ -40,10 +40,7 @@ const apiEndpoints = [
     endpoint: "/document/merge",
     method: "POST",
     defaultBody: {
-      urls: [
-        testDocument,
-        testDocument,
-      ],
+      urls: [testDocument, testDocument],
     },
   },
   {
@@ -90,31 +87,31 @@ const apiEndpoints = [
   },
   {
     name: "Get Page Bounds",
-    endpoint: "/document/page/0/bounds",
+    endpoint: "/document/page/1/bounds",
     method: "GET",
     defaultBody: {},
   },
   {
     name: "Get Page Pixmap",
-    endpoint: "/document/page/0/pixmap",
+    endpoint: "/document/page/1/pixmap",
     method: "GET",
     defaultBody: {},
   },
   {
     name: "Get Page Structured Text",
-    endpoint: "/document/page/0/structured-text",
+    endpoint: "/document/page/1/structured-text",
     method: "GET",
     defaultBody: {},
   },
   {
     name: "Get Page Images",
-    endpoint: "/document/page/0/images",
+    endpoint: "/document/page/1/images",
     method: "GET",
     defaultBody: {},
   },
   {
     name: "Add Page Text",
-    endpoint: "/document/page/0/add-text",
+    endpoint: "/document/page/1/add-text",
     method: "POST",
     defaultBody: {
       text: "Added Text",
@@ -126,7 +123,7 @@ const apiEndpoints = [
   },
   {
     name: "Add Page Image",
-    endpoint: "/document/page/0/add-image",
+    endpoint: "/document/page/1/add-image",
     method: "POST",
     defaultBody: {
       imageUrl: "/image.jpg",
@@ -138,25 +135,25 @@ const apiEndpoints = [
   },
   {
     name: "Copy Page",
-    endpoint: "/document/page/0/copy",
+    endpoint: "/document/page/1/copy",
     method: "POST",
     defaultBody: {},
   },
   {
     name: "Delete Page",
-    endpoint: "/document/page/0/delete",
+    endpoint: "/document/page/1/delete",
     method: "DELETE",
     defaultBody: {},
   },
   {
     name: "Rotate Page",
-    endpoint: "/document/page/0/rotate",
+    endpoint: "/document/page/1/rotate",
     method: "POST",
     defaultBody: { degrees: 90 },
   },
   {
     name: "Crop Page",
-    endpoint: "/document/page/0/crop",
+    endpoint: "/document/page/1/crop",
     method: "POST",
     defaultBody: { x: 0, y: 0, width: 500, height: 500 },
   },

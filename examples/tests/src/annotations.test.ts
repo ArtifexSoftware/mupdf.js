@@ -125,7 +125,7 @@ describe('mupdfjs annotations tests', () => {
         const lineAnnotation = annotations.find(ann => ann.getType() === 'Line');
         expect(lineAnnotation).toBeDefined();
         if (lineAnnotation) {
-            expect(lineAnnotation.getLine()).toEqual([[50, 350], [150, 350]]); // 修正: 期待する結果も2つのPointの配列にする
+            expect(lineAnnotation.getLine()).toEqual([[50, 350], [150, 350]]);
         }
     });
 
@@ -156,5 +156,66 @@ describe('mupdfjs annotations tests', () => {
     //         expect(circleAnnotation.getRect()).toEqual([200, 50, 300, 100]);
     //     }
     // });
+
+    it('should add and verify Polygon annotation', async () => {
+        let polygon = page.createAnnotation("Polygon");
+        polygon.setColor([1, 1, 0]);
+        polygon.setVertices([[100, 150], [200, 150], [150, 200]]);
+        polygon.update();
+
+        const annotations = page.getAnnotations();
+        const polygonAnnotation = annotations.find(ann => ann.getType() === 'Polygon');
+        expect(polygonAnnotation).toBeDefined();
+        if (polygonAnnotation) {
+            expect(polygonAnnotation.getVertices()).toEqual([[100, 150], [200, 150], [150, 200]]);
+        }
+    });
+
+    it('should add and verify PolyLine annotation', async () => {
+        let polyline = page.createAnnotation("PolyLine");
+        polyline.setColor([0, 1, 1]);
+        polyline.setVertices([[100, 250], [200, 250], [150, 300]]);
+        polyline.update();
+
+        const annotations = page.getAnnotations();
+        const polylineAnnotation = annotations.find(ann => ann.getType() === 'PolyLine');
+        expect(polylineAnnotation).toBeDefined();
+        if (polylineAnnotation) {
+            expect(polylineAnnotation.getVertices()).toEqual([[100, 250], [200, 250], [150, 300]]);
+        }
+    });
+
+    // it('should add and verify Stamp annotation', async () => {
+    //     let stamp = page.createAnnotation("Stamp");
+    //     stamp.setRect([50, 650, 150, 700]);
+    //     stamp.setContents("Approved");
+    //     stamp.update();
+
+    //     const annotations = page.getAnnotations();
+    //     const stampAnnotation = annotations.find(ann => ann.getType() === 'Stamp');
+    //     expect(stampAnnotation).toBeDefined();
+    //     if (stampAnnotation) {
+    //         expect(stampAnnotation.getRect()).toEqual([50, 650, 150, 700]);
+    //         expect(stampAnnotation.getContents()).toBe("Approved");
+    //     }
+    // });
+
+    it('should delete an annotation', async () => {
+        let note = page.createAnnotation("Text");
+        const text = "This is a temporary note.";
+        note.setContents(text);
+        note.setRect([100, 100, 0, 0]);
+        note.update();
+
+        let annotations = page.getAnnotations();
+        const textAnnotation = annotations.find(ann => ann.getType() === 'Text' && ann.getContents() === text);
+        expect(textAnnotation).toBeDefined();
+
+        if (textAnnotation) {
+            page.deleteAnnotation(textAnnotation);
+            annotations = page.getAnnotations();
+            expect(annotations.find(ann => ann.getType() === 'Text' && ann.getContents() === text)).toBeUndefined();
+        }
+    });
     
 });

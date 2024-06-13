@@ -974,9 +974,9 @@ void wasm_link_set_uri(fz_link *link, char *uri)
 // --- Page ---
 
 EXPORT
-fz_rect * wasm_bound_page(fz_page *page)
+fz_rect * wasm_bound_page(fz_page *page, int box_type)
 {
-	RECT(fz_bound_page, page)
+	RECT(fz_bound_page_box, page, box_type)
 }
 
 EXPORT

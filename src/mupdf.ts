@@ -1880,15 +1880,26 @@ export class Link extends Userdata<"fz_link"> {
 	}
 }
 
+type PageBox = "MediaBox" | "CropBox" | "BleedBox" | "TrimBox" | "ArtBox"
+
 export class Page extends Userdata<"any_page"> {
 	static override readonly _drop = libmupdf._wasm_drop_page
+
+	static readonly BOXES: PageBox[] = [
+		"MediaBox",
+		"CropBox",
+		"BleedBox",
+		"TrimBox",
+		"ArtBox"
+	]
 
 	isPDF() {
 		return this instanceof PDFPage
 	}
 
-	getBounds() {
-		return fromRect(libmupdf._wasm_bound_page(this.pointer))
+	getBounds(box: PageBox = "CropBox") {
+		let box_ix = ENUM<PageBox>(box, Page.BOXES)
+		return fromRect(libmupdf._wasm_bound_page(this.pointer, box_ix))
 	}
 
 	getLabel() {
@@ -2394,8 +2405,6 @@ export class PDFDocument extends Document {
 	}
 }
 
-type PDFPageBox = "MediaBox" | "CropBox" | "BleedBox" | "TrimBox" | "ArtBox"
-
 export class PDFPage extends Page {
 	_doc: PDFDocument
 	_annots: PDFAnnotation[] | null
@@ -2413,28 +2422,20 @@ export class PDFPage extends Page {
 		return this._doc._fromPDFObjectKeep(libmupdf._wasm_pdf_page_get_obj(this.pointer))
 	}
 
-	static readonly BOXES: PDFPageBox[] = [
-		"MediaBox",
-		"CropBox",
-		"BleedBox",
-		"TrimBox",
-		"ArtBox"
-	]
-
 	getTransform() {
 		return fromMatrix(libmupdf._wasm_pdf_page_transform(this.pointer))
 	}
 
-	setPageBox(box: PDFPageBox, rect: Rect) {
-		let box_ix = ENUM<PDFPageBox>(box, PDFPage.BOXES)
+	setPageBox(box: PageBox, rect: Rect) {
+		let box_ix = ENUM<PageBox>(box, Page.BOXES)
 		checkRect(rect)
 		libmupdf._wasm_pdf_set_page_box(this.pointer, box_ix, RECT(rect))
 	}
 
-	override toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha = false, showExtras = true, usage = "View", box: PDFPageBox = "CropBox") {
+	override toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha = false, showExtras = true, usage = "View", box: PageBox = "CropBox") {
 		checkMatrix(matrix)
 		checkType(colorspace, ColorSpace)
-		let box_ix = ENUM<PDFPageBox>(box, PDFPage.BOXES)
+		let box_ix = ENUM<PageBox>(box, Page.BOXES)
 		let result
 		if (showExtras)
 			result = libmupdf._wasm_pdf_new_pixmap_from_page_with_usage(this.pointer,

@@ -261,7 +261,7 @@ interface Libmupdf {
 	_wasm_is_document_reflowable(doc: Pointer<"any_document">): boolean,
 	_wasm_link_set_rect(link: Pointer<"fz_link">, rect: Pointer<"fz_rect">): void,
 	_wasm_link_set_uri(link: Pointer<"fz_link">, uri: Pointer<"char">): void,
-	_wasm_bound_page(page: Pointer<"any_page">): Pointer<"fz_rect">,
+	_wasm_bound_page(page: Pointer<"any_page">, box_type: number): Pointer<"fz_rect">,
 	_wasm_load_links(page: Pointer<"any_page">): Pointer<"fz_link">,
 	_wasm_create_link(page: Pointer<"any_page">, bbox: Pointer<"fz_rect">, uri: Pointer<"char">): Pointer<"fz_link">,
 	_wasm_delete_link(page: Pointer<"any_page">, link: Pointer<"fz_link">): void,

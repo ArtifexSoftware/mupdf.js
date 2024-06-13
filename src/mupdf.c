@@ -40,6 +40,7 @@ static fz_matrix out_matrix;
 static fz_point out_point;
 static fz_rect out_rect;
 static fz_quad out_quad;
+static fz_link_dest out_link_dest;
 
 typedef int boolean;
 
@@ -158,6 +159,7 @@ PDF_REFS(graft_map)
 #define GETU(S,T,F,U) EXPORT T wasm_ ## S ## _get_ ## F(fz_ ## S *p) { return p->U; }
 #define GETUP(S,T,F,U) EXPORT T* wasm_ ## S ## _get_ ## F(fz_ ## S *p) { return &p->U; }
 #define GET(S,T,F) EXPORT T wasm_ ## S ## _get_ ## F(fz_ ## S *p) { return p->F; }
+#define GET_ALIAS(S,T,F,FF) EXPORT T wasm_ ## S ## _get_ ## F(fz_ ## S *p) { return p->FF; }
 #define SET(S,T,F) EXPORT void wasm_ ## S ## _set_ ## F(fz_ ## S *p, T v) { p->F = v; }
 #define GETSET(S,T,F) GET(S,T,F) SET(S,T,F)
 
@@ -243,6 +245,15 @@ GETP(stext_char, fz_point, origin)
 GETP(stext_char, fz_quad, quad)
 GET(stext_char, float, size)
 GET(stext_char, fz_font*, font)
+
+GET_ALIAS(link_dest, int, chapter, loc.chapter)
+GET_ALIAS(link_dest, int, page, loc.page)
+GET(link_dest, int, type)
+GET(link_dest, float, x)
+GET(link_dest, float, y)
+GET(link_dest, float, w)
+GET(link_dest, float, h)
+GET(link_dest, float, zoom)
 
 PDF_GET(embedded_file_params, const char*, filename)
 PDF_GET(embedded_file_params, const char*, mimetype)
@@ -914,6 +925,15 @@ int wasm_resolve_link(fz_document *doc, const char *uri)
 }
 
 EXPORT
+fz_link_dest * wasm_resolve_link_dest(fz_document *doc, const char *uri)
+{
+	TRY({
+		out_link_dest = fz_resolve_link_dest(ctx, doc, uri);
+	})
+	return &out_link_dest;
+}
+
+EXPORT
 fz_outline * wasm_load_outline(fz_document *doc)
 {
 	POINTER(fz_load_outline, doc)
@@ -954,9 +974,9 @@ void wasm_link_set_uri(fz_link *link, char *uri)
 // --- Page ---
 
 EXPORT
-fz_rect * wasm_bound_page(fz_page *page)
+fz_rect * wasm_bound_page(fz_page *page, int box_type)
 {
-	RECT(fz_bound_page, page)
+	RECT(fz_bound_page_box, page, box_type)
 }
 
 EXPORT

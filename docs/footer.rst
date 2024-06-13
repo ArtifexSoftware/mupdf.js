@@ -139,6 +139,7 @@
 .. _Node.js: https://nodejs.org/
 
 .. Core API links:
+.. _Core API: https://mupdf.readthedocs.io/en/latest/mupdf-js.html
 .. _Document:
 .. _Document Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#document
 .. _saveToBuffer: https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-document.html#saveToBuffer

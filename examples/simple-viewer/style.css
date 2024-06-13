@@ -189,18 +189,27 @@ div.page canvas {
 	user-select: none;
 }
 
-div.text span {
-	white-space: pre;
-	line-height: 1;
-	color: transparent;
+svg.text {
+	width: 100%;
+	height: 100%;
 }
 
-div.text ::selection {
+svg.text text {
+	white-space: pre;
+	line-height: 1;
+	fill: transparent;
+}
+
+svg.text ::selection {
 	background: hsla(220, 100%, 50%, 0.2);
 }
 
 div.link a:hover {
 	border: 1px dotted blue;
+}
+
+#pages.do-content-select div.link {
+	pointer-events: none;
 }
 
 div.search > div {

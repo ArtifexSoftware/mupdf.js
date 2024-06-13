@@ -206,8 +206,8 @@ class PageView {
 		this.rootNode.appendChild(this.canvasNode)
 
 		this.textData = null
-		this.textNode = document.createElement("div")
-		this.textNode.className = "text"
+		this.textNode = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+		this.textNode.classList.add("text")
 		this.rootNode.appendChild(this.textNode)
 
 		this.linkData = null
@@ -341,44 +341,29 @@ class PageView {
 	}
 
 	_showText() {
-		this.textNode.zoom = this.zoom
-		this.textNode.replaceChildren()
-
-		let nodes = []
-		let pdf_w = []
-		let html_w = []
-		let text_len = []
+		let frag = document.createDocumentFragment()
 		let scale = this.zoom / 72
 
 		for (let block of this.textData.blocks) {
 			if (block.type === "text") {
 				for (let line of block.lines) {
-					let text = document.createElement("span")
-					text.style.left = line.bbox.x * scale + "px"
-					text.style.top = (line.y - line.font.size * 0.8) * scale + "px"
-					text.style.height = line.bbox.h * scale + "px"
+					let text = document.createElementNS("http://www.w3.org/2000/svg", "text")
+					text.setAttribute("x", line.bbox.x * scale + "px")
+					text.setAttribute("y", line.y * scale + "px")
 					text.style.fontSize = line.font.size * scale + "px"
 					text.style.fontFamily = line.font.family
 					text.style.fontWeight = line.font.weight
 					text.style.fontStyle = line.font.style
+					text.setAttribute("textLength", line.bbox.w * scale + "px")
+					text.setAttribute("lengthAdjust", "spacingAndGlyphs")
 					text.textContent = line.text
-					this.textNode.appendChild(text)
-					nodes.push(text)
-					pdf_w.push(line.bbox.w * scale)
-					text_len.push(line.text.length - 1)
+					frag.appendChild(text)
 				}
 			}
 		}
 
-		for (let i = 0; i < nodes.length; ++i) {
-			if (text_len[i] > 0)
-				html_w[i] = nodes[i].clientWidth
-		}
-
-		for (let i = 0; i < nodes.length; ++i) {
-			if (text_len[i] > 0)
-				nodes[i].style.letterSpacing = (pdf_w[i] - html_w[i]) / text_len[i] + "px"
-		}
+		this.textNode.zoom = this.zoom
+		this.textNode.replaceChildren(frag)
 	}
 
 	_showLinks() {
@@ -543,7 +528,12 @@ window.addEventListener("keydown", function (event) {
 		case 96:
 			zoom_to(100)
 			break
-
+		// 'A'
+		case 65:
+			// Ctrl-A full selection
+			document.getSelection().selectAllChildren(document.getElementById("pages"))
+			event.preventDefault()
+			break
 		// 'F'
 		case 70:
 			show_search_panel()
@@ -574,6 +564,17 @@ function toggle_fullscreen() {
 		document.documentElement.requestFullscreen()
 }
 
+// Mark TEXT-SELECTION State
+function remove_selection_state(e) {
+	document.getElementById("pages").classList.remove("do-content-select")
+	document.removeEventListener("mouseup", remove_selection_state)
+}
+
+document.addEventListener("selectstart", function (event) {
+	document.getElementById("pages").classList.add("do-content-select")
+	document.addEventListener("mouseup", remove_selection_state)
+})
+
 // SEARCH
 
 let search_panel = document.getElementById("search-panel")
@@ -583,7 +584,7 @@ let search_input = document.getElementById("search-input")
 var current_search_needle = ""
 var current_search_page = 0
 
-search_input.onchange = function (event) {
+search_input.oninput = function (event) {
 	run_search(event.shiftKey ? -1 : 1, 0)
 }
 

@@ -72,13 +72,13 @@ For example, this would add a link with a bounding box of `100x100` at the top l
 Resolving Internal Links
 ----------------------------
 
-Sometimes when we retrieve a link object it may be an internal link. To `resolve a link <https://mupdf.readthedocs.io/en/latest/mutool-object-document.html#resolveLink>`_ to a `Link Destination Object`_ do the following:
+Sometimes when we retrieve a link object it may be an internal link. To `resolve a link <https://mupdf.readthedocs.io/en/latest/mutool-object-document.html#resolveLinkDestination>`_ to a `Link Destination Object`_ do the following:
 
 |example_tag|
 
 .. code-block:: javascript
     
-    let linkDestinationObject = document.resolveLink(my_link)
+    let linkDestinationObject = document.resolveLinkDestination(my_link)
 
 
 

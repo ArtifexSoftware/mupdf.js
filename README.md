@@ -1,5 +1,7 @@
 # MuPDF.js
 
+Welcome to official MuPDF.js library from [Artifex](https://artifex.com) - the maintainers of MuPDF.
+
 This is a build of [MuPDF](https://mupdf.com) for **JavaScript** and **TypeScript**,
 using the speed and performance of **WebAssembly**.
 

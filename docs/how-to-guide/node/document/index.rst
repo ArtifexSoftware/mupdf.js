@@ -8,7 +8,7 @@
 Working with Documents
 =========================
 
-A **Document** instance has access to the :ref:`Core JavaScript API <Node_How_To_Guide_Document_Core_API>`.
+A **Document** instance has access to the :ref:`Core JavaScript API <https://mupdf.readthedocs.io/en/latest/mupdf-js.html>`.
 
 
 .. _Node_How_To_Guide_Document_Core_API:
@@ -310,7 +310,6 @@ Embedding files uses the :ref:`addEmbeddedFile <Node_How_To_Guide_Annotations_Em
 
 
 .. include:: ../../../footer.rst
-
 
 
 

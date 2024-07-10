@@ -849,6 +849,18 @@ int wasm_search_stext_page(fz_stext_page *text, char *needle, int *marks, fz_qua
 	INTEGER(fz_search_stext_page, text, needle, marks, hits, hit_max)
 }
 
+EXPORT
+char * wasm_copy_selection(fz_stext_page *text, fz_point *a, fz_point *b)
+{
+	POINTER(fz_copy_selection, text, *a, *b, 0);
+}
+
+EXPORT
+int wasm_highlight_selection(fz_stext_page *text, fz_point *a, fz_point *b, fz_quad *hits, int n)
+{
+	INTEGER(fz_highlight_selection, text, *a, *b, hits, n);
+}
+
 // --- Document ---
 
 EXPORT

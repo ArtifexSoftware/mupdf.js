@@ -1330,8 +1330,23 @@ export class StructuredText extends Userdata<"fz_stext_page"> {
 		return fromStringFree(libmupdf._wasm_print_stext_page_as_json(this.pointer, scale))
 	}
 
-	// TODO: highlight(a, b) -> quad[]
-	// TODO: copy(a, b) -> string
+	copy(p: Point, q: Point): string {
+		return fromStringFree(libmupdf._wasm_copy_selection(this.pointer, POINT(p), POINT2(q)))
+	}
+
+	highlight(p: Point, q: Point, max_hits = 100): Quad[] {
+		let hits = 0 as Pointer<"fz_quad">
+		let result: Quad[] = []
+		try {
+			hits = Malloc<"fz_quad">(32 * max_hits)
+			let n = libmupdf._wasm_highlight_selection(this.pointer, POINT(p), POINT2(q), hits, max_hits)
+			for (let i = 0; i < n; ++i)
+				result.push(fromQuad(hits + i * 32 as Pointer<"fz_quad">))
+		} finally {
+			Free(hits)
+		}
+		return result
+	}
 
 	search(needle: string, max_hits = 500) {
 		return runSearch(libmupdf._wasm_search_stext_page, this.pointer, needle, max_hits)

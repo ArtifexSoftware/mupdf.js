@@ -23,3 +23,4 @@ npm run build
 npm run start
 ```
 
+Note: if you make changes to `server.ts` then you will need to both `build` and `start` in order to see the changes!

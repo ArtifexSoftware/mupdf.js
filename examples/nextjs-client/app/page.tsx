@@ -126,7 +126,7 @@ const apiEndpoints = [
     endpoint: "/document/page/1/add-image",
     method: "POST",
     defaultBody: {
-      imageUrl: "/image.jpg",
+      imageUrl: "http://localhost:8080/logo.png",
       x: 100,
       y: 100,
       width: 200,

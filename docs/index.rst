@@ -1,11 +1,20 @@
-.. meta::
-   :description: MuPDF.js Developer documentation.
-   :keywords: mupdf, wasm, pdf, document, api, split, merge, extract, view
+.. include:: header.rst
 
-:html_theme.sidebar_secondary.remove:
+.. This is the TOC in the sidebar!
 
+.. raw:: html
 
-        
+   <style>
+
+      .toc-drawer {
+         display: none;
+      }
+
+      .main .content {
+         width:  100% !important;
+      }
+
+   </style>
 
 Welcome to MuPDF.js
 ==================================================
@@ -16,10 +25,6 @@ Welcome to MuPDF.js
 Developer documentation to help you get started 
 --------------------------------------------------------------------------------------------------
 
-
-
-.. adds a class to a section
-.. rst-class:: hide-me
 
 .. toctree::
     :caption: Welcome

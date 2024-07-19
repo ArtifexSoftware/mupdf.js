@@ -22,8 +22,6 @@ Additionally the following requirements should be defined in your **JavaScript**
 ----
 
 
-Table of Contents
--------------------
 
 .. toctree::
     :caption: Node.js

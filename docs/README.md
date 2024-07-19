@@ -38,6 +38,14 @@ This then creates the HTML documentation within `build/html`.
 
 ---
 
+### Using Sphinx Autobuild
+
+A better way of building the documentation if you are actively working on updates is to run this from the `docs` folder:
+
+`sphinx-autobuild . _build/html`
+
+This will serve the docs on a localhost and auto-update the pages live as you make edits.
+
 
 For full details see: [Using Sphinx](https://www.sphinx-doc.org/en/master/usage/index.html) 
 

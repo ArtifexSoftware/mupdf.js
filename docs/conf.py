@@ -83,7 +83,7 @@ keep_warnings = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "pydata_sphinx_theme"
+html_theme = "furo"
 
 # favicon & logo
 html_favicon = "_static/favicon.ico"
@@ -143,7 +143,7 @@ html_static_path = ["_static"]
 # the filename string and the attributes dictionary. The filename must be
 # relative to the html_static_path, or a full URI
 html_css_files = ["custom.css"]
-html_js_files = ["app.js"] # JS files which go in the <head>
+# html_js_files = ["app.js"] # JS files which go in the <head>
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied

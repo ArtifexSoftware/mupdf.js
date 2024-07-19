@@ -6,8 +6,6 @@ How To Guide
 ===================
 
 
-Table of Contents
--------------------
 
 |node_js_logo|
 

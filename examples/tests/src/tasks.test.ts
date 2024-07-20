@@ -38,7 +38,7 @@ describe("drawPageAsPng", () => {
     })
 })
 
-describe("drawPageAsHTML", () => {
+describe("drawPageAsHtml", () => {
     it("successfully renders a page as HTML", () => {
         const document = loadPDF(file)
         const pageNumber = 0

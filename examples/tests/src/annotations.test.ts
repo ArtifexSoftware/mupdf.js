@@ -4,7 +4,7 @@ import path from 'path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "resources", "test.pdf");
+const filename = path.join(scriptdir, "..", "test.pdf");
 const outputFilename = path.join(scriptdir, "resources", "output-annotations.pdf");
 
 describe('mupdfjs annotations tests', () => {

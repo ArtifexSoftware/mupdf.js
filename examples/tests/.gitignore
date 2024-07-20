@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-# Test output file
-/src/resources/output-annotations.pdf
+# Test output files
+/src/resources/output*

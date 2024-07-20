@@ -19,3 +19,8 @@ export function drawPageAsHtml(document: mupdf.PDFDocument, pageNumber: number, 
     const page = document.loadPage(pageNumber)
     return page.toStructuredText().asHTML(id)
 }
+
+export function drawPageAsSvg(document: mupdf.PDFDocument, pageNumber: number) {
+    const page = document.loadPage(pageNumber)
+    return page.asSvg()
+}

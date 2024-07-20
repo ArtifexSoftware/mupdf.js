@@ -277,6 +277,7 @@ interface Libmupdf {
 	_wasm_new_display_list_from_page_contents(page: Pointer<"any_page">): Pointer<"fz_display_list">,
 	_wasm_page_label(page: Pointer<"any_page">): Pointer<"char">,
 	_wasm_search_page(page: Pointer<"any_page">, needle: Pointer<"char">, marks: Pointer<"int">, hits: Pointer<"fz_quad">, hit_max: number): number,
+	_wasm_page_as_svg(page: Pointer<"any_page">): Pointer<"char">,
 	_wasm_new_outline_iterator(doc: Pointer<"any_document">): Pointer<"fz_outline_iterator">,
 	_wasm_outline_iterator_next(iter: Pointer<"fz_outline_iterator">): number,
 	_wasm_outline_iterator_prev(iter: Pointer<"fz_outline_iterator">): number,

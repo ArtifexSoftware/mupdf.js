@@ -2,14 +2,13 @@ import {describe, expect, it} from 'vitest'
 import path from "path"
 import * as fs from "node:fs"
 import * as mupdf from "../../../dist/mupdf"
-import {drawPageAsPng, loadPDF} from "../../../dist/tasks"
-import {drawPageAsHtml} from "../../../src/tasks.ts"
+import {drawPageAsPng, loadPDF, drawPageAsHtml, drawPageAsSvg} from "../../../dist/tasks"
 
 const scriptdir = path.resolve(__dirname)
 const filename = path.join(scriptdir, "..", "test.pdf")
 const outputDir = path.join(scriptdir, "resources")
 
-const file = fs.readFileSync(filename);
+const file = fs.readFileSync(filename)
 
 describe("loadPDF", () => {
     it("successfully loads a PDF document", () => {
@@ -47,6 +46,20 @@ describe("drawPageAsHtml", () => {
         expect(result).toHaveLength(654)
         fs.writeFileSync(
           path.join(outputDir, "output-tasks.html"),
+          Buffer.from(result)
+        )
+    })
+})
+
+describe("drawPageAsSvg", () => {
+    it("successfully renders a page as SVG", () => {
+        const document = loadPDF(file)
+        const pageNumber = 0
+        const result = drawPageAsSvg(document, pageNumber)
+
+        expect(result).toHaveLength(91454)
+        fs.writeFileSync(
+          path.join(outputDir, "output-tasks.svg"),
           Buffer.from(result)
         )
     })

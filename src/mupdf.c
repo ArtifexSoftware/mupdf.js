@@ -1086,6 +1086,39 @@ int wasm_search_page(fz_page *page, char *needle, int *marks, fz_quad *hits, int
 	INTEGER(fz_search_page, page, needle, marks, hits, hit_max)
 }
 
+EXPORT
+char *wasm_page_as_svg(fz_page *page)
+{
+	static unsigned char *data = NULL;
+	fz_buffer *buf;
+	fz_output *out;
+	fz_device *dev;
+	fz_rect bbox;
+
+	fz_free(ctx, data);
+	data = NULL;
+
+	buf = fz_new_buffer(ctx, 0);
+	{
+		out = fz_new_output_with_buffer(ctx, buf);
+		{
+			bbox = fz_bound_page(ctx, page);
+			dev = fz_new_svg_device(ctx, out, bbox.x1-bbox.x0, bbox.y1-bbox.y0, FZ_SVG_TEXT_AS_PATH, 0);
+			fz_run_page(ctx, page, dev, fz_identity, NULL);
+			fz_close_device(ctx, dev);
+			fz_drop_device(ctx, dev);
+		}
+		fz_write_byte(ctx, out, 0);
+		fz_close_output(ctx, out);
+		fz_drop_output(ctx, out);
+	}
+	fz_buffer_extract(ctx, buf, &data);
+	fz_drop_buffer(ctx, buf);
+
+	return (char*)data;
+}
+
+
 // --- DocumentIterator ---
 
 EXPORT

@@ -2003,6 +2003,10 @@ export class Page extends Userdata<"any_page"> {
 	search(needle: string, max_hits = 500) {
 		return runSearch(libmupdf._wasm_search_page, this.pointer, needle, max_hits)
 	}
+
+  asSvg() {
+    return fromStringFree(libmupdf._wasm_page_as_svg(this.pointer))
+  }
 }
 
 /* -------------------------------------------------------------------------- */

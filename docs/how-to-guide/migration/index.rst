@@ -58,7 +58,7 @@ With this:
     async function handleSomePdf(file) {
       const buf = await file.arrayBuffer();
       const arrayBuf = new Uint8Array(buf);
-      const doc = loadPDF(arrayBuf); // Returns a Document instance
+      const doc = loadPdf(arrayBuf); // Returns a Document instance
     }
 ----
 
@@ -114,7 +114,7 @@ Here's how you would do it with this package:
 -------------------
 
 Finally, we provide two functions to replace the `mupdf-js` `getPageText` and
-`searchPagText` functions:
+`searchPageText` functions:
 
 .. code-block:: javascript
 
@@ -145,8 +145,6 @@ Finally, we provide two functions to replace the `mupdf-js` `getPageText` and
 You can also
 `see the tests <https://github.com/ArtifexSoftware/mupdf.js/blob/master/examples/tests/src/tasks.test.ts>`_
 for these functions for more examples of how to use them.
-
-
 
 
 .. include:: ../../footer.rst

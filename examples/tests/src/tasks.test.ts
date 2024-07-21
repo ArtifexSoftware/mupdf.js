@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest'
 import path from "path"
 import * as fs from "node:fs"
 import * as mupdf from "../../../dist/mupdf"
-import {drawPageAsPng, loadPDF, drawPageAsHtml, drawPageAsSvg, getPageText, searchPageText} from "../../../dist/tasks"
+import {drawPageAsHtml, drawPageAsPng, drawPageAsSvg, getPageText, loadPDF, searchPageText} from "../../../dist/tasks"
 
 const scriptdir = path.resolve(__dirname)
 const filename = path.join(scriptdir, "..", "test.pdf")
@@ -25,10 +25,7 @@ describe("loadPDF", () => {
 
 describe("drawPageAsPng", () => {
     it("successfully renders a page as PNG", () => {
-        const document = loadPDF(file)
-        const pageNumber = 0
-
-        const result = drawPageAsPng(document, pageNumber, 150)
+        const result = drawPageAsPng(loadPDF(file), 0, 150)
         expect(result).toHaveLength(173738)
         fs.writeFileSync(
           path.join(outputDir, "output-tasks.png"),
@@ -39,10 +36,7 @@ describe("drawPageAsPng", () => {
 
 describe("drawPageAsHtml", () => {
     it("successfully renders a page as HTML", () => {
-        const document = loadPDF(file)
-        const pageNumber = 0
-        const result = drawPageAsHtml(document, pageNumber, 0)
-
+        const result = drawPageAsHtml(loadPDF(file), 0, 0)
         expect(result).toHaveLength(654)
         fs.writeFileSync(
           path.join(outputDir, "output-tasks.html"),
@@ -53,10 +47,7 @@ describe("drawPageAsHtml", () => {
 
 describe("drawPageAsSvg", () => {
     it("successfully renders a page as SVG", () => {
-        const document = loadPDF(file)
-        const pageNumber = 0
-        const result = drawPageAsSvg(document, pageNumber)
-
+        const result = drawPageAsSvg(loadPDF(file), 0)
         expect(result).toHaveLength(91454)
         fs.writeFileSync(
           path.join(outputDir, "output-tasks.svg"),
@@ -67,10 +58,7 @@ describe("drawPageAsSvg", () => {
 
 describe("getPageText", () => {
     it("successfully extracts the text from page", () => {
-        const document = loadPDF(file)
-        const pageNumber = 0
-        const result = getPageText(document, pageNumber)
-
+        const result = getPageText(loadPDF(file), 0)
         expect(result).toMatchInlineSnapshot(`
           "Welcome to the Node server test.pdf file.
 
@@ -87,9 +75,7 @@ describe("getPageText", () => {
 
 describe("searchPageText", () => {
     it("returns an array of search results as coordinate bounding boxes", () => {
-        const document = loadPDF(file)
-        const pageNumber = 0
-        const result = searchPageText(document, pageNumber, "Welcome", 1)
+        const result = searchPageText(loadPDF(file), 0, "Welcome", 1)
         expect(result).toMatchInlineSnapshot(`
           [
             [
@@ -109,9 +95,7 @@ describe("searchPageText", () => {
     })
 
     it("returns an empty array if no matches found", () => {
-        const document = loadPDF(file)
-        const pageNumber = 0
-        const result = searchPageText(document, pageNumber, "mupdf", 1)
+        const result = searchPageText(loadPDF(file), 0, "mupdf", 1)
         expect(result).toMatchInlineSnapshot(`[]`)
     })
 })

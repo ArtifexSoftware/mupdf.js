@@ -29,3 +29,8 @@ export function getPageText(document: mupdf.PDFDocument, pageNumber: number) {
     const page = document.loadPage(pageNumber)
     return page.toStructuredText().asText()
 }
+
+export function searchPageText(document: mupdf.PDFDocument, pageNumber: number, searchString: string, maxHits = 500) {
+    const page = document.loadPage(pageNumber)
+    return page.toStructuredText().search(searchString, maxHits)
+}

@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest'
 import path from "path"
 import * as fs from "node:fs"
 import * as mupdf from "../../../dist/mupdf"
-import {drawPageAsPng, loadPDF, drawPageAsHtml, drawPageAsSvg, getPageText} from "../../../dist/tasks"
+import {drawPageAsPng, loadPDF, drawPageAsHtml, drawPageAsSvg, getPageText, searchPageText} from "../../../dist/tasks"
 
 const scriptdir = path.resolve(__dirname)
 const filename = path.join(scriptdir, "..", "test.pdf")
@@ -82,5 +82,36 @@ describe("getPageText", () => {
 
           "
         `)
+    })
+})
+
+describe("searchPageText", () => {
+    it("returns an array of search results as coordinate bounding boxes", () => {
+        const document = loadPDF(file)
+        const pageNumber = 0
+        const result = searchPageText(document, pageNumber, "Welcome", 1)
+        expect(result).toMatchInlineSnapshot(`
+          [
+            [
+              [
+                30.7637996673584,
+                32.626708984375,
+                80.7696304321289,
+                32.626708984375,
+                30.7637996673584,
+                46.032958984375,
+                80.7696304321289,
+                46.032958984375,
+              ],
+            ],
+          ]
+        `)
+    })
+
+    it("returns an empty array if no matches found", () => {
+        const document = loadPDF(file)
+        const pageNumber = 0
+        const result = searchPageText(document, pageNumber, "mupdf", 1)
+        expect(result).toMatchInlineSnapshot(`[]`)
     })
 })

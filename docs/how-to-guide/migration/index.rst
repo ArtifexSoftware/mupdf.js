@@ -34,7 +34,7 @@ So you can remove code like this:
 Just like with `mupdf-js`, you can load a document either as a Buffer
 (in Node.js), an ArrayBuffer (in the browser), or a Uint8Array (in both environments).
 
-We provide a `loadPDF` function that is similar to the `load` method in `mupdf-js`.
+We provide a `loadPdf` function that is similar to the `load` method in `mupdf-js`.
 So you can replace this:
 
 .. code-block:: javascript

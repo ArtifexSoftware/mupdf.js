@@ -5,7 +5,6 @@
 How To Guide
 ===================
 
-
 Table of Contents
 -------------------
 
@@ -16,6 +15,13 @@ Table of Contents
     :maxdepth: 2
 
     node/index.rst
+
+
+.. toctree::
+    :caption: Migrating from mupdf-js
+    :maxdepth: 1
+
+    migration/index.rst
 
 
 .. toctree::

@@ -24,3 +24,8 @@ export function drawPageAsSvg(document: mupdf.PDFDocument, pageNumber: number) {
     const page = document.loadPage(pageNumber)
     return page.asSvg()
 }
+
+export function getPageText(document: mupdf.PDFDocument, pageNumber: number) {
+    const page = document.loadPage(pageNumber)
+    return page.toStructuredText().asText()
+}

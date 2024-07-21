@@ -246,6 +246,7 @@ interface Libmupdf {
 	_wasm_copy_selection(text: Pointer<"fz_stext_page">, a: Pointer<"fz_point">, b: Pointer<"fz_point">): Pointer<"char">,
 	_wasm_highlight_selection(text: Pointer<"fz_stext_page">, a: Pointer<"fz_point">, b: Pointer<"fz_point">, hits: Pointer<"fz_quad">, n: number): number,
 	_wasm_print_stext_page_as_html(page: Pointer<"fz_stext_page">, id: number): Pointer<"char">,
+	_wasm_print_stext_page_as_text(page: Pointer<"fz_stext_page">): Pointer<"char">,
 	_wasm_open_document_with_buffer(magic: Pointer<"char">, buffer: Pointer<"fz_buffer">): Pointer<"any_document">,
 	_wasm_open_document_with_stream(magic: Pointer<"char">, stream: Pointer<"fz_stream">): Pointer<"any_document">,
 	_wasm_format_link_uri(doc: Pointer<"any_document">, ch: number, pg: number, ty: number, x: number, y: number, w: number, h: number, z: number): Pointer<"char">,

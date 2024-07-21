@@ -877,6 +877,22 @@ unsigned char * wasm_print_stext_page_as_html(fz_stext_page *page, int id)
 	return data;
 }
 
+EXPORT
+unsigned char * wasm_print_stext_page_as_text(fz_stext_page *page)
+{
+	unsigned char *data = NULL;
+	TRY ({
+		fz_buffer *buf = fz_new_buffer(ctx, 1024);
+		fz_output *out = fz_new_output_with_buffer(ctx, buf);
+		fz_print_stext_page_as_text(ctx, out, page);
+		fz_close_output(ctx, out);
+		fz_drop_output(ctx, out);
+		fz_terminate_buffer(ctx, buf);
+		fz_buffer_extract(ctx, buf, &data);
+	})
+	return data;
+}
+
 // --- Document ---
 
 EXPORT

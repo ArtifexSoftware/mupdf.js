@@ -1334,6 +1334,10 @@ export class StructuredText extends Userdata<"fz_stext_page"> {
 		return fromStringFree(libmupdf._wasm_print_stext_page_as_html(this.pointer, id))
 	}
 
+	asText() {
+		return fromStringFree(libmupdf._wasm_print_stext_page_as_text(this.pointer))
+	}
+
 	copy(p: Point, q: Point): string {
 		return fromStringFree(libmupdf._wasm_copy_selection(this.pointer, POINT(p), POINT2(q)))
 	}

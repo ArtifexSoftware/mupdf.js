@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest'
 import path from "path"
 import * as fs from "node:fs"
 import * as mupdf from "../../../dist/mupdf"
-import {drawPageAsPng, loadPDF, drawPageAsHtml, drawPageAsSvg} from "../../../dist/tasks"
+import {drawPageAsPng, loadPDF, drawPageAsHtml, drawPageAsSvg, getPageText} from "../../../dist/tasks"
 
 const scriptdir = path.resolve(__dirname)
 const filename = path.join(scriptdir, "..", "test.pdf")
@@ -62,5 +62,25 @@ describe("drawPageAsSvg", () => {
           path.join(outputDir, "output-tasks.svg"),
           Buffer.from(result)
         )
+    })
+})
+
+describe("getPageText", () => {
+    it("successfully extracts the text from page", () => {
+        const document = loadPDF(file)
+        const pageNumber = 0
+        const result = getPageText(document, pageNumber)
+
+        expect(result).toMatchInlineSnapshot(`
+          "Welcome to the Node server test.pdf file.
+
+          Sorry there is not much to see here!
+
+          1
+
+          Page 1 footer
+
+          "
+        `)
     })
 })

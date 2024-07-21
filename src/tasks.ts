@@ -1,6 +1,6 @@
 import * as mupdf from "mupdf"
 
-export function loadPDF(data: Buffer | ArrayBuffer | Uint8Array) {
+export function loadPdf(data: Buffer | ArrayBuffer | Uint8Array) {
     return new mupdf.PDFDocument(data)
 }
 

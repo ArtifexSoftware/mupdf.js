@@ -1,39 +1,16 @@
-# vue
+# Vue
 
-This template should help get you started developing with Vue 3 in Vite.
+This project was generated with [Vite](https://vitejs.dev/).
 
-## Recommended IDE Setup
+## Development server
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Run `npm run dev` for a dev server. Navigate to `http://localhost:5173/`. The application will automatically reload if you change any of the source file
 
-## Type Support for `.vue` Imports in TS
+## Build
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+Run `npm run build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Customize configuration
+## Preview production build
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+After building the project, you can preview the production build locally using:  `npm run preview` 
+This command will serve the contents of the `dist` directory, allowing you to check the production version of your application before deployment. By default, it will be available at `http://localhost:4173/`.

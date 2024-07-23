@@ -636,18 +636,34 @@ app.post(
 
       resFonts.put('F1', font)
 
-      // TODO: .addStream API type is not correct
-      // const extra_contents = pdfDocument.addStream()
+      // create drawing operations
+      var extra_contents = pdfDocument.addStream("BT /F1 "+fontSize+" Tf 1 0 0 1 "+x+" "+y+" Tm ("+text+") Tj ET", {})
+
+      // add drawing operations to page contents
+      var page_contents = pageObj.get("Contents")
+      if (page_contents.isArray()) {
+        // Contents is already an array, so append our new buffer object.
+        page_contents.push(extra_contents)
+      } else {
+        // Contents is not an array, so change it into an array
+        // and then append our new buffer object.
+        var new_page_contents = pdfDocument.newArray()
+        new_page_contents.push(page_contents)
+        new_page_contents.push(extra_contents)
+        pageObj.put("Contents", new_page_contents)
+      }
 
       const outputBuffer = pdfDocument.saveToBuffer('incremental')
       const outputPath = path.join('public', `output-${Date.now()}.pdf`)
       fs.writeFileSync(outputPath, outputBuffer.asUint8Array())
       res.json({ url: `${HOST}:${PORT}/${path.basename(outputPath)}` })
+
     } catch (error) {
       next(error)
     }
   }
 )
+
 
 // POST /document/page/:pageNumber/add-image
 app.post(
@@ -694,8 +710,21 @@ app.post(
 
       resXobj.put('Image', image)
 
-      // TODO: .addStream API type is not correct
-      // const extra_contents = pdfDocument.addStream()
+      const extra_contents = pdfDocument.addStream("q "+width+" 0 0 "+height+" "+x+" "+y+" cm /Image Do Q", null)
+
+      // add drawing operations to page contents
+      var page_contents = pageObj.get("Contents")
+      if (page_contents.isArray()) {
+        // Contents is already an array, so append our new buffer object.
+        page_contents.push(extra_contents)
+      } else {
+        // Contents is not an array, so change it into an array
+        // and then append our new buffer object.
+        var new_page_contents = pdfDocument.newArray()
+        new_page_contents.push(page_contents)
+        new_page_contents.push(extra_contents)
+        pageObj.put("Contents", new_page_contents)
+      }
 
       const outputBuffer = pdfDocument.saveToBuffer('incremental')
       const outputPath = path.join('public', `output-${Date.now()}.pdf`)

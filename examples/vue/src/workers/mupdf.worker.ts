@@ -4,7 +4,7 @@ import type { MupdfWorker } from '../types/mupdf';
 
 export const MUPDF_LOADED = 'MUPDF_LOADED';
 
-const mupdfScript = import.meta.env.PROD ? '/assets/mupdf.js' : '/mupdf.js';
+const mupdfScript = import.meta.env.PROD ? '/assets/mupdf.js' : '/node_modules/mupdf/dist/mupdf.js';
 
 class MupdfWorkerImpl implements MupdfWorker {
   private mupdf?: any;

@@ -1,47 +1,21 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { useMupdf } from '@/composables/useMupdf'
+import { watch, ref } from 'vue'
+
+const { workerInitialized, loadDocument, renderPage, currentPage } = useMupdf()
+const pdfUrl = ref<string | null>(null)
+
+watch(workerInitialized, async (isInitialized) => {
+  if (isInitialized) {
+    const response = await fetch('/test.pdf')
+    const arrayBuffer = await response.arrayBuffer()
+    await loadDocument(arrayBuffer)
+    const pngData = await renderPage(0)
+    pdfUrl.value = URL.createObjectURL(new Blob([pngData], { type: 'image/png' }))
+  }
+})
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <img v-if="pdfUrl" :src="pdfUrl" alt="PDF page" />
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>

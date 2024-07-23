@@ -1,12 +1,11 @@
 /// <reference lib="webworker" />
 import * as Comlink from 'comlink';
-import type { MupdfWorker } from '../types/mupdf';
 
 export const MUPDF_LOADED = 'MUPDF_LOADED';
 
 const mupdfScript = import.meta.env.PROD ? '/assets/mupdf.js' : '/node_modules/mupdf/dist/mupdf.js';
 
-class MupdfWorkerImpl implements MupdfWorker {
+export class MupdfWorker {
   private mupdf?: any;
   private document?: any;
 
@@ -41,4 +40,4 @@ class MupdfWorkerImpl implements MupdfWorker {
   }
 }
 
-Comlink.expose(new MupdfWorkerImpl());
+Comlink.expose(new MupdfWorker());

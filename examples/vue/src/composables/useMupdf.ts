@@ -1,6 +1,6 @@
+import type { MupdfWorker } from '@/workers/mupdf.worker';
 import * as Comlink from 'comlink';
 import { ref, shallowRef } from 'vue';
-import type { MupdfWorker } from '../types/mupdf';
 
 const worker = new Worker(new URL('../workers/mupdf.worker', import.meta.url), { type: 'module' });
 const mupdfWorker = Comlink.wrap<MupdfWorker>(worker);

@@ -21,7 +21,7 @@ python -m http.server
 
 - Then open the viewer in a browser with the following URL:
 
-	[http://localhost:8000/examples/simple-viewer/mupdf-view.html](http://localhost:8000/examples/simple-viewer/mupdf-view.html)
+	[http://localhost:8000/examples/simple-viewer/index.html](http://localhost:8000/examples/simple-viewer/index.html)
 
 
 ## View a PDF file

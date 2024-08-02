@@ -2,6 +2,11 @@
 
 This project was generated with [Vite](https://vitejs.dev/).
 
+## Setup
+
+Before running the development server or building the project, make sure to install the dependencies:
+`npm i`
+
 ## Development server
 
 Run `npm run dev` for a dev server. Navigate to `http://localhost:5173/`. The application will automatically reload if you change any of the source file

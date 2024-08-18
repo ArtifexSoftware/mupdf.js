@@ -19,7 +19,14 @@ export function drawPageAsHTML(document: mupdf.PDFDocument, pageNumber: number, 
 }
 
 export function drawPageAsSVG(document: mupdf.PDFDocument, pageNumber: number): string {
-    return document.loadPage(pageNumber).asSvg()
+    const page = document.loadPage(pageNumber)
+    const buffer = new mupdf.Buffer()
+    const writer = new mupdf.DocumentWriter(buffer, "svg", "")
+    const device = writer.beginPage(page.getBounds())
+    page.run(device, mupdf.Matrix.identity)
+    device.close()
+    writer.endPage()
+    return buffer.asString()
 }
 
 export function getPageText(document: mupdf.PDFDocument, pageNumber: number): string {

@@ -48,7 +48,7 @@ describe("drawPageAsHtml", () => {
 describe("drawPageAsSvg", () => {
     it("successfully renders a page as SVG", () => {
         const result = drawPageAsSVG(loadPDF(file), 0)
-        expect(result).toHaveLength(91454)
+        expect(result).toHaveLength(91467)
         fs.writeFileSync(
           path.join(outputDir, "output-tasks.svg"),
           Buffer.from(result)

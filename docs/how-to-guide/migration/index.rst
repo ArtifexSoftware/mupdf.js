@@ -91,9 +91,9 @@ Here's how you would do it with this package:
 
     import {
       loadPDF,
-      drawPageAsPng,
-      drawPageAsSvg,
-      drawPageAsHtml
+      drawPageAsPNG,
+      drawPageAsSVG,
+      drawPageAsHTML
     } from "mupdf/tasks";
 
     async function handleSomePdf(file) {
@@ -103,9 +103,9 @@ Here's how you would do it with this package:
 
       // Each of these returns a string:
 
-      const png = drawPageAsPng(doc, 1, 300);
-      const svg = drawPageAsSvg(doc, 1);
-      const html = drawPageAsHtml(doc, 1);
+      const png = drawPageAsPNG(doc, 1, 300);
+      const svg = drawPageAsSVG(doc, 1);
+      const html = drawPageAsHTML(doc, 1);
     }
 
 ----

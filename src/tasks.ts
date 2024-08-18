@@ -1,10 +1,10 @@
 import * as mupdf from "mupdf"
 
-export function loadPdf(data: Buffer | ArrayBuffer | Uint8Array) {
+export function loadPDF(data: Buffer | ArrayBuffer | Uint8Array) {
     return new mupdf.PDFDocument(data)
 }
 
-export function drawPageAsPng(document: mupdf.PDFDocument, pageNumber: number, dpi: number): Uint8Array {
+export function drawPageAsPNG(document: mupdf.PDFDocument, pageNumber: number, dpi: number): Uint8Array {
     const page = document.loadPage(pageNumber)
     const zoom = dpi / 72
 
@@ -14,11 +14,11 @@ export function drawPageAsPng(document: mupdf.PDFDocument, pageNumber: number, d
     ).asPNG()
 }
 
-export function drawPageAsHtml(document: mupdf.PDFDocument, pageNumber: number, id: number): string {
+export function drawPageAsHTML(document: mupdf.PDFDocument, pageNumber: number, id: number): string {
     return document.loadPage(pageNumber).toStructuredText().asHTML(id)
 }
 
-export function drawPageAsSvg(document: mupdf.PDFDocument, pageNumber: number): string {
+export function drawPageAsSVG(document: mupdf.PDFDocument, pageNumber: number): string {
     return document.loadPage(pageNumber).asSvg()
 }
 

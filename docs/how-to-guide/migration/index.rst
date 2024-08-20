@@ -34,7 +34,7 @@ So you can remove code like this:
 Just like with `mupdf-js`, you can load a document either as a Buffer
 (in Node.js), an ArrayBuffer (in the browser), or a Uint8Array (in both environments).
 
-We provide a `loadPdf` function that is similar to the `load` method in `mupdf-js`.
+We provide a `loadPDF` function that is similar to the `load` method in `mupdf-js`.
 So you can replace this:
 
 .. code-block:: javascript
@@ -53,12 +53,12 @@ With this:
 
 .. code-block:: javascript
 
-    import { loadPdf } from "mupdf/tasks";
+    import { loadPDF } from "mupdf/tasks";
 
     async function handleSomePdf(file) {
       const buf = await file.arrayBuffer();
       const arrayBuf = new Uint8Array(buf);
-      const doc = loadPdf(arrayBuf); // Returns a Document instance
+      const doc = loadPDF(arrayBuf); // Returns a Document instance
     }
 ----
 

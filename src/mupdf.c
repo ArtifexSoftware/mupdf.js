@@ -861,6 +861,38 @@ int wasm_highlight_selection(fz_stext_page *text, fz_point *a, fz_point *b, fz_q
 	INTEGER(fz_highlight_selection, text, *a, *b, hits, n);
 }
 
+EXPORT
+unsigned char * wasm_print_stext_page_as_html(fz_stext_page *page, int id)
+{
+	unsigned char *data = NULL;
+	TRY ({
+		fz_buffer *buf = fz_new_buffer(ctx, 0);
+		fz_output *out = fz_new_output_with_buffer(ctx, buf);
+		fz_print_stext_page_as_html(ctx, out, page, id);
+		fz_close_output(ctx, out);
+		fz_drop_output(ctx, out);
+		fz_terminate_buffer(ctx, buf);
+		fz_buffer_extract(ctx, buf, &data);
+	})
+	return data;
+}
+
+EXPORT
+unsigned char * wasm_print_stext_page_as_text(fz_stext_page *page)
+{
+	unsigned char *data = NULL;
+	TRY ({
+		fz_buffer *buf = fz_new_buffer(ctx, 1024);
+		fz_output *out = fz_new_output_with_buffer(ctx, buf);
+		fz_print_stext_page_as_text(ctx, out, page);
+		fz_close_output(ctx, out);
+		fz_drop_output(ctx, out);
+		fz_terminate_buffer(ctx, buf);
+		fz_buffer_extract(ctx, buf, &data);
+	})
+	return data;
+}
+
 // --- Document ---
 
 EXPORT
@@ -1069,6 +1101,7 @@ int wasm_search_page(fz_page *page, char *needle, int *marks, fz_quad *hits, int
 {
 	INTEGER(fz_search_page, page, needle, marks, hits, hit_max)
 }
+
 
 // --- DocumentIterator ---
 

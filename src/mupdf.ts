@@ -1330,6 +1330,14 @@ export class StructuredText extends Userdata<"fz_stext_page"> {
 		return fromStringFree(libmupdf._wasm_print_stext_page_as_json(this.pointer, scale))
 	}
 
+	asHTML(id: number) {
+		return fromStringFree(libmupdf._wasm_print_stext_page_as_html(this.pointer, id))
+	}
+
+	asText() {
+		return fromStringFree(libmupdf._wasm_print_stext_page_as_text(this.pointer))
+	}
+
 	copy(p: Point, q: Point): string {
 		return fromStringFree(libmupdf._wasm_copy_selection(this.pointer, POINT(p), POINT2(q)))
 	}
@@ -1999,6 +2007,7 @@ export class Page extends Userdata<"any_page"> {
 	search(needle: string, max_hits = 500) {
 		return runSearch(libmupdf._wasm_search_page, this.pointer, needle, max_hits)
 	}
+
 }
 
 /* -------------------------------------------------------------------------- */

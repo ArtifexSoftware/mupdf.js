@@ -746,7 +746,9 @@ export class Font extends Userdata<"fz_font"> {
 	// Create new Font from a font file.
 	constructor(name: string, data: AnyBuffer, subfont: number)
 
-	// PRIVATE
+    // PRIVATE
+    constructor(name:string) 
+
 	constructor(pointer: Pointer<"fz_font">)
 
 	constructor(name_or_pointer: Pointer<"fz_font"> | string, data?: AnyBuffer, subfont=0) {
@@ -2531,6 +2533,41 @@ export class PDFPage extends Page {
 	update() {
 		return !!libmupdf._wasm_pdf_update_page(this.pointer)
 	}
+
+    insertText(value:string, point: Point, fontName:string = "Times-Roman", fontSize:number = 18) {
+        let page_obj = this.getObject()
+
+        let font = this._doc.addSimpleFont(new Font(fontName))
+
+        // add object to page/Resources/XObject/F1 dictionary (creating nested dictionaries as needed)
+        var res = page_obj.get("Resources")
+        if (!res.isDictionary())
+            page_obj.put("Resources", res = this._doc.newDictionary())
+
+        var res_font = res.get("Font")
+        if (!res_font.isDictionary())
+            res.put("Font", res_font = this._doc.newDictionary())
+
+        res_font.put("F1", font)
+
+        // create drawing operations
+        var extra_contents = this._doc.addStream("BT /F1 " + fontSize + " Tf 1 0 0 1 "+point[0]+" "+point[1]+" Tm (" + value + ") Tj ET", {});
+
+        // add drawing operations to page contents
+        var page_contents = page_obj.get("Contents")
+        if (page_contents.isArray()) {
+            // Contents is already an array, so append our new buffer object.
+            page_contents.push(extra_contents)
+        } else {
+            // Contents is not an array, so change it into an array
+            // and then append our new buffer object.
+            var new_page_contents = this._doc.newArray()
+            new_page_contents.push(page_contents)
+            new_page_contents.push(extra_contents)
+            page_obj.put("Contents", new_page_contents)
+        }   
+    }
+
 }
 
 type PDFObjectPath = Array<number | string | PDFObject>

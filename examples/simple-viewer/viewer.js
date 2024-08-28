@@ -584,10 +584,6 @@ let search_input = document.getElementById("search-input")
 var current_search_needle = ""
 var current_search_page = 0
 
-search_input.oninput = function (event) {
-	run_search(event.shiftKey ? -1 : 1, 0)
-}
-
 function show_search_panel() {
 	if (!page_list)
 		return
@@ -616,6 +612,12 @@ function set_search_needle(needle) {
 }
 
 async function run_search(direction, step) {
+
+    // this means the main search button was pressed (not previous or next)
+    // we don't know if there are any hits so hide the previous & next buttons
+    if (direction == 1 && step == 0) {
+        showPreviousAndNext(false)
+    }
 	// start search from visible page
 	set_search_needle(search_input.value)
 
@@ -642,7 +644,13 @@ async function run_search(direction, step) {
 		if (hits && hits.length > 0) {
 			page_list[next_page].rootNode.scrollIntoView()
 			current_search_page = next_page
-			search_status.textContent = `${hits.length} hits on page ${next_page}.`
+            showPreviousAndNext(true)
+
+            var word = "hits"
+            if (hits.length == 1) {
+                word = "hit"
+            }
+			search_status.textContent = `${hits.length} ${word} on page ${next_page+1}.`
 			return
 		}
 
@@ -690,6 +698,7 @@ function hide_outline_panel() {
 // DOCUMENT LOADING
 
 function close_document() {
+    showPreviousAndNext(false)
 	clear_message()
 	hide_outline_panel()
 	hide_search_panel()
@@ -705,6 +714,17 @@ function close_document() {
 	}
 
 	page_list = null
+}
+
+function showPreviousAndNext(show) {
+    if (show) {
+        document.getElementById("searchPrevious").style.display = "block";
+        document.getElementById("searchNext").style.display = "block";
+    } else {
+        document.getElementById("searchPrevious").style.display = "none";
+        document.getElementById("searchNext").style.display = "none";
+    }
+
 }
 
 async function init_document(title) {

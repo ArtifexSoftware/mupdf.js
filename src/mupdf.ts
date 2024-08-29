@@ -744,7 +744,7 @@ export class Font extends Userdata<"fz_font"> {
 	}
 
 	// Create new Font from a font file.
-	constructor(name: string, data: AnyBuffer, subfont: number)
+	constructor(name: string, data?: AnyBuffer, subfont?: number)
 
 	// PRIVATE
 	constructor(pointer: Pointer<"fz_font">)

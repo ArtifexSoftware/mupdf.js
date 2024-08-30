@@ -24,11 +24,23 @@ import * as mupdf from "mupdf"
 
 export class PDFDocument extends mupdf.PDFDocument {
 
-    // default A4 size is 595x842
+    // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
     static createBlankDocument(w:number = 595, h:number = 842): mupdf.PDFDocument {
-        let pdfDocument = new PDFDocument()
-        let pageObj = pdfDocument.addPage([0,0,w,h], 0, [], "")
+        let pdfDocument = new mupdf.PDFDocument()
+        let helvetica = pdfDocument.newDictionary();
+        helvetica.put("Type", pdfDocument.newName("Font"));
+        helvetica.put("Subtype", pdfDocument.newName("Type1"));
+        helvetica.put("Name", pdfDocument.newName("Helv"));
+        helvetica.put("BaseFont", pdfDocument.newName("Helvetica"));
+        helvetica.put("Encoding", pdfDocument.newName("WinAnsiEncoding"));
+        let fonts = pdfDocument.newDictionary();
+        fonts.put("Helv", helvetica);
+        let resources = pdfDocument.addObject(pdfDocument.newDictionary());
+        resources.put("Font", fonts);
+
+        let pageObj = pdfDocument.addPage([0,0,w,h], 0, resources, "BT /Helv ET")
         pdfDocument.insertPage(-1, pageObj)
+
         return pdfDocument
     }
 

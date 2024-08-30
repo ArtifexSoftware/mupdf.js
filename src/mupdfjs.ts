@@ -53,13 +53,13 @@ export class PDFPage extends mupdf.PDFPage {
         let font = doc.addSimpleFont(new mupdf.Font(fontName))
 
         // add object to page/Resources/XObject/F1 dictionary (creating nested dictionaries as needed)
-        var res = page_obj.get("Resources")
-        if (!res.isDictionary())
-            page_obj.put("Resources", res = doc.newDictionary())
+        var resources = page_obj.get("Resources")
+        if (!resources.isDictionary())
+            page_obj.put("Resources", resources = doc.newDictionary())
 
-        var res_font = res.get("Font")
+        var res_font = resources.get("Font")
         if (!res_font.isDictionary())
-            res.put("Font", res_font = doc.newDictionary())
+            resources.put("Font", res_font = doc.newDictionary())
 
         res_font.put("F1", font)
 
@@ -90,9 +90,21 @@ export class PDFPage extends mupdf.PDFPage {
             strokeThicknessMarkup = ""
         }
 
-        let graphicsState = "/fitzca"+strokeOpacity+""+fillOpacity+" gs"
+        // add the graphics state object to the resources dictionary
+        var res_graphics_state = resources.get("ExtGState")
+        if (!res_graphics_state.isDictionary())
+            resources.put("ExtGState", res_graphics_state = doc.newDictionary())
 
-        let contentStream = "q " + graphicsState + " BT /F1 " + fontSize + " Tf 1 0 0 1 " + strokeThicknessMarkup + " " + strokeColor + " " + fillColor + " " + point[0] + " " + point[1] + " Tm (" + value + ") Tj ET Q"
+        var graphicsDict = doc.newDictionary()
+        graphicsDict.put("CA", graphics.strokeColor[3])
+        graphicsDict.put("ca", graphics.fillColor[3])
+
+        let graphicsStateIdentifier:string = "fitzca"+strokeOpacity+""+fillOpacity
+        res_graphics_state.put(graphicsStateIdentifier, graphicsDict)
+
+        let graphicsState:string = "/"+graphicsStateIdentifier+" gs"
+
+        let contentStream:string = "q " + graphicsState + " BT /F1 " + fontSize + " Tf 1 0 0 1 " + strokeThicknessMarkup + " " + strokeColor + " " + fillColor + " " + point[0] + " " + point[1] + " Tm (" + value + ") Tj ET Q"
 
         console.log(`Inserting text to page with content stream:\n${contentStream}`)
 

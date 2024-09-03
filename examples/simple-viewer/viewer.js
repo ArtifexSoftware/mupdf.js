@@ -582,10 +582,19 @@ let search_status = document.getElementById("search-status")
 let search_input = document.getElementById("search-input")
 
 var current_search_needle = ""
-var current_search_page = 0
+var last_search_page = -1
 
-search_input.oninput = function (event) {
-	run_search(event.shiftKey ? -1 : 1, 0)
+search_input.onchange = function (event) {
+	last_search_page = -1
+}
+
+search_input.onkeyup = function (event) {
+	if (event.key === 'Enter') {
+		if (event.shiftKey)
+			document.getElementById("search-prev").click()
+		else
+			document.getElementById("search-next").click()
+	}
 }
 
 function show_search_panel() {
@@ -619,13 +628,16 @@ async function run_search(direction, step) {
 	// start search from visible page
 	set_search_needle(search_input.value)
 
-	current_search_page = find_visible_page()
+	let page = 0;
+	if (last_search_page === -1)
+		page = find_visible_page()
+	else {
+		page = last_search_page
+		if (step)
+			page += direction
+	}
 
-	let next_page = current_search_page
-	if (step)
-		next_page += direction
-
-	while (next_page >= 0 && next_page < page_list.length) {
+	while (page >= 0 && page < page_list.length) {
 		// We run the check once per loop iteration,
 		// in case the search was cancel during the 'await' below.
 		if (current_search_needle === "") {
@@ -633,20 +645,21 @@ async function run_search(direction, step) {
 			return
 		}
 
-		search_status.textContent = `Searching page ${next_page}.`
+		search_status.textContent = `Searching page ${page + 1}.`
 
-		if (page_list[next_page].loadNeedle !== page_list[next_page].needle)
-			await page_list[next_page]._loadSearch()
+		if (page_list[page].loadNeedle !== page_list[page].needle)
+			await page_list[page]._loadSearch()
 
-		const hits = page_list[next_page].searchData
+		const hits = page_list[page].searchData
 		if (hits && hits.length > 0) {
-			page_list[next_page].rootNode.scrollIntoView()
-			current_search_page = next_page
-			search_status.textContent = `${hits.length} hits on page ${next_page}.`
+			page_list[page].rootNode.scrollIntoView()
+			last_search_page = page
+			const word = hits.length === 1 ? "hit" : "hits"
+			search_status.textContent = `${hits.length} ${word} on page ${page + 1}.`
 			return
 		}
 
-		next_page += direction
+		page += direction
 	}
 
 	search_status.textContent = "No more search hits."
@@ -735,7 +748,7 @@ async function init_document(title) {
 	clear_message()
 
 	current_search_needle = ""
-	current_search_page = 0
+	last_search_page = -1
 }
 
 async function open_document_from_buffer(buffer, magic, title) {

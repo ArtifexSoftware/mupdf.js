@@ -51,6 +51,32 @@ export class PDFDocument extends mupdf.PDFDocument {
         }
         throw new Error("Not a PDF document");
     }
+
+    copyPage(pno: number, to: number = -1): void {
+        if (!this.isPDF()) {
+            throw new Error("This operation is only available for PDF documents.");
+        }
+    
+        const pageCount = this.countPages();
+        if (pno < 0 || pno >= pageCount || to < -1 || to >= pageCount) {
+            throw new Error("bad page number");
+        }
+    
+        let before = 1;
+        if (to === -1) {
+            to = pageCount - 1;
+            before = 0;
+        }
+    
+        const sourcePageObj = this.findPage(pno);
+        
+        if (before) {
+            this.insertPage(to, sourcePageObj);
+        } else {
+            this.insertPage(to + 1, sourcePageObj);
+        }
+    }
+
 }
 
 export class PDFPage extends mupdf.PDFPage {

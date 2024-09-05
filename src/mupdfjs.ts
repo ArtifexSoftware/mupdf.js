@@ -20,7 +20,7 @@
 // Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
 // CA 94129, USA, for further information.
 
-import * as mupdf from "mupdf"
+import * as mupdf from "mupdf";
 
 export class PDFDocument extends mupdf.PDFDocument {
 
@@ -44,6 +44,13 @@ export class PDFDocument extends mupdf.PDFDocument {
         return pdfDocument
     }
 
+    static override openDocument(from: mupdf.Buffer | ArrayBuffer | Uint8Array | mupdf.Stream, magic: string): PDFDocument {
+        const doc = mupdf.Document.openDocument(from, magic);
+        if (doc instanceof mupdf.PDFDocument) {
+            return new PDFDocument(doc.pointer);
+        }
+        throw new Error("Not a PDF document");
+    }
 }
 
 export class PDFPage extends mupdf.PDFPage {

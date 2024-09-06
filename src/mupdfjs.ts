@@ -77,6 +77,25 @@ export class PDFDocument extends mupdf.PDFDocument {
         }
     }
 
+    newPage(pno: number = -1, width: number = 595, height: number = 842): mupdf.PDFPage {
+        if (width <= 0 || height <= 0) {
+          throw new Error("Invalid page dimensions: width and height must be positive numbers");
+        }
+      
+        const pageCount = this.countPages();
+        if (pno > pageCount) {
+          throw new Error(`Invalid page number: ${pno}. The document has only ${pageCount} pages.`);
+        }
+      
+        const insertPosition = (pno < 0 || pno > pageCount) ? pageCount : pno;
+      
+        const mediabox: [number, number, number, number] = [0, 0, width, height];
+        const newPageObj = this.addPage(mediabox, 0, this.newDictionary(), "");
+      
+        this.insertPage(insertPosition, newPageObj);
+        return this.loadPage(insertPosition);
+      }
+
 }
 
 export class PDFPage extends mupdf.PDFPage {

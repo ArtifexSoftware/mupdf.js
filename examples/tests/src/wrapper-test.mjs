@@ -15,5 +15,12 @@ mupdfJSPage.insertText("HELLO WORLD",
                        "Times-Roman", 
                        65, 
                        {strokeColor:[0,0,0,0.8], fillColor:[1,0,0,0.75]})
+                 
+let image = new mupdfjs.Image(fs.readFileSync("../logo.png"))
+
+mupdfJSPage.insertImage({image:image, name:"MyLogo"}, {x:200, y:300})
 
 fs.writeFileSync("output.pdf", document.saveToBuffer("").asUint8Array())
+
+
+

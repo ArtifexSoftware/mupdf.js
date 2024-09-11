@@ -96,6 +96,73 @@ export class PDFDocument extends mupdf.PDFDocument {
         return this.loadPage(insertPosition);
       }
 
+      deletePages(...args: any[]): void {
+        if (!this.isPDF()) {
+            throw new Error("This operation is only available for PDF documents.");
+        }
+    
+        const pageCount = this.countPages();
+        let pagesToDelete: number[] = [];
+    
+        if (typeof args[0] === 'object' && !Array.isArray(args[0])) {
+            // Format 1: Keywords
+            let fromPage = args[0].fromPage ?? 0;
+            let toPage = args[0].toPage ?? pageCount - 1;
+            fromPage = fromPage < 0 ? fromPage + pageCount : fromPage;
+            toPage = toPage < 0 ? toPage + pageCount : toPage;
+            if (fromPage > toPage || fromPage < 0 || toPage >= pageCount) {
+                throw new Error("Bad page number(s)");
+            }
+            pagesToDelete = Array.from({length: toPage - fromPage + 1}, (_, i) => fromPage + i);
+        } else if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
+            // Format 2: Two integers
+            let [start, end] = args[0] <= args[1] ? [args[0], args[1]] : [args[1], args[0]];
+            start = start < 0 ? start + pageCount : start;
+            end = end < 0 ? end + pageCount : end;
+            if (start < 0 || end >= pageCount) {
+                throw new Error("Bad page number(s)");
+            }
+            pagesToDelete = Array.from({length: end - start + 1}, (_, i) => start + i);
+        } else if (args.length === 1) {
+            if (typeof args[0] === 'number') {
+                // Format 3: Single integer
+                let pageNum = args[0] < 0 ? args[0] + pageCount : args[0];
+                if (pageNum < 0 || pageNum >= pageCount) {
+                    throw new Error("Bad page number");
+                }
+                pagesToDelete = [pageNum];
+            } else if (Array.isArray(args[0]) || args[0] instanceof Set) {
+                // Format 4: Array, Set, or Range
+                pagesToDelete = [...new Set(args[0])].map(n => {
+                    const pageNum = typeof n === 'number' ? (n < 0 ? n + pageCount : n) : NaN;
+                    if (isNaN(pageNum) || pageNum < 0 || pageNum >= pageCount) {
+                        throw new Error("Bad page number(s)");
+                    }
+                    return pageNum;
+                });
+            } else {
+                throw new Error("Invalid argument type");
+            }
+        } else {
+            throw new Error("Invalid arguments for deletePages");
+        }
+    
+        if (pagesToDelete.length === 0) {
+            console.log("Nothing to delete");
+            return;
+        }
+    
+        pagesToDelete.sort((a, b) => a - b);
+    
+        // TODO: Implement TOC and link processing (refer to PyMuPDF)
+    
+        for (const pageNum of pagesToDelete.reverse()) {
+            this.deletePage(pageNum);
+        }
+    
+        // TODO: Implement page reference reset (refer to PyMuPDF)
+    }
+
 }
 
 export class Image extends mupdf.Image {

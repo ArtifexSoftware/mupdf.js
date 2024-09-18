@@ -25,23 +25,26 @@ import * as mupdf from "mupdf";
 export class PDFDocument extends mupdf.PDFDocument {
 
     // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
-    static createBlankDocument(w:number = 595, h:number = 842): mupdf.PDFDocument {
-        let pdfDocument = new mupdf.PDFDocument()
-        let helvetica = pdfDocument.newDictionary();
-        helvetica.put("Type", pdfDocument.newName("Font"));
-        helvetica.put("Subtype", pdfDocument.newName("Type1"));
-        helvetica.put("Name", pdfDocument.newName("Helv"));
-        helvetica.put("BaseFont", pdfDocument.newName("Helvetica"));
-        helvetica.put("Encoding", pdfDocument.newName("WinAnsiEncoding"));
-        let fonts = pdfDocument.newDictionary();
+    static createBlankDocument(w:number = 595, h:number = 842): PDFDocument {
+        let doc = new mupdf.PDFDocument()
+        let helvetica = doc.newDictionary();
+        helvetica.put("Type", doc.newName("Font"));
+        helvetica.put("Subtype", doc.newName("Type1"));
+        helvetica.put("Name", doc.newName("Helv"));
+        helvetica.put("BaseFont", doc.newName("Helvetica"));
+        helvetica.put("Encoding", doc.newName("WinAnsiEncoding"));
+        let fonts = doc.newDictionary();
         fonts.put("Helv", helvetica);
-        let resources = pdfDocument.addObject(pdfDocument.newDictionary());
+        let resources = doc.addObject(doc.newDictionary());
         resources.put("Font", fonts);
 
-        let pageObj = pdfDocument.addPage([0,0,w,h], 0, resources, "BT /Helv ET")
-        pdfDocument.insertPage(-1, pageObj)
+        let pageObj = doc.addPage([0,0,w,h], 0, resources, "BT /Helv ET")
+        doc.insertPage(-1, pageObj)
 
-        return pdfDocument
+        if (doc instanceof mupdf.PDFDocument) {
+            return new PDFDocument(doc.pointer);
+        }
+        throw new Error("Not a PDF document");
     }
 
     static override openDocument(from: mupdf.Buffer | ArrayBuffer | Uint8Array | mupdf.Stream, magic: string): PDFDocument {
@@ -239,6 +242,9 @@ export class PDFPage extends mupdf.PDFPage {
 
         let graphicsState:string = "/"+graphicsStateIdentifier+" gs"
 
+        // invert the Y point
+        point[1] = page.getBounds()[3]-(point[1]+fontSize);
+
         let contentStream:string = "q " + graphicsState + " BT /F1 " + fontSize + " Tf 1 0 0 1 " + strokeThicknessMarkup + " " + strokeColor + " " + fillColor + " " + point[0] + " " + point[1] + " Tm (" + value + ") Tj ET Q"
 
         console.log(`Inserting text to page with content stream:\n${contentStream}`)
@@ -262,7 +268,7 @@ export class PDFPage extends mupdf.PDFPage {
     }
 
     insertImage(data: {image:Image, name:string}, 
-                rect: {x:number, y:number, width:number, height:number} = {x:0,y:0,width:0,height:0}) {
+                rect: {x?:number, y?:number, width?:number, height?:number} = {x:0,y:0,width:0,height:0}) {
 
         if (data.image == null) {
             throw new Error("Invalid image");
@@ -288,20 +294,23 @@ export class PDFPage extends mupdf.PDFPage {
         const image = doc.addImage(data.image)
 
         // source some metrics data from sensible defaults if it isn't provided
-        if (rect.x == undefined) {
-            rect.x = 0
-        }
-
-        if (rect.y == undefined) {
-            rect.y = 0
-        }
-
         if (rect.width == 0 || rect.width == undefined) {
             rect.width = data.image.getWidth()
         }
 
         if (rect.height == 0 || rect.height == undefined) {
             rect.height = data.image.getHeight()
+        }
+
+        if (rect.x == undefined) {
+            rect.x = 0
+        }
+
+        // invert the Y point
+        if (rect.y == undefined) {
+            rect.y = page.getBounds()[3]-rect.height;
+        } else {
+            rect.y = page.getBounds()[3]-(rect.y+rect.height);
         }
 
         res_xobj.put(data.name, image)

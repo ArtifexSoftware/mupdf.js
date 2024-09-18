@@ -32,7 +32,7 @@ Developer documentation to help you get started
 
     getting-started/index.rst
     how-to-guide/index.rst
-    api/index.rst
+    classes/index.rst
 
 
 

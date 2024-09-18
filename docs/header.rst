@@ -1,18 +1,14 @@
 .. |example_tag| raw:: html
 
-   <span class="example-tag"></span>
+   <span class="example-tag">EXAMPLE</span>
 
-.. |post_tag| raw:: html
+.. |constructor_tag| raw:: html
 
-   <span class="post-tag"></span>
+   <span class="constructor-tag">CONSTRUCTOR METHODS</span>
 
-.. |get_tag| raw:: html
+.. |instance_method_tag| raw:: html
 
-   <span class="get-tag"></span>
-
-.. |put_tag| raw:: html
-
-   <span class="put-tag"></span>
+   <span class="instance-method-tag">INSTANCE METHODS</span>
 
 .. |page_spacer| raw:: html
 

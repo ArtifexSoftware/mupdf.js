@@ -4,3 +4,4 @@ node_modules
 build
 .idea
 /docs/venv/
+docs/_build

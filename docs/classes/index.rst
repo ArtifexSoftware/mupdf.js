@@ -10,6 +10,7 @@ Classes
     :maxdepth: 2
 
     Image.rst
+    PDFDocument.rst
     PDFPage.rst
 
 

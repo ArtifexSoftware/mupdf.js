@@ -25,7 +25,7 @@ import * as mupdf from "mupdf";
 export class PDFDocument extends mupdf.PDFDocument {
 
     // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
-    static createBlankDocument(w:number = 595, h:number = 842): PDFDocument {
+    static createBlankDocument(width:number = 595, height:number = 842): PDFDocument {
         let doc = new mupdf.PDFDocument()
         let helvetica = doc.newDictionary();
         helvetica.put("Type", doc.newName("Font"));
@@ -38,7 +38,7 @@ export class PDFDocument extends mupdf.PDFDocument {
         let resources = doc.addObject(doc.newDictionary());
         resources.put("Font", fonts);
 
-        let pageObj = doc.addPage([0,0,w,h], 0, resources, "BT /Helv ET")
+        let pageObj = doc.addPage([0,0,width,height], 0, resources, "BT /Helv ET")
         doc.insertPage(-1, pageObj)
 
         if (doc instanceof mupdf.PDFDocument) {
@@ -174,7 +174,12 @@ export class Image extends mupdf.Image {
 
 export class PDFPage extends mupdf.PDFPage {
 
-    constructor(doc: mupdf.PDFDocument, page: mupdf.PDFPage) {
+    // note page number is *not* zero-indexed here
+    constructor(doc: mupdf.PDFDocument, pno:number) {
+        if (pno < 1) {
+            pno = 1
+        }
+        let page: mupdf.PDFPage = doc.loadPage(pno-1)
         super(doc, page.pointer)
 	}
 

@@ -106,7 +106,7 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
 .. code-block:: javascript
 
     // load the 1st page of the document
-    let page = new mupdfjs.PDFPage(document, 1)
+    let page = new mupdfjs.PDFPage(document, 0)
     
 
 

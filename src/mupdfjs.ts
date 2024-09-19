@@ -174,12 +174,12 @@ export class Image extends mupdf.Image {
 
 export class PDFPage extends mupdf.PDFPage {
 
-    // note page number is *not* zero-indexed here
+    // note page number is zero-indexed here
     constructor(doc: mupdf.PDFDocument, pno:number) {
-        if (pno < 1) {
-            pno = 1
+        if (pno < 0) {
+            pno = 0
         }
-        let page: mupdf.PDFPage = doc.loadPage(pno-1)
+        let page: mupdf.PDFPage = doc.loadPage(pno)
         super(doc, page.pointer)
 	}
 

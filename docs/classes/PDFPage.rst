@@ -18,7 +18,7 @@ PDFPage
     Returns a `PDFPage` from the document.
 
     :arg doc: `mupdf.Document <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-run-js-api-document>`_.
-    :arg pno: `number`. Note: not zero-indexed! - to get page `1` of the document just use `1` here!
+    :arg pno: `number`. Note: zero-indexed! - to get page `1` of the document use `0` here!
 
     :return: `PDFPage`.
 
@@ -26,7 +26,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        let page = new mupdfjs.PDFPage(doc, 1);
+        let page = new mupdfjs.PDFPage(doc, 0); // loads the first pageof the document
 
 
 |instance_method_tag|

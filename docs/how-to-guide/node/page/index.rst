@@ -40,7 +40,7 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
 .. code-block:: javascript
 
     // load the 1st page of the document
-    let page = new mupdfjs.PDFPage(document, 1)
+    let page = new mupdfjs.PDFPage(document, 0)
 
 
 Getting the Page Bounds
@@ -150,7 +150,7 @@ The following script creates a blank **PDF** document, adds some styled text to 
 .. code-block:: javascript
 
     let document = mupdfjs.PDFDocument.createBlankDocument()
-    let page = new mupdfjs.PDFPage(document, 1)
+    let page = new mupdfjs.PDFPage(document, 0) // get the 1st page of the document
     page.insertText("HELLO WORLD", 
                     [0,0], 
                     "Times-Roman", 

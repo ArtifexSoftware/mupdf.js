@@ -17,7 +17,7 @@ Additionally the following requirements should be defined in your **JavaScript**
 .. code-block:: javascript
 
     import * as fs from "fs"
-    import * as mupdf from "mupdf"
+    import * as mupdfjs from "mupdfjs"
 
 ----
 

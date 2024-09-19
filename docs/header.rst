@@ -18,6 +18,10 @@
 
    <div class="node-js-logo"></div>
 
+.. |TODO| raw:: html
+
+   <div style="color:red;padding:10px;border:1px solid red;">TODO</div>
+
 .. meta::
    :description: MuPDF.js Developer documentation.
    :keywords: mupdf, wasm, pdf, document, api, split, merge, extract, view

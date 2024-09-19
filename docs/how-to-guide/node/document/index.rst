@@ -8,21 +8,20 @@
 Working with Documents
 =========================
 
-A **Document** instance has access to the :ref:`Core JavaScript API <https://mupdf.readthedocs.io/en/latest/mupdf-js.html>`.
-
+.. A **Document** instance has access to the :ref:`Core JavaScript API <https://mupdf.readthedocs.io/en/latest/mupdf-js.html>`. Once you have a **Document** instance you are free to use the **Core JavaScript API** methods as you wish, please see the `Document Class`_ methods in the `Core API`_ for *full details*.
 
 .. _Node_How_To_Guide_Document_Core_API:
+..
+    Core API
+    ----------------------------------
 
-Core API
-----------------------------------
+    Once you have a **Document** instance you are free to use the **Core JavaScript API** methods as you wish, please see the `Document Class`_ methods in the `Core API`_ for *full details*.
 
-Once you have a **Document** instance you are free to use the **Core JavaScript API** methods as you wish, please see the `Document Class`_ methods in the `Core API`_ for *full details*.
+    |
 
-|
+    ----
 
-----
-
-**Below details some common operations you may need.**
+    **Below details some common operations you may need.**
 
 
 Passwords & Security
@@ -36,8 +35,10 @@ A document may require a password if it is protected. To check this use the `nee
 
     let needsPassword = document.needsPassword()
 
+|TODO|
 
 To provide a password use the `authenticatePassword` method as follows:
+
 
 |example_tag|
 
@@ -98,25 +99,23 @@ Count the number of :ref:`pages <Node_How_To_Guide_Page>` in the document.
 Load a Page of a Document
 -------------------------------------------
 
-To load a :ref:`page <Node_How_To_Guide_Page>` of a document use the `loadPage` method. 
-
-
-.. note::
-    
-    The parameter for the page number passed to `loadPage` is zero-indexed.
-
+To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_Guide_Document>` use the :ref:`PDFPage constructor <Classes_PDFPage>` method to return a page instance. 
 
 |example_tag|
 
 .. code-block:: javascript
 
-    // loads the 1st page of the document
-    const page = document.loadPage(0) 
+    // load the 1st page of the document
+    let page = new mupdfjs.PDFPage(document, 1)
     
 
 
 Merging Documents
 -----------------------------
+
+|TODO|
+
+
 
 To merge documents we need to use the core `GraftObject`_ method and copy objects from documents into a new **PDF** document (the new document will be the result of the merge).
 
@@ -131,6 +130,8 @@ See the script below for an implementation, this can be found in `examples/tools
 
 Splitting a Document
 -----------------------------
+
+|TODO|
 
 To split a document we can take the :ref:`pages <Node_How_To_Guide_Page>` we want to use and create new documents from them with the `graftPage` method in the order we require.
 
@@ -157,7 +158,7 @@ To get the text for an entire document we can retrieve StructuredText_ objects a
 
     let i = 0
     while (i < document.countPages()) {
-        const page = document.loadPage(i)
+        const page = new mupdfjs.PDFPage(document, i)
         const json = page.toStructuredText("preserve-whitespace").asJSON()
         console.log(`json=${json}`)
         i++
@@ -183,7 +184,7 @@ To get the images for an entire document we can retrieve StructuredText_ objects
 
     let i = 0
     while (i < document.countPages()) {
-        const page = document.loadPage(i)
+        const page = new mupdfjs.PDFPage(document, i)
         page.toStructuredText("preserve-images").walk({
             onImageBlock(bbox, matrix, image) {
                 // Image found!
@@ -210,7 +211,7 @@ We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from d
 
     let i = 0
     while (i < document.countPages()) {
-        const page = document.loadPage(i)
+        const page = new mupdfjs.PDFPage(document, i)
         const annots = page.getAnnotations()
         console.log(`Page=${page}, Annotations=${annots}`)
         i++
@@ -308,7 +309,7 @@ Embedding files uses the :ref:`addEmbeddedFile <Node_How_To_Guide_Annotations_Em
 
 
 
-
+.. include:: ../node-footer.rst
 .. include:: ../../../footer.rst
 
 

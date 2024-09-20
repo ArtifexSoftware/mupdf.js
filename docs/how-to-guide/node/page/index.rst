@@ -251,25 +251,14 @@ To delete a page from a document use the :meth:`deletePage` method on the :meth:
 Rotating Pages
 ---------------------
 
-|TODO|
-
-Rotating a page involves updating keys on the associated `PDFObject`_ for the page. 
-
-The sample code below retrieves the `PDFObject`_ , then gets the current rotation value, then adds a 90 degree clockwise rotation it.
+Rotating a page with :meth:`rotate` allows for 90 increment rotations on a page.
 
 |example_tag|
 
 .. code-block:: javascript
 
-    // Get the PDF object corresponding to the page
-    const page_obj = page.getObject()
-
-    // get the current page rotation
-    var rotate = page_obj.getInheritable("Rotate")
-
-    // Update the Rotate value
-    page_obj.put("Rotate", rotate + 90)
-
+    // rotate a page 90 degrees anti-clockwise
+    page.rotate(-90)
 
 .. note::
 

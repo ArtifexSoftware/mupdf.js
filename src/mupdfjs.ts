@@ -342,4 +342,17 @@ export class PDFPage extends mupdf.PDFPage {
         }
 
     }
+
+    rotate(r:number) {
+        let page = this
+
+        // Get the PDF object corresponding to the page
+        const page_obj = page.getObject()
+
+        // Get the current page rotation
+        var rotate = page_obj.getInheritable("Rotate")
+
+        // Update the Rotate value
+        page_obj.put("Rotate", Number(rotate) + r)
+    }
 }

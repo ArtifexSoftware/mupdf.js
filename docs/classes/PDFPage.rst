@@ -113,6 +113,25 @@ PDFPage
         let widgets = pdfPage.getWidgets();
 
 
+..  method:: rotate(r:number)
+
+    Rotating a page allows for 90 increment rotations on a page. 
+    
+    If you send a rotation value which is not one of postive or negative `0`, `90`, `180`, `270` then this method will do nothing.
+
+    :arg r: The rotation value to apply to the page.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        // rotate a page 90 degrees anti-clockwise
+        page.rotate(-90)
+
+    .. note::
+
+        Positive rotation values are clockwise, negative are anti-clockwise.
+
 .. _RGBA_Array:
 
 .. admonition:: RGBA Array

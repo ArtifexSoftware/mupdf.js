@@ -168,7 +168,14 @@ export class PDFDocument extends mupdf.PDFDocument {
 
 }
 
+export const Rect = mupdf.Rect
+export const Matrix = mupdf.Matrix
+
 export class Image extends mupdf.Image {
+
+}
+
+export class ColorSpace extends mupdf.ColorSpace {
 
 }
 

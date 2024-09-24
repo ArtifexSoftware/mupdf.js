@@ -240,6 +240,15 @@ export class PDFDocument extends mupdf.PDFDocument {
         pageLabelsDict.put("Nums", numsArray);
         root.put("PageLabels", pageLabelsDict);
     }
+
+    authenticate(password: string): number {
+        if (this.pointer === 0) {
+          throw new Error("document closed");
+        } 
+        const val = super.authenticatePassword(password);
+        return val;
+    }
+
 }
 
 export const Rect = mupdf.Rect

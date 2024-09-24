@@ -12,6 +12,7 @@ Classes
     Image.rst
     PDFDocument.rst
     PDFPage.rst
+    PDFAnnotation.rst
 
 
 .. 

@@ -6,6 +6,8 @@ PDFDocument
 ===================
 
 
+|instance_method_tag|
+
 .. method:: createBlankDocument(width:number = 595, height:number = 842)
 
     *Static method*.

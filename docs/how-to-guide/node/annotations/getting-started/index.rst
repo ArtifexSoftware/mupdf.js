@@ -14,9 +14,9 @@ Getting Started
 Create an Annotation
 ----------------------
 
-To create an annotation use the `createAnnotation`_ method on the `PDFPage`_ class.
+To create an annotation use the :meth:`createAnnotation` method on the :doc:`../../../../classes/PDFPage` class.
 
-For example, assuming you have acquired an instance of a `PDFPage`_, to create a text annotation do the following:
+For example, assuming you have acquired an instance of a :doc:`../../../../classes/PDFPage`, to create a text annotation do the following:
 
 |example_tag|
 
@@ -30,7 +30,7 @@ For example, assuming you have acquired an instance of a `PDFPage`_, to create a
 Delete an Annotation
 --------------------------
 
-To delete an annotation use the `deleteAnnotation`_ method on the `PDFPage`_ class.
+To delete an annotation use the :meth:`deleteAnnotation` method on the :doc:`../../../../classes/PDFPage` class.
 
 |example_tag|
 
@@ -159,7 +159,7 @@ The following code queries all the pages of a :ref:`document <Node_How_To_Guide_
 
     let i = 0
     while (i < document.countPages()) {
-        const page = document.loadPage(i)
+        const page = new mupdfjs.PDFPage(document, i)
         const annots = page.getAnnotations()
         console.log(`Page=${page}, Annotations=${annots}`)
         i++
@@ -171,7 +171,7 @@ The following code queries all the pages of a :ref:`document <Node_How_To_Guide_
 Common Annotation Methods
 --------------------------------------------
 
-The following list shows some of the most commonly used methods to work with annotations. This list is *not exhaustive* - see the `PDFAnnotation class`_ for the full **API**. 
+The following list shows some of the most commonly used methods to work with annotations. This list is *not exhaustive* - see the :doc:`../../../../classes/PDFAnnotation` for the full **API**. 
 
 
 Get the Annotation Type
@@ -187,7 +187,7 @@ Position and Size
 - `getBounds <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#id35>`_
 - `hasRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#hasRect>`_
 - `getRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getRect>`_
-- `hasRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setRect>`_
+- `setRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setRect>`_
 
 
 Author

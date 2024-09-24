@@ -166,6 +166,80 @@ export class PDFDocument extends mupdf.PDFDocument {
         // TODO: Implement page reference reset (refer to PyMuPDF)
     }
 
+    getPageLabels(): PageLabelRule[] {
+        const root = this.getTrailer().get("Root");
+        if (!root) return [];
+        
+        const pageLabels = root.get("PageLabels");
+        if (!pageLabels) return [];
+    
+        const nums = pageLabels.get("Nums");
+        if (!nums || !nums.isArray()) return [];
+    
+        const labels: PageLabelRule[] = [];
+    
+        for (let i = 0; i < nums.length; i += 2) {
+            const startPage = nums.get(i).asNumber();
+            const labelDict = nums.get(i + 1);
+    
+            if (labelDict.isDictionary()) {
+                const rule: PageLabelRule = {
+                    startpage: startPage,
+                    prefix: "",
+                    style: "",
+                    firstpagenum: 1
+                };
+        
+                const prefix = labelDict.get("P");
+                if (prefix) {
+                    rule.prefix = prefix.asString();
+                }
+        
+                const style = labelDict.get("S");
+                if (style) {
+                    rule.style = style.asName();
+                }
+        
+                const firstPageNum = labelDict.get("St");
+                if (firstPageNum) {
+                    const num = firstPageNum.asNumber();
+                    if (num > 1) {
+                        rule.firstpagenum = num;
+                    }
+                }
+        
+                labels.push(rule);
+            }
+        }
+    
+        return labels;
+    }
+    
+    setPageLabelsArray(labels: PageLabelRule[]): void {
+        const root = this.getTrailer().get("Root");
+        const pageLabelsDict = this.newDictionary();
+        const numsArray = this.newArray();
+    
+        labels.forEach(rule => {
+            numsArray.push(this.newInteger(rule.startpage));
+            
+            const ruleDict = this.newDictionary();
+            if (rule.prefix !== undefined) {
+                ruleDict.put("P", this.newString(rule.prefix));
+            }
+            if (rule.style !== undefined) {
+                ruleDict.put("S", this.newName(rule.style));
+            }
+            if (rule.firstpagenum !== undefined && rule.firstpagenum > 1) {
+                ruleDict.put("St", this.newInteger(rule.firstpagenum));
+            }
+    
+            numsArray.push(ruleDict);
+        });
+    
+        pageLabelsDict.put("Nums", numsArray);
+        root.put("PageLabels", pageLabelsDict);
+    }
 }
 
 export const Rect = mupdf.Rect
@@ -362,4 +436,12 @@ export class PDFPage extends mupdf.PDFPage {
         // Update the Rotate value
         page_obj.put("Rotate", Number(rotate) + r)
     }
+}
+
+//Type
+interface PageLabelRule {
+    startpage: number;
+    prefix?: string;
+    style?: string;
+    firstpagenum?: number;
 }

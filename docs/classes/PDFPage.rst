@@ -26,7 +26,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        let page = new mupdfjs.PDFPage(doc, 0); // loads the first pageof the document
+        let page = new mupdfjs.PDFPage(doc, 0); // loads the first page of the document
 
 
 |instance_method_tag|
@@ -44,7 +44,7 @@ PDFPage
 
         - `strokeColor`. :ref:`RGBA Array <RGBA_Array>` for the color of the text border (or stroke).
         - `fillColor`. :ref:`RGBA Array <RGBA_Array>`  for the color of the text fill (or body)
-        - `strokeThickness`. Number - 0 or above to set the stroke thickness in points. Floating point numbers are accepted.
+        - `strokeThickness`. `number`. 0 or above to set the stroke thickness in points. Floating point numbers are accepted.
 
     |example_tag|
 
@@ -86,7 +86,151 @@ PDFPage
 
     .. code-block:: javascript
 
-        let links = pdfPage.getLinks();
+        let links = page.getLinks();
+
+
+.. method:: createAnnotation()
+
+    Create a new blank annotation of a given :ref:`type <PDFPage_annotation_types>`.
+
+    :arg type: `String` representing :ref:`annotation type <PDFPage_annotation_types>`.
+    :return: `PDFAnnotation`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let annotation = page.createAnnotation("Text");
+
+.. _PDFPage_annotation_types:
+
+**Annotation types**
+
+.. note::
+
+    Annotation types are also referred to as "subtypes".
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - **Name**
+     - **Supported**
+     - **Notes**
+   * - Text
+     - Yes
+     -
+   * - Link
+     - Yes
+     - Please use :meth:`createLink`.
+   * - FreeText
+     - Yes
+     -
+   * - Square
+     - Yes
+     -
+   * - Circle
+     - Yes
+     -
+   * - Line
+     - Yes
+     -
+   * - Polygon
+     - Yes
+     -
+   * - PolyLine
+     - Yes
+     -
+   * - Highlight
+     - Yes
+     -
+   * - Underline
+     - Yes
+     -
+   * - Squiggly
+     - Yes
+     -
+   * - StrikeOut
+     - Yes
+     -
+   * - Redact
+     - Yes
+     -
+   * - Stamp
+     - Yes
+     -
+   * - Caret
+     - Yes
+     -
+   * - Ink
+     - Yes
+     -
+   * - Popup
+     - No
+     -
+   * - FileAttachment
+     - Yes
+     -
+   * - Sound
+     - No
+     -
+   * - Movie
+     - No
+     -
+   * - RichMedia
+     - No
+     -
+   * - Widget
+     - No
+     -
+   * - Screen
+     - No
+     -
+   * - PrinterMark
+     - No
+     -
+   * - TrapNet
+     - No
+     -
+   * - Watermark
+     - No
+     -
+   * - 3D
+     - No
+     -
+   * - Projection
+     - No
+     -
+
+.. method:: deleteAnnotation(annot)
+
+    Delete the annotation from the page.
+
+    :arg annot: `PDFAnnotation`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        page.deleteAnnotation(annot)
+
+
+.. method:: createLink(rect:[], destinationUri:string)
+
+    |TODO|
+
+    Create a new link within the rectangle on the page, linking to the destination URI string.
+
+    :arg rect: :ref:`Rectangle<mutool_run_js_api_rectangle>` for the link.
+    :arg destinationUri: `string` containing URI.
+    :return: :ref:`Link<mutool_object_link>`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var link = page.createLink([0,0,100,100], "https://example.com");
+
 
 .. method:: getAnnotations()
 
@@ -119,7 +263,7 @@ PDFPage
     
     If you send a rotation value which is not one of postive or negative `0`, `90`, `180`, `270` then this method will do nothing.
 
-    :arg r: The rotation value to apply to the page.
+    :arg r: `Number`. The rotation value to apply to the page.
 
     |example_tag|
 
@@ -131,6 +275,30 @@ PDFPage
     .. note::
 
         Positive rotation values are clockwise, negative are anti-clockwise.
+
+
+.. method:: setPageBox(type:string)
+
+    Sets the type of box required for the page, one of "MediaBox", "CropBox", "BleedBox", "TrimBox" or "ArtBox".
+
+    :arg type: `string`.
+
+    .. note::
+
+        Explanation of box types:
+
+        - **MediaBox** -for complete pages including items that will be physically trimmed from the final product like crop marks, registration marks, etc.
+
+        - **CropBox** defines the region that a PDF is expected to display or print.
+
+        - **BleedBox** determines the region to which the page contents expect to be clipped.
+
+        - **TrimBox** defines the intended dimensions of the finished page.
+
+        - **ArtBox** can be used to denote areas where it is considered “safe” to place graphical elements.
+
+
+----
 
 .. _RGBA_Array:
 

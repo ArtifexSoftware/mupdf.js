@@ -268,9 +268,7 @@ Rotating a page with :meth:`rotate` allows for 90 increment rotations on a page.
 Cropping Pages
 --------------------
 
-|TODO|
-
-To crop a page we just need to set its "CropBox" value with `setPageBox` and an associated Rectangle_.
+To crop a page we just need to set its "CropBox" value with :meth:`setPageBox` and an associated Rectangle_.
 
 |example_tag|
 

@@ -1653,6 +1653,14 @@ PDF_ANNOT_GETSET(boolean, BOOLEAN, is_open)
 PDF_ANNOT_GETSET(boolean, BOOLEAN, hidden_for_editing)
 PDF_ANNOT_GETSET(char*, POINTER, icon_name)
 PDF_ANNOT_GETSET(int, INTEGER, intent)
+PDF_ANNOT_GETSET(int, INTEGER, callout_style)
+PDF_ANNOT_GETSET(float, NUMBER, line_leader)
+PDF_ANNOT_GETSET(float, NUMBER, line_leader_extension)
+PDF_ANNOT_GETSET(float, NUMBER, line_leader_offset)
+PDF_ANNOT_GETSET(boolean, BOOLEAN, line_caption)
+
+PDF_ANNOT_GET(fz_point*, POINT, callout_point)
+PDF_ANNOT_GET(fz_point*, POINT, line_caption_offset)
 
 PDF_ANNOT_GET(fz_rect*, RECT, rect)
 PDF_ANNOT_GET(fz_rect*, RECT, popup)
@@ -1683,6 +1691,7 @@ PDF_ANNOT_HAS(icon_name)
 PDF_ANNOT_HAS(open)
 PDF_ANNOT_HAS(author)
 PDF_ANNOT_HAS(filespec)
+PDF_ANNOT_HAS(callout)
 
 EXPORT
 char * wasm_pdf_annot_language(pdf_annot *doc)
@@ -1801,6 +1810,38 @@ EXPORT
 void wasm_pdf_set_annot_line(pdf_annot *annot, fz_point *a, fz_point *b)
 {
 	VOID(pdf_set_annot_line, annot, *a, *b)
+}
+
+EXPORT
+void wasm_pdf_set_annot_callout_point(pdf_annot *annot, fz_point *point)
+{
+	VOID(pdf_set_annot_callout_point, annot, *point)
+}
+
+EXPORT
+int wasm_pdf_annot_callout_line(pdf_annot *annot, fz_point *line)
+{
+	int n = 0;
+	TRY ({
+		pdf_annot_callout_line(ctx, annot, line, &n);
+	})
+	return n;
+}
+
+EXPORT
+void wasm_pdf_set_annot_callout_line(pdf_annot *annot, int n, fz_point *a, fz_point *b, fz_point *c)
+{
+	fz_point line[3] = { {0,0}, {0,0}, {0,0} };
+	if (a) line[0] = *a;
+	if (b) line[1] = *b;
+	if (c) line[2] = *c;
+	VOID(pdf_set_annot_callout_line, annot, line, n)
+}
+
+EXPORT
+void wasm_pdf_set_annot_line_caption_offset(pdf_annot *annot, fz_point *point)
+{
+	VOID(pdf_set_annot_line_caption_offset, annot, *point)
 }
 
 EXPORT

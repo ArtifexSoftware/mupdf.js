@@ -218,7 +218,7 @@ export function setUserCSS(text: string) {
 
 // To pass Rect and Matrix as pointer arguments
 const _wasm_int = Malloc<"int">(4)
-const _wasm_point = Malloc<"fz_point">(4 * 4) >> 2
+const _wasm_point = Malloc<"fz_point">(4 * 6) >> 2
 const _wasm_rect = Malloc<"fz_rect">(4 * 8) >> 2
 const _wasm_matrix = Malloc<"fz_matrix">(4 * 6) >> 2
 const _wasm_color = Malloc<"number">(4 * 4) >> 2
@@ -324,6 +324,12 @@ function POINT2(p: Point) {
 	libmupdf.HEAPF32[_wasm_point + 2] = p[0]
 	libmupdf.HEAPF32[_wasm_point + 3] = p[1]
 	return (_wasm_point + 2) << 2 as Pointer<"fz_point">
+}
+
+function POINT3(p: Point) {
+	libmupdf.HEAPF32[_wasm_point + 4] = p[0]
+	libmupdf.HEAPF32[_wasm_point + 5] = p[1]
+	return (_wasm_point + 4) << 2 as Pointer<"fz_point">
 }
 
 function RECT(r: Rect) {
@@ -3011,6 +3017,9 @@ export class PDFAnnotation extends Userdata<"pdf_annot"> {
 	hasFilespec() {
 		return !!libmupdf._wasm_pdf_annot_has_filespec(this.pointer)
 	}
+	hasCallout() {
+		return !!libmupdf._wasm_pdf_annot_has_callout(this.pointer)
+	}
 
 	getRect() {
 		return fromRect(libmupdf._wasm_pdf_annot_rect(this.pointer))
@@ -3099,7 +3108,92 @@ export class PDFAnnotation extends Userdata<"pdf_annot"> {
 	setLineEndingStyles(start: PDFAnnotationLineEndingStyle, end: PDFAnnotationLineEndingStyle) {
 		let start_ix = ENUM<PDFAnnotationLineEndingStyle>(start, PDFAnnotation.LINE_ENDING)
 		let end_ix = ENUM<PDFAnnotationLineEndingStyle>(end, PDFAnnotation.LINE_ENDING)
-		return libmupdf._wasm_pdf_set_annot_line_ending_styles(this.pointer, start_ix, end_ix)
+		libmupdf._wasm_pdf_set_annot_line_ending_styles(this.pointer, start_ix, end_ix)
+	}
+
+	getLineCaption() {
+		return libmupdf._wasm_pdf_annot_line_caption(this.pointer)
+	}
+
+	setLineCaption(on: boolean) {
+		return libmupdf._wasm_pdf_set_annot_line_caption(this.pointer, on)
+	}
+
+	getLineCaptionOffset() {
+		return fromPoint(libmupdf._wasm_pdf_annot_line_caption_offset(this.pointer))
+	}
+
+	setLineCaptionOffset(p: Point) {
+		return libmupdf._wasm_pdf_set_annot_line_caption_offset(this.pointer, POINT(p))
+	}
+
+	getLineLeader() {
+		return libmupdf._wasm_pdf_annot_line_leader(this.pointer)
+	}
+
+	getLineLeaderExtension() {
+		return libmupdf._wasm_pdf_annot_line_leader_extension(this.pointer)
+	}
+
+	getLineLeaderOffset() {
+		return libmupdf._wasm_pdf_annot_line_leader_offset(this.pointer)
+	}
+
+	setLineLeader(v: number) {
+		return libmupdf._wasm_pdf_set_annot_line_leader(this.pointer, v)
+	}
+
+	setLineLeaderExtension(v: number) {
+		return libmupdf._wasm_pdf_set_annot_line_leader_extension(this.pointer, v)
+	}
+
+	setLineLeaderOffset(v: number) {
+		return libmupdf._wasm_pdf_set_annot_line_leader_offset(this.pointer, v)
+	}
+
+	getCalloutStyle() {
+		let style = libmupdf._wasm_pdf_annot_callout_style(this.pointer)
+		return PDFAnnotation.LINE_ENDING[style] || "None"
+	}
+
+	setCalloutStyle(style: PDFAnnotationLineEndingStyle) {
+		let style_ix = ENUM<PDFAnnotationLineEndingStyle>(style, PDFAnnotation.LINE_ENDING)
+		libmupdf._wasm_pdf_set_annot_callout_style(this.pointer, style_ix)
+	}
+
+	getCalloutLine() {
+		let n = libmupdf._wasm_pdf_annot_callout_line(this.pointer,
+			(_wasm_point << 2) as Pointer<"fz_point">)
+		if (n == 3)
+			return [
+				fromPoint((_wasm_point+0) << 2 as Pointer<"fz_point">),
+				fromPoint((_wasm_point+1) << 2 as Pointer<"fz_point">),
+				fromPoint((_wasm_point+2) << 2 as Pointer<"fz_point">)
+			]
+		if (n == 2)
+			return [
+				fromPoint((_wasm_point+0) << 2 as Pointer<"fz_point">),
+				fromPoint((_wasm_point+1) << 2 as Pointer<"fz_point">)
+			]
+		return undefined
+	}
+
+	setCalloutLine(line: Point[]) {
+		let a = line[0] || [0, 0]
+		let b = line[1] || [0, 0]
+		let c = line[2] || [0, 0]
+		libmupdf._wasm_pdf_set_annot_callout_line(this.pointer, line.length, POINT(a), POINT2(b), POINT3(c))
+	}
+
+	getCalloutPoint() {
+		let line = this.getCalloutLine()
+		if (line)
+			return line[0]
+		return undefined
+	}
+
+	setCalloutPoint(p: Point) {
+		libmupdf._wasm_pdf_set_annot_callout_point(this.pointer, POINT(p))
 	}
 
 	getColor() {

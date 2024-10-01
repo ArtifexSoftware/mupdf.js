@@ -249,6 +249,91 @@ export class PDFDocument extends mupdf.PDFDocument {
         return val;
     }
 
+    getPageNumbers(label: string, only_one: boolean = false): number[] {
+        const numbers: number[] = [];
+        if (!label) {
+            return numbers;
+        }
+
+        const labels = this.getPageLabels();
+        if (labels.length === 0) {
+            return numbers;
+        }
+
+        for (let i = 0; i < this.countPages(); i++) {
+            const pageLabel = this.getPageLabel(i, labels);
+            if (pageLabel === label) {
+                numbers.push(i);
+                if (only_one) {
+                    break;
+                }
+            }
+        }
+
+        return numbers;
+    }
+
+    private getPageLabel(pageNum: number, labels: PageLabelRule[]): string {
+        let currentRule: PageLabelRule | undefined;
+        for (const rule of labels) {
+            if (rule.startpage <= pageNum) {
+                currentRule = rule;
+            } else {
+                break;
+            }
+        }
+
+        if (!currentRule) {
+            return (pageNum + 1).toString();
+        }
+
+        let labelNum = pageNum - currentRule.startpage + (currentRule.firstpagenum || 1);
+        let prefix = currentRule.prefix || '';
+
+        switch (currentRule.style) {
+            case 'D':
+                return prefix + labelNum;
+            case 'r':
+                return prefix + this.toRoman(labelNum).toLowerCase();
+            case 'R':
+                return prefix + this.toRoman(labelNum);
+            case 'a':
+                return prefix + this.toAlpha(labelNum).toLowerCase();
+            case 'A':
+                return prefix + this.toAlpha(labelNum);
+            default:
+                return prefix + labelNum;
+        }
+    }
+
+    private toRoman(num: number): string {
+        const roman: string[][] = [
+            ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'],
+            ['', 'X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX', 'LXXX', 'XC'],
+            ['', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM'],
+            ['', 'M', 'MM', 'MMM']
+        ];
+        
+        const thousands = Math.floor(num / 1000);
+        const hundreds = Math.floor((num % 1000) / 100);
+        const tens = Math.floor((num % 100) / 10);
+        const ones = num % 10;
+    
+        return (roman[3]?.[thousands] ?? '') +
+        (roman[2]?.[hundreds] ?? '') +
+        (roman[1]?.[tens] ?? '') +
+        (roman[0]?.[ones] ?? '');
+    }
+
+    private toAlpha(num: number): string {
+        let result = '';
+        while (num > 0) {
+            num--;
+            result = String.fromCharCode(65 + (num % 26)) + result;
+            num = Math.floor(num / 26);
+        }
+        return result;
+    }
 }
 
 export const Rect = mupdf.Rect

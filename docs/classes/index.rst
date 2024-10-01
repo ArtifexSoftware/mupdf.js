@@ -9,10 +9,14 @@ Classes
 .. toctree::
     :maxdepth: 2
 
+    Buffer.rst
+    ColorSpace.rst
+    Font.rst
     Image.rst
     PDFDocument.rst
     PDFPage.rst
     PDFAnnotation.rst
+    StructuredText.rst
 
 
 .. 

@@ -11,13 +11,13 @@ PDFPage
 
 |constructor_tag|
 
-.. method:: PDFPage(doc: mupdf.Document, pno: number)
+.. method:: PDFPage(doc: PDFDocument, pno: number)
 
     *Constructor method*.
 
-    Returns a `PDFPage` from the document.
+    Returns a `PDFPage` from a supplied document and page number.
 
-    :arg doc: `mupdf.Document <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-run-js-api-document>`_.
+    :arg doc: :doc:`PDFDocument`.
     :arg pno: `number`. Note: zero-indexed! - to get page `1` of the document use `0` here!
 
     :return: `PDFPage`.
@@ -31,6 +31,18 @@ PDFPage
 
 |instance_method_tag|
 
+.. method:: toStructuredText(options:string)
+
+    Extract the text on the page into a :doc:`StructuredText` object. 
+
+    :arg options: `string`. A comma separated list of flags: "preserve-ligatures", "preserve-whitespace", "preserve-spans", and "preserve-images".
+    :return: :doc:`StructuredText`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let sText = page.toStructuredText("preserve-whitespace");
 
 .. method:: insertText(value:string, point: [number, number], fontName:string = "Times-Roman", fontSize:number = 18, graphics: {strokeColor:[number,number,number,number], fillColor:[number,number,number,number], strokeThickness:number} = {strokeColor:[0,0,0,1], fillColor:[0,0,0,1], strokeThickness:1})
     
@@ -93,8 +105,8 @@ PDFPage
 
     Create a new blank annotation of a given :ref:`type <PDFPage_annotation_types>`.
 
-    :arg type: `String` representing :ref:`annotation type <PDFPage_annotation_types>`.
-    :return: `PDFAnnotation`.
+    :arg type: `string` representing :ref:`annotation type <PDFPage_annotation_types>`.
+    :return: :doc:`PDFAnnotation`.
 
     |example_tag|
 
@@ -202,7 +214,7 @@ PDFPage
      - No
      -
 
-.. method:: deleteAnnotation(annot)
+.. method:: deleteAnnotation(annot:PDFAnnotation)
 
     Delete the annotation from the page.
 
@@ -217,13 +229,11 @@ PDFPage
 
 .. method:: createLink(rect:[], destinationUri:string)
 
-    |TODO|
-
     Create a new link within the rectangle on the page, linking to the destination URI string.
 
-    :arg rect: :ref:`Rectangle<mutool_run_js_api_rectangle>` for the link.
+    :arg rect: :ref:`Rectangle <Glossary_Rectangles>` for the link.
     :arg destinationUri: `string` containing URI.
-    :return: :ref:`Link<mutool_object_link>`.
+    :return: :doc:`Link`.
 
     |example_tag|
 
@@ -263,7 +273,7 @@ PDFPage
     
     If you send a rotation value which is not one of postive or negative `0`, `90`, `180`, `270` then this method will do nothing.
 
-    :arg r: `Number`. The rotation value to apply to the page.
+    :arg r: `number`. The rotation value to apply to the page.
 
     |example_tag|
 

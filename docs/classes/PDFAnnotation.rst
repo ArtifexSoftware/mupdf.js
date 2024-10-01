@@ -16,7 +16,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     Returns a rectangle containing the location and dimension of the annotation.
 
-    :return: `[ulx,uly,lrx,lry]`. :ref:`Rectangle<mutool_run_js_api_rectangle>`.
+    :return: `[ulx,uly,lrx,lry]`. :ref:`Rectangle <Glossary_Rectangles>`.
 
 
     |example_tag|
@@ -108,7 +108,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
     :arg appearance: `string` Appearance stream ("N", "R" or "D").
     :arg state: `string` The annotation state to set the appearance for or null for the current state. Only widget annotations of pushbutton, check box, or radio button type have states, which are "Off" or "Yes". For other types of annotations pass null.
     :arg transform: `[a,b,c,d,e,f]`. The transform :ref:`matrix<mutool_run_js_api_matrix>`.
-    :arg bbox: `[ulx,uly,lrx,lry]` :ref:`Rectangle<mutool_run_js_api_rectangle>`.
+    :arg bbox: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
     :arg resources: `object`. Resources object.
     :arg contents: `string`. Contents string.
 
@@ -197,10 +197,6 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         let type = annotation.getType()
 
 
-|TODO|
-from here on Monday
-|TODO|
-
 .. method:: getFlags()
 
     Get the annotation flags.
@@ -218,13 +214,13 @@ from here on Monday
 
     Set the annotation flags.
 
-    :arg flags: `Integer` representaton of a bit-field of flags specified below.
+    :arg flags: `number` representaton of a bit-field of flags specified below.
 
     |example_tag|
 
     .. code-block:: javascript
 
-        annotation.setFlags(8); // Clears all other flags and sets NoZoom.
+        annotation.setFlags(4); // Clears all other flags and sets NoZoom.
 
 
 
@@ -265,7 +261,7 @@ from here on Monday
 
     Get the annotation contents.
 
-    :return: `String`.
+    :return: `string`.
 
     |example_tag|
 
@@ -273,11 +269,11 @@ from here on Monday
 
         var contents = annotation.getContents();
 
-.. method:: setContents(text)
+.. method:: setContents(text:string)
 
     Set the annotation contents.
 
-    :arg text: `String`.
+    :arg text: `string`.
 
     |example_tag|
 
@@ -286,40 +282,11 @@ from here on Monday
         annotation.setContents("Hello World");
 
 
-.. method:: getBorder()
-
-    |mutool_tag|
-
-    Get the annotation border line width in points.
-
-    :return: `Float`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        var border = annotation.getBorder();
-
-
-.. method:: setBorder(width)
-
-    |mutool_tag|
-
-    Set the annotation border line width in points. Use `setBorderWidth()` to avoid removing the border effect.
-
-    :arg width: `Float` Border width.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        annotation.setBorder(1.0);
-
 .. method:: getColor()
 
     Get the annotation color, represented as an array of 1, 3, or 4 component values.
 
-    :return: The :ref:`color value<mutool_run_js_api_colors>`.
+    :return: The :ref:`color value <Glossary_Colors>`.
 
     |example_tag|
 
@@ -460,7 +427,7 @@ from here on Monday
 
     Get the annotation language (or get the inherited document language).
 
-    :return: `String`.
+    :return: `string`.
 
     |example_tag|
 
@@ -473,7 +440,7 @@ from here on Monday
 
     Set the annotation language.
 
-    :arg language: `String`.
+    :arg language: `string`.
 
     |example_tag|
 
@@ -505,7 +472,7 @@ These properties are only present for some annotation types, so support for them
 
     Get the annotation bounding box.
 
-    :return: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle<mutool_run_js_api_rectangle>`.
+    :return: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -519,7 +486,7 @@ These properties are only present for some annotation types, so support for them
 
     Set the annotation bounding box.
 
-    :arg rect: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle<mutool_run_js_api_rectangle>`.
+    :arg rect: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -548,7 +515,7 @@ These properties are only present for some annotation types, so support for them
 
     Set the default text appearance used for free text annotations.
 
-    :arg font: `String` ("Helv" = Helvetica, "TiRo" = Times New Roman, "Cour" = Courier).
+    :arg font: `string` ("Helv" = Helvetica, "TiRo" = Times New Roman, "Cour" = Courier).
     :arg size: `Integer`.
     :arg color: `Array`. The :ref:`color value<mutool_run_js_api_colors>`.
 
@@ -631,7 +598,7 @@ These properties are only present for some annotation types, so support for them
 
     Gets the annotation author.
 
-    :return: `String`.
+    :return: `string`.
 
     |example_tag|
 
@@ -644,7 +611,7 @@ These properties are only present for some annotation types, so support for them
 
     Sets the annotation author.
 
-    :arg author: `String`.
+    :arg author: `string`.
 
     |example_tag|
 
@@ -691,8 +658,8 @@ These properties are only present for some annotation types, so support for them
 
     Sets the :ref:`line ending styles<mutool_pdf_annotation_line_ending_styles>` object.
 
-    :arg start: `String`.
-    :arg end: `String`.
+    :arg start: `string`.
+    :arg end: `string`.
 
     |example_tag|
 
@@ -899,7 +866,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Sets the style of the callout line.
 
-    :arg style: `String`. A :ref:`line ending style <mutool_pdf_annotation_line_ending_styles>`.
+    :arg style: `string`. A :ref:`line ending style <mutool_pdf_annotation_line_ending_styles>`.
 
 
 .. method:: getCalloutStyle()
@@ -908,7 +875,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Returns the callout style.
 
-    :return: `String`.
+    :return: `string`.
 
 
 ----
@@ -934,7 +901,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Gets the annotation icon name, either one of the standard :ref:`icon names<mutool_pdf_annotation_icon_names>`, or something custom.
 
-    :return: `String`.
+    :return: `string`.
 
     |example_tag|
 
@@ -947,7 +914,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Sets the annotation icon name, either one of the standard :ref:`icon names<mutool_pdf_annotation_icon_names>`, or something custom. Note that standard icon names can be used to resynthesize the annotation apperance, but custom names cannot.
 
-    :arg name: `String`.
+    :arg name: `string`.
 
     |example_tag|
 
@@ -1082,7 +1049,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Get annotation popup rectangle.
 
-    :return: `[ulx,uly,lrx,lry]` :ref:`Rectangle<mutool_run_js_api_rectangle>`.
+    :return: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -1094,7 +1061,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Set annotation popup rectangle.
 
-    :arg rect: `[ulx,uly,lrx,lry]` :ref:`Rectangle<mutool_run_js_api_rectangle>`.
+    :arg rect: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -1232,7 +1199,7 @@ The border drawn around some annotations can be controlled by:
 
     Get the annotation border style, either of "Solid" or "Dashed".
 
-    :return: `String`.
+    :return: `string`.
 
     |example_tag|
 
@@ -1248,7 +1215,7 @@ The border drawn around some annotations can be controlled by:
 
     Set the annotation border style, either of "Solid" or "Dashed".
 
-    :arg: `String`.
+    :arg: `string`.
 
     |example_tag|
 
@@ -1393,7 +1360,7 @@ Annotations that have a border effect allows the effect to be controlled by:
 
     Get the annotation border effect, either of "None" or "Cloudy".
 
-    :return: `String`.
+    :return: `string`.
 
     |example_tag|
 
@@ -1409,7 +1376,7 @@ Annotations that have a border effect allows the effect to be controlled by:
 
     Set the annotation border effect, either of "None" or "Cloudy".
 
-    :arg: `String`.
+    :arg: `string`.
 
     |example_tag|
 

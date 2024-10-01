@@ -7,13 +7,13 @@ Image
 
 |constructor_tag|
 
-.. method:: Image(data: AnyBuffer)
+.. method:: Image(data: Buffer | ArrayBuffer | Uint8Array | string)
 
     *Constructor method*.
 
     Returns an `Image` from the supplied data buffer.
 
-    :arg data: Buffer of file data.
+    :arg data: :doc:`Buffer` | `ArrayBuffer` | `Uint8Array` | `string`. Buffer of file data.
 
     :return: `Image`.
 

@@ -22,6 +22,17 @@
 
 import * as mupdf from "mupdf";
 
+export const Rect = mupdf.Rect
+export const Matrix = mupdf.Matrix
+
+export class Buffer extends mupdf.Buffer {}
+export class ColorSpace extends mupdf.ColorSpace {}
+export class Font extends mupdf.Font {}
+export class Image extends mupdf.Image {}
+export class Link extends mupdf.Link {}
+export class OutlineIterator extends mupdf.OutlineIterator {}
+export class StructuredText extends mupdf.StructuredText {}
+
 export class PDFDocument extends mupdf.PDFDocument {
 
     // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
@@ -334,17 +345,6 @@ export class PDFDocument extends mupdf.PDFDocument {
         }
         return result;
     }
-}
-
-export const Rect = mupdf.Rect
-export const Matrix = mupdf.Matrix
-
-export class Image extends mupdf.Image {
-
-}
-
-export class ColorSpace extends mupdf.ColorSpace {
-
 }
 
 export class PDFPage extends mupdf.PDFPage {

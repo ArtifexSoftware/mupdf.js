@@ -35,18 +35,16 @@ A document may require a password if it is protected. To check this use the `nee
 
     let needsPassword = document.needsPassword()
 
-|TODO|
-
-To provide a password use the `authenticatePassword` method as follows:
+To provide a password use the `authenticate` method as follows:
 
 
 |example_tag|
 
 .. code-block:: javascript
 
-    let auth = document.authenticatePassword("abracadabra")
+    let auth = document.authenticate("abracadabra")
 
-See the `authenticate password return values`_ for what the return value means.
+See the :ref:`authenticate password return values <authenticate password return values>` for what the return value means.
 
 Document Metadata
 ---------------------------
@@ -55,7 +53,7 @@ Document Metadata
 Get Metadata
 """""""""""""""""""""
 
-You can get metadata for a document using the `getMetaData` method. 
+You can get metadata for a document using the :meth:`getMetaData` method. 
 
 The common keys are: `format`, `encryption`, `info:ModDate`, and `info:Title`.
 
@@ -72,7 +70,7 @@ The common keys are: `format`, `encryption`, `info:ModDate`, and `info:Title`.
 Set Metadata
 """""""""""""""""""""
 
-You can set metadata for a document using the `setMetaData` method. 
+You can set metadata for a document using the :meth:`setMetaData` method. 
 
 
 |example_tag|
@@ -312,6 +310,3 @@ Embedding files uses the :ref:`addEmbeddedFile <Node_How_To_Guide_Annotations_Em
 .. include:: ../node-footer.rst
 .. include:: ../../../footer.rst
 
-
-
-.. _authenticate password return values: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#authenticatePassword

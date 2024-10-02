@@ -345,6 +345,88 @@ export class PDFDocument extends mupdf.PDFDocument {
         }
         return result;
     }
+
+    merge(
+        sourcePDF: mupdf.PDFDocument,
+        fromPage: number = 0,
+        toPage: number = -1,
+        startAt: number = -1,
+        rotate: 0 | 90 | 180 | 270 = 0,
+        copyLinks: boolean = true,
+        copyAnnotations: boolean = true
+    ): void {
+        if (this.pointer === 0) {
+            throw new Error("document closed");
+        }
+        if (sourcePDF.pointer === 0) {
+            throw new Error("source document closed");
+        }
+        if (this === sourcePDF) {
+            throw new Error("Cannot merge a document with itself");
+        }
+
+        const sourcePageCount = sourcePDF.countPages();
+        const targetPageCount = this.countPages();
+
+        // Normalize page numbers
+        fromPage = Math.max(0, Math.min(fromPage, sourcePageCount - 1));
+        toPage = toPage < 0 ? sourcePageCount - 1 : Math.min(toPage, sourcePageCount - 1);
+        startAt = startAt < 0 ? targetPageCount : Math.min(startAt, targetPageCount);
+
+        // Ensure fromPage <= toPage
+        if (fromPage > toPage) {
+            [fromPage, toPage] = [toPage, fromPage];
+        }
+
+        for (let i = fromPage; i <= toPage; i++) {
+            const sourcePage = sourcePDF.loadPage(i);
+            const pageObj = sourcePage.getObject();
+            
+            // Create a new page in the target document
+            const newPageObj = this.addPage(sourcePage.getBounds(), rotate, this.newDictionary(), "");
+            
+            // Copy page contents
+            const contents = pageObj.get("Contents");
+            if (contents) {
+                newPageObj.put("Contents", this.graftObject(contents));
+            }
+            
+            // Copy page resources
+            const resources = pageObj.get("Resources");
+            if (resources) {
+                newPageObj.put("Resources", this.graftObject(resources));
+            }
+
+            // Insert the new page at the specified position
+            this.insertPage(startAt + (i - fromPage), newPageObj);
+
+            if (copyLinks || copyAnnotations) {
+                const targetPage = this.loadPage(startAt + (i - fromPage));
+                if (copyLinks) {
+                    this.copyPageLinks(sourcePage, targetPage);
+                }
+                if (copyAnnotations) {
+                    this.copyPageAnnotations(sourcePage, targetPage);
+                }
+            }
+        }
+    }
+
+    private copyPageLinks(sourcePage: mupdf.PDFPage, targetPage: mupdf.PDFPage): void {
+        const links = sourcePage.getLinks();
+        for (const link of links) {
+            targetPage.createLink(link.getBounds(), link.getURI());
+        }
+    }
+
+    private copyPageAnnotations(sourcePage: mupdf.PDFPage, targetPage: mupdf.PDFPage): void {
+        const annotations = sourcePage.getAnnotations();
+        for (const annotation of annotations) {
+            const newAnnotation = targetPage.createAnnotation(annotation.getType());
+            newAnnotation.setRect(annotation.getRect());
+            newAnnotation.setContents(annotation.getContents());
+        }
+    }
 }
 
 export class PDFPage extends mupdf.PDFPage {

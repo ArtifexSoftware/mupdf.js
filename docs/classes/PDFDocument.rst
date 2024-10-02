@@ -6,16 +6,14 @@ PDFDocument
 ===================
 
 
-|instance_method_tag|
+|static_method_tag|
 
 .. method:: createBlankDocument(width:number = 595, height:number = 842)
 
-    *Static method*.
-
     Creates and returns a one paged :doc:`PDFDocument`. If no width or height is supplied then the default values for an A4 sized document will be used.
 
-    :arg width: Width of document. 
-    :arg height: Height of document.
+    :arg width: `number`. Width of document. 
+    :arg height: `number`. Height of document.
 
     :return: `PDFDocument`.
 
@@ -26,13 +24,15 @@ PDFDocument
         let document = mupdfjs.PDFDocument.createBlankDocument()
 
 
+|instance_method_tag|
+
 .. method:: newPage(pno: number = -1, width: number = 595, height: number = 842)
 
     Creates and returns a :doc:`PDFPage` at a given place location in a document. If no width or height is supplied then the default values for an A4 sized document will be used.
 
-    :arg pno: The page location in the document to insert the page `0` = start of document, `-1` = end of document.
-    :arg width: Width of document. 
-    :arg height: Height of document.
+    :arg pno: `number`. The page location in the document to insert the page `0` = start of document, `-1` = end of document.
+    :arg width: `number`. Width of document. 
+    :arg height: `number`. Height of document.
 
     :return: :doc:`PDFPage`.
 
@@ -40,8 +40,8 @@ PDFDocument
 
     Copys a page from one index to another in the document.
 
-    :arg pno: The page location in the document to copy the page from, `0` = start of document, `-1` = end of document.
-    :arg to: The page location in the document to copy the page to, `0` = start of document, `-1` = end of document.
+    :arg pno: `number`. The page location in the document to copy the page from, `0` = start of document, `-1` = end of document.
+    :arg to: `number`. The page location in the document to copy the page to, `0` = start of document, `-1` = end of document.
 
 
 .. method:: graftPage(insertIndex:number, doc:PDFDocument, pnoIndexToCopy:number)
@@ -88,7 +88,7 @@ PDFDocument
 
 .. method:: needsPassword()
 
-    Returns *true* if a password is required to open a password protected PDF.
+    Returns `true` if a password is required to open a password protected PDF.
 
     :return: `boolean`.
 
@@ -104,7 +104,7 @@ PDFDocument
 
     Returns a bitfield value against the password authentication result.
 
-    :arg password: The password to attempt authentication with.
+    :arg password: `string`. The password to attempt authentication with.
     :return: `number`.
 
     **Return values**
@@ -134,7 +134,7 @@ PDFDocument
 
 .. method:: hasPermission(permission:string)
 
-    Returns *true* if the document has permission for the supplied `permission` parameter.
+    Returns `true` if the document has permission for the supplied `permission` parameter.
 
     :arg permission: `string` The permission to seek for, e.g. "edit".
     :return: `boolean`.

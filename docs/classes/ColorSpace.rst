@@ -51,6 +51,7 @@ ColorSpace
 
     A Grayscale colorspace has one component, RGB has 3, CMYK has 4, and DeviceN may have any number of components.
 
+    :return: `number`.
 
     |example_tag|
 
@@ -174,7 +175,18 @@ ColorSpace
 
     Returns a string indicating the type.
 
-    :return: `string`. One of "None", "Gray", "RGB", "BGR", "CMYK", "Lab", "Indexed", "Separation".
+    :return: `string`. 
+    
+    One of:
+    
+    - "None"
+    - "Gray"
+    - "RGB"
+    - "BGR"
+    - "CMYK"
+    - "Lab"
+    - "Indexed"
+    - "Separation"
 
     |example_tag|
     

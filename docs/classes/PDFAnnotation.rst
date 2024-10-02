@@ -5,7 +5,9 @@
 PDFAnnotation
 ===================
 
-:title:`PDF` Annotations belong to a specific :doc:`PDFPage` and may be created/changed/removed. Because annotation appearances may change (for several reasons) it is possible to scan through the annotations on a page and query them to see whether a re-render is necessary. Finally redaction annotations can be applied to a :doc:`PDFPage`, destructively removing content from the page.
+:title:`PDF` Annotations belong to a specific :doc:`PDFPage` and may be created/changed/removed. Because annotation appearances may change (for several reasons) it is possible to scan through the annotations on a page and query them to see whether a re-render is necessary.
+
+Additionally redaction annotations can be applied to a :doc:`PDFPage`, destructively removing content from the page.
 
 To get the annotations on a page see: :meth:`getAnnotations`, to create an annotation see: :meth:`createAnnotation`.
 
@@ -16,7 +18,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     Returns a rectangle containing the location and dimension of the annotation.
 
-    :return: `[ulx,uly,lrx,lry]`. :ref:`Rectangle <Glossary_Rectangles>`.
+    :return: `Array`. `[ulx,uly,lrx,lry]`. :ref:`Rectangle <Glossary_Rectangles>`.
 
 
     |example_tag|
@@ -26,12 +28,12 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         let bounds = annotation.getBounds()
 
 
-.. method:: run(device:Device, transform:[a,b,c,d,e,f])
+.. method:: run(device:Device, transform:Array)
 
     Calls the device functions to draw the annotation.
 
-    :arg device: `Device`.
-    :arg transform: `[a,b,c,d,e,f]`. The transform :ref:`matrix<mutool_run_js_api_matrix>`.
+    :arg device: :doc:`Device`.
+    :arg transform: `Array`. `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
 
     |example_tag|
 
@@ -40,15 +42,15 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         annotation.run(device, mupdfjs.Matrix.identity)
 
 
-.. method:: toPixmap(transform:[a,b,c,d,e,f], colorspace:ColorSpace, alpha:boolean)
+.. method:: toPixmap(transform:Array, colorspace:ColorSpace, alpha:boolean)
 
-    Render the annotation into a :ref:`Pixmap <mutool_object_pixmap>`, using the transform and colorspace.
+    Render the annotation into a :doc:`Pixmap`, using the `transform`, `colorspace` and `alpha` parameters.
 
-    :arg transform: `[a,b,c,d,e,f]`. The transform :ref:`matrix<mutool_run_js_api_matrix>`.
-    :arg colorspace: `ColorSpace`.
+    :arg transform: `Array`. `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg colorspace: :doc:`ColorSpace`.
     :arg alpha: `boolean`.
 
-    :return: `Pixmap`.
+    :return: :doc:`Pixmap`.
 
     |example_tag|
 
@@ -61,9 +63,9 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
 .. method:: toDisplayList()
 
-    Record the contents of the annotation into a `DisplayList`.
+    Record the contents of the annotation into a :doc:`DisplayList`.
 
-    :return: `DisplayList`.
+    :return: :doc:`DisplayList`.
 
     |example_tag|
 
@@ -86,13 +88,13 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         let obj = annotation.getObject()
 
 
-.. method:: setAppearanceFromDisplayList(appearance:string, state:string, transform:[a,b,c,d,e,f], displayList:DisplayList)
+.. method:: setAppearanceFromDisplayList(appearance:string, state:string, transform:Array, displayList:DisplayList)
 
     Set the annotation appearance stream for the given appearance. The desired appearance is given as a transform along with a display list.
 
     :arg appearance: `string` Appearance stream ("N", "R" or "D").
     :arg state: `string` The annotation state to set the appearance for or null for the current state. Only widget annotations of pushbutton, check box, or radio button type have states, which are "Off" or "Yes". For other types of annotations pass null.
-    :arg transform: `[a,b,c,d,e,f]`. The transform :ref:`matrix<mutool_run_js_api_matrix>`.
+    :arg transform: `Array`. `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
     :arg displayList: `DisplayList`.
 
     |example_tag|
@@ -101,14 +103,14 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
         annotation.setAppearanceFromDisplayList("N", null, mupdfjs.Matrix.identity, displayList);
 
-.. method:: setAppearance(appearance:string, state:string, transform:[a,b,c,d,e,f], bbox:[ulx,uly,lrx,lry], resources:object, contents:string)
+.. method:: setAppearance(appearance:string, state:string, transform:Array, bbox:Array, resources:object, contents:string)
 
     Set the annotation appearance stream for the given appearance. The desired appearance is given as a transform along with a bounding box, a :title:`PDF` dictionary of resources and a content stream.
 
     :arg appearance: `string` Appearance stream ("N", "R" or "D").
     :arg state: `string` The annotation state to set the appearance for or null for the current state. Only widget annotations of pushbutton, check box, or radio button type have states, which are "Off" or "Yes". For other types of annotations pass null.
-    :arg transform: `[a,b,c,d,e,f]`. The transform :ref:`matrix<mutool_run_js_api_matrix>`.
-    :arg bbox: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :arg transform: `Array`. `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg bbox: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
     :arg resources: `object`. Resources object.
     :arg contents: `string`. Contents string.
 
@@ -210,17 +212,17 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         var flags = annotation.getFlags();
 
 
-.. method:: setFlags(flags)
+.. method:: setFlags(flags:number)
 
     Set the annotation flags.
 
-    :arg flags: `number` representaton of a bit-field of flags specified below.
+    :arg flags: `number`. Representaton of a bit-field of flags specified below.
 
     |example_tag|
 
     .. code-block:: javascript
 
-        annotation.setFlags(4); // Clears all other flags and sets NoZoom.
+        annotation.setFlags(4); // Clears all other flags and sets "NoZoom".
 
 
 
@@ -286,7 +288,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     Get the annotation color, represented as an array of 1, 3, or 4 component values.
 
-    :return: The :ref:`color value <Glossary_Colors>`.
+    :return: `Array`. The :ref:`color value <Glossary_Colors>`.
 
     |example_tag|
 
@@ -296,11 +298,11 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
 
 
-.. method:: setColor(color)
+.. method:: setColor(color:Array)
 
     Set the annotation color, represented as an array of 1, 3, or 4 component values.
 
-    :arg color: The :ref:`color value<mutool_run_js_api_colors>`.
+    :arg color: `Array`. The :ref:`color value <Glossary_Colors>`.
 
     |example_tag|
 
@@ -313,7 +315,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     Get the annotation opacity.
 
-    :return: The :ref:`opacity<mutool_run_js_api_alpha>` value.
+    :return: `number`. The :ref:`opacity <Glossary_Alpha>` value.
 
     |example_tag|
 
@@ -323,11 +325,11 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
 
 
-.. method:: setOpacity(opacity)
+.. method:: setOpacity(opacity:number)
 
     Set the annotation opacity.
 
-    :arg opacity: The :ref:`opacity<mutool_run_js_api_alpha>` value.
+    :arg opacity: `number`. The :ref:`opacity <Glossary_Alpha>` value.
 
     |example_tag|
 
@@ -350,19 +352,17 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
 
 
-.. method:: setCreationDate(date)
+.. method:: setCreationDate(date:Date)
 
     Set the creation date.
 
-    :arg date: `Date`.
+    :arg date: `Date`. :title:`JavaScript` `Date` object.
 
     |example_tag|
 
     .. code-block:: javascript
 
         annotation.setCreationDate(new Date());
-
-    .. |tor_todo| In mutool this is milliseconds we need to change it to Date
 
 
 .. method:: getModificationDate()
@@ -378,11 +378,11 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         var date = annotation.getModificationDate();
 
 
-.. method:: setModificationDate(date)
+.. method:: setModificationDate(date:Date)
 
     Set the modification date.
 
-    :arg date: `Date`.
+    :arg date: `Date`. :title:`JavaScript` `Date` object.
 
     |example_tag|
 
@@ -390,17 +390,12 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
         annotation.setModificationDate(new Date());
 
-    .. |tor_todo| In mutool this is milliseconds we need to change it to Date
-
-
-
-
 
 .. method:: getQuadding()
 
     Get the annotation quadding (justification).
 
-    :return: Quadding value, `0` for left-justified, `1` for centered, `2` for right-justified.
+    :return: `number`. Quadding value, `0` for left-justified, `1` for centered, `2` for right-justified.
 
     |example_tag|
 
@@ -409,11 +404,11 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         var quadding = annotation.getQuadding();
 
 
-.. method:: setQuadding(value)
+.. method:: setQuadding(value:number)
 
     Set the annotation quadding (justification).
 
-    :arg value: `Number`. Quadding value, `0` for left-justified, `1` for centered, `2` for right-justified.
+    :arg value: `number`. Quadding value, `0` for left-justified, `1` for centered, `2` for right-justified.
 
     |example_tag|
 
@@ -436,7 +431,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         var language = annotation.getLanguage();
 
 
-.. method:: setLanguage(language)
+.. method:: setLanguage(language:string)
 
     Set the annotation language.
 
@@ -457,10 +452,9 @@ These properties are only present for some annotation types, so support for them
 
 .. method:: hasRect()
 
-
     Checks the support for annotation bounding box.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -482,7 +476,7 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setRect(rect)
+.. method:: setRect(rect:Array)
 
     Set the annotation bounding box.
 
@@ -499,9 +493,9 @@ These properties are only present for some annotation types, so support for them
 
 
 
-    Get the :ref:`default text appearance <mutool_run_js_api_object_default_appearance_text_object>` used for free text annotations.
+    Get the :ref:`default text appearance <Glossary_Default_Appearance_Text_Object>` used for free text annotations.
 
-    :return: `{font:String, size:Integer, color:[r,g,b]}` Returns :ref:`a default text appearance <mutool_run_js_api_object_default_appearance_text_object>` with the key/value pairs.
+    :return: `{font:string, size:number, color:Array}` Returns :ref:`a default text appearance <Glossary_Default_Appearance_Text_Object>` with the key/value pairs.
 
     |example_tag|
 
@@ -511,13 +505,13 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setDefaultAppearance(font, size, color)
+.. method:: setDefaultAppearance(font:number, size:number, color:Array)
 
     Set the default text appearance used for free text annotations.
 
     :arg font: `string` ("Helv" = Helvetica, "TiRo" = Times New Roman, "Cour" = Courier).
-    :arg size: `Integer`.
-    :arg color: `Array`. The :ref:`color value<mutool_run_js_api_colors>`.
+    :arg size: `number`.
+    :arg color: `Array`. The :ref:`color value <Glossary_Colors>`.
 
     |example_tag|
 
@@ -532,7 +526,7 @@ These properties are only present for some annotation types, so support for them
 
     Checks whether the annotation has support for an interior color.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -545,11 +539,9 @@ These properties are only present for some annotation types, so support for them
 
 .. method:: getInteriorColor()
 
-
-
     Gets the annotation interior color.
 
-    :return: The :ref:`color value<mutool_run_js_api_colors>`.
+    :return: `Array`. The :ref:`color value <Glossary_Colors>`.
 
     |example_tag|
 
@@ -559,13 +551,13 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setInteriorColor(color)
+.. method:: setInteriorColor(color:Array)
 
 
 
     Sets the annotation interior color.
 
-    :arg color: `Array`. The :ref:`color value<mutool_run_js_api_colors>`.
+    :arg color: `Array`. The :ref:`color value <Glossary_Colors>`.
 
     |example_tag|
 
@@ -580,11 +572,9 @@ These properties are only present for some annotation types, so support for them
 
 .. method:: hasAuthor()
 
-
-
     Checks whether the annotation has an author.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -607,7 +597,7 @@ These properties are only present for some annotation types, so support for them
         var author = annotation.getAuthor();
 
 
-.. method:: setAuthor(author)
+.. method:: setAuthor(author:string)
 
     Sets the annotation author.
 
@@ -623,9 +613,9 @@ These properties are only present for some annotation types, so support for them
 .. method:: hasLineEndingStyles()
 
 
-    Checks the support for :ref:`line ending styles<mutool_pdf_annotation_line_ending_styles>`.
+    Checks the support for :ref:`line ending styles <Glossary_Line_Ending_Styles>`.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -639,10 +629,9 @@ These properties are only present for some annotation types, so support for them
 .. method:: getLineEndingStyles()
 
 
+    Gets the :ref:`line ending styles <Glossary_Line_Ending_Styles>` object.
 
-    Gets the :ref:`line ending styles<mutool_pdf_annotation_line_ending_styles>` object.
-
-    :return: `{start:String, end:String}` Returns an object with the key/value pairs.
+    :return: `{start:string, end:string}` Returns an object with the key/value pairs.
 
     |example_tag|
 
@@ -654,9 +643,7 @@ These properties are only present for some annotation types, so support for them
 
 .. method:: setLineEndingStyles(start, end)
 
-
-
-    Sets the :ref:`line ending styles<mutool_pdf_annotation_line_ending_styles>` object.
+    Sets the :ref:`line ending styles <Glossary_Line_Ending_Styles>` object.
 
     :arg start: `string`.
     :arg end: `string`.
@@ -670,223 +657,13 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. _mutool_pdf_annotation_line_ending_styles:
-
-.. list-table::
-   :header-rows: 1
-
-   * - **Line ending names**
-   * - "None"
-   * - "Square"
-   * - "Circle"
-   * - "Diamond"
-   * - "OpenArrow"
-   * - "ClosedArrow"
-   * - "Butt"
-   * - "ROpenArrow"
-   * - "RClosedArrow"
-   * - "Slash"
-
-
-Line Leaders
-~~~~~~~~~~~~~~~
-
-
-In a PDF line annotation, "line leaders" refer to visual elements that can be added to the endpoints of a line annotation to enhance its appearance or meaning.
-
-.. image:: images/leader-lines.png
-          :alt: Leader lines explained
-          :width: 100%
-
-
-.. method:: setLineLeader(ll)
-
-    |mutool_tag|
-
-    Sets the line leader length.
-
-    :arg ll: `Number`. The length of leader lines that extend from each endpoint of the line perpendicular to the line itself. A positive value means that the leader lines appear in the direction that is clockwise when traversing the line from its starting point to its ending point a negative value indicates the opposite direction.
-
-
-.. method:: getLineLeader()
-
-    |mutool_tag|
-
-    Gets the line leader length.
-
-    :return: `Number`
-
-
-.. method:: setLineLeaderExtension(lle)
-
-    |mutool_tag|
-
-    Sets the line leader extension.
-
-    :arg lle: `Number`. A non-negative number representing the length of leader line extensions that extend from the line proper 180 degrees from the leader lines.
-
-
-.. method:: getLineLeaderExtension()
-
-    |mutool_tag|
-
-    Gets the line leader extension.
-
-    :return: `Number`
-
-
-.. method:: setLineLeaderOffset(llo)
-
-    |mutool_tag|
-
-    Sets the line leader offset.
-
-    :arg llo: `Number`. A non-negative number representing the length of the leader line offset, which is the amount of empty space between the endpoints of the annotation and the beginning of the leader lines.
-
-
-
-.. method:: getLineLeaderOffset()
-
-    |mutool_tag|
-
-    Gets the line leader offset.
-
-    :return: `Number`
-
-
-.. method:: setLineCaption(enable)
-
-    |mutool_tag|
-
-    Sets whether line caption is enabled or not.
-
-    :arg enable: `Boolean`.
-
-
-    .. note::
-
-        When line captions are enabled then using the :meth:`setContents` method on the Line will graphically render the caption contents onto the line.
-
-
-.. method:: getLineCaption()
-
-    |mutool_tag|
-
-    Returns whether the line caption is enabled or not.
-
-    :return: `Boolean`.
-
-
-.. method:: setLineCaptionOffset(point)
-
-    |mutool_tag|
-
-    Sets any line caption offset.
-
-
-    :arg point: `Array`. A point, `[x, y]`, specifying the offset of the caption text from its normal position. The first value is the horizontal offset along the annotation line from its midpoint, with a positive value indicating offset to the right and a negative value indicating offset to the left. The second value is the vertical offset perpendicular to the annotation line, with a positive value indicating a shift up and a negative value indicating a shift down.
-
-
-    .. image:: images/offset-caption.png
-          :alt: Offset caption explained
-          :width: 100%
-
-
-
-.. method:: getLineCaptionOffset()
-
-    |mutool_tag|
-
-    Returns the line caption offset as a point, `[x, y]`.
-
-    :return: `Array`.
-
-
-----
-
-
-Callouts
-~~~~~~~~~~~~
-
-Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotation_types>` and allow for a graphical line to point to an area on a page.
-
-.. image:: images/callout-annot.png
-          :alt: Callout annotation
-          :width: 100%
-
-
-.. method:: hasCallout()
-
-    |mutool_tag|
-
-    Returns whether the annotation has a callout or not.
-
-    :return: `Boolean`.
-
-
-.. method:: setCalloutLine(points)
-
-    |mutool_tag|
-
-    Takes an array of 2 or 3 points.
-
-    :arg points: [ [x1, y1], [x2, y2], [x3, y3]? ].
-
-
-.. method:: getCalloutLine()
-
-    |mutool_tag|
-
-    Returns the array of points.
-
-    :return: `[ [x1, y1], [x2, y2], [x3, y3]? ]`.
-
-
-.. method:: setCalloutPoint(point)
-
-    |mutool_tag|
-
-    Takes a point where the callout should point to.
-
-    :arg points: `[x,y]`.
-
-
-.. method:: getCalloutPoint()
-
-    |mutool_tag|
-
-    Returns the callout point.
-
-    :return: `[x,y]`.
-
-
-.. method:: setCalloutStyle(style)
-
-    |mutool_tag|
-
-    Sets the style of the callout line.
-
-    :arg style: `string`. A :ref:`line ending style <mutool_pdf_annotation_line_ending_styles>`.
-
-
-.. method:: getCalloutStyle()
-
-    |mutool_tag|
-
-    Returns the callout style.
-
-    :return: `string`.
-
-
-----
-
 
 .. method:: hasIcon()
 
 
     Checks the support for annotation icon.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -899,7 +676,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
 .. method:: getIcon()
 
-    Gets the annotation icon name, either one of the standard :ref:`icon names<mutool_pdf_annotation_icon_names>`, or something custom.
+    Gets the annotation icon name, either one of the standard :ref:`icon names <Glossary_Icon_Names>`, or something custom.
 
     :return: `string`.
 
@@ -910,9 +687,9 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
         var icon = annotation.getIcon();
 
 
-.. method:: setIcon(name)
+.. method:: setIcon(name:string)
 
-    Sets the annotation icon name, either one of the standard :ref:`icon names<mutool_pdf_annotation_icon_names>`, or something custom. Note that standard icon names can be used to resynthesize the annotation apperance, but custom names cannot.
+    Sets the annotation icon name, either one of the standard :ref:`icon names <Glossary_Icon_Names>`, or something custom. Note that standard icon names can be used to resynthesize the annotation apperance, but custom names cannot.
 
     :arg name: `string`.
 
@@ -922,76 +699,13 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
         annotation.setIcon("Note");
 
-.. _mutool_pdf_annotation_icon_names:
-
-.. list-table::
-   :header-rows: 1
-
-   * - **Icon type**
-     - **Icon name**
-   * - File attachment
-     - "Graph"
-   * -
-     - "PaperClip"
-   * -
-     - "PushPin"
-   * -
-     - "Tag"
-   * - Sound
-     - "Mic"
-   * -
-     - "Speaker"
-   * - Stamp
-     - "Approved"
-   * -
-     - "AsIs"
-   * -
-     - "Confidential"
-   * -
-     - "Departmental"
-   * -
-     - "Draft"
-   * -
-     - "Experimental"
-   * -
-     - "Expired"
-   * -
-     - "Final"
-   * -
-     - "ForComment"
-   * -
-     - "ForPublicRelease"
-   * -
-     - "NotApproved"
-   * -
-     - "NotForPublicRelease"
-   * -
-     - "Sold"
-   * -
-     - "TopSecret"
-   * - Text
-     - "Comment"
-   * -
-     - "Help"
-   * -
-     - "Insert"
-   * -
-     - "Key"
-   * -
-     - "NewParagraph"
-   * -
-     - "Note"
-   * -
-     - "Paragraph"
-
-
 
 .. method:: hasLine()
 
 
     Checks the support for annotation line.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1008,7 +722,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Get line end points, represented by an array of two points, each represented as an `[x, y]` array.
 
-    :return: `[[x,y],...]`.
+    :return: `Array`. `[[x,y],...]`.
 
     |example_tag|
 
@@ -1018,12 +732,12 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
 
 
-.. method:: setLine(endpoints)
+.. method:: setLine(a: Array, b: Array)
 
     Set the two line end points, represented by an array of two points, each represented as an `[x, y]` array.
 
-    :arg endpoint1: `[x,y]`.
-    :arg endpoint2: `[x,y]`.
+    :arg a: `Array`. Point format `[x,y]`.
+    :arg b: `Array`. Point format `[x,y]`.
 
     |example_tag|
 
@@ -1036,7 +750,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Checks the support for annotation popup.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1049,7 +763,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Get annotation popup rectangle.
 
-    :return: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :return: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -1057,11 +771,11 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
         var popupRect = annotation.getPopup();
 
-.. method:: setPopup(rect)
+.. method:: setPopup(rect:Array)
 
     Set annotation popup rectangle.
 
-    :arg rect: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :arg rect: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -1074,7 +788,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Checks the support for annotation open state.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1087,7 +801,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Get annotation open state.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1095,12 +809,12 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
         var isOpen = annotation.getIsOpen();
 
-.. method:: setIsOpen(state)
+.. method:: setIsOpen(state:boolean)
 
 
     Set annotation open state.
 
-    :arg state: `Boolean`.
+    :arg state: `boolean`.
 
     |example_tag|
 
@@ -1118,7 +832,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Checks support for the annotation file specification.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1135,7 +849,7 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
     Gets the file specification object.
 
-    :return: `Object` :ref:`File Specification Object<mutool_run_js_api_file_spec_object>`.
+    :return: `Object` :ref:`File Specification Object <Glossary_Object_Filespec_Params_Object>`.
 
     |example_tag|
 
@@ -1145,16 +859,12 @@ Callouts are used with :ref:`"FreeText" annotations <mutool_run_js_api_annotatio
 
 
 
-
-.. _mutool_run_js_api_pdf_annotation_setFilespec:
-
-
-.. method:: setFilespec(fileSpecObject)
+.. method:: setFilespec(fileSpec:Object)
 
 
     Sets the file specification object.
 
-    :arg fileSpecObject: `Object` :ref:`File Specification object<mutool_run_js_api_file_spec_object>`.
+    :arg fileSpec: `Object` :ref:`File Specification object <Glossary_Object_Filespec_Params_Object>`.
 
 
     |example_tag|
@@ -1182,7 +892,7 @@ The border drawn around some annotations can be controlled by:
 
     Check support for the annotation border style.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1196,8 +906,7 @@ The border drawn around some annotations can be controlled by:
 .. method:: getBorderStyle()
 
 
-
-    Get the annotation border style, either of "Solid" or "Dashed".
+    Get the annotation :ref:`border style <Glossary_Border_Style>`.
 
     :return: `string`.
 
@@ -1209,11 +918,9 @@ The border drawn around some annotations can be controlled by:
 
 
 
-.. method:: setBorderStyle(style)
+.. method:: setBorderStyle(style:string)
 
-
-
-    Set the annotation border style, either of "Solid" or "Dashed".
+    Set the annotation :ref:`border style <Glossary_Border_Style>`.
 
     :arg: `string`.
 
@@ -1231,7 +938,7 @@ The border drawn around some annotations can be controlled by:
 
     Get the border width in points.
 
-    :return: `Float`.
+    :return: `number`.
 
     |example_tag|
 
@@ -1241,13 +948,11 @@ The border drawn around some annotations can be controlled by:
 
 
 
-.. method:: setBorderWidth(width)
+.. method:: setBorderWidth(width:number)
 
+    Set the border width in points. Retains any existing border effects.
 
-
-    Set the border width in points. Retain any existing border effects.
-
-    :arg width: `Float`.
+    :arg width: `number`.
 
     |example_tag|
 
@@ -1264,7 +969,7 @@ The border drawn around some annotations can be controlled by:
 
     Returns the number of items in the border dash pattern.
 
-    :return: `Integer`.
+    :return: `number`.
 
     |example_tag|
 
@@ -1273,14 +978,12 @@ The border drawn around some annotations can be controlled by:
         var dashCount = annotation.getBorderDashCount();
 
 
-.. method:: getBorderDashItem(i)
+.. method:: getBorderDashItem(idx:number)
 
+    Returns the length of dash pattern item `idx`.
 
-
-    Returns the length of dash pattern item `i`.
-
-    :arg i: `Integer` Item index.
-    :return: `Float`.
+    :arg idx: `number`. Item index.
+    :return: `number`.
 
     |example_tag|
 
@@ -1290,13 +993,13 @@ The border drawn around some annotations can be controlled by:
 
 
 
-.. method:: setBorderDashPattern(dashPattern)
+.. method:: setBorderDashPattern(dashPattern:Array)
 
 
 
     Set the annotation border dash pattern to the given array of dash item lengths. The supplied array represents the respective line stroke and gap lengths, e.g. `[1,1]` sets a small dash and small gap, `[2,1,4,1]` would set a medium dash, a small gap, a longer dash and then another small gap.
 
-    :arg dashpattern: [Float, Float, ....].
+    :arg dashPattern: `Array`. `[number, number, ....]`.
 
     |example_tag|
 
@@ -1319,13 +1022,13 @@ The border drawn around some annotations can be controlled by:
 
 
 
-.. method:: addBorderDashItem(length)
+.. method:: addBorderDashItem(length:number)
 
 
 
     Append an item (of the given length) to the end of the border dash pattern.
 
-    :arg length: `Float`.
+    :arg length: `number`.
 
     |example_tag|
 
@@ -1335,14 +1038,14 @@ The border drawn around some annotations can be controlled by:
 
 
 
-Annotations that have a border effect allows the effect to be controlled by:
+
 
 .. method:: hasBorderEffect()
 
 
     Check support for annotation border effect.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1358,7 +1061,7 @@ Annotations that have a border effect allows the effect to be controlled by:
 
 
 
-    Get the annotation border effect, either of "None" or "Cloudy".
+    Get the :ref:`annotation border effect <Glossary_Border_Effect>`.
 
     :return: `string`.
 
@@ -1374,7 +1077,7 @@ Annotations that have a border effect allows the effect to be controlled by:
 
 
 
-    Set the annotation border effect, either of "None" or "Cloudy".
+    Set the :ref:`annotation border effect <Glossary_Border_Effect>`.
 
     :arg: `string`.
 
@@ -1392,7 +1095,7 @@ Annotations that have a border effect allows the effect to be controlled by:
 
     Get the annotation border effect intensity.
 
-    :return: `Float`.
+    :return: `number`.
 
     |example_tag|
 
@@ -1403,13 +1106,13 @@ Annotations that have a border effect allows the effect to be controlled by:
 
 
 
-.. method:: setBorderEffectIntensity(intensity)
+.. method:: setBorderEffectIntensity(intensity:number)
 
 
 
     Set the annotation border effect intensity. Recommended values are between `0` and `2` inclusive.
 
-    :arg: `Float`.
+    :arg: `number`.
 
     |example_tag|
 
@@ -1427,7 +1130,7 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
 
     Check support for the annotation ink list.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1440,7 +1143,7 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
 
     Get the annotation ink list, represented as an array of strokes, each an array of points each an array of its X/Y coordinates.
 
-    :return: `[...]`.
+    :return: `Array`.
 
     |example_tag|
 
@@ -1448,13 +1151,13 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
 
         var inkList = annotation.getInkList();
 
-.. method:: setInkList(inkList)
+.. method:: setInkList(inkList:Array)
 
 
 
     Set the annotation ink list, represented as an array of strokes, each an array of points each an array of its X/Y coordinates.
 
-    :arg: `[...]`.
+    :arg: `Array`.
 
     |example_tag|
 
@@ -1485,13 +1188,13 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
 
 
 
-.. method:: addInkList(stroke)
+.. method:: addInkList(stroke:Array)
 
 
 
     To the list of strokes, append a stroke, represented as an array of vertices each an array of its X/Y coordinates.
 
-    :arg stroke: `[]`.
+    :arg stroke: `Array`.
 
     |example_tag|
 
@@ -1522,13 +1225,13 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
 
 
 
-.. method:: addInkListStrokeVertex(vertex)
+.. method:: addInkListStrokeVertex(vertex:Array)
 
 
 
     Append a vertex to end of the last stroke in the ink annotation. The vertex is an array of its X/Y coordinates.
 
-    :arg vertex: `[...]`.
+    :arg vertex: `Array`.
 
     |example_tag|
 
@@ -1537,14 +1240,15 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
         annotation.addInkListStrokeVertex([0,0]);
 
 
+----
 
 Text markup and redaction annotations consist of a set of quadadrilaterals controlled by:
 
 .. method:: hasQuadPoints()
 
-    Check support for the annotation quadpoints.
+    Check support for the annotation :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>`.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1556,9 +1260,9 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
 
 .. method:: getQuadPoints()
 
-    Get the annotation quadpoints, describing the areas affected by text markup annotations and link annotations.
+    Get the annotation :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>`, describing the areas affected by text markup annotations and link annotations.
 
-    :return: `[...]`.
+    :return: `Array`.
 
     |example_tag|
 
@@ -1566,11 +1270,11 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
 
         var quadPoints = annotation.getQuadPoints();
 
-.. method:: setQuadPoints(quadPoints)
+.. method:: setQuadPoints(quadPoints:Array)
 
-    Set the annotation quadpoints, describing the areas affected by text markup annotations and link annotations.
+    Set the annotation :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>`, describing the areas affected by text markup annotations and link annotations.
 
-    :arg quadPoints: `[...]`.
+    :arg quadPoints: `Array`.
 
     |example_tag|
 
@@ -1584,7 +1288,7 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
 
 .. method:: clearQuadPoints()
 
-    Clear the list of quad points for the annotation.
+    Clear the list of :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>` for the annotation.
 
     |example_tag|
 
@@ -1593,11 +1297,11 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
         annotation.clearQuadPoints();
 
 
-.. method:: addQuadPoint(quadpoint)
+.. method:: addQuadPoint(quadpoint:Array)
 
-    Append a single quad point as an array of 8 elements, where each pair are the X/Y coordinates of a corner of the quad.
+    Append a single :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>` as an array of 8 elements, where each pair are the X/Y coordinates of a corner of the quad.
 
-    :arg quadpoint: `[]`.
+    :arg quadpoint: `Array`.
 
     |example_tag|
 
@@ -1606,13 +1310,15 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
         annotation.addQuadPoint([1,2,3,4,5,6,7,8]);
 
 
+----
+
 Polygon and polyline annotations consist of a sequence of vertices with a straight line between them. Those can be controlled by:
 
 .. method:: hasVertices()
 
     Check support for the annotation vertices.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -1627,7 +1333,7 @@ Polygon and polyline annotations consist of a sequence of vertices with a straig
 
     Get the annotation vertices, represented as an array of vertices each an array of its X/Y coordinates.
 
-    :return: `[...]`.
+    :return: `Array`.
 
     |example_tag|
 
@@ -1636,11 +1342,11 @@ Polygon and polyline annotations consist of a sequence of vertices with a straig
         var vertices = annotation.getVertices();
 
 
-.. method:: setVertices(vertices)
+.. method:: setVertices(vertices:Array)
 
     Set the annotation vertices, represented as an array of vertices each an array of its X/Y coordinates.
 
-    :arg vertices: `[...]`.
+    :arg vertices: `Array`.
 
     |example_tag|
 
@@ -1663,13 +1369,11 @@ Polygon and polyline annotations consist of a sequence of vertices with a straig
         annotation.clearVertices();
 
 
-.. method:: addVertex(vertex)
-
-
+.. method:: addVertex(vertex:Array)
 
     Append a single vertex as an array of its X/Y coordinates.
 
-    :arg vertex: `[...]`.
+    :arg vertex: `Array`.
 
     |example_tag|
 
@@ -1678,12 +1382,42 @@ Polygon and polyline annotations consist of a sequence of vertices with a straig
         annotation.addVertex([0,0]);
 
 
-.. method:: applyRedaction(blackBoxes, imageMethod)
+----
+
+Redactions
+---------------
+
+Redactions are a special type of annotation used to permanently remove (or "redact") content from a :title:`PDF`.
+
+To create a redaction annotation use the :meth:`addRedaction` method on a :doc:`PDFPage` instance.
+
+Once redactions are added to a page you can *apply* them, which is an irreversable action, thus it is a two step process as follows:
+
+.. code-block:: javascript
+    // create a redaction annotation
+    let redactionAnnotation = page.addRedaction(rect)
+    // apply redaction to the annotation with options
+    redactionAnnotation.applyRedaction(true, mupdfjs.PDFPage.REDACT_IMAGE_NONE);
+
+
+.. method:: applyRedaction(blackBoxes:boolean = true, imageMethod:number = PDFPage.REDACT_IMAGE_PIXELS)
 
     Applies redaction to the annotation.
 
-    :arg blackBoxes: `Boolean` Whether to use black boxes at each redaction or not.
-    :arg imageMethod: `Integer`. `0` for no redactions, `1` to redact entire images, `2` for redacting just the covered pixels.
+    :arg blackBoxes: `boolean`. Whether to use black boxes on the redaction or not. (Default: `true`)
+    :arg imageMethod: `number`. Used to declare how to redact image content affected by the redaction rectangle area. (Default: `PDFPage.REDACT_IMAGE_PIXELS`).
+    
+    .. list-table::
+        :header-rows: 1
+
+        * - **Image redaction variable**
+          - **Description**
+        * - `PDFPage.REDACT_IMAGE_NONE`
+          - Do not redact images
+        * - `PDFPage.REDACT_IMAGE_REMOVE`
+          - Redact entire images
+        * - `PDFPage.REDACT_IMAGE_PIXELS`
+          - Redact just the covered pixels
 
     .. note::
 
@@ -1693,7 +1427,7 @@ Polygon and polyline annotations consist of a sequence of vertices with a straig
 
     .. code-block:: javascript
 
-        annotation.applyRedaction(true, 1);
+        annotation.applyRedaction(true, mupdfjs.PDFPage.REDACT_IMAGE_REMOVE);
 
 
 .. include:: footer.rst

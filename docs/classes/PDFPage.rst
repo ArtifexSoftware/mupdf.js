@@ -26,7 +26,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        let page = new mupdfjs.PDFPage(doc, 0); // loads the first page of the document
+        let page = new mupdfjs.PDFPage(doc, 0); // returns the first page of the document
 
 
 |instance_method_tag|
@@ -35,7 +35,12 @@ PDFPage
 
     Extract the text on the page into a :doc:`StructuredText` object. 
 
-    :arg options: `string`. A comma separated list of flags: "preserve-ligatures", "preserve-whitespace", "preserve-spans", and "preserve-images".
+    :arg options: `string`. A comma separated list of flags: 
+    - `preserve-ligatures`
+    - `preserve-whitespace`
+    - `preserve-spans`
+    - `preserve-images`
+
     :return: :doc:`StructuredText`.
 
     |example_tag|
@@ -90,7 +95,7 @@ PDFPage
 
 .. method:: getLinks()
 
-    Return array of all links on the page.
+    Returns an array of all links on the page.
 
     :return: `[...]`.
 
@@ -103,9 +108,9 @@ PDFPage
 
 .. method:: createAnnotation()
 
-    Create a new blank annotation of a given :ref:`type <PDFPage_annotation_types>`.
+    Create a new blank annotation of a given :ref:`type <Glossary_Annotation_Types>`.
 
-    :arg type: `string` representing :ref:`annotation type <PDFPage_annotation_types>`.
+    :arg type: `string` representing :ref:`annotation type <Glossary_Annotation_Types>`.
     :return: :doc:`PDFAnnotation`.
 
     |example_tag|
@@ -114,105 +119,7 @@ PDFPage
 
         let annotation = page.createAnnotation("Text");
 
-.. _PDFPage_annotation_types:
 
-**Annotation types**
-
-.. note::
-
-    Annotation types are also referred to as "subtypes".
-
-
-.. list-table::
-   :header-rows: 1
-
-   * - **Name**
-     - **Supported**
-     - **Notes**
-   * - Text
-     - Yes
-     -
-   * - Link
-     - Yes
-     - Please use :meth:`createLink`.
-   * - FreeText
-     - Yes
-     -
-   * - Square
-     - Yes
-     -
-   * - Circle
-     - Yes
-     -
-   * - Line
-     - Yes
-     -
-   * - Polygon
-     - Yes
-     -
-   * - PolyLine
-     - Yes
-     -
-   * - Highlight
-     - Yes
-     -
-   * - Underline
-     - Yes
-     -
-   * - Squiggly
-     - Yes
-     -
-   * - StrikeOut
-     - Yes
-     -
-   * - Redact
-     - Yes
-     -
-   * - Stamp
-     - Yes
-     -
-   * - Caret
-     - Yes
-     -
-   * - Ink
-     - Yes
-     -
-   * - Popup
-     - No
-     -
-   * - FileAttachment
-     - Yes
-     -
-   * - Sound
-     - No
-     -
-   * - Movie
-     - No
-     -
-   * - RichMedia
-     - No
-     -
-   * - Widget
-     - No
-     -
-   * - Screen
-     - No
-     -
-   * - PrinterMark
-     - No
-     -
-   * - TrapNet
-     - No
-     -
-   * - Watermark
-     - No
-     -
-   * - 3D
-     - No
-     -
-   * - Projection
-     - No
-     -
 
 .. method:: deleteAnnotation(annot:PDFAnnotation)
 
@@ -225,6 +132,21 @@ PDFPage
     .. code-block:: javascript
 
         page.deleteAnnotation(annot)
+
+
+.. method:: addRedaction(rect:{x:number, y:number, width:number, height:number})
+
+    Creates a redaction annotation at a location on the page defined by `rect`.
+
+    :arg rect: `{x:number, y:number, width:number, height:number}`.
+
+    :return: :doc:`PDFAnnotation`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let redactionAnnotation = page.addRedaction({x:100, y:200, width:300, height:50})
 
 
 .. method:: createLink(rect:[], destinationUri:string)
@@ -244,7 +166,7 @@ PDFPage
 
 .. method:: getAnnotations()
 
-    Return array of all annotations on the page.
+    Returns an array of all annotations on the page.
 
     :return: `[...]`.
 
@@ -256,7 +178,7 @@ PDFPage
 
 .. method:: getWidgets()
 
-    Return array of all widgets on the page.
+    Returns an array of all widgets on the page.
 
     :return: `[...]`.
 
@@ -289,7 +211,13 @@ PDFPage
 
 .. method:: setPageBox(type:string)
 
-    Sets the type of box required for the page, one of "MediaBox", "CropBox", "BleedBox", "TrimBox" or "ArtBox".
+    Sets the type of box required for the page, one of:
+
+    - `MediaBox`
+    - `CropBox`
+    - `BleedBox`
+    - `TrimBox`
+    - `ArtBox`
 
     :arg type: `string`.
 
@@ -297,7 +225,7 @@ PDFPage
 
         Explanation of box types:
 
-        - **MediaBox** -for complete pages including items that will be physically trimmed from the final product like crop marks, registration marks, etc.
+        - **MediaBox** for complete pages including items that will be physically trimmed from the final product like crop marks, registration marks, etc.
 
         - **CropBox** defines the region that a PDF is expected to display or print.
 
@@ -307,6 +235,11 @@ PDFPage
 
         - **ArtBox** can be used to denote areas where it is considered “safe” to place graphical elements.
 
+    |example_tag|
+
+    .. code-block:: javascript
+
+        page.setPageBox("TrimBox");
 
 ----
 

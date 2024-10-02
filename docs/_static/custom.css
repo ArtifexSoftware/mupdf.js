@@ -46,6 +46,15 @@
     color:#000;
 }
 
+.static-method-tag {
+    font-size:14px;
+    padding: 2px 5px;
+    background-color: #e6a20f;
+    border-radius: 4px;
+    border: 1px solid #222;
+    color:#000;
+}
+
 .htmltag {
     padding: 2px 5px;
     background-color: #fbff68;

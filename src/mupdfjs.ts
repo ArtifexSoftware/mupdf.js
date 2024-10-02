@@ -27,11 +27,24 @@ export const Matrix = mupdf.Matrix
 
 export class Buffer extends mupdf.Buffer {}
 export class ColorSpace extends mupdf.ColorSpace {}
+export class Device extends mupdf.Device {}
+export class DocumentWriter extends mupdf.DocumentWriter {}
+export class DrawDevice extends mupdf.DrawDevice {}
+export class DisplayList extends mupdf.DisplayList {}
+export class DisplayListDevice extends mupdf.DisplayListDevice {}
 export class Font extends mupdf.Font {}
 export class Image extends mupdf.Image {}
 export class Link extends mupdf.Link {}
 export class OutlineIterator extends mupdf.OutlineIterator {}
+export class Path extends mupdf.Path {}
+export class PDFAnnotation extends mupdf.PDFAnnotation {}
+export class PDFGraftMap extends mupdf.PDFGraftMap {}
+export class PDFObject extends mupdf.PDFObject {}
+export class PDFWidget extends mupdf.PDFWidget {}
+export class Pixmap extends mupdf.Pixmap {}
+export class StrokeState extends mupdf.StrokeState {}
 export class StructuredText extends mupdf.StructuredText {}
+export class Text extends mupdf.Text {}
 
 export class PDFDocument extends mupdf.PDFDocument {
 
@@ -611,6 +624,14 @@ export class PDFPage extends mupdf.PDFPage {
 
         // Update the Rotate value
         page_obj.put("Rotate", Number(rotate) + r)
+    }
+
+    addRedaction(rect:{x:number, y:number, width:number, height:number}): PDFAnnotation {
+        let page = this
+        let redaction = page.createAnnotation("Redact")
+        redaction.setRect([rect.x,rect.y,rect.x+rect.width,rect.y+rect.height])
+        redaction.update()
+        return redaction
     }
 }
 

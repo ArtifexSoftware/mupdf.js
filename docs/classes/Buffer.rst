@@ -65,11 +65,11 @@ Buffer
         var length = buffer.getLength();
 
 
-.. method:: writeByte(b)
+.. method:: writeByte(byte:number)
 
     Append a single byte to the end of the buffer.
 
-    :arg b: The byte value. Only the least significant 8 bits of the value are appended to the buffer.
+    :arg byte: `number`. The byte value. Only the least significant 8 bits of the value are appended to the buffer.
 
     |example_tag|
 
@@ -78,7 +78,7 @@ Buffer
         buffer.writeByte(0x2a);
 
 
-.. method:: readByte(at)
+.. method:: readByte(at:number)
 
     Read the byte at the supplied index.
 
@@ -91,11 +91,23 @@ Buffer
         buffer.readByte(0);
 
 
-.. method:: writeLine(...)
+.. method:: write(str: string)
 
-    Append arguments to the end of the buffer, separated by spaces, ending with a newline.
+    Append string to the end of the buffer.
 
-    :arg ...: List of arguments.
+    :arg str: `string`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        buffer.write("hello world");
+
+.. method:: writeLine(str: string)
+
+    Append string to the end of the buffer ending with a newline.
+
+    :arg str: `string`.
 
     |example_tag|
 
@@ -104,17 +116,7 @@ Buffer
         buffer.writeLine("a line");
 
 
-.. method:: write(...)
 
-    Append arguments to the end of the buffer, separated by spaces.
-
-    :arg ...: List of arguments.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        buffer.write("hello", "world");
 
 
 .. method:: writeBuffer(data: Buffer | ArrayBuffer | Uint8Array | string)
@@ -144,7 +146,7 @@ Buffer
     .. code-block:: javascript
 
         var buffer = new mupdfjs.Buffer();
-        buffer.write("hello", "world"); // buffer contains "hello world"
+        buffer.write("hello world"); // buffer contains "hello world"
         var newBuffer = buffer.slice(1, -1); // newBuffer contains "ello worl"
 
 

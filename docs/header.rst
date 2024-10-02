@@ -10,6 +10,11 @@
 
    <span class="instance-method-tag">INSTANCE METHODS</span>
 
+.. |static_method_tag| raw:: html
+
+   <span class="static-method-tag">STATIC METHODS</span>
+   
+
 .. |page_spacer| raw:: html
 
    <div class="page-spacer" style="margin:40px 0 20px;"><hr/></div>

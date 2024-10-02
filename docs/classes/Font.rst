@@ -95,9 +95,9 @@ Font
 
 .. method:: isBold()
 
-    Returns *true* if font is bold.
+    Returns `true` if font is bold.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -108,9 +108,9 @@ Font
 
 .. method:: isItalic()
 
-    Returns *true* if font is italic.
+    Returns `true` if font is italic.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -121,9 +121,9 @@ Font
 
 .. method:: isMono()
 
-    Returns *true* if font is monospaced.
+    Returns `true` if font is monospaced.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 
@@ -134,9 +134,9 @@ Font
 
 .. method:: isSerif()
 
-    Returns *true* if font is serif.
+    Returns `true` if font is serif.
 
-    :return: `Boolean`.
+    :return: `boolean`.
 
     |example_tag|
 

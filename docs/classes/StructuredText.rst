@@ -16,7 +16,7 @@ instance use :meth:`toStructuredText`.
 
     Search the text for all instances of `needle`, and return an array with all matches found on the page.
 
-    Each match in the result is an array containing one or more QuadPoints that cover the matching text.
+    Each match in the result is an array containing one or more :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>` that cover the matching text.
 
     :arg needle: `string`.
     :return: `[...]`.

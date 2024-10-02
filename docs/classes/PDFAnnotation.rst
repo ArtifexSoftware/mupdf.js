@@ -1394,6 +1394,7 @@ To create a redaction annotation use the :meth:`addRedaction` method on a :doc:`
 Once redactions are added to a page you can *apply* them, which is an irreversable action, thus it is a two step process as follows:
 
 .. code-block:: javascript
+    
     // create a redaction annotation
     let redactionAnnotation = page.addRedaction(rect)
     // apply redaction to the annotation with options

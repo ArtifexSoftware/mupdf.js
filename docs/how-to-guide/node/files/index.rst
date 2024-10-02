@@ -11,18 +11,19 @@ Working with Files
 Local Files
 ----------------------------------
 
-An example of loading a local file using the `mupdfjs.PDFDocument.openDocument` method with a local string to reference the file path.
+An example of loading a local file using the :meth:`openDocument` method with a local string to reference the file path.
 
 |example_tag|
 
 .. code-block:: javascript
 
-    let document = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
+    let document = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"), 
+                                                    "application/pdf")
 
 Remote Files
 ----------------------------------
 
-An example of loading a remote file which waits for the remote data and then uses the `mupdfjs.PDFDocument.openDocument` method with the resulting buffer data.
+An example of loading a remote file which waits for the remote data and then uses the :meth:`openDocument` method with the resulting buffer data.
 
 |example_tag|
 

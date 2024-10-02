@@ -24,6 +24,23 @@ PDFDocument
         let document = mupdfjs.PDFDocument.createBlankDocument()
 
 
+.. method:: openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream, fileType: string)
+
+    Opens a document from a supplied `Buffer`, `Array` or `Stream`.
+
+    :arg from: :doc:`Buffer` | `ArrayBuffer` | `Uint8Array` | :doc:`Stream`
+    :arg fileType: `string`. Used to denote fie type, e.g. "application/pdf".
+
+    :return: `PDFDocument`.
+
+    |example_tag|
+    
+    .. code-block:: javascript
+
+        let document = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"),
+                                                        "application/pdf")
+
+
 |instance_method_tag|
 
 .. method:: newPage(pno: number = -1, width: number = 595, height: number = 842)

@@ -41,8 +41,8 @@ To verify your installation you can create a file, e.g. `test.mjs` with the foll
 
 .. code-block:: javascript
 
-    import * as mupdf from "mupdf"
-    console.log(mupdf)
+    import * as mupdfjs from "mupdfjs"
+    console.log(mupdfjs)
 
 
 3. Run the Test
@@ -54,7 +54,7 @@ Then, on the command line for the project folder, run the test script with `node
 
     node test.mjs
 
-This will print the `mupdf` object to the output - you are now ready to :ref:`use it! <How_To_Guide_With_Node>`
+This will print the `mupdfjs` object to the output - you are now ready to :ref:`use it! <How_To_Guide_With_Node>`
 
 |
 
@@ -117,7 +117,7 @@ This will then create the `dist` folder with the required **Wasm** library and a
 4. Create a Simple **HTML** & **JS** Test Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Just to try things out we can create a couple of test files to see if we can see the `mupdf` object in the browser.
+Just to try things out we can create a couple of test files to see if we can see the `mupdfjs` object in the browser.
 
 - Create a file called `test.html` and populate it as follows:
 
@@ -136,10 +136,10 @@ Just to try things out we can create a couple of test files to see if we can see
 
     "use strict"
 
-    import * as mupdf from "../../dist/mupdf.js"
+    import * as mupdfjs from "../../dist/mupdfjs.js"
 
-    for (var i in mupdf) {
-        console.log(`mupdf=${mupdf[i]}`)
+    for (var i in mupdfjs) {
+        console.log(`mupdfjs=${mupdfjs[i]}`)
     }
 
 Ensure to save the files in the root of the your git checkout so the library files can be accessed.

@@ -75,7 +75,7 @@ See: `toPixmap`_ for full details.
 
 .. code-block:: javascript
 
-    let pixmap = page.toPixmap(mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB, false, true)
+    let pixmap = page.toPixmap(mupdfjs.Matrix.identity, mupdfjs.ColorSpace.DeviceRGB, false, true)
     let pngImage = pixmap.asPNG()
     let base64Image = Buffer.from(pngImage, 'binary').toString('base64')
 

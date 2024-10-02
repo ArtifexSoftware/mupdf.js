@@ -9,8 +9,6 @@ Image
 
 .. method:: Image(data: Buffer | ArrayBuffer | Uint8Array | string)
 
-    *Constructor method*.
-
     Returns an `Image` from the supplied data buffer.
 
     :arg data: :doc:`Buffer` | `ArrayBuffer` | `Uint8Array` | `string`. Buffer of file data.

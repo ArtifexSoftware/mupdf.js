@@ -20,12 +20,12 @@ For example:
 - In the `DeviceGray` color space a color would be `[Black]`. A full black color would therefore be `[0]`.
 
 
-.. _mutool_run_js_api_matrix:
+.. _Glossary_Alpha:
 
+Alpha
+~~~~~~~~~~~~
 
-
-
-
+Alpha values are floats between `0` and `1`, whereby `0` denotes full transparency & `1` denotes full opacity.
 
 .. _Glossary_Matrix:
 
@@ -220,6 +220,244 @@ If the minimum x coordinate is bigger than the maximum x coordinate, :title:`MuP
 
 
 
+.. _Glossary_Object_Points_and_QuadPoints:
+
+Points
+---------
+
+
+**Points** are two-dimensonial numeric arrays in the format: `[x, y]`.
+
+
+**QuadPoints** are arrays of 8 elements, where each pair are the X/Y coordinates of a corner of the quad, i.e.: `[x1,y1,x2,y2,x3,y3,x4,y4]`.
+
+
+.. _Glossary_Annotations:
+
+Annotations
+--------------
+
+
+.. _Glossary_Annotation_Types:
+
+Annotation Types
+~~~~~~~~~~~~~~~~~~~~~
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - **Name**
+     - **Supported**
+     - **Notes**
+   * - Text
+     - Yes
+     -
+   * - Link
+     - Yes
+     - Please use :meth:`createLink`.
+   * - FreeText
+     - Yes
+     -
+   * - Square
+     - Yes
+     -
+   * - Circle
+     - Yes
+     -
+   * - Line
+     - Yes
+     -
+   * - Polygon
+     - Yes
+     -
+   * - PolyLine
+     - Yes
+     -
+   * - Highlight
+     - Yes
+     -
+   * - Underline
+     - Yes
+     -
+   * - Squiggly
+     - Yes
+     -
+   * - StrikeOut
+     - Yes
+     -
+   * - Redact
+     - Yes
+     -
+   * - Stamp
+     - Yes
+     -
+   * - Caret
+     - Yes
+     -
+   * - Ink
+     - Yes
+     -
+   * - Popup
+     - No
+     -
+   * - FileAttachment
+     - Yes
+     -
+   * - Sound
+     - No
+     -
+   * - Movie
+     - No
+     -
+   * - RichMedia
+     - No
+     -
+   * - Widget
+     - No
+     -
+   * - Screen
+     - No
+     -
+   * - PrinterMark
+     - No
+     -
+   * - TrapNet
+     - No
+     -
+   * - Watermark
+     - No
+     -
+   * - 3D
+     - No
+     -
+   * - Projection
+     - No
+     -
+
+.. note::
+
+    Annotation types are also referred to as "subtypes".
+
+
+
+.. _Glossary_Line_Ending_Styles:
+
+Line Ending Styles
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following table lists line ending styles for use with :doc:`../classes/PDFAnnotation`.
+
+.. list-table::
+   :header-rows: 1
+
+   * - **Line ending names**
+   * - "None"
+   * - "Square"
+   * - "Circle"
+   * - "Diamond"
+   * - "OpenArrow"
+   * - "ClosedArrow"
+   * - "Butt"
+   * - "ROpenArrow"
+   * - "RClosedArrow"
+   * - "Slash"
+
+.. _Glossary_Icon_Names:
+
+Icon Names
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+The following table lists icon names for use with :doc:`../classes/PDFAnnotation`.
+
+.. list-table::
+   :header-rows: 1
+
+   * - **Icon type**
+     - **Icon name**
+   * - File attachment
+     - "Graph"
+   * -
+     - "PaperClip"
+   * -
+     - "PushPin"
+   * -
+     - "Tag"
+   * - Sound
+     - "Mic"
+   * -
+     - "Speaker"
+   * - Stamp
+     - "Approved"
+   * -
+     - "AsIs"
+   * -
+     - "Confidential"
+   * -
+     - "Departmental"
+   * -
+     - "Draft"
+   * -
+     - "Experimental"
+   * -
+     - "Expired"
+   * -
+     - "Final"
+   * -
+     - "ForComment"
+   * -
+     - "ForPublicRelease"
+   * -
+     - "NotApproved"
+   * -
+     - "NotForPublicRelease"
+   * -
+     - "Sold"
+   * -
+     - "TopSecret"
+   * - Text
+     - "Comment"
+   * -
+     - "Help"
+   * -
+     - "Insert"
+   * -
+     - "Key"
+   * -
+     - "NewParagraph"
+   * -
+     - "Note"
+   * -
+     - "Paragraph"
+
+.. _Glossary_Border_Style:
+
+Border Style
+~~~~~~~~~~~~~~~~~~
+
+Annotation border styles are one of:
+
+.. list-table::
+   :header-rows: 0
+
+   * - "Solid"
+   * - "Dashed"
+
+.. _Glossary_Border_Effect:
+
+Border Effect
+~~~~~~~~~~~~~~~~~~
+
+Annotation border effects are one of:
+
+.. list-table::
+   :header-rows: 0
+
+   * - "None"
+   * - "Cloudy"
+
+
 .. _Glossary_Object_Protocols:
 
 Object Protocols
@@ -269,41 +507,17 @@ It consists of a dictionary with keys for:
 .. _Glossary_Object_Protocols_File_Specification_Object:
 
 File Specification Object
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This object is used to represent a file.
 
 In order to retrieve information from this object see methods described within :ref:`Embedded files in PDFs<mutool_object_pdf_document_embedded_files>`.
 
 
-
-.. _Glossary_Object_Protocols_Embedded_File_Params_Object:
-
-Embedded File Params Object
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Historical equivalent to Filespec Params Object. This `Object` contains metadata about a filespec, it has properties for:
-
-`filename`
-    The name of the embedded file.
-
-`mimetype`
-    The :title:`MIME` type of the embedded file, or `undefined` if none exists.
-
-`size`
-    The size in bytes of the embedded file contents.
-
-`creationDate`
-    The creation date of the embedded file.
-
-`modificationDate`
-    The modification date of the embedded file.
-
-
 .. _Glossary_Object_Filespec_Params_Object:
 
 Filespec Params Object
-~~~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""
 
 This `Object` contains metadata about a filespec, it has properties for:
 
@@ -346,31 +560,54 @@ Stroking State Object
 
 The stroking state is a dictionary with keys for:
 
-    - `startCap`, `dashCap`, `endCap`
-        "Butt", "Round", "Square", or "Triangle".
+`startCap`, `dashCap`, `endCap`
+    "Butt", "Round", "Square", or "Triangle".
 
-    - `lineCap`
-        Set `startCap`, `dashCap`, and `endCap` all at once.
+`lineCap`
+    Set `startCap`, `dashCap`, and `endCap` all at once.
 
-    - `lineJoin`
-        "Miter", "Round", "Bevel", or "MiterXPS".
+`lineJoin`
+    "Miter", "Round", "Bevel", or "MiterXPS".
 
-    - `lineWidth`
-        Thickness of the line.
+`lineWidth`
+    Thickness of the line.
 
-    - `miterLimit`
-        Maximum ratio of the miter length to line width, before beveling the join instead.
+`miterLimit`
+    Maximum ratio of the miter length to line width, before beveling the join instead.
 
-    - `dashPhase`
-        Starting offset for dash pattern.
+`dashPhase`
+    Starting offset for dash pattern.
 
-    - `dashes`
-        Array of on/off dash lengths.
+`dashes`
+    Array of on/off dash lengths.
 
 
 |example_tag|
 
     `{dashes:[5,10], lineWidth:3, lineCap:'Round'}`
+
+
+
+
+
+
+
+
+
+.. _Glossary_Default_Appearance_Text_Object:
+
+Default Appearance Text Object
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+`font`
+    String representing the font.
+
+`size`
+    Number representing the size of the font.
+
+`color`
+    Array representing the :ref:`color value <Glossary_Colors>`.
 
 
 .. include:: ../footer.rst

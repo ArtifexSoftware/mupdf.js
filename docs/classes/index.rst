@@ -11,12 +11,26 @@ Classes
 
     Buffer.rst
     ColorSpace.rst
+    Device.rst
+    DisplayList.rst
+    DisplayListDevice.rst
+    DocumentWriter.rst
+    DrawDevice.rst
     Font.rst
     Image.rst
-    PDFDocument.rst
-    PDFPage.rst
+    Link.rst
+    OutlineIterator.rst
+    Path.rst
     PDFAnnotation.rst
+    PDFDocument.rst
+    PDFGraftMap.rst
+    PDFObject.rst
+    PDFPage.rst
+    PDFWidget.rst
+    Pixmap.rst
+    StrokeState.rst
     StructuredText.rst
+    Text.rst
 
 
 .. 

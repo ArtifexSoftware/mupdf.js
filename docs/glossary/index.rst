@@ -610,4 +610,25 @@ Default Appearance Text Object
     Array representing the :ref:`color value <Glossary_Colors>`.
 
 
+
+.. _Glossary_Page_Labels:
+
+Page Labels
+------------------
+
+Page labels are used to label your pages - giving them a name, usually this is the page number, however there may be prefixes or other kinds of labels (e.g. roman numerals) that you may want to use.
+
+There is a common interface object in :title:`MuPDF.js` which is used to define a page label rule as follows:
+
+.. code-block:: javascript
+
+    interface PageLabelRule {
+        startpage: number;
+        prefix?: string;
+        style?: string;
+        firstpagenum?: number;
+    }
+
+
+
 .. include:: ../footer.rst

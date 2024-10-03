@@ -111,19 +111,24 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
 Merging Documents
 -----------------------------
 
-|TODO|
+To merge documents we can use the :meth:`merge` method.
 
-
-
-To merge documents we need to use the core `GraftObject`_ method and copy objects from documents into a new **PDF** document (the new document will be the result of the merge).
-
-See the script below for an implementation, this can be found in `examples/tools/pdf-merge.js`.
+See the script below for an example implementation.
 
 |example_tag|
 
-.. literalinclude:: ../../../../examples/tools/pdf-merge.js
-   :language: javascript
-   :name: examples/tools/pdf-merge.js
+.. code-block:: javascript
+
+    // create a blank document and add some text
+    let sourcePDF = mupdfjs.PDFDocument.createBlankDocument()
+    let page = new mupdfjs.PDFPage(sourcePDF, 0)
+    page.insertText("HELLO WORLD", 
+                        [0,0], 
+                        "Times-Roman", 
+                        20, 
+                        {strokeColor:[0,0,0,1], fillColor:[1,0,0,0.75], strokeThickness:0.5})
+    // now merge this document onto page 2 of our document and rotate it by 90 degrees
+    document.merge(sourcePDF, 0, -1, 1, 90);
 
 
 Splitting a Document
@@ -219,7 +224,9 @@ We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from d
 "Baking" a Document
 ---------------------------
 
-If you need to "bake" your document's annotations and/or widgets you can use the `bake` method as follows:
+If you need to flatten your document's annotations and/or widgets this is known as "baking".
+
+You can use the :meth:`bake` method as follows:
 
 |example_tag|
 
@@ -227,9 +234,6 @@ If you need to "bake" your document's annotations and/or widgets you can use the
 
     document.bake()
 
-.. note::
-    
-    See the `bake method in the core MuPDF JavaScript API <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#bake>`_ for full explanation & details.
 
 Searching a Document
 ------------------------------------------
@@ -246,7 +250,7 @@ To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` an
 
 .. note::
 
-    The resulting array contains numbers which are a sequence of `[ulx, uly, urx, ury, llx, lly, lrx, lry]` which defines each rectangle for each result. These type of rectangles are known as QuadPoints_ in the **PDF** specification.
+    The resulting array contains numbers which are a sequence of `[ulx, uly, urx, ury, llx, lly, lrx, lry]` which defines each rectangle for each result. These type of rectangles are known as :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>` in the :title:`PDF` specification.
 
     For example, the following would represent a search result with two results showing one "QuadPoint" (or "Quad") for each result:
 
@@ -285,7 +289,7 @@ To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` an
 Getting Document Links
 ------------------------------------------
 
-To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the `getLinks <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#getLinks>`_ method as follows:
+To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the :meth:`getLinks` method as follows:
 
 .. code-block:: javascript
 
@@ -293,7 +297,7 @@ To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide
 
 .. note:: 
 
-    The resulting array contains an array of `Link`_ objects which have their own bounds and `uri` for the link.
+    The resulting array contains an array of :doc:`../../../classes/Link` objects which have their own bounds and `uri` for the link.
 
 
 Embedding Files

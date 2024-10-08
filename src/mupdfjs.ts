@@ -273,7 +273,7 @@ export class PDFDocument extends mupdf.PDFDocument {
         return val;
     }
 
-    getPageNumbers(label: string, only_one: boolean = false): number[] {
+    getPageNumbers(label: string, onlyOne: boolean = false): number[] {
         const numbers: number[] = [];
         if (!label) {
             return numbers;
@@ -288,7 +288,7 @@ export class PDFDocument extends mupdf.PDFDocument {
             const pageLabel = this.getPageLabel(i, labels);
             if (pageLabel === label) {
                 numbers.push(i);
-                if (only_one) {
+                if (onlyOne) {
                     break;
                 }
             }

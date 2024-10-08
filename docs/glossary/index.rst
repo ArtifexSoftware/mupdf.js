@@ -225,11 +225,19 @@ If the minimum x coordinate is bigger than the maximum x coordinate, :title:`MuP
 Points
 ---------
 
+**Points** objects are two-dimensonial numeric arrays in the format: `[x, y]`.
 
-**Points** are two-dimensonial numeric arrays in the format: `[x, y]`.
+.. code-block:: javascript
+
+    type Point = [number, number]
 
 
-**QuadPoints** are arrays of 8 elements, where each pair are the X/Y coordinates of a corner of the quad, i.e.: `[x1,y1,x2,y2,x3,y3,x4,y4]`.
+**QuadPoint** or **Quad** objects are arrays of 8 elements, where each pair are the X/Y coordinates of a corner of the quad, i.e.: `[ulx, uly, urx, ury, llx, lly, lrx, lry]`.
+
+.. code-block:: javascript
+
+    type Quad = [number, number, number, number, number, number, number, number]
+
 
 
 .. _Glossary_Annotations:
@@ -243,6 +251,7 @@ Annotations
 Annotation Types
 ~~~~~~~~~~~~~~~~~~~~~
 
+`PDFAnnotationType`
 
 .. list-table::
    :header-rows: 1
@@ -347,6 +356,8 @@ Line Ending Styles
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following table lists line ending styles for use with :doc:`../classes/PDFAnnotation`.
+
+`PDFAnnotationLineEndingStyle`
 
 .. list-table::
    :header-rows: 1
@@ -587,13 +598,6 @@ The stroking state is a dictionary with keys for:
     `{dashes:[5,10], lineWidth:3, lineCap:'Round'}`
 
 
-
-
-
-
-
-
-
 .. _Glossary_Default_Appearance_Text_Object:
 
 Default Appearance Text Object
@@ -628,6 +632,55 @@ There is a common interface object in :title:`MuPDF.js` which is used to define 
         style?: string;
         firstpagenum?: number;
     }
+
+
+.. _Glossary_Outline_Items:
+
+Outline Items
+--------------------
+
+Outline items are returned from the :meth:`loadOutline` method and represent a table of contents entry.
+
+
+.. code-block:: javascript
+
+    interface OutlineItem {
+        title: string | undefined,
+        uri: string | undefined,
+        open: boolean,
+        down?: OutlineItem[],
+        page?: number,
+    }
+
+
+
+.. _Glossary_BlendMode:
+
+
+Blend Modes
+--------------------
+
+`BlendMode` is defined as a string as one of:
+
+.. list-table::
+   :header-rows: 0
+
+   * - Normal
+   * - Multiply
+   * - Screen
+   * - Overlay
+   * - Darken
+   * - Lighten
+   * - ColorDodge
+   * - ColorBurn
+   * - HardLight
+   * - SoftLight
+   * - Difference
+   * - Exclusion
+   * - Hue
+   * - Saturation
+   * - Color
+   * - Luminosity
 
 
 

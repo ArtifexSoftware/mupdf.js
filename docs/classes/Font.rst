@@ -34,7 +34,7 @@ Font
 
     The built-in CJK fonts are referenced by language code: `zh-Hant`, `zh-Hans`, `ja`, `ko`.
 
-    :arg ref: Font name or file name.
+    :arg ref: `string`. Font name or file name.
 
     :return: `Font`.
 
@@ -66,7 +66,7 @@ Font
 
     Get the glyph index for a unicode character. Glyph `0` is returned if the font does not have a glyph for the character.
 
-    :arg unicode: The unicode character.
+    :arg unicode: `number`. The unicode character.
 
     :return: `number`. Glyph index.
 
@@ -77,7 +77,7 @@ Font
         var index = font.encodeCharacter(0x42);
 
 
-.. method:: advanceGlyph(glyph: number, wmode: number)
+.. method:: advanceGlyph(glyph: number, wmode: number = 0)
 
     Return advance width for a glyph in either horizontal or vertical writing mode.
 
@@ -90,7 +90,7 @@ Font
 
     .. code-block:: javascript
 
-        var width = font.advanceGlyph(0x42, 0);
+        var width = font.advanceGlyph(0x42);
 
 
 .. method:: isBold()

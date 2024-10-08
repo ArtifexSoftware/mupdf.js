@@ -19,7 +19,7 @@ instance use :meth:`toStructuredText`.
     Each match in the result is an array containing one or more :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>` that cover the matching text.
 
     :arg needle: `string`.
-    :return: `[...]`.
+    :return: `Quad[][]`.
 
     |example_tag|
 
@@ -31,14 +31,14 @@ instance use :meth:`toStructuredText`.
 
 .. method:: highlight(p:[number, number], q:[number, number],  max_hits:number = 100)
 
-    Return an array with :ref:`rectangles <Glossary_Rectangles>`
+    Return an array with :ref:`Quads <Glossary_Rectangles>`
     needed to highlight a selection defined by the start and end points.
 
     :arg p: `[number, number]`. Start point in format `[x,y]`.
     :arg q: `[number, number]`. End point in format `[x,y]`.
     :arg max_hits: `number`. The number of results to return as a maximum for the search.
 
-    :return: `[...]`.
+    :return: `Quad[]`.
 
     |example_tag|
 

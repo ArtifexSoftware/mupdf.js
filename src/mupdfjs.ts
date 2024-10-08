@@ -24,6 +24,8 @@ import * as mupdf from "mupdf";
 
 export const Rect = mupdf.Rect
 export const Matrix = mupdf.Matrix
+type Point = [number, number]
+type Quad = [number, number, number, number, number, number, number, number]
 
 export class Buffer extends mupdf.Buffer {}
 export class ColorSpace extends mupdf.ColorSpace {}
@@ -454,7 +456,7 @@ export class PDFPage extends mupdf.PDFPage {
 	}
 
     insertText(value:string, 
-               point: [number, number], 
+               point: Point, 
                fontName:string = "Times-Roman", 
                fontSize:number = 18,
                graphics: {strokeColor:[number,number,number,number], 
@@ -632,6 +634,10 @@ export class PDFPage extends mupdf.PDFPage {
         redaction.setRect([rect.x,rect.y,rect.x+rect.width,rect.y+rect.height])
         redaction.update()
         return redaction
+    }
+
+    override search(needle:string, maxHits:number = 50): Quad[][] {
+        return super.search(needle, maxHits)
     }
 }
 

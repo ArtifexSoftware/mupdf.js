@@ -122,10 +122,6 @@ PDFDocument
         document.merge(sourcePDF, 0, -1, 1);
 
 
-.. method:: merge()
-
-    |TODO|
-
 .. method:: bake(bakeAnnots:boolean = true, bakeWidgets:boolean = true)
 
     *Baking* a document changes all the annotations and/or form fields (otherwise known as widgets) in the document into static content. It "bakes" the appearance of the annotations and fields onto the page, before removing the interactive objects so they can no longer be changed.
@@ -134,6 +130,50 @@ PDFDocument
 
     :arg bakeAnnots: `boolean` Whether to bake annotations or not. Defaults to `true`.
     :arg bakeWidgets: `boolean` Whether to bake widgets or not. Defaults to `true`.
+
+
+.. method:: newGraftMap()
+
+    Create a graft map on the destination document, so that objects that have already been copied can be found again. Each graft map should only be used with one source document. Make sure to create a new graft map for each source document used.
+
+    :return: :doc:`PDFGraftMap`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var graftMap = pdfDocument.newGraftMap();
+
+
+.. method:: graftObject(obj: PDFObject)
+
+    Deep copy an object into the destination document. This function will not remember previously copied objects. If you are copying several objects from the same source document using multiple calls, you should use a graft map instead.
+
+    :arg obj: `PDFObject` to graft.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        pdfDocument.graftObject(obj);
+
+
+.. method:: graftPage(to: number, srcDoc: PDFDocument, srcPage: number)
+
+    Graft a page and its resources at the given page number from the source document to the requested page number in the document.
+
+    :arg to: `number`. The page number to insert the page before. Page numbers start at `0` and `-1` means at the end of the document.
+    :arg srcDoc: `PDFDocument`. Source document.
+    :arg srcPage: `number`. Source page number.
+
+    |example_tag|
+
+    This would copy the first page of the source document (`0`) to the last page (-1) of the current PDF document.
+
+    .. code-block:: javascript
+
+        pdfDocument.graftPage(-1, srcDoc, 0);
+
 
 .. method:: needsPassword()
 
@@ -270,7 +310,7 @@ PDFDocument
 
     Returns an array with the outline (also known as "table of contents" or "bookmarks"). In the array is an object for each heading with the property 'title', and a property 'page' containing the page number. If the object has a 'down' property, it contains an array with all the sub-headings for that entry.
 
-    :return: `[...]`.
+    :return: `[OutlineItem]`. An array of :ref:`OutlineItem <Glossary_Outline_Items>` objects.
 
 
     |example_tag|
@@ -293,11 +333,11 @@ PDFDocument
         var obj = document.outlineIterator();
 
 
-.. method:: resolveLink(uri:string)
+.. method:: resolveLink(link: string | Link)
 
     Resolve a document internal link :title:`URI` to a page index.
 
-    :arg uri: `string`.
+    :arg uri: `string` | :doc:`Link`.
     :return: `number`.
 
     |example_tag|
@@ -322,11 +362,11 @@ PDFDocument
         var linkDestination = document.resolveLinkDestination(uri);
 
 
-.. method:: formatLinkURI(linkDestination:object)
+.. method:: formatLinkURI(dest:LinkDest)
 
     Format a document internal link destination object to a :title:`URI` string suitable for :meth:`createLink`.
 
-    :arg linkDestination: `object`. :ref:`Link destination <Glossary_Object_Protocols_Link_Destination_Object>`.
+    :arg dest: `LinkDest`. :ref:`Link destination <Glossary_Object_Protocols_Link_Destination_Object>`.
     :return: `string`.
 
 

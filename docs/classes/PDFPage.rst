@@ -5,15 +5,10 @@
 PDFPage
 ===================
 
-.. 
-    A **PDFPage** instance has access to the :ref:`Core JavaScript API <Node_How_To_Guide_Document_Core_API>`. Please see the `Page Class`_ methods within the `Core API`_ for *full details* on all the available **JavaScript** methods.
-
 
 |constructor_tag|
 
 .. method:: PDFPage(doc: PDFDocument, pno: number)
-
-    *Constructor method*.
 
     Returns a `PDFPage` from a supplied document and page number.
 
@@ -30,6 +25,35 @@ PDFPage
 
 
 |instance_method_tag|
+
+.. method:: getBounds()
+
+    Returns a :ref:`rectangle <Glossary_Rectangles>` containing the page dimensions.
+
+    :return: `[ulx,uly,lrx,lry]`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var rect = page.getBounds();
+
+
+.. _PDFPage_run:
+
+.. method:: run(device: Device, matrix: Matrix)
+
+    Calls device functions for all the contents on the page, using the specified transform :ref:`matrix <Glossary_Matrix>`. The `device` can be one of the built-in devices or a :title:`JavaScript` object with methods for the device calls. The `matrix` maps from user space points to device space pixels.
+
+    :arg device: :doc:`Device`. The device object.
+    :arg matrix: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        page.run(obj, mupdf.Matrix.identity);
+
 
 .. method:: toStructuredText(options:string)
 
@@ -49,12 +73,12 @@ PDFPage
 
         let sText = page.toStructuredText("preserve-whitespace");
 
-.. method:: insertText(value:string, point: [number, number], fontName:string = "Times-Roman", fontSize:number = 18, graphics: {strokeColor:[number,number,number,number], fillColor:[number,number,number,number], strokeThickness:number} = {strokeColor:[0,0,0,1], fillColor:[0,0,0,1], strokeThickness:1})
+.. method:: insertText(value:string, point: Point, fontName:string = "Times-Roman", fontSize:number = 18, graphics: {strokeColor:[number,number,number,number], fillColor:[number,number,number,number], strokeThickness:number} = {strokeColor:[0,0,0,1], fillColor:[0,0,0,1], strokeThickness:1})
     
     Inserts text onto a page at the given point along with styling options. 
 
     :arg value: `string`. The value of the text. 
-    :arg point: `[number, number]`. The `x,y` coordinate for the text.
+    :arg point: `Point`. The :ref:`point <Glossary_Object_Points_and_QuadPoints>` coordinate for the text.
     :arg fontName: `string`. Defaults to "Times-Roman"
     :arg fontSize: `number`. Font size, default is 18 points.
     :arg graphics: `{strokeColor:[number,number,number,number], fillColor:[number,number,number,number], strokeThickness:number}`. An object with three keys to set the graphics styling for the text.
@@ -92,12 +116,33 @@ PDFPage
                                 {x:0, y:0, width:200, height:200});
 
 
+.. method:: search(needle:string, maxHits:number = 500)
+
+
+    Search the page text for all instances of the `needle` value, and return an array of search hits.
+    
+    Each search hit is an array of :ref:`quadpoints <Glossary_Object_Points_and_QuadPoints>` corresponding to all characters in the search hit.
+
+    :arg needle: `string`.
+    :arg maxHits: `number`. Defaults to 500 unless otherwise specified.
+    :return: `Quad[][]`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let results = page.search("my search phrase");
+
+
+    .. note::
+
+        The array contents are `[ulx, uly, urx, ury, llx, lly, lrx, lry]` for each result. These sets of numbers are known as :ref:`quadpoints <Glossary_Object_Points_and_QuadPoints>` or "Quads" in the :title:`PDF` specification.
 
 .. method:: getLinks()
 
-    Returns an array of all links on the page.
+    Returns an array of all :ref:`links <Classes_Link>` on the page.
 
-    :return: `[...]`.
+    :return: `Link[]`.
 
     |example_tag|
 
@@ -106,11 +151,11 @@ PDFPage
         let links = page.getLinks();
 
 
-.. method:: createAnnotation()
+.. method:: createAnnotation(type: PDFAnnotationType)
 
     Create a new blank annotation of a given :ref:`type <Glossary_Annotation_Types>`.
 
-    :arg type: `string` representing :ref:`annotation type <Glossary_Annotation_Types>`.
+    :arg type: `PDFAnnotationType` representing :ref:`annotation type <Glossary_Annotation_Types>`.
     :return: :doc:`PDFAnnotation`.
 
     |example_tag|
@@ -149,9 +194,11 @@ PDFPage
         let redactionAnnotation = page.addRedaction({x:100, y:200, width:300, height:50})
 
 
-.. method:: createLink(rect:[], destinationUri:string)
+.. method:: createLink(rect:Rect, destinationUri:string)
 
     Create a new link within the rectangle on the page, linking to the destination URI string.
+
+    To create links to other pages within the document see the :meth:`formatLinkURI` method.
 
     :arg rect: :ref:`Rectangle <Glossary_Rectangles>` for the link.
     :arg destinationUri: `string` containing URI.
@@ -161,14 +208,18 @@ PDFPage
 
     .. code-block:: javascript
 
+        // create a link to an external URL
         var link = page.createLink([0,0,100,100], "https://example.com");
+
+        // create a link to another page in the document
+        var link = page.createLink(rectobj, "#page=1&view=FitV,0");
 
 
 .. method:: getAnnotations()
 
     Returns an array of all annotations on the page.
 
-    :return: `[...]`.
+    :return: `PDFAnnotation[]`.
 
     |example_tag|
 
@@ -180,7 +231,7 @@ PDFPage
 
     Returns an array of all widgets on the page.
 
-    :return: `[...]`.
+    :return: `PDFWidget[]`.
 
     |example_tag|
 

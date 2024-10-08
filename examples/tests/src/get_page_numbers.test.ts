@@ -34,7 +34,7 @@ describe("PDFDocument getPageNumbers", () => {
         expect(doc.getPageNumbers("NonExistent")).toEqual([]);
     });
 
-    it("should stop after first hit when only_one is true", () => {
+    it("should stop after first hit when onlyOne is true", () => {
         doc.setPageLabelsArray([
             { startpage: 0, style: "D", prefix: "Page-" },
             { startpage: 5, style: "D", prefix: "Page-" }

@@ -1,6 +1,5 @@
 .. include:: ../header.rst
 
-
 Glossary
 ===========
 
@@ -19,6 +18,17 @@ For example:
 - In the `DeviceRGB` color space a color would be `[Red,Green,Blue]`. A full green color would therefore be `[0,1,0]`.
 - In the `DeviceGray` color space a color would be `[Black]`. A full black color would therefore be `[0]`.
 
+.. _Glossary_Color_Type:
+
+Color Type
+~~~~~~~~~~~~~~
+
+The convenience type is defined as follows:
+
+.. code-block:: javascript
+
+    type Color = [number] | [number, number, number] | [number, number, number, number]
+
 
 .. _Glossary_Alpha:
 
@@ -32,7 +42,6 @@ Alpha values are floats between `0` and `1`, whereby `0` denotes full transparen
 Matrices
 -------------
 
-
 Matrices are simply 6-element arrays representing a 3-by-3 transformation matrix as:
 
 
@@ -43,6 +52,16 @@ Matrices are simply 6-element arrays representing a 3-by-3 transformation matrix
     \ e f 1 /
 
 This matrix is represented in :title:`JavaScript` as `[a,b,c,d,e,f]`.
+
+
+Matrix Type
+~~~~~~~~~~~~~~
+
+The convenience type is defined as follows:
+
+.. code-block:: bash
+
+    type Matrix = [number, number, number, number, number, number]
 
 `Matrix`
 ~~~~~~~~~~~
@@ -148,6 +167,15 @@ Rectangles are 4-element arrays, specifying the minimum and maximum corners (typ
 If the minimum x coordinate is bigger than the maximum x coordinate, :title:`MuPDF` treats the rectangle as infinite in size.
 
 
+Rect Type
+~~~~~~~~~~~~~~
+
+The convenience type is defined as follows:
+
+.. code-block:: bash
+
+    type Rect = [number, number, number, number]
+
 `Rect`
 ~~~~~~~~~~~~~~
 
@@ -222,17 +250,38 @@ If the minimum x coordinate is bigger than the maximum x coordinate, :title:`MuP
 
 .. _Glossary_Object_Points_and_QuadPoints:
 
+.. _Glossary_Points:
+
 Points
 ---------
 
 **Points** objects are two-dimensonial numeric arrays in the format: `[x, y]`.
+
+
+Point Type
+~~~~~~~~~~~~~~
+
+The convenience type is defined as follows:
 
 .. code-block:: javascript
 
     type Point = [number, number]
 
 
+
+.. _Glossary_Quads:
+
+Quads
+----------------
+
 **QuadPoint** or **Quad** objects are arrays of 8 elements, where each pair are the X/Y coordinates of a corner of the quad, i.e.: `[ulx, uly, urx, ury, llx, lly, lrx, lry]`.
+
+
+
+Quad Type
+~~~~~~~~~~~~~~
+
+The convenience type is defined as follows:
 
 .. code-block:: javascript
 
@@ -350,10 +399,32 @@ Annotation Types
 
 
 
+.. _Glossary_Widgets_Types:
+
+Widgets Types
+~~~~~~~~~~~~~~~~~~~~~
+
+Widgets are a special type of interactive annotation used for form filling in :title:`PDF`.
+
+.. list-table::
+   :header-rows: 1
+
+   * - **Name**
+   * - button
+   * - checkbox
+   * - combobox
+   * - listbox
+   * - radiobutton
+   * - signature
+   * - text
+
+
+
+
 .. _Glossary_Line_Ending_Styles:
 
 Line Ending Styles
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following table lists line ending styles for use with :doc:`../classes/PDFAnnotation`.
 
@@ -377,7 +448,7 @@ The following table lists line ending styles for use with :doc:`../classes/PDFAn
 .. _Glossary_Icon_Names:
 
 Icon Names
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 The following table lists icon names for use with :doc:`../classes/PDFAnnotation`.
@@ -445,7 +516,7 @@ The following table lists icon names for use with :doc:`../classes/PDFAnnotation
 .. _Glossary_Border_Style:
 
 Border Style
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Annotation border styles are one of:
 
@@ -458,7 +529,7 @@ Annotation border styles are one of:
 .. _Glossary_Border_Effect:
 
 Border Effect
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Annotation border effects are one of:
 
@@ -618,7 +689,7 @@ Default Appearance Text Object
 .. _Glossary_Page_Labels:
 
 Page Labels
-------------------
+--------------------------------
 
 Page labels are used to label your pages - giving them a name, usually this is the page number, however there may be prefixes or other kinds of labels (e.g. roman numerals) that you may want to use.
 
@@ -637,7 +708,7 @@ There is a common interface object in :title:`MuPDF.js` which is used to define 
 .. _Glossary_Outline_Items:
 
 Outline Items
---------------------
+----------------------------------
 
 Outline items are returned from the :meth:`loadOutline` method and represent a table of contents entry.
 
@@ -658,7 +729,7 @@ Outline items are returned from the :meth:`loadOutline` method and represent a t
 
 
 Blend Modes
---------------------
+----------------------------------
 
 `BlendMode` is defined as a string as one of:
 

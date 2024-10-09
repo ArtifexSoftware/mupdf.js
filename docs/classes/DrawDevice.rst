@@ -14,7 +14,7 @@ The `DrawDevice` can be used to render to a :doc:`Pixmap`; either by :ref:`runni
 
     Create a device for drawing into a :doc:`Pixmap`. The :doc:`Pixmap` bounds used should match the transformed page bounds, or you can adjust them to only draw a part of the page.
 
-    :arg matrix: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
     :arg pixmap: :doc:`Pixmap`.
 
     :return: `DrawDevice`.
@@ -23,7 +23,7 @@ The `DrawDevice` can be used to render to a :doc:`Pixmap`; either by :ref:`runni
 
     .. code-block:: javascript
 
-        var drawDevice = new mupdfjs.DrawDevice(mupdf.Matrix.identity, pixmap);
+        var drawDevice = new mupdfjs.DrawDevice(mupdfjs.Matrix.identity, pixmap);
 
 
 

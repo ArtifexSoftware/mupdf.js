@@ -16,7 +16,7 @@ A display list records all the device calls for playback later. If you want to r
 
     Create an empty display list. The mediabox rectangle should be the bounds of the page.
 
-    :arg mediabox: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :arg mediabox: :ref:`Rect <Glossary_Rectangles>`.
 
     :return: `DisplayList`.
 
@@ -36,7 +36,7 @@ A display list records all the device calls for playback later. If you want to r
     Play back the recorded device calls onto the device.
 
     :arg device: :doc:`Device`.
-    :arg matrix: `[a,b,c,d,e,f]`. The transform :ref:`Matrix <Glossary_Matrix>`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
 
     |example_tag|
 
@@ -50,7 +50,7 @@ A display list records all the device calls for playback later. If you want to r
 
     Returns a rectangle containing the dimensions of the display list contents.
 
-    :return: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :return: :ref:`Rect <Glossary_Rectangles>`.
 
 
     |example_tag|
@@ -66,7 +66,7 @@ A display list records all the device calls for playback later. If you want to r
 
     Render display list to a :doc:`Pixmap`.
 
-    :arg matrix: `[a,b,c,d,e,f]`. The transform :ref:`Matrix <Glossary_Matrix>`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
     :arg colorspace: `ColorSpace`.
     :arg alpha: `boolean`. If alpha is *true*, a transparent background, otherwise white.
 
@@ -101,7 +101,7 @@ A display list records all the device calls for playback later. If you want to r
 
     Search the display list text for all instances of the `needle` value,
     and return an array of search hits.
-    Each search hit is an array of :ref:`Quads <Glossary_Object_Points_and_QuadPoints>`
+    Each search hit is an array of :ref:`Quads <Glossary_Quads>`
     corresponding to all characters in the search hit.
 
     :arg needle: `string`.

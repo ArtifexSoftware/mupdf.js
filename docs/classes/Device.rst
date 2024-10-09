@@ -23,10 +23,10 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     :arg path: :doc:`Path` object.
     :arg evenOdd: `boolean`. The `even odd rule`_ to use.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
     :arg colorspace: The :doc:`ColorSpace`.
-    :arg color: The :ref:`color <Glossary_Colors>`.
-    :arg alpha: The :ref:`alpha <Glossary_Alpha>`.
+    :arg color: :ref:`Color <Glossary_Colors>`.
+    :arg alpha: `number`. The :ref:`alpha <Glossary_Alpha>`.
 
 
     |example_tag|
@@ -42,10 +42,10 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     :arg path: :doc:`Path` object.
     :arg stroke: :doc:`StrokeState`.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
     :arg colorspace: The :doc:`ColorSpace`.
-    :arg color: The :ref:`color <Glossary_Colors>`.
-    :arg alpha: The :ref:`alpha <Glossary_Alpha>`.
+    :arg color: :ref:`Color <Glossary_Colors>`.
+    :arg alpha: `number`. The :ref:`alpha <Glossary_Alpha>`.
 
     |example_tag|
 
@@ -67,7 +67,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     :arg path: `Path` object.
     :arg evenOdd: `boolean`. The `even odd rule`_ to use.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
 
 
     |example_tag|
@@ -85,7 +85,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     :arg path: :doc:`Path` object.
     :arg stroke: :doc:`StrokeState` object.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
 
     |example_tag|
 
@@ -102,10 +102,10 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
     Fill a text object.
 
     :arg text: :doc:`Text` object.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
     :arg colorspace: The :doc:`ColorSpace`.
-    :arg color: The :ref:`color <Glossary_Colors>`.
-    :arg alpha: The :ref:`alpha <Glossary_Alpha>`.
+    :arg color: :ref:`Color <Glossary_Colors>`.
+    :arg alpha: `number`. The :ref:`alpha <Glossary_Alpha>`.
 
     |example_tag|
 
@@ -120,10 +120,10 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     :arg text: :doc:`Text` object.
     :arg stroke: :doc:`StrokeState` object.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
     :arg colorspace: The :doc:`ColorSpace`.
-    :arg color: The :ref:`color <Glossary_Colors>`.
-    :arg alpha: The :ref:`alpha <Glossary_Alpha>`.
+    :arg color: :ref:`Color <Glossary_Colors>`.
+    :arg alpha: `number`. The :ref:`alpha <Glossary_Alpha>`.
 
     |example_tag|
 
@@ -141,7 +141,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
     Clip a text object.
 
     :arg text: :doc:`Text` object.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
 
     |example_tag|
 
@@ -157,7 +157,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     :arg text: :doc:`Text` object.
     :arg stroke: `StrokeState` object.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
 
     |example_tag|
 
@@ -173,7 +173,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
     Invisible text that can be searched but should not be visible, such as for overlaying a scanned OCR image.
 
     :arg text: :doc:`Text` object.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
 
     |example_tag|
 
@@ -193,8 +193,8 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
 
     :arg shade: `Shade`. The gradient.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
-    :arg alpha: The :ref:`alpha <Glossary_Alpha>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
+    :arg alpha: `number`. The :ref:`alpha <Glossary_Alpha>`.
 
 
     |example_tag|
@@ -211,8 +211,8 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
     Draw an image. An image always fills a unit rectangle `[0,0,1,1]`, so must be transformed to be placed and drawn at the appropriate size.
 
     :arg image: `Image` object.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
-    :arg alpha: The :ref:`alpha <Glossary_Alpha>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
+    :arg alpha: `number`. The :ref:`alpha <Glossary_Alpha>`.
 
 
     |example_tag|
@@ -229,10 +229,10 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
     An image mask is an image without color. Fill with the color where the image is opaque.
 
     :arg image: :doc:`Image` object.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
     :arg colorspace: The :doc:`ColorSpace`.
-    :arg color: The :ref:`color <Glossary_Colors>`.
-    :arg alpha: The :ref:`alpha <Glossary_Alpha>`.
+    :arg color: :ref:`Color <Glossary_Colors>`.
+    :arg alpha: `number`. The :ref:`alpha <Glossary_Alpha>`.
 
 
     |example_tag|
@@ -249,7 +249,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
     Clip graphics using the image to mask the areas to be drawn.
 
     :arg image: :doc:`Image` object.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
 
 
     |example_tag|
@@ -275,10 +275,10 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     Create a soft mask. Any drawing commands between `beginMask` and `endMask` are grouped and used as a clip mask.
 
-    :arg area: `Rect` Mask area.
-    :arg luminosity: `boolean` If luminosity is *true*, the mask is derived from the luminosity (grayscale value) of the graphics drawn; otherwise the color is ignored completely and the mask is derived from the alpha of the group.
-    :arg colorspace: The :doc:`ColorSpace`.
-    :arg color: The :ref:`color <Glossary_Colors>`.
+    :arg area: :ref:`Rect <Glossary_Rectangles>`. Mask area.
+    :arg luminosity: `boolean`. If luminosity is *true*, the mask is derived from the luminosity (grayscale value) of the graphics drawn; otherwise the color is ignored completely and the mask is derived from the alpha of the group.
+    :arg colorspace: :doc:`ColorSpace`.
+    :arg color: :ref:`Color <Glossary_Colors>`.
 
 
     |example_tag|
@@ -306,12 +306,12 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     Push/pop a transparency blending group. See the PDF reference for details on `isolated` and `knockout`.
 
-    :arg area: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`. The blend area.
+    :arg area: :ref:`Rect <Glossary_Rectangles>`. The blend area.
     :arg colorspace: :doc:`ColorSpace`.
     :arg isolated: `boolean`.
     :arg knockout: `boolean`.
     :arg blendmode: :ref:`BlendMode <Glossary_BlendMode>` is one of the standard :title:`PDF` blend modes.
-    :arg alpha: The :ref:`alpha <Glossary_Alpha>`.
+    :arg alpha: `nu,ber`. The :ref:`alpha <Glossary_Alpha>`.
 
 
     .. image:: ../images/isolated-and-knockout.png
@@ -342,12 +342,12 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     Draw a tiling pattern. Any drawing commands between `beginTile` and `endTile` are grouped and then repeated across the whole page. Apply a clip mask to restrict the pattern to the desired shape.
 
-    :arg area: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
-    :arg view: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :arg area: :ref:`Rect <Glossary_Rectangles>`.
+    :arg view: :ref:`Rect <Glossary_Rectangles>`.
     :arg xstep: `number` representing `x` step.
     :arg ystep: `number` representing `y` step.
-    :arg ctm: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
-    :arg id: `number` The purpose of `id` is to allow for efficient caching of rendered tiles. If `id` is `0`, then no caching is performed. If it is non-zero, then it assumed to uniquely identify this tile.
+    :arg ctm: :ref:`Matrix <Glossary_Matrix>`.
+    :arg id: `number`. The purpose of `id` is to allow for efficient caching of rendered tiles. If `id` is `0`, then no caching is performed. If it is non-zero, then it assumed to uniquely identify this tile.
 
 
     |example_tag|

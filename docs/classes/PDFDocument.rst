@@ -451,8 +451,284 @@ PDFDocument
         let result = pdfDocument.getPageNumbers("Appendix-A");
 
 
+.. method:: getTrailer()
+
+    The trailer dictionary. This contains indirect references to the "Root" and "Info" dictionaries. See: :ref:`PDF object access <PDFDocument_Object_Access>`.
+
+    :return: `PDFObject`. The trailer dictionary.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var dict = pdfDocument.getTrailer();
+
+.. method:: countObjects()
+
+    Return the number of objects in the :title:`PDF`.
+    Object number `0` is reserved, and may not be used for anything. See: :ref:`PDF object access <PDFDocument_Object_Access>`.
+
+    :return: `number` Object count.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var num = pdfDocument.countObjects();
 
 
+.. method:: createObject()
+
+    Allocate a new numbered object in the :title:`PDF`, and return an indirect reference to it. The object itself is uninitialized.
+
+    :return: `PDFObject`. The new object.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.createObject();
+
+
+.. method:: deleteObject(num: number | PDFObject)
+
+    Delete the object referred to by an indirect reference or its object number.
+
+    :arg num: `number | PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        pdfDocument.deleteObject(obj);
+
+
+
+----
+
+.. _PDFDocument_Object_Access:
+
+:title:`PDF` Object Access
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A :title:`PDF` document contains objects, similar to those in :title:`JavaScript`: arrays, dictionaries, strings, booleans, and numbers. At the root of the :title:`PDF` document is the trailer object; which contains pointers to the meta data dictionary and the catalog object which contains the pages and other information.
+
+Pointers in :title:`PDF` are also called indirect references, and are of the form "32 0 R" (where 32 is the object number, 0 is the generation, and R is magic syntax). All functions in :title:`MuPDF` dereference indirect references automatically.
+
+:title:`PDF` has two types of strings: `/Names` and `(Strings)`. All dictionary keys are names.
+
+Some dictionaries in :title:`PDF` also have attached binary data. These are called streams, and may be compressed.
+
+
+.. note::
+
+    `PDFObjects` are always bound to the document that created them. Do **NOT** mix and match objects from one document with another document!
+
+
+
+
+----
+
+.. method:: addObject(obj: any)
+
+    Add `obj` to the :title:`PDF` as a numbered object, and return an indirect reference to it.
+
+    :arg obj: `any`. Object to add.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var ref = pdfDocument.addObject(obj);
+
+
+.. method:: addStream(buf: AnyBuffer, obj: any)
+
+    Create a stream object with the contents of `buffer`, add it to the :title:`PDF`, and return an indirect reference to it. If `object` is defined, it will be used as the stream object dictionary.
+
+    :arg buf: `AnyBuffer` object.
+    :arg obj: `any`. The object to add the stream to.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var stream = pdfDocument.addStream(buffer, object);
+
+
+
+.. method:: addRawStream(buf: AnyBuffer, obj: any)
+
+    Create a stream object with the contents of `buffer`, add it to the :title:`PDF`, and return an indirect reference to it. If `object` is defined, it will be used as the stream object dictionary. The `buffer` must contain already compressed data that matches "Filter" and "DecodeParms" set in the stream object dictionary.
+
+    :arg buf: `AnyBuffer` object.
+    :arg obj: `any`. The object to add the stream to.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var stream = pdfDocument.addRawStream(buffer, object);
+
+
+.. method:: newNull()
+
+    Create a new null object.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newNull();
+
+
+
+.. method:: newBoolean(v:boolean)
+
+    Create a new boolean object.
+
+    :arg v: `boolean`.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newBoolean(true);
+
+
+.. method:: newInteger(v:number)
+
+    Create a new integer object.
+
+    :arg v: `number`.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newInteger(1);
+
+
+.. method:: newReal(v:number)
+
+    Create a new real number object.
+
+    :arg v: `number`.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newReal(7.3);
+
+
+.. method:: newString(v:string)
+
+    Create a new string object.
+
+    :arg v: `string`.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newString("hello");
+
+
+.. method:: newByteString(v: Uint8Array)
+
+    Create a new byte string object.
+
+    :arg v: `Uint8Array`.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newByteString([21, 31]);
+
+
+
+.. method:: newName(v:string)
+
+    Create a new name object.
+
+    :arg v: `string`.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newName("hello");
+
+
+.. method:: newIndirect(v: number)
+
+    Create a new indirect object.
+
+    :arg v: `number`.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newIndirect(100);
+
+
+
+.. method:: newArray(cap:number = 8)
+
+    Create a new array object.
+
+    :arg cap: `number`. Defaults to `8`.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newArray();
+
+
+.. method:: newDictionary(cap:number = 8)
+
+    Create a new dictionary object.
+
+    :arg cap: `number`. Defaults to `8`.
+
+    :return: `PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var obj = pdfDocument.newDictionary();
+
+
+----
 
 
 .. include:: footer.rst

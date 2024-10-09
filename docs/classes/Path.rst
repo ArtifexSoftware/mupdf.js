@@ -31,9 +31,9 @@ A `Path` object represents vector graphics as drawn by a pen. A path can be eith
     Return a bounding rectangle for the path.
 
     :arg stroke: :doc:`StrokeState`. The stroke for the path.
-    :arg transform: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>` for the path.
+    :arg transform: :ref:`Matrix <Glossary_Matrix>`. The transform matrix for the path.
 
-    :return: `[ulx,uly,lrx,lry]`. :ref:`Rectangle <Glossary_Rectangles>`.
+    :return: :ref:`Rect <Glossary_Rectangles>`.
 
 
     |example_tag|
@@ -154,7 +154,7 @@ A `Path` object represents vector graphics as drawn by a pen. A path can be eith
 
     Transform path by the given transform matrix.
 
-    :arg matrix: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>` for the path.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
 
 
     |example_tag|

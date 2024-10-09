@@ -3333,7 +3333,7 @@ export class PDFAnnotation extends Userdata<"pdf_annot"> {
 export class PDFWidget extends PDFAnnotation {
 	/* IMPORTANT: Keep in sync with mupdf/pdf/widget.h and PDFWidget.java */
 	static readonly WIDGET_TYPES = [
-		"button",
+		"widget", // unknown
 		"button",
 		"checkbox",
 		"combobox",

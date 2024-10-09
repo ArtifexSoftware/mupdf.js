@@ -839,6 +839,7 @@ unsigned char * wasm_print_stext_page_as_json(fz_stext_page *page, float scale)
 		fz_drop_output(ctx, out);
 		fz_terminate_buffer(ctx, buf);
 		fz_buffer_extract(ctx, buf, &data);
+		fz_drop_buffer(ctx, buf);
 	})
 	return data;
 }

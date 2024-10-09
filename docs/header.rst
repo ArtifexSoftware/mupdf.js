@@ -13,6 +13,10 @@
 .. |static_method_tag| raw:: html
 
    <span class="static-method-tag">STATIC METHODS</span>
+
+.. |instance_property_tag| raw:: html
+
+   <span class="instance-properties-tag">INSTANCE PROPERTIES</span>
    
 
 .. |page_spacer| raw:: html

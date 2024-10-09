@@ -16,7 +16,7 @@ instance use :meth:`toStructuredText`.
 
     Search the text for all instances of `needle`, and return an array with all matches found on the page.
 
-    Each match in the result is an array containing one or more :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>` that cover the matching text.
+    Each match in the result is an array containing one or more :ref:`QuadPoints <Glossary_Quads>` that cover the matching text.
 
     :arg needle: `string`.
     :return: `Quad[][]`.
@@ -29,13 +29,13 @@ instance use :meth:`toStructuredText`.
 
 
 
-.. method:: highlight(p:[number, number], q:[number, number],  max_hits:number = 100)
+.. method:: highlight(p:Point, q:Point,  max_hits:number = 100)
 
-    Return an array with :ref:`Quads <Glossary_Rectangles>`
+    Return an array with :ref:`Quads <Glossary_Quads>`
     needed to highlight a selection defined by the start and end points.
 
-    :arg p: `[number, number]`. Start point in format `[x,y]`.
-    :arg q: `[number, number]`. End point in format `[x,y]`.
+    :arg p: :ref:`Point <Glossary_Points>`.
+    :arg q: :ref:`Point <Glossary_Points>`.
     :arg max_hits: `number`. The number of results to return as a maximum for the search.
 
     :return: `Quad[]`.
@@ -48,12 +48,12 @@ instance use :meth:`toStructuredText`.
 
 
 
-.. method:: copy(p:[number, number], q:[number, number])
+.. method:: copy(p:Point, q:Point)
 
     Return the text from the selection defined by the start and end points.
 
-    :arg p: `[number, number]`. Start point in format `[x,y]`.
-    :arg q: `[number, number]`. End point in format `[x,y]`.
+    :arg p: :ref:`Point <Glossary_Points>`.
+    :arg q: :ref:`Point <Glossary_Points>`.
 
     :return: `string`.
 

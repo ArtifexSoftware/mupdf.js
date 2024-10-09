@@ -18,7 +18,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     Returns a rectangle containing the location and dimension of the annotation.
 
-    :return: `Array`. `[ulx,uly,lrx,lry]`. :ref:`Rectangle <Glossary_Rectangles>`.
+    :return: :ref:`Rect <Glossary_Rectangles>`.
 
 
     |example_tag|
@@ -28,12 +28,12 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         let bounds = annotation.getBounds()
 
 
-.. method:: run(device:Device, transform:Array)
+.. method:: run(device:Device, matrix:Matrix)
 
     Calls the device functions to draw the annotation.
 
     :arg device: :doc:`Device`.
-    :arg transform: `Array`. `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
 
     |example_tag|
 
@@ -42,11 +42,11 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         annotation.run(device, mupdfjs.Matrix.identity)
 
 
-.. method:: toPixmap(transform:Array, colorspace:ColorSpace, alpha:boolean)
+.. method:: toPixmap(matrix:Matrix, colorspace:ColorSpace, alpha:boolean = false)
 
     Render the annotation into a :doc:`Pixmap`, using the `transform`, `colorspace` and `alpha` parameters.
 
-    :arg transform: `Array`. `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
     :arg colorspace: :doc:`ColorSpace`.
     :arg alpha: `boolean`.
 
@@ -88,14 +88,14 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
         let obj = annotation.getObject()
 
 
-.. method:: setAppearanceFromDisplayList(appearance:string, state:string, transform:Array, displayList:DisplayList)
+.. method:: setAppearanceFromDisplayList(appearance: string | null, state: string | null, transform: Matrix, list: DisplayList)
 
     Set the annotation appearance stream for the given appearance. The desired appearance is given as a transform along with a display list.
 
     :arg appearance: `string` Appearance stream ("N", "R" or "D").
     :arg state: `string` The annotation state to set the appearance for or null for the current state. Only widget annotations of pushbutton, check box, or radio button type have states, which are "Off" or "Yes". For other types of annotations pass null.
-    :arg transform: `Array`. `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
-    :arg displayList: `DisplayList`.
+    :arg transform: :ref:`Matrix <Glossary_Matrix>`.
+    :arg list: `DisplayList`.
 
     |example_tag|
 
@@ -103,14 +103,14 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
         annotation.setAppearanceFromDisplayList("N", null, mupdfjs.Matrix.identity, displayList);
 
-.. method:: setAppearance(appearance:string, state:string, transform:Array, bbox:Array, resources:object, contents:string)
+.. method:: setAppearance(appearance: string | null, state: string | null, transform: Matrix, bbox: Rect, resources: any, contents: AnyBuffer)
 
     Set the annotation appearance stream for the given appearance. The desired appearance is given as a transform along with a bounding box, a :title:`PDF` dictionary of resources and a content stream.
 
     :arg appearance: `string` Appearance stream ("N", "R" or "D").
     :arg state: `string` The annotation state to set the appearance for or null for the current state. Only widget annotations of pushbutton, check box, or radio button type have states, which are "Off" or "Yes". For other types of annotations pass null.
-    :arg transform: `Array`. `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
-    :arg bbox: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :arg transform: :ref:`Matrix <Glossary_Matrix>`.
+    :arg bbox: :ref:`Rect <Glossary_Rectangles>`.
     :arg resources: `object`. Resources object.
     :arg contents: `string`. Contents string.
 
@@ -288,7 +288,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     Get the annotation color, represented as an array of 1, 3, or 4 component values.
 
-    :return: `Array`. The :ref:`color value <Glossary_Colors>`.
+    :return: :ref:`Color <Glossary_Colors>`.
 
     |example_tag|
 
@@ -298,11 +298,11 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
 
 
-.. method:: setColor(color:Array)
+.. method:: setColor(color:Color)
 
     Set the annotation color, represented as an array of 1, 3, or 4 component values.
 
-    :arg color: `Array`. The :ref:`color value <Glossary_Colors>`.
+    :arg color: :ref:`Color <Glossary_Colors>`.
 
     |example_tag|
 
@@ -466,7 +466,7 @@ These properties are only present for some annotation types, so support for them
 
     Get the annotation bounding box.
 
-    :return: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :return: :ref:`Rect <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -476,11 +476,11 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setRect(rect:Array)
+.. method:: setRect(rect:Rect)
 
     Set the annotation bounding box.
 
-    :arg rect: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -491,11 +491,9 @@ These properties are only present for some annotation types, so support for them
 
 .. method:: getDefaultAppearance()
 
-
-
     Get the :ref:`default text appearance <Glossary_Default_Appearance_Text_Object>` used for free text annotations.
 
-    :return: `{font:string, size:number, color:Array}` Returns :ref:`a default text appearance <Glossary_Default_Appearance_Text_Object>` with the key/value pairs.
+    :return: `{font:string, size:number, color:Color}` Returns :ref:`a default text appearance <Glossary_Default_Appearance_Text_Object>` with the key/value pairs.
 
     |example_tag|
 
@@ -505,13 +503,13 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setDefaultAppearance(font:number, size:number, color:Array)
+.. method:: setDefaultAppearance(font:number, size:number, color:Color)
 
     Set the default text appearance used for free text annotations.
 
     :arg font: `string` ("Helv" = Helvetica, "TiRo" = Times New Roman, "Cour" = Courier).
     :arg size: `number`.
-    :arg color: `Array`. The :ref:`color value <Glossary_Colors>`.
+    :arg color: :ref:`Color <Glossary_Colors>`.
 
     |example_tag|
 
@@ -541,7 +539,7 @@ These properties are only present for some annotation types, so support for them
 
     Gets the annotation interior color.
 
-    :return: `Array`. The :ref:`color value <Glossary_Colors>`.
+    :return: :ref:`Color <Glossary_Colors>`.
 
     |example_tag|
 
@@ -551,22 +549,17 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setInteriorColor(color:Array)
-
-
+.. method:: setInteriorColor(color:Color)
 
     Sets the annotation interior color.
 
-    :arg color: `Array`. The :ref:`color value <Glossary_Colors>`.
+    :arg color: :ref:`Color <Glossary_Colors>`.
 
     |example_tag|
 
     .. code-block:: javascript
 
         annotation.setInteriorColor([0,1,1]);
-
-
-
 
 
 
@@ -722,7 +715,7 @@ These properties are only present for some annotation types, so support for them
 
     Get line end points, represented by an array of two points, each represented as an `[x, y]` array.
 
-    :return: `Array`. `[[x,y],...]`.
+    :return: `Point[]`.
 
     |example_tag|
 
@@ -732,12 +725,12 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setLine(a: Array, b: Array)
+.. method:: setLine(a: Point, b: Point)
 
     Set the two line end points, represented by an array of two points, each represented as an `[x, y]` array.
 
-    :arg a: `Array`. Point format `[x,y]`.
-    :arg b: `Array`. Point format `[x,y]`.
+    :arg a: :ref:`Point <Glossary_Points>`.
+    :arg b: :ref:`Point <Glossary_Points>`.
 
     |example_tag|
 
@@ -763,7 +756,7 @@ These properties are only present for some annotation types, so support for them
 
     Get annotation popup rectangle.
 
-    :return: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :return: :ref:`Rect <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -771,11 +764,11 @@ These properties are only present for some annotation types, so support for them
 
         var popupRect = annotation.getPopup();
 
-.. method:: setPopup(rect:Array)
+.. method:: setPopup(rect:Rect)
 
     Set annotation popup rectangle.
 
-    :arg rect: `Array`. `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -1143,7 +1136,7 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
 
     Get the annotation ink list, represented as an array of strokes, each an array of points each an array of its X/Y coordinates.
 
-    :return: `Array`.
+    :return: `Point[][]`.
 
     |example_tag|
 
@@ -1151,13 +1144,11 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
 
         var inkList = annotation.getInkList();
 
-.. method:: setInkList(inkList:Array)
-
-
+.. method:: setInkList(inkList: Point[][])
 
     Set the annotation ink list, represented as an array of strokes, each an array of points each an array of its X/Y coordinates.
 
-    :arg: `Array`.
+    :arg inkList: :ref:`Point[][] <Glossary_Points>`.
 
     |example_tag|
 
@@ -1188,26 +1179,6 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
 
 
 
-.. method:: addInkList(stroke:Array)
-
-
-
-    To the list of strokes, append a stroke, represented as an array of vertices each an array of its X/Y coordinates.
-
-    :arg stroke: `Array`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        annotation.addInkList(
-                                [
-                                    [0,0]
-                                ],
-                                [
-                                    [10,10], [20,20], [30,30]
-                                ]
-                             );
 
 
 
@@ -1225,13 +1196,11 @@ Ink annotations consist of a number of strokes, each consisting of a sequence of
 
 
 
-.. method:: addInkListStrokeVertex(vertex:Array)
+.. method:: addInkListStrokeVertex(v:Point)
 
+    Append a vertex to end of the last stroke in the ink annotation.
 
-
-    Append a vertex to end of the last stroke in the ink annotation. The vertex is an array of its X/Y coordinates.
-
-    :arg vertex: `Array`.
+    :arg v: :ref:`Point <Glossary_Points>`.
 
     |example_tag|
 
@@ -1246,7 +1215,7 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
 
 .. method:: hasQuadPoints()
 
-    Check support for the annotation :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>`.
+    Check support for the annotation :ref:`QuadPoints <Glossary_Quads>`.
 
     :return: `boolean`.
 
@@ -1260,9 +1229,9 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
 
 .. method:: getQuadPoints()
 
-    Get the annotation :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>`, describing the areas affected by text markup annotations and link annotations.
+    Get the annotation :ref:`QuadPoints <Glossary_Quads>`, describing the areas affected by text markup annotations and link annotations.
 
-    :return: `Array`.
+    :return: `Quad[]`.
 
     |example_tag|
 
@@ -1270,11 +1239,11 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
 
         var quadPoints = annotation.getQuadPoints();
 
-.. method:: setQuadPoints(quadPoints:Array)
+.. method:: setQuadPoints(quadList: Quad[])
 
-    Set the annotation :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>`, describing the areas affected by text markup annotations and link annotations.
+    Set the annotation :ref:`QuadPoints <Glossary_Quads>`, describing the areas affected by text markup annotations and link annotations.
 
-    :arg quadPoints: `Array`.
+    :arg quadList: `Quad[]`.
 
     |example_tag|
 
@@ -1288,7 +1257,7 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
 
 .. method:: clearQuadPoints()
 
-    Clear the list of :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>` for the annotation.
+    Clear the list of :ref:`QuadPoints <Glossary_Quads>` for the annotation.
 
     |example_tag|
 
@@ -1297,11 +1266,11 @@ Text markup and redaction annotations consist of a set of quadadrilaterals contr
         annotation.clearQuadPoints();
 
 
-.. method:: addQuadPoint(quadpoint:Array)
+.. method:: addQuadPoint(quad:Quad)
 
-    Append a single :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>` as an array of 8 elements, where each pair are the X/Y coordinates of a corner of the quad.
+    Append a single :ref:`QuadPoints <Glossary_Quads>` as an array of 8 elements, where each pair are the X/Y coordinates of a corner of the quad.
 
-    :arg quadpoint: `Array`.
+    :arg quad: :ref:`Quad <Glossary_Quads>`
 
     |example_tag|
 

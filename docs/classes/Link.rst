@@ -12,7 +12,7 @@ Link
 
     Returns a :ref:`rectangle <Glossary_rectangles>` describing the link's location on the page.
 
-    :return: `[ulx,uly,lrx,lry]`.
+    :return: :ref:`Rect <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -24,7 +24,7 @@ Link
 
     Sets the :ref:`bounds <Glossary_rectangles>` for the link's location on the page.
 
-    :arg rect: `[ulx,uly,lrx,lry]`.
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
 
 
 .. method:: getURI()

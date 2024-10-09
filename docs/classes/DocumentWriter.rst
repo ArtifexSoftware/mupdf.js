@@ -34,7 +34,7 @@ DocumentWriter
 
     Begin rendering a new page. Returns a `Device` that can be used to render the page graphics.
 
-    :arg mediabox: `[ulx,uly,lrx,lry]` :ref:`Rectangle <Glossary_Rectangles>`.
+    :arg mediabox: :ref:`Rect <Glossary_Rectangles>`.
 
     :return: `Device`.
 

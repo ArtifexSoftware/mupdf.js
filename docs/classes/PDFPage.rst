@@ -30,7 +30,7 @@ PDFPage
 
     Returns a :ref:`rectangle <Glossary_Rectangles>` containing the page dimensions.
 
-    :return: `[ulx,uly,lrx,lry]`.
+    :return: :ref:`Rect <Glossary_Rectangles>`.
 
     |example_tag|
 
@@ -46,7 +46,7 @@ PDFPage
     Calls device functions for all the contents on the page, using the specified transform :ref:`matrix <Glossary_Matrix>`. The `device` can be one of the built-in devices or a :title:`JavaScript` object with methods for the device calls. The `matrix` maps from user space points to device space pixels.
 
     :arg device: :doc:`Device`. The device object.
-    :arg matrix: `[a,b,c,d,e,f]`. The transform :ref:`matrix <Glossary_Matrix>`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
 
     |example_tag|
 
@@ -73,12 +73,38 @@ PDFPage
 
         let sText = page.toStructuredText("preserve-whitespace");
 
+.. method:: toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha: boolean = false, showExtras: boolean = true, usage: string = "View", box: PageBox = "CropBox")
+
+    Render the page into a `Pixmap` using the given `colorspace` and `alpha` while applying the `matrix`. Rendering of annotations/widgets can be disabled. A page can be rendered for e.g. "View" or "Print" usage.
+
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
+    :arg colorspace: `ColorSpace`.
+    :arg alpha: `boolean`.
+    :arg renderExtra: `boolean`. Whether annotations and widgets should be rendered.
+    :arg usage: `string`. "View" or "Print".
+    :arg box: `PageBox`. Default is "CropBox".
+
+    :return: `Pixmap`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var pixmap = pdfPage.toPixmap(mupdfjs.Matrix.identity,
+                                      mupdfjs.ColorSpace.DeviceRGB,
+                                      true,
+                                      false,
+                                      "View",
+                                      "CropBox");
+
+
+
 .. method:: insertText(value:string, point: Point, fontName:string = "Times-Roman", fontSize:number = 18, graphics: {strokeColor:[number,number,number,number], fillColor:[number,number,number,number], strokeThickness:number} = {strokeColor:[0,0,0,1], fillColor:[0,0,0,1], strokeThickness:1})
     
     Inserts text onto a page at the given point along with styling options. 
 
     :arg value: `string`. The value of the text. 
-    :arg point: `Point`. The :ref:`point <Glossary_Object_Points_and_QuadPoints>` coordinate for the text.
+    :arg point: `Point`. The :ref:`Point <Glossary_Points>` coordinate for the text.
     :arg fontName: `string`. Defaults to "Times-Roman"
     :arg fontSize: `number`. Font size, default is 18 points.
     :arg graphics: `{strokeColor:[number,number,number,number], fillColor:[number,number,number,number], strokeThickness:number}`. An object with three keys to set the graphics styling for the text.
@@ -121,7 +147,7 @@ PDFPage
 
     Search the page text for all instances of the `needle` value, and return an array of search hits.
     
-    Each search hit is an array of :ref:`quadpoints <Glossary_Object_Points_and_QuadPoints>` corresponding to all characters in the search hit.
+    Each search hit is an array of :ref:`Quadpoints <Glossary_Quads>` corresponding to all characters in the search hit.
 
     :arg needle: `string`.
     :arg maxHits: `number`. Defaults to 500 unless otherwise specified.
@@ -136,7 +162,7 @@ PDFPage
 
     .. note::
 
-        The array contents are `[ulx, uly, urx, ury, llx, lly, lrx, lry]` for each result. These sets of numbers are known as :ref:`quadpoints <Glossary_Object_Points_and_QuadPoints>` or "Quads" in the :title:`PDF` specification.
+        The array contents are `[ulx, uly, urx, ury, llx, lly, lrx, lry]` for each result. These sets of numbers are known as :ref:`quadpoints <Glossary_Quads>` or "Quads" in the :title:`PDF` specification.
 
 .. method:: getLinks()
 
@@ -200,7 +226,7 @@ PDFPage
 
     To create links to other pages within the document see the :meth:`formatLinkURI` method.
 
-    :arg rect: :ref:`Rectangle <Glossary_Rectangles>` for the link.
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
     :arg destinationUri: `string` containing URI.
     :return: :doc:`Link`.
 

@@ -167,6 +167,16 @@ PDFPage
 
         The array contents are `[ulx, uly, urx, ury, llx, lly, lrx, lry]` for each result. These sets of numbers are known as :ref:`quadpoints <Glossary_Quads>` or "Quads" in the :title:`PDF` specification.
 
+.. method:: getImages(): {bbox:Rect, matrix:Matrix, image:Image}[] 
+
+    Returns an array of the page's images along with their bounding box and transform matrix.
+
+    :return: `{bbox:Rect, matrix:Matrix, image:Image}[]`.
+
+    .. code-block:: javascript
+
+        let images = page.getImages();
+
 .. method:: getLinks()
 
     Returns an array of all :ref:`links <Classes_Link>` on the page.

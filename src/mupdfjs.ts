@@ -24,8 +24,11 @@ import * as mupdf from "mupdf";
 
 export const Rect = mupdf.Rect
 export const Matrix = mupdf.Matrix
+type Matrix = [number, number, number, number, number, number]
+type Rect = [number, number, number, number]
 type Point = [number, number]
 type Quad = [number, number, number, number, number, number, number, number]
+type Color = [number] | [number, number, number] | [number, number, number, number]
 
 export class Buffer extends mupdf.Buffer {}
 export class ColorSpace extends mupdf.ColorSpace {}
@@ -447,7 +450,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 export class PDFPage extends mupdf.PDFPage {
 
     // note page number is zero-indexed here
-    constructor(doc: mupdf.PDFDocument, pno:number) {
+    constructor(doc: mupdf.PDFDocument, pno: number) {
         if (pno < 0) {
             pno = 0
         }
@@ -455,12 +458,12 @@ export class PDFPage extends mupdf.PDFPage {
         super(doc, page.pointer)
 	}
 
-    insertText(value:string, 
+    insertText(value: string, 
                point: Point, 
-               fontName:string = "Times-Roman", 
-               fontSize:number = 18,
-               graphics: {strokeColor:[number,number,number,number], 
-                       fillColor:[number,number,number,number],
+               fontName: string = "Times-Roman", 
+               fontSize: number = 18,
+               graphics: {strokeColor:Color, 
+                       fillColor:Color,
                        strokeThickness:number} = {strokeColor:[0,0,0,1], fillColor:[0,0,0,1], strokeThickness:1}) {
         let doc = this._doc
         let page = this
@@ -492,6 +495,14 @@ export class PDFPage extends mupdf.PDFPage {
 
         if (graphics.strokeThickness == undefined) {
             graphics.strokeThickness = 1
+        }
+
+        if (graphics.strokeColor[3] == undefined) {
+            graphics.strokeColor[3] = 1
+        }
+
+        if (graphics.fillColor[3] == undefined) {
+            graphics.fillColor[3] = 1
         }
 
         let strokeColor:string = graphics.strokeColor[0] + " " + graphics.strokeColor[1] + " " + graphics.strokeColor[2] + " RG"
@@ -545,7 +556,7 @@ export class PDFPage extends mupdf.PDFPage {
     }
 
     insertImage(data: {image:Image, name:string}, 
-                rect: {x?:number, y?:number, width?:number, height?:number} = {x:0,y:0,width:0,height:0}) {
+                metrics: {x?:number, y?:number, width?:number, height?:number} = {x:0,y:0,width:0,height:0}) {
 
         if (data.image == null) {
             throw new Error("Invalid image");
@@ -571,28 +582,28 @@ export class PDFPage extends mupdf.PDFPage {
         const image = doc.addImage(data.image)
 
         // source some metrics data from sensible defaults if it isn't provided
-        if (rect.width == 0 || rect.width == undefined) {
-            rect.width = data.image.getWidth()
+        if (metrics.width == 0 || metrics.width == undefined) {
+            metrics.width = data.image.getWidth()
         }
 
-        if (rect.height == 0 || rect.height == undefined) {
-            rect.height = data.image.getHeight()
+        if (metrics.height == 0 || metrics.height == undefined) {
+            metrics.height = data.image.getHeight()
         }
 
-        if (rect.x == undefined) {
-            rect.x = 0
+        if (metrics.x == undefined) {
+            metrics.x = 0
         }
 
         // invert the Y point
-        if (rect.y == undefined) {
-            rect.y = page.getBounds()[3]-rect.height;
+        if (metrics.y == undefined) {
+            metrics.y = page.getBounds()[3]-metrics.height;
         } else {
-            rect.y = page.getBounds()[3]-(rect.y+rect.height);
+            metrics.y = page.getBounds()[3]-(metrics.y+metrics.height);
         }
 
         res_xobj.put(data.name, image)
 
-        let contentStream:string = "q "+rect.width+" 0 0 "+rect.height+" "+rect.x+" "+rect.y+" cm /"+data.name+" Do Q"
+        let contentStream:string = "q "+metrics.width+" 0 0 "+metrics.height+" "+metrics.x+" "+metrics.y+" cm /"+data.name+" Do Q"
 
         console.log(`Inserting image to page with content stream:\n${contentStream}`)
 
@@ -615,7 +626,11 @@ export class PDFPage extends mupdf.PDFPage {
 
     }
 
-    rotate(r:number) {
+    insertLink(metrics: {x:number, y:number, width:number, height:number}, uri: string) {
+        super.createLink([metrics.x,metrics.y,metrics.x+metrics.width,metrics.y+metrics.height], uri)
+    }
+
+    rotate(r: number) {
         let page = this
 
         // Get the PDF object corresponding to the page
@@ -628,16 +643,46 @@ export class PDFPage extends mupdf.PDFPage {
         page_obj.put("Rotate", Number(rotate) + r)
     }
 
-    addRedaction(rect:{x:number, y:number, width:number, height:number}): PDFAnnotation {
+    addRedaction(metrics: {x:number, y:number, width:number, height:number}): PDFAnnotation {
         let page = this
         let redaction = page.createAnnotation("Redact")
-        redaction.setRect([rect.x,rect.y,rect.x+rect.width,rect.y+rect.height])
+        redaction.setRect([metrics.x,metrics.y,metrics.x+metrics.width,metrics.y+metrics.height])
         redaction.update()
         return redaction
     }
 
-    override search(needle:string, maxHits:number = 50): Quad[][] {
+    override applyRedactions(blackBoxes: boolean | number = true, imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS) {
+        var num:number
+        if (typeof blackBoxes === "boolean") {
+            num = blackBoxes ? 1 : 0
+        } else {
+            num = blackBoxes
+        }
+        super.applyRedactions(num, imageMethod)
+    }
+
+    override search(needle: string, maxHits: number = 50): Quad[][] {
         return super.search(needle, maxHits)
+    }
+
+    setCropBox(rect: Rect) {
+        super.setPageBox("CropBox", rect)
+    }
+
+    setArtBox(rect: Rect) {
+        super.setPageBox("ArtBox", rect)
+    }
+
+    setBleedBox(rect: Rect) {
+        super.setPageBox("BleedBox", rect)
+    }
+
+    setTrimBox(rect: Rect) {
+        super.setPageBox("TrimBox", rect)
+    }
+
+    setMediaBox(rect: Rect) {
+        super.setPageBox("MediaBox", rect)
     }
 }
 

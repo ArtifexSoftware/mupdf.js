@@ -24,11 +24,11 @@ import * as mupdf from "mupdf";
 
 export const Rect = mupdf.Rect
 export const Matrix = mupdf.Matrix
-type Matrix = [number, number, number, number, number, number]
-type Rect = [number, number, number, number]
-type Point = [number, number]
-type Quad = [number, number, number, number, number, number, number, number]
-type Color = [number] | [number, number, number] | [number, number, number, number]
+export type Matrix = [number, number, number, number, number, number]
+export type Rect = [number, number, number, number]
+export type Point = [number, number]
+export type Quad = [number, number, number, number, number, number, number, number]
+export type Color = [number] | [number, number, number] | [number, number, number, number]
 
 export class Buffer extends mupdf.Buffer {}
 export class ColorSpace extends mupdf.ColorSpace {}
@@ -683,6 +683,18 @@ export class PDFPage extends mupdf.PDFPage {
 
     setMediaBox(rect: Rect) {
         super.setPageBox("MediaBox", rect)
+    }
+
+    getImages(): {bbox:Rect, matrix:Matrix, image:Image}[] {
+        var images:{bbox:Rect, matrix:Matrix, image:Image}[] = []
+        let page = this
+        page.toStructuredText("preserve-images").walk({
+            onImageBlock(bbox, matrix, image) {
+                images.push({bbox:bbox, matrix:matrix, image:image})
+            }
+        })
+
+        return images
     }
 }
 

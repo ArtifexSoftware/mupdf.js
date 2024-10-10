@@ -39,31 +39,17 @@ PDFPage
         var rect = page.getBounds();
 
 
-.. _PDFPage_run:
-
-.. method:: run(device: Device, matrix: Matrix)
-
-    Calls device functions for all the contents on the page, using the specified transform :ref:`matrix <Glossary_Matrix>`. The `device` can be one of the built-in devices or a :title:`JavaScript` object with methods for the device calls. The `matrix` maps from user space points to device space pixels.
-
-    :arg device: :doc:`Device`. The device object.
-    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        page.run(obj, mupdf.Matrix.identity);
-
 
 .. method:: toStructuredText(options:string)
 
     Extract the text on the page into a :doc:`StructuredText` object. 
 
     :arg options: `string`. A comma separated list of flags: 
-    - `preserve-ligatures`
-    - `preserve-whitespace`
-    - `preserve-spans`
-    - `preserve-images`
+
+        - `preserve-ligatures`
+        - `preserve-whitespace`
+        - `preserve-spans`
+        - `preserve-images`
 
     :return: :doc:`StructuredText`.
 
@@ -82,7 +68,7 @@ PDFPage
     :arg alpha: `boolean`.
     :arg renderExtra: `boolean`. Whether annotations and widgets should be rendered.
     :arg usage: `string`. "View" or "Print".
-    :arg box: `PageBox`. Default is "CropBox".
+    :arg box: :ref:`PageBox <Glossary_PageBox>`. Default is "CropBox".
 
     :return: `Pixmap`.
 
@@ -98,8 +84,25 @@ PDFPage
                                       "CropBox");
 
 
+.. method:: toDisplayList(showExtras = true)
 
-.. method:: insertText(value:string, point: Point, fontName:string = "Times-Roman", fontSize:number = 18, graphics: {strokeColor:[number,number,number,number], fillColor:[number,number,number,number], strokeThickness:number} = {strokeColor:[0,0,0,1], fillColor:[0,0,0,1], strokeThickness:1})
+    Record the contents on the page into a :doc:`DisplayList`. 
+    
+    If `showExtras` is *true* then the operation will include any page annotations and/or widgets.
+
+    :arg showExtras: `boolean`. Default is *true*.
+
+    :return: :doc:`DisplayList`. 
+
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var displayList = page.toDisplayList();
+
+
+.. method:: insertText(value:string, point: Point, fontName:string = "Times-Roman", fontSize:number = 18, graphics: {strokeColor:Color, fillColor:Color, strokeThickness:number} = {strokeColor:[0,0,0,1], fillColor:[0,0,0,1], strokeThickness:1})
     
     Inserts text onto a page at the given point along with styling options. 
 
@@ -107,11 +110,11 @@ PDFPage
     :arg point: `Point`. The :ref:`Point <Glossary_Points>` coordinate for the text.
     :arg fontName: `string`. Defaults to "Times-Roman"
     :arg fontSize: `number`. Font size, default is 18 points.
-    :arg graphics: `{strokeColor:[number,number,number,number], fillColor:[number,number,number,number], strokeThickness:number}`. An object with three keys to set the graphics styling for the text.
+    :arg graphics: `{strokeColor:Color, fillColor:Color, strokeThickness:number}`. An object with three keys to set the graphics styling for the text.
 
-        - `strokeColor`. :ref:`RGBA Array <RGBA_Array>` for the color of the text border (or stroke).
-        - `fillColor`. :ref:`RGBA Array <RGBA_Array>`  for the color of the text fill (or body)
-        - `strokeThickness`. `number`. 0 or above to set the stroke thickness in points. Floating point numbers are accepted.
+        - `strokeColor`. :ref:`Color <Glossary_Colors>` for the color of the text border (or stroke).
+        - `fillColor`. :ref:`Color <Glossary_Colors>`  for the color of the text fill (or body)
+        - `strokeThickness`. `number`. `0` or above to set the stroke thickness in points. Floating point numbers are accepted.
 
     |example_tag|
 
@@ -125,12 +128,12 @@ PDFPage
 
 
 
-.. method:: insertImage(data: {image:Image, name:string}, rect: {x?:number, y?:number, width?:number, height?:number} = {x:0,y:0,width:0,height:0}) 
+.. method:: insertImage(data: {image:Image, name:string}, metrics: {x?:number, y?:number, width?:number, height?:number} = {x:0,y:0,width:0,height:0}) 
 
     Inserts an image onto a page with a given name and within the given rectangle.
 
     :arg data: `{image:Image, name:string}`. Object containing an :doc:`Image` and the name for the image (note this should ideally be unique for the page).
-    :arg rect: `{x?:number, y?:number, width?:number, height?:number}`. An optional object used to define the position and size for the image. If these values are `undefined` then `x` = `0`, `y` = `0`, `width` = *inherent image width*, `height` = *inherent image height*. 
+    :arg metrics: `{x?:number, y?:number, width?:number, height?:number}`. An optional object used to define the position and size for the image. If these values are `undefined` then `x` = `0`, `y` = `0`, `width` = *inherent image width*, `height` = *inherent image height*. 
 
     |example_tag|
 
@@ -181,7 +184,7 @@ PDFPage
 
     Create a new blank annotation of a given :ref:`type <Glossary_Annotation_Types>`.
 
-    :arg type: `PDFAnnotationType` representing :ref:`annotation type <Glossary_Annotation_Types>`.
+    :arg type: :ref:`PDFAnnotationType <Glossary_Annotation_Types>` representing :ref:`annotation type <Glossary_Annotation_Types>`.
     :return: :doc:`PDFAnnotation`.
 
     |example_tag|
@@ -192,7 +195,7 @@ PDFPage
 
 
 
-.. method:: deleteAnnotation(annot:PDFAnnotation)
+.. method:: deleteAnnotation(annot: PDFAnnotation)
 
     Delete the annotation from the page.
 
@@ -205,11 +208,21 @@ PDFPage
         page.deleteAnnotation(annot)
 
 
-.. method:: addRedaction(rect:{x:number, y:number, width:number, height:number})
+.. method:: update()
 
-    Creates a redaction annotation at a location on the page defined by `rect`.
+    Loop through all annotations of the page and update them. Returns true if re-rendering is needed because at least one annotation was changed (due to either events or :title:`JavaScript` actions or annotation editing).
 
-    :arg rect: `{x:number, y:number, width:number, height:number}`.
+    |example_tag|
+
+    .. code-block:: javascript
+
+        pdfPage.update();
+
+.. method:: addRedaction(metrics: {x:number, y:number, width:number, height:number})
+
+    Creates a redaction annotation at a location on the page defined by the `metrics`.
+
+    :arg metrics: `{x:number, y:number, width:number, height:number}`.
 
     :return: :doc:`PDFAnnotation`.
 
@@ -220,7 +233,29 @@ PDFPage
         let redactionAnnotation = page.addRedaction({x:100, y:200, width:300, height:50})
 
 
-.. method:: createLink(rect:Rect, destinationUri:string)
+.. method:: applyRedactions(blackBoxes: boolean | number = true, imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS)
+
+    Applies redactions to the page.
+
+    :arg blackBoxes: `boolean` | `number`.  Whether to use black boxes at each redaction or not.
+    :arg imageMethod: `number`. Default is `PDFPage.REDACT_IMAGE_PIXELS`.
+
+        - `PDFPage.REDACT_IMAGE_NONE` for no redactions.
+        - `PDFPage.REDACT_IMAGE_REMOVE` to redact entire images.
+        - `PDFPage.REDACT_IMAGE_PIXELS` for redacting just the covered pixels.
+
+    .. note::
+
+        Redactions are secure as they remove the affected content completely.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        pdfPage.applyRedactions(true, mupdfjs.PDFPage.REDACT_IMAGE_REMOVE);
+
+
+.. method:: createLink(rect: Rect, destinationUri: string)
 
     Create a new link within the rectangle on the page, linking to the destination URI string.
 
@@ -239,6 +274,18 @@ PDFPage
 
         // create a link to another page in the document
         var link = page.createLink(rectobj, "#page=1&view=FitV,0");
+
+.. method:: deleteLink(link: Link)
+
+    Delete a link from the page.
+
+    :arg link: :doc:`Link`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        page.deleteLink(link);
 
 
 .. method:: getAnnotations()
@@ -286,45 +333,109 @@ PDFPage
         Positive rotation values are clockwise, negative are anti-clockwise.
 
 
-.. method:: setPageBox(type:string)
+.. method:: setPageBox(box: PageBox, rect: Rect)
 
-    Sets the type of box required for the page, one of:
+    Sets the type of box required for the page.
 
-    - `MediaBox`
-    - `CropBox`
-    - `BleedBox`
-    - `TrimBox`
-    - `ArtBox`
-
-    :arg type: `string`.
-
-    .. note::
-
-        Explanation of box types:
-
-        - **MediaBox** for complete pages including items that will be physically trimmed from the final product like crop marks, registration marks, etc.
-
-        - **CropBox** defines the region that a PDF is expected to display or print.
-
-        - **BleedBox** determines the region to which the page contents expect to be clipped.
-
-        - **TrimBox** defines the intended dimensions of the finished page.
-
-        - **ArtBox** can be used to denote areas where it is considered “safe” to place graphical elements.
+    :arg box: :ref:`PageBox <Glossary_PageBox>`.
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
 
     |example_tag|
 
     .. code-block:: javascript
 
-        page.setPageBox("TrimBox");
+        page.setPageBox("TrimBox", [10,10, 585, 832]);
 
-----
+.. method:: setTrimBox(rect: Rect) 
 
-.. _RGBA_Array:
+    Convenience method for setting the trim box.
 
-.. admonition:: RGBA Array
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
 
-    **RGBA Array** is a array of 4 floating point numbers between `0 - 1` to define Red, Green, Blue, and Alpha settings for your color.
+.. method:: setMediaBox(rect: Rect)
+
+    Convenience method for setting the media box.
+
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
+
+.. method:: setCropBox(rect: Rect)
+
+    Convenience method for setting the crop box.
+
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
+
+.. method:: setArtBox(rect: Rect) 
+
+    Convenience method for setting the art box.
+
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
+
+.. method:: setBleedBox(rect: Rect)
+
+    Convenience method for setting the bleed box.
+
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
+
+
+
+
+.. _PDFPage_run:
+
+.. method:: run(device: Device, matrix: Matrix)
+
+    Calls device functions for all the contents on the page, using the specified transform :ref:`matrix <Glossary_Matrix>`. The `device` can be one of the built-in devices or a :title:`JavaScript` object with methods for the device calls. The `matrix` maps from user space points to device space pixels.
+
+    :arg device: :doc:`Device`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        page.run(device, mupdf.Matrix.identity);
+
+
+.. method:: runPageContents(device: Device, matrix: Matrix)
+
+    This is the same as the :ref:`run <PDFPage_run>` method above but it only considers the page *annotations*.
+
+    :arg device: :doc:`Device`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        page.runPageAnnots(device, mupdfjs.Matrix.identity);
+
+
+.. method:: runPageAnnots(device: Device, matrix: Matrix)
+
+    This is the same as the :ref:`run <PDFPage_run>` method above but it only considers the page *widgets*.
+
+    :arg device: :doc:`Device`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        page.runPageWidgets(device, mupdfjs.Matrix.identity);
+
+
+.. method:: getLabel()
+
+    Returns the page number as a string using the numbering scheme of the document.
+
+    :return: `string`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var label = page.getLabel();
+
+
 
 .. include:: footer.rst
 .. include:: ../footer.rst

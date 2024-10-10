@@ -20,7 +20,7 @@ For example:
 
 .. _Glossary_Color_Type:
 
-Color Type
+`Color` Type
 ~~~~~~~~~~~~~~
 
 The convenience type is defined as follows:
@@ -54,7 +54,7 @@ Matrices are simply 6-element arrays representing a 3-by-3 transformation matrix
 This matrix is represented in :title:`JavaScript` as `[a,b,c,d,e,f]`.
 
 
-Matrix Type
+`Matrix` Type
 ~~~~~~~~~~~~~~
 
 The convenience type is defined as follows:
@@ -167,7 +167,7 @@ Rectangles are 4-element arrays, specifying the minimum and maximum corners (typ
 If the minimum x coordinate is bigger than the maximum x coordinate, :title:`MuPDF` treats the rectangle as infinite in size.
 
 
-Rect Type
+`Rect` Type
 ~~~~~~~~~~~~~~
 
 The convenience type is defined as follows:
@@ -258,7 +258,7 @@ Points
 **Points** objects are two-dimensonial numeric arrays in the format: `[x, y]`.
 
 
-Point Type
+`Point` Type
 ~~~~~~~~~~~~~~
 
 The convenience type is defined as follows:
@@ -278,7 +278,7 @@ Quads
 
 
 
-Quad Type
+`Quad` Type
 ~~~~~~~~~~~~~~
 
 The convenience type is defined as follows:
@@ -287,6 +287,37 @@ The convenience type is defined as follows:
 
     type Quad = [number, number, number, number, number, number, number, number]
 
+
+.. _Glossary_PageBox:
+
+Page Boxes
+------------
+
+**Page boxes** are rectangles that define different areas of a :title:`PDF` page, such as the content area, the trim area, and the bleed area.
+
+`PageBox` Type
+~~~~~~~~~~~~~~
+
+The convenience type is defined as follows:
+
+.. code-block:: javascript
+
+    type PageBox = "MediaBox" | "CropBox" | "BleedBox" | "TrimBox" | "ArtBox"
+
+
+.. note::
+
+        Explanation of box types:
+
+        - **MediaBox** for complete pages including items that will be physically trimmed from the final product like crop marks, registration marks, etc.
+
+        - **CropBox** defines the region that a PDF is expected to display or print.
+
+        - **BleedBox** determines the region to which the page contents expect to be clipped.
+
+        - **TrimBox** defines the intended dimensions of the finished page.
+
+        - **ArtBox** can be used to denote areas where it is considered “safe” to place graphical elements.
 
 
 .. _Glossary_Annotations:
@@ -752,6 +783,10 @@ Blend Modes
    * - Saturation
    * - Color
    * - Luminosity
+
+
+
+
 
 
 

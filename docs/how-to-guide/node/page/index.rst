@@ -108,22 +108,15 @@ Extracting Page Images
 ----------------------------------
 
 
-To get the images for a page we can retrieve a StructuredText_ object and `walk <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#walk>`_ through it looking for images as follows:
+To get the images for a page we can use the :meth:`getImages` method as follows:
 
 |example_tag|
 
 .. code-block:: javascript
 
-    page.toStructuredText("preserve-images").walk({
-        onImageBlock(bbox, matrix, image) {
-            // Image found!
-            console.log(`onImageBlock, bbox=${bbox}, transform=${transform}, image=${image}`)
-        }
-    })
+    var result = page.getImages()
 
-.. note::
-
-    When we obtain StructuredText_ using `toStructuredText` decoding images **does not** happen by default - we have to pass through the `"preserve-images"` parameter. This is because decoding images takes a bit more processing power, so we only do it if requested.
+This returns an array of objects which includes the image (:doc:`../../../classes/Image`) along with the bounding box and matrix transform.
 
 
 Extracting Page Annotations

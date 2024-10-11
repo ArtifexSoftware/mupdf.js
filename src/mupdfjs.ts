@@ -696,6 +696,19 @@ export class PDFPage extends mupdf.PDFPage {
 
         return images
     }
+
+    delete(obj:PDFAnnotation | PDFWidget | Image | Link) {
+        if (obj.constructor.name === "PDFAnnotation") {
+            super.deleteAnnotation(obj as PDFAnnotation)
+        } else if (obj.constructor.name === "PDFWidget") {
+            super.deleteAnnotation(obj as PDFWidget)
+        } else if (obj.constructor.name === "Image") {
+            let image:Image = obj as Image
+            // to do, get the image xref and update it with a replaced image of 1x1 and transparent
+        } else if (obj.constructor.name === "Link") {
+            super.deleteLink(obj as Link)
+        } 
+    }
 }
 
 //Type

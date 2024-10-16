@@ -688,6 +688,7 @@ export class PDFPage extends mupdf.PDFPage {
     getImages(): {bbox:Rect, matrix:Matrix, image:Image}[] {
         var images:{bbox:Rect, matrix:Matrix, image:Image}[] = []
         let page = this
+
         page.toStructuredText("preserve-images").walk({
             onImageBlock(bbox, matrix, image) {
                 images.push({bbox:bbox, matrix:matrix, image:image})
@@ -697,17 +698,46 @@ export class PDFPage extends mupdf.PDFPage {
         return images
     }
 
-    delete(obj:PDFAnnotation | PDFWidget | Image | Link) {
-        if (obj.constructor.name === "PDFAnnotation") {
-            super.deleteAnnotation(obj as PDFAnnotation)
-        } else if (obj.constructor.name === "PDFWidget") {
-            super.deleteAnnotation(obj as PDFWidget)
-        } else if (obj.constructor.name === "Image") {
-            let image:Image = obj as Image
-            // to do, get the image xref and update it with a replaced image of 1x1 and transparent
-        } else if (obj.constructor.name === "Link") {
-            super.deleteLink(obj as Link)
-        } 
+    delete(ref:PDFAnnotation | PDFWidget | Link | string) {
+        if (ref.constructor.name === "PDFAnnotation") {
+            super.deleteAnnotation(ref as PDFAnnotation)
+        } else if (ref.constructor.name === "PDFWidget") {
+            super.deleteAnnotation(ref as PDFWidget)
+        } else if (ref.constructor.name === "Link") {
+            super.deleteLink(ref as Link)
+        } else if (typeof ref === "string") {
+            let pageObj = this.getObject()
+            var isIndirect = pageObj.isIndirect()
+
+            if (isIndirect) {
+                pageObj = pageObj.resolve()
+            }
+
+            let res = pageObj.get("Resources")
+            let resXObj = res.get("XObject")
+            resXObj.delete(ref)
+            res.put("XObject", resXObj)
+            pageObj.put("Resources", res)
+        }
+    }
+
+    getResourcesXrefObjects(): {key:string | number, value:string}[] {
+        let pageObj = this.getObject()
+        var isIndirect = pageObj.isIndirect()
+
+        if (isIndirect) {
+            pageObj = pageObj.resolve()
+        }
+
+        let res = pageObj.get("Resources")
+        let resXObj = res.get("XObject")
+        let arr: {key:string | number, value:string}[] = []
+
+        resXObj.forEach(function(value:PDFObject, key:string | number) {
+            arr.push({key:key, value:value.toString()})
+        })
+
+        return arr
     }
 }
 

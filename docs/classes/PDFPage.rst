@@ -145,6 +145,63 @@ PDFPage
                                 {x:0, y:0, width:200, height:200});
 
 
+
+
+
+.. method:: createAnnotation(type: PDFAnnotationType)
+
+    Create a new blank annotation of a given :ref:`type <Glossary_Annotation_Types>`.
+
+    :arg type: :ref:`PDFAnnotationType <Glossary_Annotation_Types>` representing :ref:`annotation type <Glossary_Annotation_Types>`.
+    :return: :doc:`PDFAnnotation`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let annotation = page.createAnnotation("Text");
+
+
+.. method:: createLink(rect: Rect, destinationUri: string)
+
+    Create a new link within the rectangle on the page, linking to the destination URI string.
+
+    To create links to other pages within the document see the :meth:`formatLinkURI` method.
+
+    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
+    :arg destinationUri: `string` containing URI.
+    :return: :doc:`Link`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        // create a link to an external URL
+        var link = page.createLink([0,0,100,100], "https://example.com");
+
+        // create a link to another page in the document
+        var link = page.createLink(rectobj, "#page=1&view=FitV,0");
+
+
+
+.. method:: delete(ref:PDFAnnotation | PDFWidget | Link | string)
+
+    Deletes a :doc:`PDFAnnotation`, :doc:`PDFWidget`, :doc:`Link` instance or a **PDF** :doc:`PDFObject` by `xref` key.
+
+    :arg ref: :doc:`PDFAnnotation` | :doc:`PDFWidget` | :doc:`Link` | `string`
+
+    .. note:: 
+
+        Use :meth:`getResourcesXrefObjects` to find :doc:`PDFObject` `xref` keys which you may want to delete.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let annots = getAnnotations();
+        page.delete(annots[0]);
+
+    
 .. method:: search(needle:string, maxHits:number = 500)
 
 
@@ -167,55 +224,7 @@ PDFPage
 
         The array contents are `[ulx, uly, urx, ury, llx, lly, lrx, lry]` for each result. These sets of numbers are known as :ref:`quadpoints <Glossary_Quads>` or "Quads" in the :title:`PDF` specification.
 
-.. method:: getImages(): {bbox:Rect, matrix:Matrix, image:Image}[] 
 
-    Returns an array of the page's images along with their bounding box and transform matrix.
-
-    :return: `{bbox:Rect, matrix:Matrix, image:Image}[]`.
-
-    .. code-block:: javascript
-
-        let images = page.getImages();
-
-.. method:: getLinks()
-
-    Returns an array of all :ref:`links <Classes_Link>` on the page.
-
-    :return: `Link[]`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        let links = page.getLinks();
-
-
-.. method:: createAnnotation(type: PDFAnnotationType)
-
-    Create a new blank annotation of a given :ref:`type <Glossary_Annotation_Types>`.
-
-    :arg type: :ref:`PDFAnnotationType <Glossary_Annotation_Types>` representing :ref:`annotation type <Glossary_Annotation_Types>`.
-    :return: :doc:`PDFAnnotation`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        let annotation = page.createAnnotation("Text");
-
-
-
-.. method:: deleteAnnotation(annot: PDFAnnotation)
-
-    Delete the annotation from the page.
-
-    :arg annot: `PDFAnnotation`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        page.deleteAnnotation(annot)
 
 
 .. method:: update()
@@ -265,38 +274,6 @@ PDFPage
         pdfPage.applyRedactions(true, mupdfjs.PDFPage.REDACT_IMAGE_REMOVE);
 
 
-.. method:: createLink(rect: Rect, destinationUri: string)
-
-    Create a new link within the rectangle on the page, linking to the destination URI string.
-
-    To create links to other pages within the document see the :meth:`formatLinkURI` method.
-
-    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
-    :arg destinationUri: `string` containing URI.
-    :return: :doc:`Link`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        // create a link to an external URL
-        var link = page.createLink([0,0,100,100], "https://example.com");
-
-        // create a link to another page in the document
-        var link = page.createLink(rectobj, "#page=1&view=FitV,0");
-
-.. method:: deleteLink(link: Link)
-
-    Delete a link from the page.
-
-    :arg link: :doc:`Link`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        page.deleteLink(link);
-
 
 .. method:: getAnnotations()
 
@@ -322,6 +299,57 @@ PDFPage
 
         let widgets = pdfPage.getWidgets();
 
+
+.. method:: getImages()
+
+    Returns an array of the page's images along with their bounding box and transform matrix.
+
+    :return: `{bbox:Rect, matrix:Matrix, image:Image}[]`.
+
+    .. code-block:: javascript
+
+        let images = page.getImages();
+
+.. method:: getLinks()
+
+    Returns an array of all :ref:`links <Classes_Link>` on the page.
+
+    :return: `Link[]`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let links = page.getLinks();
+
+
+.. method:: getObject()
+
+    Get the underlying :doc:`PDFObject` for a :doc:`PDFPage`.
+
+    :return: :doc:`PDFObject`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let obj = page.getObject();
+
+
+.. method:: getResourcesXrefObjects()
+
+    Returns an array with the key/value pairs for the page resources object.
+
+    :return: `{key:string | number, value:string}[]`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let xrefObjs = getResourcesXrefObjects();
+        for (var obj in xrefObjs) {
+            console.log(xrefObjs[obj])    
+        }
 
 ..  method:: rotate(r:number)
 

@@ -146,23 +146,7 @@ PDFPage
 
 
 
-
-
-.. method:: createAnnotation(type: PDFAnnotationType)
-
-    Create a new blank annotation of a given :ref:`type <Glossary_Annotation_Types>`.
-
-    :arg type: :ref:`PDFAnnotationType <Glossary_Annotation_Types>` representing :ref:`annotation type <Glossary_Annotation_Types>`.
-    :return: :doc:`PDFAnnotation`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        let annotation = page.createAnnotation("Text");
-
-
-.. method:: createLink(rect: Rect, destinationUri: string)
+.. method:: insertLink(rect: Rect, destinationUri: string)
 
     Create a new link within the rectangle on the page, linking to the destination URI string.
 
@@ -177,10 +161,10 @@ PDFPage
     .. code-block:: javascript
 
         // create a link to an external URL
-        var link = page.createLink([0,0,100,100], "https://example.com");
+        var link = page.insertLink([0,0,100,100], "https://example.com");
 
         // create a link to another page in the document
-        var link = page.createLink(rectobj, "#page=1&view=FitV,0");
+        var link = page.insertLink(rectobj, "#page=1&view=FitV,0");
 
 
 
@@ -236,6 +220,27 @@ PDFPage
     .. code-block:: javascript
 
         pdfPage.update();
+
+
+.. method:: addAnnotation(type: CreatableAnnotationType, metrics: {x:number, y:number, width:number, height:number}, author?:string, contents?:string)
+
+    Creates an annotation of your choice from the set in :ref:`CreatableAnnotationType <Glossary_CreatableAnnotationType>` at a location on the page defined by the `metrics`.
+
+    This method also has options for defining the author and contents of the annotation.
+
+    :arg type: `CreatableAnnotationType`.
+    :arg metrics: `{x:number, y:number, width:number, height:number}`.
+    :arg author: `string` | `null`. The annotation author.
+    :arg contents: `string`. The annotation contents. See :meth:`setContents`.
+
+    :return: :doc:`PDFAnnotation`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let myNote = page.addAnnotation("Text", {x:100, y:200, width:300, height:50}, null, "Hello World!");
+
 
 .. method:: addRedaction(metrics: {x:number, y:number, width:number, height:number})
 

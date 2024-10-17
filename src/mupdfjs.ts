@@ -51,6 +51,25 @@ export class StrokeState extends mupdf.StrokeState {}
 export class StructuredText extends mupdf.StructuredText {}
 export class Text extends mupdf.Text {}
 
+export type CreatableAnnotationType =
+    "Text" |
+	"FreeText" |
+	"Line" |
+	"Square" |
+	"Circle" |
+	"Polygon" |
+	"PolyLine" |
+	"Highlight" |
+	"Underline" |
+	"Squiggly" |
+	"StrikeOut" |
+	"Redact" |
+	"Stamp" |
+	"Caret" |
+	"Ink" |
+	"FileAttachment"
+
+
 export class PDFDocument extends mupdf.PDFDocument {
 
     // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
@@ -468,7 +487,8 @@ export class PDFPage extends mupdf.PDFPage {
         let doc = this._doc
         let page = this
         let page_obj = page.getObject()
-        let font = doc.addSimpleFont(new mupdf.Font(fontName))
+        let font = new mupdf.Font(fontName)
+        let fontResource = doc.addSimpleFont(font)
 
         // add object to page/Resources/XObject/F1 dictionary (creating nested dictionaries as needed)
         var resources = page_obj.get("Resources")
@@ -479,7 +499,7 @@ export class PDFPage extends mupdf.PDFPage {
         if (!res_font.isDictionary())
             resources.put("Font", res_font = doc.newDictionary())
 
-        res_font.put("F1", font)
+        res_font.put("F1", fontResource)
 
         // format this for the PDF markup language
 
@@ -533,8 +553,7 @@ export class PDFPage extends mupdf.PDFPage {
         // invert the Y point
         point[1] = page.getBounds()[3]-(point[1]+fontSize);
 
-        let contentStream:string = "q " + graphicsState + " BT /F1 " + fontSize + " Tf 1 0 0 1 " + strokeThicknessMarkup + " " + strokeColor + " " + fillColor + " " + point[0] + " " + point[1] + " Tm (" + value + ") Tj ET Q"
-
+        let contentStream:string = "q " + graphicsState + " BT " + strokeColor + " " + fillColor + " " + strokeThicknessMarkup +" /F1 " + fontSize + " Tf " + point[0] + " " + point[1] + " Td (" + value + ") Tj ET Q"
         console.log(`Inserting text to page with content stream:\n${contentStream}`)
 
         // Create drawing operations
@@ -600,7 +619,7 @@ export class PDFPage extends mupdf.PDFPage {
         } else {
             metrics.y = page.getBounds()[3]-(metrics.y+metrics.height);
         }
-
+      
         res_xobj.put(data.name, image)
 
         let contentStream:string = "q "+metrics.width+" 0 0 "+metrics.height+" "+metrics.x+" "+metrics.y+" cm /"+data.name+" Do Q"
@@ -641,6 +660,24 @@ export class PDFPage extends mupdf.PDFPage {
 
         // Update the Rotate value
         page_obj.put("Rotate", Number(rotate) + r)
+    }
+
+    addAnnotation(type: CreatableAnnotationType, 
+                  metrics: {x:number, y:number, width:number, height:number}, 
+                  author?:string,
+                  contents?:string): PDFAnnotation {
+        let page = this
+        let annotation = page.createAnnotation(type)
+        annotation.setRect([metrics.x,metrics.y,metrics.x+metrics.width,metrics.y+metrics.height])
+        if (author) {
+            annotation.setAuthor(author)
+        }
+
+        if (contents) {
+            annotation.setContents(contents)
+        }
+        annotation.update()
+        return annotation
     }
 
     addRedaction(metrics: {x:number, y:number, width:number, height:number}): PDFAnnotation {
@@ -713,9 +750,15 @@ export class PDFPage extends mupdf.PDFPage {
                 pageObj = pageObj.resolve()
             }
 
+            // replace the XObject with a 1x1 transparent pixel to "delete" it
             let res = pageObj.get("Resources")
             let resXObj = res.get("XObject")
-            resXObj.delete(ref)
+            let pix = new Pixmap(ColorSpace.DeviceRGB, [0,0,1,1], true)
+            let imageRes = new Image(pix)
+
+            const image = this._doc.addImage(imageRes)
+            resXObj.put(ref, image)
+
             res.put("XObject", resXObj)
             pageObj.put("Resources", res)
         }

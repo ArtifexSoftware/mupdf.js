@@ -337,11 +337,11 @@ Annotation Types
    :header-rows: 1
 
    * - **Name**
-     - **Supported**
+     - **Supported (can be created)**
      - **Notes**
    * - Text
      - Yes
-     -
+     - This is a "Note" style annotation
    * - Link
      - Yes
      - Please use :meth:`createLink`.
@@ -424,9 +424,32 @@ Annotation Types
      - No
      -
 
-.. note::
+.. _Glossary_CreatableAnnotationType:
 
-    Annotation types are also referred to as "subtypes".
+The following list defines the *creatable* annotations as a sub-set from ``PDFAnnotationType``.
+
+`CreatableAnnotationType`
+
+.. list-table::
+   :header-rows: 1
+
+   * - **Name**
+   * - Text
+   * - FreeText
+   * - Square
+   * - Circle
+   * - Line
+   * - Polygon
+   * - PolyLine
+   * - Highlight
+   * - Underline
+   * - Squiggly
+   * - StrikeOut
+   * - Redact
+   * - Stamp
+   * - Caret
+   * - Ink
+   * - FileAttachment
 
 
 

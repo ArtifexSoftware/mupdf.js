@@ -464,6 +464,116 @@ export class PDFDocument extends mupdf.PDFDocument {
             newAnnotation.setContents(annotation.getContents());
         }
     }
+
+    scrub(options:{
+        attachedFiles?: boolean;
+        cleanPages?: boolean;
+        embeddedFiles?: boolean;
+        hiddenText?: boolean;
+        javascript?: boolean;
+        metadata?: boolean;
+        redactions?: boolean;
+        redactImages?: number;
+        removeLinks?: boolean;
+        resetFields?: boolean;
+        resetResponses?: boolean;
+        thumbnails?: boolean;
+        xmlMetadata?: boolean;
+    }): void {
+        const {
+            attachedFiles = true,
+            cleanPages = true,
+            embeddedFiles = true,
+            hiddenText = true,
+            javascript = true,
+            metadata = true,
+            redactions = true,
+            redactImages = 0,
+            removeLinks = true,
+            resetFields = true,
+            resetResponses = true,
+            thumbnails = true,
+            xmlMetadata = true
+        } = options;
+    
+        // Basic validation
+        if (!this.isPDF()) {
+            throw new Error("is no PDF");
+        }
+    
+        if (this.needsPassword()) {
+            throw new Error("encrypted doc");
+        }
+    
+        // Metadata cleaning
+        if (metadata) {
+            // TODO: Implement metadata cleaning
+        }
+    
+        // Process each page
+        const pageCount = this.countPages();
+        for (let i = 0; i < pageCount; i++) {
+            // const page = this.loadPage(i);
+    
+            // Remove links
+            if (removeLinks) {
+                // TODO: Implement link removal
+            }
+    
+            // Handle attached files
+            if (attachedFiles) {
+                // TODO: Implement attached files handling
+            }
+    
+            // Clean pages
+            if (cleanPages) {
+                // TODO: Implement page cleaning
+            }
+    
+            // Handle hidden text
+            if (hiddenText) {
+                // TODO: Implement hidden text removal
+            }
+    
+            // Handle redactions
+            if (redactions) {
+                // TODO: Implement redactions
+                if (redactImages >= 0) {
+                    // TODO: Handle redacted images
+                }
+            }
+    
+            // Reset form fields
+            if (resetFields) {
+                // TODO: Implement form fields reset
+            }
+    
+            // Reset responses
+            if (resetResponses) {
+                // TODO: Implement response reset
+            }
+    
+            // Remove thumbnails
+            if (thumbnails) {
+                // TODO: Implement thumbnail removal
+            }
+        }
+    
+        // Handle embedded files
+        if (embeddedFiles) {
+            // TODO: Implement embedded files handling
+        }
+    
+        // Handle JavaScript
+        if (javascript) {
+            // TODO: Implement JavaScript removal
+        }
+    
+        // Handle XML metadata
+        if (xmlMetadata) {
+            // TODO: Implement XML metadata handling
+        }
+    }
 }
 
 export class PDFPage extends mupdf.PDFPage {

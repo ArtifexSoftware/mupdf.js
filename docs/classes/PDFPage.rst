@@ -279,6 +279,17 @@ PDFPage
         pdfPage.applyRedactions(true, mupdfjs.PDFPage.REDACT_IMAGE_REMOVE);
 
 
+.. method:: getText()
+
+    Returns the unstyled, plain text for a page as a string.
+
+    :return: `string`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let text = pdfPage.getText();
 
 .. method:: getAnnotations()
 

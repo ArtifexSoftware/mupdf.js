@@ -451,6 +451,20 @@ PDFPage
 
 .. method:: runPageContents(device: Device, matrix: Matrix)
 
+    This is the same as the :ref:`run <PDFPage_run>` method above but it only considers the page itself and *omits* annotations and widgets.
+
+    :arg device: :doc:`Device`.
+    :arg matrix: :ref:`Matrix <Glossary_Matrix>`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        page.runPageContents(device, mupdfjs.Matrix.identity);
+
+
+.. method:: runPageAnnots(device: Device, matrix: Matrix)
+
     This is the same as the :ref:`run <PDFPage_run>` method above but it only considers the page *annotations*.
 
     :arg device: :doc:`Device`.
@@ -463,7 +477,7 @@ PDFPage
         page.runPageAnnots(device, mupdfjs.Matrix.identity);
 
 
-.. method:: runPageAnnots(device: Device, matrix: Matrix)
+.. method:: runPageWidgets(device: Device, matrix: Matrix)
 
     This is the same as the :ref:`run <PDFPage_run>` method above but it only considers the page *widgets*.
 

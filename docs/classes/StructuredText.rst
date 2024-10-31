@@ -94,8 +94,8 @@ instance use :meth:`toStructuredText`.
             endTextBlock: function () {
                 console.log("endTextBlock");
             },
-            onChar: function (utf, origin, font, size, quad, color) {
-                console.log("onChar", utf, origin, font, size, quad, color);
+            onChar: function (utf, origin, font, size, quad) {
+                console.log("onChar", utf, origin, font, size, quad);
             },
             onImageBlock: function (bbox, transform, image) {
                 console.log("onImageBlock", bbox, transform, image);

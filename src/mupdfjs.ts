@@ -832,6 +832,22 @@ export class PDFPage extends mupdf.PDFPage {
         super.setPageBox("MediaBox", rect)
     }
 
+    getText(): string {
+        var text = ""
+        let page = this
+
+        page.toStructuredText("preserve-whitespace,preserve-spans").walk({
+            onChar: function (utf) {
+                text += utf
+            },
+            endTextBlock: function () {
+                text += "\n"
+            }
+        })
+
+        return text
+    }
+
     getImages(): {bbox:Rect, matrix:Matrix, image:Image}[] {
         var images:{bbox:Rect, matrix:Matrix, image:Image}[] = []
         let page = this

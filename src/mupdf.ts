@@ -2288,10 +2288,10 @@ export class PDFDocument extends Document {
 		return null
 	}
 
-	getEmbeddedFiles() {
-		function _getEmbeddedFilesRec(result: any[string], N: PDFObject) {
+	getEmbeddedFiles(): Record<string,PDFObject> {
+		function _getEmbeddedFilesRec(result: Record<string,PDFObject>, N: PDFObject) {
 			var i, n
-			if (N) {
+			if (N.isDictionary()) {
 				var NN = N.get("Names")
 				if (NN)
 					for (i = 0, n = NN.length; i < n; i += 2)
@@ -2304,6 +2304,33 @@ export class PDFDocument extends Document {
 			return result
 		}
 		return _getEmbeddedFilesRec({}, this.getTrailer().get("Root", "Names", "EmbeddedFiles"))
+	}
+
+	insertEmbeddedFile(filename: string, filespec: PDFObject) {
+		var efs = this.getEmbeddedFiles()
+		efs[filename] = filespec
+		this._rewriteEmbeddedFiles(efs)
+	}
+
+	deleteEmbeddedFile(filename: string) {
+		var efs = this.getEmbeddedFiles()
+		delete efs[filename]
+		this._rewriteEmbeddedFiles(efs)
+	}
+
+	_rewriteEmbeddedFiles(efs: Record<string,PDFObject>) {
+		var efs_keys = Object.keys(efs)
+		efs_keys.sort()
+		var root = this.getTrailer().get("Root")
+		var root_names = root.get("Names")
+		if (!root_names.isDictionary())
+			root_names = root.put("Names", this.newDictionary(1))
+		var root_names_efs = root_names.put("EmbeddedFiles", this.newDictionary(1))
+		var root_names_efs_names = root_names_efs.put("Names", this.newArray(efs_keys.length * 2))
+		for (var key of efs_keys) {
+			root_names_efs_names.push(this.newString(key))
+			root_names_efs_names.push(efs[key])
+		}
 	}
 
 	saveToBuffer(options = "") {

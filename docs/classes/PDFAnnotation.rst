@@ -503,7 +503,7 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setDefaultAppearance(font:number, size:number, color:Color)
+.. method:: setDefaultAppearance(font: number, size: number, color: Color)
 
     Set the default text appearance used for free text annotations.
 
@@ -549,7 +549,7 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setInteriorColor(color:Color)
+.. method:: setInteriorColor(color: Color)
 
     Sets the annotation interior color.
 
@@ -590,7 +590,7 @@ These properties are only present for some annotation types, so support for them
         var author = annotation.getAuthor();
 
 
-.. method:: setAuthor(author:string)
+.. method:: setAuthor(author: string)
 
     Sets the annotation author.
 
@@ -634,20 +634,18 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setLineEndingStyles(start, end)
+.. method:: setLineEndingStyles(start: PDFAnnotationLineEndingStyle, end: PDFAnnotationLineEndingStyle)
 
     Sets the :ref:`line ending styles <Glossary_Line_Ending_Styles>` object.
 
-    :arg start: `string`.
-    :arg end: `string`.
+    :arg start: `PDFAnnotationLineEndingStyle`.
+    :arg end: `PDFAnnotationLineEndingStyle`.
 
     |example_tag|
 
     .. code-block:: javascript
 
         annotation.setLineEndingStyles("Square", "OpenArrow");
-
-
 
 
 
@@ -842,22 +840,22 @@ These properties are only present for some annotation types, so support for them
 
     Gets the file specification object.
 
-    :return: `Object` :ref:`File Specification Object <Glossary_Object_Filespec_Params_Object>`.
+    :return: `PDFObject` :ref:`File Specification Object <Glossary_Object_Filespec_Params_Object>`.
 
     |example_tag|
 
     .. code-block:: javascript
 
-        var fileSpec = annotation.getFilespec(true);
+        var fileSpec = annotation.getFilespec();
 
 
 
-.. method:: setFilespec(fileSpec:Object)
+.. method:: setFilespec(fileSpec:PDFObject)
 
 
     Sets the file specification object.
 
-    :arg fileSpec: `Object` :ref:`File Specification object <Glossary_Object_Filespec_Params_Object>`.
+    :arg fileSpec: `PDFObject` :ref:`File Specification object <Glossary_Object_Filespec_Params_Object>`.
 
 
     |example_tag|
@@ -986,13 +984,13 @@ The border drawn around some annotations can be controlled by:
 
 
 
-.. method:: setBorderDashPattern(dashPattern:Array)
+.. method:: setBorderDashPattern(list: number[])
 
 
 
     Set the annotation border dash pattern to the given array of dash item lengths. The supplied array represents the respective line stroke and gap lengths, e.g. `[1,1]` sets a small dash and small gap, `[2,1,4,1]` would set a medium dash, a small gap, a longer dash and then another small gap.
 
-    :arg dashPattern: `Array`. `[number, number, ....]`.
+    :arg dashPattern: `number[]`.
 
     |example_tag|
 
@@ -1052,8 +1050,6 @@ The border drawn around some annotations can be controlled by:
 
 .. method:: getBorderEffect()
 
-
-
     Get the :ref:`annotation border effect <Glossary_Border_Effect>`.
 
     :return: `string`.
@@ -1066,9 +1062,7 @@ The border drawn around some annotations can be controlled by:
 
 
 
-.. method:: setBorderEffect(effect)
-
-
+.. method:: setBorderEffect(effect: string)
 
     Set the :ref:`annotation border effect <Glossary_Border_Effect>`.
 
@@ -1302,7 +1296,7 @@ Polygon and polyline annotations consist of a sequence of vertices with a straig
 
     Get the annotation vertices, represented as an array of vertices each an array of its X/Y coordinates.
 
-    :return: `Array`.
+    :return: `Point[]`.
 
     |example_tag|
 
@@ -1311,11 +1305,11 @@ Polygon and polyline annotations consist of a sequence of vertices with a straig
         var vertices = annotation.getVertices();
 
 
-.. method:: setVertices(vertices:Array)
+.. method:: setVertices(vertices:Point[])
 
     Set the annotation vertices, represented as an array of vertices each an array of its X/Y coordinates.
 
-    :arg vertices: `Array`.
+    :arg vertices: `Point[]`.
 
     |example_tag|
 
@@ -1338,11 +1332,11 @@ Polygon and polyline annotations consist of a sequence of vertices with a straig
         annotation.clearVertices();
 
 
-.. method:: addVertex(vertex:Array)
+.. method:: addVertex(vertex:Point)
 
     Append a single vertex as an array of its X/Y coordinates.
 
-    :arg vertex: `Array`.
+    :arg vertex: `Point`.
 
     |example_tag|
 
@@ -1353,8 +1347,178 @@ Polygon and polyline annotations consist of a sequence of vertices with a straig
 
 ----
 
+
+Line Leaders
+~~~~~~~~~~~~~~~
+
+In a PDF line annotation, "line leaders" refer to visual elements that can be added to the endpoints of a line annotation to enhance its appearance or meaning.
+
+.. image:: ../images/leader-lines.png
+          :alt: Leader lines explained
+          :width: 100%
+
+
+.. method:: setLineLeader(v: number)
+
+    Sets the line leader length.
+
+    :arg v: `number`. The length of leader lines that extend from each endpoint of the line perpendicular to the line itself. A positive value means that the leader lines appear in the direction that is clockwise when traversing the line from its starting point to its ending point a negative value indicates the opposite direction.
+
+    .. note::
+
+        Setting a value of `0` effectivley removes the line leader.
+
+
+.. method:: getLineLeader()
+
+    Gets the line leader length.
+
+    :return: `number`
+
+
+.. method:: setLineLeaderExtension(v: number)
+
+    Sets the line leader extension.
+
+    :arg v: `number`. A non-negative number representing the length of leader line extensions that extend from the line proper 180 degrees from the leader lines.
+
+    .. note::
+
+        Setting a value of `0` effectivley removes the line leader extension.
+
+.. method:: getLineLeaderExtension()
+
+    Gets the line leader extension.
+
+    :return: `number`
+
+
+.. method:: setLineLeaderOffset(v: number)
+
+    Sets the line leader offset.
+
+    :arg v: `number`. A non-negative number representing the length of the leader line offset, which is the amount of empty space between the endpoints of the annotation and the beginning of the leader lines.
+
+    .. note::
+
+        Setting a value of `0` effectivley removes the line leader offset.
+
+.. method:: getLineLeaderOffset()
+
+    Gets the line leader offset.
+
+    :return: `number`
+
+
+.. method:: setLineCaption(on: boolean)
+
+    Sets whether line caption is enabled or not.
+
+    :arg on: `boolean`.
+
+    .. note::
+
+        When line captions are enabled then using the :meth:`setContents` method on the Line will graphically render the caption contents onto the line.
+
+
+.. method:: getLineCaption()
+
+    Returns whether the line caption is enabled or not.
+
+    :return: `boolean`.
+
+
+.. method:: setLineCaptionOffset(point: Point)
+
+    Sets any line caption offset.
+
+    :arg point: `Point`. A point, `[x, y]`, specifying the offset of the caption text from its normal position. The first value is the horizontal offset along the annotation line from its midpoint, with a positive value indicating offset to the right and a negative value indicating offset to the left. The second value is the vertical offset perpendicular to the annotation line, with a positive value indicating a shift up and a negative value indicating a shift down.
+
+
+    .. image:: ../images/offset-caption.png
+          :alt: Offset caption explained
+          :width: 100%
+
+    .. note::
+
+        Setting a point of `[0,0]` effectivley removes the caption offset.
+
+
+
+.. method:: getLineCaptionOffset()
+
+    Returns the line caption offset as a point, `[x, y]`.
+
+    :return: `Point`.
+
+
+----
+
+
+Callouts
+~~~~~~~~~~~~
+
+Callouts are used with :ref:`"FreeText" annotations <Glossary_Annotation_Types>` and allow for a graphical line to point to an area on a page.
+
+.. image:: ../images/callout-annot.png
+          :alt: Callout annotation
+          :width: 100%
+
+
+.. method:: hasCallout()
+
+    Returns whether the annotation is capable of supporting a callout or not.
+
+    :return: `boolean`.
+
+
+.. method:: setCalloutLine(line: Point[])
+
+    Takes an array of 2 or 3 points.
+
+    :arg points: `Point[]`.
+
+
+.. method:: getCalloutLine()
+
+    Returns the array of points.
+
+    :return: `Point[]`.
+
+
+.. method:: setCalloutPoint(p: Point)
+
+    Takes a point where the callout should point to.
+
+    :arg points: `Point`.
+
+
+.. method:: getCalloutPoint()
+
+    Returns the callout point.
+
+    :return: `Point`.
+
+
+.. method:: setCalloutStyle(style: PDFAnnotationLineEndingStyle)
+
+    Sets the style of the callout line.
+
+    :arg style: `PDFAnnotationLineEndingStyle`. A :ref:`line ending style <Glossary_Line_Ending_Styles>`.
+
+
+.. method:: getCalloutStyle()
+
+    Returns the callout style.
+
+    :return: `PDFAnnotationLineEndingStyle`.
+
+
+----
+
+
 Redactions
----------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Redactions are a special type of annotation used to permanently remove (or "redact") content from a :title:`PDF`.
 
@@ -1398,6 +1562,8 @@ Once redactions are added to a page you can *apply* them, which is an irreversab
     .. code-block:: javascript
 
         annotation.applyRedaction(true, mupdfjs.PDFPage.REDACT_IMAGE_REMOVE);
+
+
 
 
 .. include:: footer.rst

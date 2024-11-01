@@ -167,6 +167,19 @@ PDFPage
         var link = page.insertLink(rectobj, "#page=1&view=FitV,0");
 
 
+.. method:: createAnnotation(type:string)
+
+    Create a new blank annotation of a given :ref:`type <Glossary_Annotation_Types>`.
+
+    :arg type: `string` representing :ref:`annotation type <Glossary_Annotation_Types>`.
+    :return: :doc:`PDFAnnotation`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var annot = pdfPage.createAnnotation("Text");
+
 
 .. method:: delete(ref:PDFAnnotation | PDFWidget | Link | string)
 

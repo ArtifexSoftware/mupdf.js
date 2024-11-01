@@ -55,7 +55,8 @@
         <div class="discordLink" style="display:flex;align-items:center;margin-top: -5px;">
             <a href="https://discord.gg/zpyAHM7XtF" id="findOnDiscord" target=_blank>Find <b>#mupdf.js</b> on <b>Discord</b></a>
             <a href="https://discord.gg/zpyAHM7XtF" target=_blank>
-               <div style="width:30px;height:30px;margin-left:5px;">
+            
+                <div style="width:30px;height:30px;margin-left:5px;">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36">
                         <defs>
                             <style>.discordLogoFill{fill:#5865f2;}</style>

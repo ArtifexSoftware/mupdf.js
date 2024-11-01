@@ -9,7 +9,6 @@ Embedding Files
 ===============================
 
 
-
 Adding an Embedded File
 -----------------------------
 
@@ -21,7 +20,7 @@ We need to:
 - Get a document reference to the file we want to add the attachment to.
 - Source the page we want to add the file attachment to.
 - Create a "FileAttachment" type annotation and set its position.
-- Create a `file specification object <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#file-specification-object>`_ and add the attached file data to it.
+- Create a :ref:`file specification object <Glossary_Object_Filespec_Params_Object>` and add the attached file data to it.
 - Associate the annotation with our newly created file specification object.
 
 The following code exemplifies the steps outlined above:
@@ -54,7 +53,7 @@ The following code exemplifies the steps outlined above:
 
 The file attachment will appear as a "push pin" icon by default on the **PDF** document, clicking on the icon will open the attachment.
 
-You can also `change the look of the icon`_ for this annotation (to a paper clip for example) if required.
+You can also change the look of the icon with :meth:`setIcon` for this annotation (to a paper clip for example) if required.
 
 Removing an Embedded File
 ------------------------------

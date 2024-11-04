@@ -137,31 +137,5 @@
 .. _WebAssembly: https://webassembly.org
 .. _Node.js: https://nodejs.org/
 
-.. Core API links:
-.. _Core API: https://mupdf.readthedocs.io/en/latest/mupdf-js.html
-.. _Document:
-.. _Document Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#document
-.. _saveToBuffer: https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-document.html#saveToBuffer
-.. _Page Class: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#page
-.. _GraftObject: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#graftObject 
-.. _toPixmap: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#toPixmap
-.. _ColorSpace: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#colorspace
-.. _StructuredText: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#structuredtext
-.. _Pixmap: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pixmap
-.. _Link: https://mupdf.readthedocs.io/en/latest/mutool-object-link.html#mutool-object-link
-.. _PDFObject: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pdfobject
-.. _Rectangle:
-.. _Rectangles: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#rectangles
-.. _addEmbeddedFile: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#addEmbeddedFile
-.. _PDFPage: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#pdfpage
-.. _PDFAnnotation class:
-.. _PDFAnnotation: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#pdfannotation
-.. _createAnnotation: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#createAnnotation
-.. _deleteAnnotation: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#deleteAnnotation
-.. _setIcon:
-.. _change the look of the icon: https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-annotation.html#setIcon
-.. _QuadPoints: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setQuadPoints
-.. _Page.createLink: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-run-js-api-page-create-link
-.. _Link Destination Object: https://mupdf.readthedocs.io/en/latest/mupdf-js.html#link-destination-object
-.. _icon names: https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#mutool-pdf-annotation-icon-names
+
 

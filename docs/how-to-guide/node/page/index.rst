@@ -9,25 +9,9 @@
 Working with Pages
 =========================
 
-
-..
-    A **Page** instance has access to the :ref:`Core JavaScript API <Node_How_To_Guide_Document_Core_API>`.
-
-
-
 .. _Node_How_To_Guide_Page_Core_API:
 
-.. Core API
-    ----------------------------------
-
-    Please see the `Page Class`_ methods within the `Core API`_ for *full details* on the available **JavaScript** methods.
-
-    |
-
-    ----
-
-    **Below details some common operations you may need.**
-
+A **Page** is an instance of the :doc:`../../../classes/PDFPage` class.
 
 Loading a Page
 ----------------------------------
@@ -60,16 +44,15 @@ This returns a numerical array object in the following format: `[ulx,uly,lrx,lry
 Convert a Page to an Image
 ------------------------------
 
-To convert a page to an image use the `toPixmap` method, after this the `Pixmap`_ data can be converted to the image format you require.
+To convert a page to an image use the :meth:`toPixmap` method, after this the :doc:`../../../classes/Pixmap` data can be converted to the image format you require.
 
 The parameters for the method define:
 
 - the resolution via a matrix
-- the `ColorSpace`_ for rendering
+- the :doc:`../../../classes/ColorSpace` for rendering
 - background transparency
 - whether to render any annotations on the page.
 
-See: `toPixmap`_ for full details.
 
 |example_tag|
 
@@ -84,7 +67,7 @@ See: `toPixmap`_ for full details.
 Extracting Page Text
 -------------------------
 
-To get the text for a page we can retrieve a StructuredText_ object as `JSON` as follows:
+To get the text for a page we can retrieve a :doc:`../../../classes/StructuredText` object as `JSON` as follows:
 
 
 |example_tag|
@@ -95,7 +78,7 @@ To get the text for a page we can retrieve a StructuredText_ object as `JSON` as
     console.log(`json=${json}`)
 
 
-StructuredText_ contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the `JSON` returned is *structured* and contains positional data and font data alongside text values, e.g.:
+:doc:`../../../classes/StructuredText` contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the `JSON` returned is *structured* and contains positional data and font data alongside text values, e.g.:
 
 |example_tag|
 
@@ -261,14 +244,13 @@ Rotating a page with :meth:`rotate` allows for 90 increment rotations on a page.
 Cropping Pages
 --------------------
 
-To crop a page we just need to set its "CropBox" value with :meth:`setPageBox` and an associated Rectangle_.
+To crop a page we just need to set its "CropBox" value with :meth:`setPageBox` and an associated :ref:`rectangle <Glossary_Rectangles>`.
 
 |example_tag|
 
 .. code-block:: javascript
     
     page.setPageBox("CropBox", [ 0, 0, 500, 500 ])
-
 
 
 .. include:: ../node-footer.rst

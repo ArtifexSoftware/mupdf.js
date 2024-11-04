@@ -14,6 +14,8 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
 |instance_method_tag|
 
+.. _Classes_PDFAnnotation_getBounds:
+
 .. method:: getBounds()
 
     Returns a rectangle containing the location and dimension of the annotation.
@@ -41,6 +43,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
         annotation.run(device, mupdfjs.Matrix.identity)
 
+.. _Classes_PDFAnnotation_toPixmap:
 
 .. method:: toPixmap(matrix:Matrix, colorspace:ColorSpace, alpha:boolean = false)
 
@@ -450,6 +453,9 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
 These properties are only present for some annotation types, so support for them must be checked before use.
 
+
+.. _Classes_PDFAnnotation_hasRect:
+
 .. method:: hasRect()
 
     Checks the support for annotation bounding box.
@@ -461,6 +467,9 @@ These properties are only present for some annotation types, so support for them
     .. code-block:: javascript
 
         var hasRect = annotation.hasRect();
+
+
+.. _Classes_PDFAnnotation_getRect:
 
 .. method:: getRect()
 
@@ -475,6 +484,7 @@ These properties are only present for some annotation types, so support for them
         var rect = annotation.getRect();
 
 
+.. _Classes_PDFAnnotation_setRect:
 
 .. method:: setRect(rect:Rect)
 

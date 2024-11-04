@@ -61,7 +61,8 @@ For the simplest implementation, which saves the file locally to the current fol
     fs.writeFileSync("output.pdf", document.saveToBuffer("incremental").asUint8Array())
 
 
-For full details refer to the `saveToBuffer`_ method.
+
+For full details refer to the :meth:`saveToBuffer` method.
 
 .. include:: ../node-footer.rst
 

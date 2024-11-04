@@ -41,7 +41,7 @@ To verify your installation you can create a file, e.g. `test.mjs` with the foll
 
 .. code-block:: javascript
 
-    import * as mupdfjs from "mupdfjs"
+    import * as mupdfjs from "mupdf/mupdfjs"
     console.log(mupdfjs)
 
 

@@ -8,21 +8,7 @@
 Working with Documents
 =========================
 
-.. A **Document** instance has access to the :ref:`Core JavaScript API <https://mupdf.readthedocs.io/en/latest/mupdf-js.html>`. Once you have a **Document** instance you are free to use the **Core JavaScript API** methods as you wish, please see the `Document Class`_ methods in the `Core API`_ for *full details*.
-
 .. _Node_How_To_Guide_Document_Core_API:
-..
-    Core API
-    ----------------------------------
-
-    Once you have a **Document** instance you are free to use the **Core JavaScript API** methods as you wish, please see the `Document Class`_ methods in the `Core API`_ for *full details*.
-
-    |
-
-    ----
-
-    **Below details some common operations you may need.**
-
 
 Passwords & Security
 --------------------------
@@ -152,7 +138,7 @@ This script can be found in `examples/tools/split-pages.js`.
 Extracting Document Text
 -----------------------------
 
-To get the text for an entire document we can retrieve StructuredText_ objects as `JSON` for each page as follows:
+To get the text for an entire document we can retrieve :doc:`../../../classes/StructuredText` objects as `JSON` for each page as follows:
 
 
 |example_tag|
@@ -167,7 +153,7 @@ To get the text for an entire document we can retrieve StructuredText_ objects a
         i++
     }
 
-StructuredText_ contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the `JSON` returned is *structured* and contains positional data and font data alongside text values, e.g.:
+:doc:`../../../classes/StructuredText` contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the `JSON` returned is *structured* and contains positional data and font data alongside text values, e.g.:
 
 |example_tag|
 
@@ -179,7 +165,7 @@ Extracting Document Images
 ----------------------------------
 
 
-To get the images for an entire document we can retrieve StructuredText_ objects and `walk <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#walk>`_ through it looking for images as follows:
+To get the images for an entire document use the :meth:`getImages` method on each :ref:`page <Node_How_To_Guide_Page>`.
 
 |example_tag|
 
@@ -188,25 +174,14 @@ To get the images for an entire document we can retrieve StructuredText_ objects
     let i = 0
     while (i < document.countPages()) {
         const page = new mupdfjs.PDFPage(document, i)
-        page.toStructuredText("preserve-images").walk({
-            onImageBlock(bbox, matrix, image) {
-                // Image found!
-                console.log(`onImageBlock, bbox=${bbox}, transform=${transform}, image=${image}`);
-            }
-        })
+        let images = page.getImages()
         i++
     }
-
-
-.. note::
-
-    When we obtain StructuredText_ using `toStructuredText` decoding images **does not** happen by default - we have to pass through the `"preserve-images"` parameter. This is because decoding images takes a bit more processing power, so we only do it if requested.
-
 
 Extracting Document Annotations
 -----------------------------------
 
-We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from document pages by querying each page.
+We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from document pages by querying each page with :meth:`getAnnotations`.
 
 |example_tag|
 
@@ -238,7 +213,7 @@ You can use the :meth:`bake` method as follows:
 Searching a Document
 ------------------------------------------
 
-To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the `search <https://mupdf.readthedocs.io/en/latest/mutool-run-js-api.html#search>`_ method as follows:
+To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the :meth:`search` method as follows:
 
 
 |example_tag|

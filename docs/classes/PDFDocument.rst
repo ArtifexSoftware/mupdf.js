@@ -43,6 +43,7 @@ PDFDocument
 
 |instance_method_tag|
 
+
 .. method:: newPage(pno: number = -1, width: number = 595, height: number = 842)
 
     Creates and returns a :doc:`PDFPage` at a given place location in a document. If no width or height is supplied then the default values for an A4 sized document will be used.
@@ -503,6 +504,18 @@ PDFDocument
         pdfDocument.deleteObject(obj);
 
 
+.. method:: saveToBuffer(options: string = "")
+
+    Saves the document to a buffer. The options are a string of comma separated options.
+
+    :arg options: `string`.
+    :return: `Buffer`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        var buffer = pdfDocument.saveToBuffer();
 
 ----
 

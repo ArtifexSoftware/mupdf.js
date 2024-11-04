@@ -181,6 +181,8 @@ PDFPage
         var annot = pdfPage.createAnnotation("Text");
 
 
+.. _Classes_PDFPage_delete:
+
 .. method:: delete(ref:PDFAnnotation | PDFWidget | Link | string)
 
     Deletes a :doc:`PDFAnnotation`, :doc:`PDFWidget`, :doc:`Link` instance or a **PDF** :doc:`PDFObject` by `xref` key.

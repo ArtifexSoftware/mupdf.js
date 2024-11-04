@@ -30,13 +30,13 @@ For example, assuming you have acquired an instance of a :doc:`../../../../class
 Delete an Annotation
 --------------------------
 
-To delete an annotation use the :meth:`deleteAnnotation` method on the :doc:`../../../../classes/PDFPage` class.
+To delete an annotation use the :ref:`delete <Classes_PDFPage_delete>` method on the :doc:`../../../../classes/PDFPage` class.
 
 |example_tag|
 
 .. code-block:: javascript
 
-    page.deleteAnnotation(annotation)
+    page.delete(annotation)
 
 
 Annotation Types
@@ -177,36 +177,37 @@ The following list shows some of the most commonly used methods to work with ann
 Get the Annotation Type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- `getType <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#id42>`_
+- :meth:`getType`
 
 
 
 Position and Size 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- `getBounds <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#id35>`_
-- `hasRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#hasRect>`_
-- `getRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getRect>`_
-- `setRect <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setRect>`_
+
+- :ref:`getBounds() <Classes_PDFAnnotation_getBounds>`
+- :ref:`hasRect() <Classes_PDFAnnotation_hasRect>`
+- :ref:`getRect() <Classes_PDFAnnotation_getRect>`
+- :ref:`setRect() <Classes_PDFAnnotation_setRect>`
 
 
 Author
 ~~~~~~~~~~
 
 
-- `hasAuthor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#hasAuthor>`_
-- `getAuthor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getAuthor>`_
-- `setAuthor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setAuthor>`_
+- :meth:`hasAuthor`
+- :meth:`getAuthor`
+- :meth:`setAuthor`
 
 
 Getting/Setting Annotation Date
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-- `getCreationDate <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getCreationDate>`_
-- `setCreationDate <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setCreationDate>`_
-- `getModificationDate <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getModificationDate>`_
-- `setModificationDate <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setModificationDate>`_
+- :meth:`getCreationDate`
+- :meth:`setCreationDate`
+- :meth:`getModificationDate`
+- :meth:`setModificationDate`
 
 Graphics and Drawing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,26 +215,26 @@ Graphics and Drawing
 **Obtain a Pixmap from an annotation**
 
 
-- `toPixmap <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#id37>`_
+- :ref:`toPixmap() <Classes_PDFAnnotation_toPixmap>`
 
 **Icon properties**
 
 
-- `hasIcon <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#hasIcon>`_
-- `getIcon <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getIcon>`_
-- `setIcon <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setIcon>`_
+- :meth:`hasIcon`
+- :meth:`getIcon`
+- :meth:`setIcon`
 
 
 **Color and opacity**
 
 
-- `getColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getColor>`_
-- `setColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setColor>`_
-- `hasInteriorColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#hasInteriorColor>`_
-- `getInteriorColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getInteriorColor>`_
-- `setInteriorColor <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setInteriorColor>`_
-- `getOpacity <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#getOpacity>`_
-- `setOpacity <https://mupdf.readthedocs.io/en/latest/mupdf-js.html#setOpacity>`_
+- :meth:`getColor`
+- :meth:`setColor`
+- :meth:`hasInteriorColor`
+- :meth:`getInteriorColor`
+- :meth:`setInteriorColor`
+- :meth:`getOpacity`
+- :meth:`setOpacity`
 
 
 

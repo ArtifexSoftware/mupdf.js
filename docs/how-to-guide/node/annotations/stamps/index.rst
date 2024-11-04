@@ -13,7 +13,7 @@ Creating Stamps
 
 Stamps can be created with the `Stamp` type annotation.
 
-To set the kind of stamp you need refer to the `icon names`_ against the `Stamp` icon type and define it with the `setIcon`_ method.
+To set the kind of stamp you need refer to the :ref:`icon names <Glossary_Icon_Names>` against the `Stamp` icon type and define it with the :meth:`setIcon` method.
 
 
 |example_tag|
@@ -22,8 +22,8 @@ To set the kind of stamp you need refer to the `icon names`_ against the `Stamp`
 
     let fileData = fs.readFileSync("test.pdf")
 
-    let document = mupdf.Document.openDocument(fileData, "application/pdf")
-    let page = document.loadPage(0)
+    let document = mupdfjs.PDFDocument.openDocument(fileData, "application/pdf")
+    let page = new mupdfjs.PDFPage(document, 0)
     let annotation = page.createAnnotation("Stamp")
     annotation.setIcon("Draft")
     annotation.setRect([0, 0, 50, 50])

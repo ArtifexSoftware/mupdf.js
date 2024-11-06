@@ -30,50 +30,50 @@ export type Point = [number, number]
 export type Quad = [number, number, number, number, number, number, number, number]
 export type Color = [number] | [number, number, number] | [number, number, number, number]
 
-export class Buffer extends mupdf.Buffer {}
-export class ColorSpace extends mupdf.ColorSpace {}
-export class Device extends mupdf.Device {}
-export class DocumentWriter extends mupdf.DocumentWriter {}
-export class DrawDevice extends mupdf.DrawDevice {}
-export class DisplayList extends mupdf.DisplayList {}
-export class DisplayListDevice extends mupdf.DisplayListDevice {}
-export class Font extends mupdf.Font {}
-export class Image extends mupdf.Image {}
-export class Link extends mupdf.Link {}
-export class OutlineIterator extends mupdf.OutlineIterator {}
-export class Path extends mupdf.Path {}
-export class PDFAnnotation extends mupdf.PDFAnnotation {}
-export class PDFGraftMap extends mupdf.PDFGraftMap {}
-export class PDFObject extends mupdf.PDFObject {}
-export class PDFWidget extends mupdf.PDFWidget {}
-export class Pixmap extends mupdf.Pixmap {}
-export class StrokeState extends mupdf.StrokeState {}
-export class StructuredText extends mupdf.StructuredText {}
-export class Text extends mupdf.Text {}
+export class Buffer extends mupdf.Buffer { }
+export class ColorSpace extends mupdf.ColorSpace { }
+export class Device extends mupdf.Device { }
+export class DocumentWriter extends mupdf.DocumentWriter { }
+export class DrawDevice extends mupdf.DrawDevice { }
+export class DisplayList extends mupdf.DisplayList { }
+export class DisplayListDevice extends mupdf.DisplayListDevice { }
+export class Font extends mupdf.Font { }
+export class Image extends mupdf.Image { }
+export class Link extends mupdf.Link { }
+export class OutlineIterator extends mupdf.OutlineIterator { }
+export class Path extends mupdf.Path { }
+export class PDFAnnotation extends mupdf.PDFAnnotation { }
+export class PDFGraftMap extends mupdf.PDFGraftMap { }
+export class PDFObject extends mupdf.PDFObject { }
+export class PDFWidget extends mupdf.PDFWidget { }
+export class Pixmap extends mupdf.Pixmap { }
+export class StrokeState extends mupdf.StrokeState { }
+export class StructuredText extends mupdf.StructuredText { }
+export class Text extends mupdf.Text { }
 
 export type CreatableAnnotationType =
     "Text" |
-	"FreeText" |
-	"Line" |
-	"Square" |
-	"Circle" |
-	"Polygon" |
-	"PolyLine" |
-	"Highlight" |
-	"Underline" |
-	"Squiggly" |
-	"StrikeOut" |
-	"Redact" |
-	"Stamp" |
-	"Caret" |
-	"Ink" |
-	"FileAttachment"
+    "FreeText" |
+    "Line" |
+    "Square" |
+    "Circle" |
+    "Polygon" |
+    "PolyLine" |
+    "Highlight" |
+    "Underline" |
+    "Squiggly" |
+    "StrikeOut" |
+    "Redact" |
+    "Stamp" |
+    "Caret" |
+    "Ink" |
+    "FileAttachment"
 
 
 export class PDFDocument extends mupdf.PDFDocument {
 
     // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
-    static createBlankDocument(width:number = 595, height:number = 842): PDFDocument {
+    static createBlankDocument(width: number = 595, height: number = 842): PDFDocument {
         let doc = new mupdf.PDFDocument()
         let helvetica = doc.newDictionary();
         helvetica.put("Type", doc.newName("Font"));
@@ -86,7 +86,7 @@ export class PDFDocument extends mupdf.PDFDocument {
         let resources = doc.addObject(doc.newDictionary());
         resources.put("Font", fonts);
 
-        let pageObj = doc.addPage([0,0,width,height], 0, resources, "BT /Helv ET")
+        let pageObj = doc.addPage([0, 0, width, height], 0, resources, "BT /Helv ET")
         doc.insertPage(-1, pageObj)
 
         if (doc instanceof mupdf.PDFDocument) {
@@ -107,20 +107,20 @@ export class PDFDocument extends mupdf.PDFDocument {
         if (!this.isPDF()) {
             throw new Error("This operation is only available for PDF documents.");
         }
-    
+
         const pageCount = this.countPages();
         if (pno < 0 || pno >= pageCount || to < -1 || to >= pageCount) {
             throw new Error("bad page number");
         }
-    
+
         let before = 1;
         if (to === -1) {
             to = pageCount - 1;
             before = 0;
         }
-    
+
         const sourcePageObj = this.findPage(pno);
-        
+
         if (before) {
             this.insertPage(to, sourcePageObj);
         } else {
@@ -130,31 +130,31 @@ export class PDFDocument extends mupdf.PDFDocument {
 
     newPage(pno: number = -1, width: number = 595, height: number = 842): mupdf.PDFPage {
         if (width <= 0 || height <= 0) {
-          throw new Error("Invalid page dimensions: width and height must be positive numbers");
+            throw new Error("Invalid page dimensions: width and height must be positive numbers");
         }
-      
+
         const pageCount = this.countPages();
         if (pno > pageCount) {
-          throw new Error(`Invalid page number: ${pno}. The document has only ${pageCount} pages.`);
+            throw new Error(`Invalid page number: ${pno}. The document has only ${pageCount} pages.`);
         }
-      
+
         const insertPosition = (pno < 0 || pno > pageCount) ? pageCount : pno;
-      
+
         const mediabox: [number, number, number, number] = [0, 0, width, height];
         const newPageObj = this.addPage(mediabox, 0, this.newDictionary(), "");
-      
+
         this.insertPage(insertPosition, newPageObj);
         return this.loadPage(insertPosition);
-      }
+    }
 
-      deletePages(...args: any[]): void {
+    deletePages(...args: any[]): void {
         if (!this.isPDF()) {
             throw new Error("This operation is only available for PDF documents.");
         }
-    
+
         const pageCount = this.countPages();
         let pagesToDelete: number[] = [];
-    
+
         if (typeof args[0] === 'object' && !Array.isArray(args[0])) {
             // Format 1: Keywords
             let fromPage = args[0].fromPage ?? 0;
@@ -164,7 +164,7 @@ export class PDFDocument extends mupdf.PDFDocument {
             if (fromPage > toPage || fromPage < 0 || toPage >= pageCount) {
                 throw new Error("Bad page number(s)");
             }
-            pagesToDelete = Array.from({length: toPage - fromPage + 1}, (_, i) => fromPage + i);
+            pagesToDelete = Array.from({ length: toPage - fromPage + 1 }, (_, i) => fromPage + i);
         } else if (args.length === 2 && typeof args[0] === 'number' && typeof args[1] === 'number') {
             // Format 2: Two integers
             let [start, end] = args[0] <= args[1] ? [args[0], args[1]] : [args[1], args[0]];
@@ -173,7 +173,7 @@ export class PDFDocument extends mupdf.PDFDocument {
             if (start < 0 || end >= pageCount) {
                 throw new Error("Bad page number(s)");
             }
-            pagesToDelete = Array.from({length: end - start + 1}, (_, i) => start + i);
+            pagesToDelete = Array.from({ length: end - start + 1 }, (_, i) => start + i);
         } else if (args.length === 1) {
             if (typeof args[0] === 'number') {
                 // Format 3: Single integer
@@ -197,39 +197,39 @@ export class PDFDocument extends mupdf.PDFDocument {
         } else {
             throw new Error("Invalid arguments for deletePages");
         }
-    
+
         if (pagesToDelete.length === 0) {
             console.log("Nothing to delete");
             return;
         }
-    
+
         pagesToDelete.sort((a, b) => a - b);
-    
+
         // TODO: Implement TOC and link processing (refer to PyMuPDF)
-    
+
         for (const pageNum of pagesToDelete.reverse()) {
             this.deletePage(pageNum);
         }
-    
+
         // TODO: Implement page reference reset (refer to PyMuPDF)
     }
 
     getPageLabels(): PageLabelRule[] {
         const root = this.getTrailer().get("Root");
         if (!root) return [];
-        
+
         const pageLabels = root.get("PageLabels");
         if (!pageLabels) return [];
-    
+
         const nums = pageLabels.get("Nums");
         if (!nums || !nums.isArray()) return [];
-    
+
         const labels: PageLabelRule[] = [];
-    
+
         for (let i = 0; i < nums.length; i += 2) {
             const startPage = nums.get(i).asNumber();
             const labelDict = nums.get(i + 1);
-    
+
             if (labelDict.isDictionary()) {
                 const rule: PageLabelRule = {
                     startpage: startPage,
@@ -237,17 +237,17 @@ export class PDFDocument extends mupdf.PDFDocument {
                     style: "",
                     firstpagenum: 1
                 };
-        
+
                 const prefix = labelDict.get("P");
                 if (prefix) {
                     rule.prefix = prefix.asString();
                 }
-        
+
                 const style = labelDict.get("S");
                 if (style) {
                     rule.style = style.asName();
                 }
-        
+
                 const firstPageNum = labelDict.get("St");
                 if (firstPageNum) {
                     const num = firstPageNum.asNumber();
@@ -255,22 +255,22 @@ export class PDFDocument extends mupdf.PDFDocument {
                         rule.firstpagenum = num;
                     }
                 }
-        
+
                 labels.push(rule);
             }
         }
-    
+
         return labels;
     }
-    
+
     setPageLabelsArray(labels: PageLabelRule[]): void {
         const root = this.getTrailer().get("Root");
         const pageLabelsDict = this.newDictionary();
         const numsArray = this.newArray();
-    
+
         labels.forEach(rule => {
             numsArray.push(this.newInteger(rule.startpage));
-            
+
             const ruleDict = this.newDictionary();
             if (rule.prefix !== undefined) {
                 ruleDict.put("P", this.newString(rule.prefix));
@@ -281,18 +281,18 @@ export class PDFDocument extends mupdf.PDFDocument {
             if (rule.firstpagenum !== undefined && rule.firstpagenum > 1) {
                 ruleDict.put("St", this.newInteger(rule.firstpagenum));
             }
-    
+
             numsArray.push(ruleDict);
         });
-    
+
         pageLabelsDict.put("Nums", numsArray);
         root.put("PageLabels", pageLabelsDict);
     }
 
     authenticate(password: string): number {
         if (this.pointer === 0) {
-          throw new Error("document closed");
-        } 
+            throw new Error("document closed");
+        }
         const val = super.authenticatePassword(password);
         return val;
     }
@@ -361,16 +361,16 @@ export class PDFDocument extends mupdf.PDFDocument {
             ['', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM'],
             ['', 'M', 'MM', 'MMM']
         ];
-        
+
         const thousands = Math.floor(num / 1000);
         const hundreds = Math.floor((num % 1000) / 100);
         const tens = Math.floor((num % 100) / 10);
         const ones = num % 10;
-    
+
         return (roman[3]?.[thousands] ?? '') +
-        (roman[2]?.[hundreds] ?? '') +
-        (roman[1]?.[tens] ?? '') +
-        (roman[0]?.[ones] ?? '');
+            (roman[2]?.[hundreds] ?? '') +
+            (roman[1]?.[tens] ?? '') +
+            (roman[0]?.[ones] ?? '');
     }
 
     private toAlpha(num: number): string {
@@ -418,16 +418,16 @@ export class PDFDocument extends mupdf.PDFDocument {
         for (let i = fromPage; i <= toPage; i++) {
             const sourcePage = sourcePDF.loadPage(i);
             const pageObj = sourcePage.getObject();
-            
+
             // Create a new page in the target document
             const newPageObj = this.addPage(sourcePage.getBounds(), rotate, this.newDictionary(), "");
-            
+
             // Copy page contents
             const contents = pageObj.get("Contents");
             if (contents) {
                 newPageObj.put("Contents", this.graftObject(contents));
             }
-            
+
             // Copy page resources
             const resources = pageObj.get("Resources");
             if (resources) {
@@ -465,7 +465,7 @@ export class PDFDocument extends mupdf.PDFDocument {
         }
     }
 
-    scrub(options:{
+    scrub(options: {
         attachedFiles?: boolean;
         cleanPages?: boolean;
         embeddedFiles?: boolean;
@@ -495,46 +495,46 @@ export class PDFDocument extends mupdf.PDFDocument {
             thumbnails = true,
             xmlMetadata = true
         } = options;
-    
+
         // Basic validation
         if (!this.isPDF()) {
             throw new Error("is no PDF");
         }
-    
+
         if (this.needsPassword()) {
             throw new Error("encrypted doc");
         }
-    
+
         // Metadata cleaning
         if (metadata) {
             // TODO: Implement metadata cleaning
         }
-    
+
         // Process each page
         const pageCount = this.countPages();
         for (let i = 0; i < pageCount; i++) {
             // const page = this.loadPage(i);
-    
+
             // Remove links
             if (removeLinks) {
                 // TODO: Implement link removal
             }
-    
+
             // Handle attached files
             if (attachedFiles) {
                 // TODO: Implement attached files handling
             }
-    
+
             // Clean pages
             if (cleanPages) {
                 // TODO: Implement page cleaning
             }
-    
+
             // Handle hidden text
             if (hiddenText) {
                 // TODO: Implement hidden text removal
             }
-    
+
             // Handle redactions
             if (redactions) {
                 // TODO: Implement redactions
@@ -542,33 +542,33 @@ export class PDFDocument extends mupdf.PDFDocument {
                     // TODO: Handle redacted images
                 }
             }
-    
+
             // Reset form fields
             if (resetFields) {
                 // TODO: Implement form fields reset
             }
-    
+
             // Reset responses
             if (resetResponses) {
                 // TODO: Implement response reset
             }
-    
+
             // Remove thumbnails
             if (thumbnails) {
                 // TODO: Implement thumbnail removal
             }
         }
-    
+
         // Handle embedded files
         if (embeddedFiles) {
             // TODO: Implement embedded files handling
         }
-    
+
         // Handle JavaScript
         if (javascript) {
             // TODO: Implement JavaScript removal
         }
-    
+
         // Handle XML metadata
         if (xmlMetadata) {
             // TODO: Implement XML metadata handling
@@ -585,15 +585,17 @@ export class PDFPage extends mupdf.PDFPage {
         }
         let page: mupdf.PDFPage = doc.loadPage(pno)
         super(doc, page.pointer)
-	}
+    }
 
-    insertText(value: string, 
-               point: Point, 
-               fontName: string = "Times-Roman", 
-               fontSize: number = 18,
-               graphics: {strokeColor:Color, 
-                       fillColor:Color,
-                       strokeThickness:number} = {strokeColor:[0,0,0,1], fillColor:[0,0,0,1], strokeThickness:1}) {
+    insertText(value: string,
+        point: Point,
+        fontName: string = "Times-Roman",
+        fontSize: number = 18,
+        graphics: {
+            strokeColor: Color,
+            fillColor: Color,
+            strokeThickness: number
+        } = { strokeColor: [0, 0, 0, 1], fillColor: [0, 0, 0, 1], strokeThickness: 1 }) {
         let doc = this._doc
         let page = this
         let page_obj = page.getObject()
@@ -616,11 +618,11 @@ export class PDFPage extends mupdf.PDFPage {
         // this guards against people not sending through the complete parameter set in their "graphics" object 
         // i.e. maybe they send just one or two of them, not all three
         if (graphics.strokeColor == undefined) {
-            graphics.strokeColor = [0,0,0,1]
+            graphics.strokeColor = [0, 0, 0, 1]
         }
 
         if (graphics.fillColor == undefined) {
-            graphics.fillColor = [0,0,0,1]
+            graphics.fillColor = [0, 0, 0, 1]
         }
 
         if (graphics.strokeThickness == undefined) {
@@ -635,10 +637,10 @@ export class PDFPage extends mupdf.PDFPage {
             graphics.fillColor[3] = 1
         }
 
-        let strokeColor:string = graphics.strokeColor[0] + " " + graphics.strokeColor[1] + " " + graphics.strokeColor[2] + " RG"
-        let fillColor:string = graphics.fillColor[0] + " " + graphics.fillColor[1] + " " + graphics.fillColor[2] + " rg"
-        let strokeOpacity:string = (graphics.strokeColor[3]*100).toString()
-        let fillOpacity:string = (graphics.fillColor[3]*100).toString()
+        let strokeColor: string = graphics.strokeColor[0] + " " + graphics.strokeColor[1] + " " + graphics.strokeColor[2] + " RG"
+        let fillColor: string = graphics.fillColor[0] + " " + graphics.fillColor[1] + " " + graphics.fillColor[2] + " rg"
+        let strokeOpacity: string = (graphics.strokeColor[3] * 100).toString()
+        let fillOpacity: string = (graphics.fillColor[3] * 100).toString()
 
         let strokeThicknessMarkup = "2 Tr " + graphics.strokeThickness + " w"
 
@@ -655,20 +657,20 @@ export class PDFPage extends mupdf.PDFPage {
         graphicsDict.put("CA", graphics.strokeColor[3])
         graphicsDict.put("ca", graphics.fillColor[3])
 
-        let graphicsStateIdentifier:string = "fitzca"+strokeOpacity+""+fillOpacity
+        let graphicsStateIdentifier: string = "fitzca" + strokeOpacity + "" + fillOpacity
         res_graphics_state.put(graphicsStateIdentifier, graphicsDict)
 
-        let graphicsState:string = "/"+graphicsStateIdentifier+" gs"
+        let graphicsState: string = "/" + graphicsStateIdentifier + " gs"
 
         // invert the Y point
-        point[1] = page.getBounds()[3]-(point[1]+fontSize);
+        point[1] = page.getBounds()[3] - (point[1] + fontSize);
 
-        let contentStream:string = "q " + graphicsState + " BT " + strokeColor + " " + fillColor + " " + strokeThicknessMarkup +" /F1 " + fontSize + " Tf " + point[0] + " " + point[1] + " Td (" + value + ") Tj ET Q"
+        let contentStream: string = "q " + graphicsState + " BT " + strokeColor + " " + fillColor + " " + strokeThicknessMarkup + " /F1 " + fontSize + " Tf " + point[0] + " " + point[1] + " Td (" + value + ") Tj ET Q"
         console.log(`Inserting text to page with content stream:\n${contentStream}`)
 
         // Create drawing operations
         var extra_contents = doc.addStream(contentStream, {})
-       
+
         // Add drawing operations to page contents
         var page_contents = page_obj.get("Contents")
         if (page_contents.isArray()) {
@@ -684,8 +686,8 @@ export class PDFPage extends mupdf.PDFPage {
         }
     }
 
-    insertImage(data: {image:Image, name:string}, 
-                metrics: {x?:number, y?:number, width?:number, height?:number} = {x:0,y:0,width:0,height:0}) {
+    insertImage(data: { image: Image, name: string },
+        metrics: { x?: number, y?: number, width?: number, height?: number } = { x: 0, y: 0, width: 0, height: 0 }) {
 
         if (data.image == null) {
             throw new Error("Invalid image");
@@ -694,7 +696,7 @@ export class PDFPage extends mupdf.PDFPage {
         if (data.name == null || data.name.length == 0) {
             throw new Error("Invalid name");
         }
-    
+
         let doc = this._doc
         let page = this
         let page_obj = page.getObject()
@@ -725,14 +727,14 @@ export class PDFPage extends mupdf.PDFPage {
 
         // invert the Y point
         if (metrics.y == undefined) {
-            metrics.y = page.getBounds()[3]-metrics.height;
+            metrics.y = page.getBounds()[3] - metrics.height;
         } else {
-            metrics.y = page.getBounds()[3]-(metrics.y+metrics.height);
+            metrics.y = page.getBounds()[3] - (metrics.y + metrics.height);
         }
-      
+
         res_xobj.put(data.name, image)
 
-        let contentStream:string = "q "+metrics.width+" 0 0 "+metrics.height+" "+metrics.x+" "+metrics.y+" cm /"+data.name+" Do Q"
+        let contentStream: string = "q " + metrics.width + " 0 0 " + metrics.height + " " + metrics.x + " " + metrics.y + " cm /" + data.name + " Do Q"
 
         console.log(`Inserting image to page with content stream:\n${contentStream}`)
 
@@ -755,8 +757,8 @@ export class PDFPage extends mupdf.PDFPage {
 
     }
 
-    insertLink(metrics: {x:number, y:number, width:number, height:number}, uri: string) {
-        super.createLink([metrics.x,metrics.y,metrics.x+metrics.width,metrics.y+metrics.height], uri)
+    insertLink(metrics: { x: number, y: number, width: number, height: number }, uri: string) {
+        super.createLink([metrics.x, metrics.y, metrics.x + metrics.width, metrics.y + metrics.height], uri)
     }
 
     rotate(r: number) {
@@ -772,13 +774,13 @@ export class PDFPage extends mupdf.PDFPage {
         page_obj.put("Rotate", Number(rotate) + r)
     }
 
-    addAnnotation(type: CreatableAnnotationType, 
-                  metrics: {x:number, y:number, width:number, height:number}, 
-                  author?:string,
-                  contents?:string): PDFAnnotation {
+    addAnnotation(type: CreatableAnnotationType,
+        metrics: { x: number, y: number, width: number, height: number },
+        author?: string,
+        contents?: string): PDFAnnotation {
         let page = this
         let annotation = page.createAnnotation(type)
-        annotation.setRect([metrics.x,metrics.y,metrics.x+metrics.width,metrics.y+metrics.height])
+        annotation.setRect([metrics.x, metrics.y, metrics.x + metrics.width, metrics.y + metrics.height])
         if (author) {
             annotation.setAuthor(author)
         }
@@ -790,16 +792,16 @@ export class PDFPage extends mupdf.PDFPage {
         return annotation
     }
 
-    addRedaction(metrics: {x:number, y:number, width:number, height:number}): PDFAnnotation {
+    addRedaction(metrics: { x: number, y: number, width: number, height: number }): PDFAnnotation {
         let page = this
         let redaction = page.createAnnotation("Redact")
-        redaction.setRect([metrics.x,metrics.y,metrics.x+metrics.width,metrics.y+metrics.height])
+        redaction.setRect([metrics.x, metrics.y, metrics.x + metrics.width, metrics.y + metrics.height])
         redaction.update()
         return redaction
     }
 
     override applyRedactions(blackBoxes: boolean | number = true, imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS) {
-        var num:number
+        var num: number
         if (typeof blackBoxes === "boolean") {
             num = blackBoxes ? 1 : 0
         } else {
@@ -848,20 +850,20 @@ export class PDFPage extends mupdf.PDFPage {
         return text
     }
 
-    getImages(): {bbox:Rect, matrix:Matrix, image:Image}[] {
-        var images:{bbox:Rect, matrix:Matrix, image:Image}[] = []
+    getImages(): { bbox: Rect, matrix: Matrix, image: Image }[] {
+        var images: { bbox: Rect, matrix: Matrix, image: Image }[] = []
         let page = this
 
         page.toStructuredText("preserve-images").walk({
             onImageBlock(bbox, matrix, image) {
-                images.push({bbox:bbox, matrix:matrix, image:image})
+                images.push({ bbox: bbox, matrix: matrix, image: image })
             }
         })
 
         return images
     }
 
-    delete(ref:PDFAnnotation | PDFWidget | Link | string) {
+    delete(ref: PDFAnnotation | PDFWidget | Link | string) {
         if (ref.constructor.name === "PDFAnnotation") {
             super.deleteAnnotation(ref as PDFAnnotation)
         } else if (ref.constructor.name === "PDFWidget") {
@@ -879,7 +881,7 @@ export class PDFPage extends mupdf.PDFPage {
             // replace the XObject with a 1x1 transparent pixel to "delete" it
             let res = pageObj.get("Resources")
             let resXObj = res.get("XObject")
-            let pix = new Pixmap(ColorSpace.DeviceRGB, [0,0,1,1], true)
+            let pix = new Pixmap(ColorSpace.DeviceRGB, [0, 0, 1, 1], true)
             let imageRes = new Image(pix)
 
             const image = this._doc.addImage(imageRes)
@@ -890,7 +892,7 @@ export class PDFPage extends mupdf.PDFPage {
         }
     }
 
-    getResourcesXrefObjects(): {key:string | number, value:string}[] {
+    getResourcesXrefObjects(): { key: string | number, value: string }[] {
         let pageObj = this.getObject()
         var isIndirect = pageObj.isIndirect()
 
@@ -900,10 +902,10 @@ export class PDFPage extends mupdf.PDFPage {
 
         let res = pageObj.get("Resources")
         let resXObj = res.get("XObject")
-        let arr: {key:string | number, value:string}[] = []
+        let arr: { key: string | number, value: string }[] = []
 
-        resXObj.forEach(function(value:PDFObject, key:string | number) {
-            arr.push({key:key, value:value.toString()})
+        resXObj.forEach(function (value: PDFObject, key: string | number) {
+            arr.push({ key: key, value: value.toString() })
         })
 
         return arr

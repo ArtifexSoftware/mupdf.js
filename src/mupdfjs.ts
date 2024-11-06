@@ -574,6 +574,69 @@ export class PDFDocument extends mupdf.PDFDocument {
             // TODO: Implement XML metadata handling
         }
     }
+
+    attachFile(
+        name: string,
+        data: Buffer | ArrayBuffer | Uint8Array,
+        options?: {
+            filename?: string;
+            creationDate?: Date;
+            modificationDate?: Date;
+        },
+    ): void {
+        // Set default values for optional parameters
+        const now = new Date();
+        const { filename = name, creationDate = now, modificationDate = now } = options || {};
+
+        // Determine MIME type based on file extension
+        const mimeType = this.guessMimeType(name);
+
+        // Convert input data to mupdf Buffer format
+        // Handles multiple input formats: Buffer, ArrayBuffer, Uint8Array
+        let buffer: mupdf.Buffer;
+        if (data instanceof mupdf.Buffer) {
+            buffer = data;
+        } else {
+            buffer = new mupdf.Buffer();
+            if (data instanceof ArrayBuffer) {
+                buffer.writeBuffer(new Uint8Array(data));
+            } else if (data instanceof Uint8Array) {
+                buffer.writeBuffer(data);
+            } else {
+                throw new Error('Invalid input data type');
+            }
+        }
+
+        // Create file specification object with metadata
+        const fileSpec = this.addEmbeddedFile(filename, mimeType, buffer, creationDate, modificationDate);
+
+        // Add the file to the PDF document's embedded files collection
+        this.insertEmbeddedFile(name, fileSpec);
+    }
+
+    private guessMimeType(filename: string): string {
+        // Extract and normalize the file extension
+        const ext = filename.split('.').pop()?.toLowerCase();
+
+        // Define mapping of file extensions to MIME types
+        const mimeTypes: { [key: string]: string } = {
+            pdf: 'application/pdf',
+            txt: 'text/plain',
+            html: 'text/html',
+            htm: 'text/html',
+            json: 'application/json',
+            jpg: 'image/jpeg',
+            jpeg: 'image/jpeg',
+            png: 'image/png',
+            gif: 'image/gif',
+            svg: 'image/svg+xml',
+            xml: 'application/xml',
+            zip: 'application/zip',
+        };
+
+        // Return the corresponding MIME type or default to octet-stream
+        return mimeTypes[ext || ''] || 'application/octet-stream';
+    }
 }
 
 export class PDFPage extends mupdf.PDFPage {

@@ -465,6 +465,70 @@ export class PDFDocument extends mupdf.PDFDocument {
         }
     }
 
+    split(range: number[] | undefined) {
+        let document = this;
+        let documents: PDFDocument[] = [];
+        
+        if (range == undefined || range.length == 0) { // just split out all pages as single PDFs
+            let i = 0;
+            while (i < document.countPages()) {
+                let newDoc: PDFDocument = new mupdf.PDFDocument() as PDFDocument;
+                newDoc.graftPage(0, document, i);
+                documents.push(newDoc);
+                i ++;
+            }
+        } else { // we have a defined page ranges to consider, create the correct PDFs
+            let i = 0
+
+            // build range arrays according to input 
+            let ranges: number[][] = [];
+
+            while (i < range.length) {
+
+                var a: number = range[i] as number;
+
+                if (a < 0) {
+                    throw new Error("Split error: document page indexes cannot be less than zero");
+                }
+
+                var nextIndex: number = i+1;
+                var b: number;
+                if (nextIndex > range.length-1) {
+                    b = document.countPages();
+                } else {
+                    b = range[nextIndex] as number;
+                }
+
+                var set: number[] = [];
+
+                while (a < b) {
+                    set.push(a);
+                    a ++;
+                }
+
+                ranges.push(set);
+
+                i ++;
+            }
+
+            // now cycle the ranges and create the new documents as required
+            var n: number = 0;
+            while (n < ranges.length) { 
+                let newDoc = new mupdf.PDFDocument() as PDFDocument;
+                
+                if (ranges[n] != undefined) {
+                    for (let o: number = 0; o < ranges[n]!.length; o++) {
+                        // note: "o" is the "to" number for graftPage()
+                        newDoc.graftPage(o, document, ranges[n]![o]!);
+                    }
+                    documents.push(newDoc);
+                }
+                n ++;
+            }
+        }
+        return documents
+    }
+
     scrub(options: {
         attachedFiles?: boolean;
         cleanPages?: boolean;

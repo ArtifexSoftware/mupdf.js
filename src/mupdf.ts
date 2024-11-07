@@ -3646,8 +3646,12 @@ globalThis.$libmupdf_stm_seek = function (id: number, pos: number, offset: numbe
 			return offset
 		if (whence === 1)
 			return pos + offset
-		if (whence === 2)
-			return handle.fileSize() + offset
+		if (whence === 2) {
+			let size = handle.fileSize()
+			if (size < 0)
+				return -1
+			return size + offset
+		}
 		throw new Error("invalid whence argument")
 	}
 	throw new Error("invalid file handle")

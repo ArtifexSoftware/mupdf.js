@@ -2263,6 +2263,8 @@ static int js_stm_next(fz_context *ctx, fz_stream *stm, size_t len)
 	stm->wp = state->buf + n;
 	stm->pos += n;
 
+	if (n < 0)
+		fz_throw(ctx, FZ_ERROR_TRYLATER, "trylater from stream callback");
 	if (n == 0)
 		return EOF;
 	return *stm->rp++;
@@ -2271,8 +2273,7 @@ static int js_stm_next(fz_context *ctx, fz_stream *stm, size_t len)
 static void js_stm_seek(fz_context *ctx, fz_stream *stm, int64_t offset, int whence)
 {
 	struct js_stm_state *state = stm->state;
-	stm->rp = stm->wp = state->buf;
-	stm->pos = EM_ASM_INT(
+	int n = EM_ASM_INT(
 		{
 			return globalThis.$libmupdf_stm_seek($0, $1, $2, $3);
 		},
@@ -2281,6 +2282,10 @@ static void js_stm_seek(fz_context *ctx, fz_stream *stm, int64_t offset, int whe
 		(int) offset,
 		(int) whence
 	);
+	if (n < 0)
+		fz_throw(ctx, FZ_ERROR_TRYLATER, "trylater from stream callback");
+	stm->rp = stm->wp = state->buf;
+	stm->pos = n;
 }
 
 EXPORT

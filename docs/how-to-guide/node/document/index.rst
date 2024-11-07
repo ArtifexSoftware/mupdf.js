@@ -93,6 +93,25 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
     let page = new mupdfjs.PDFPage(document, 0)
     
 
+Splitting a Document
+-----------------------------
+
+To split a document's pages into new documents use the :meth:`split` method. Supply an array of page indicies that you want to use for the splitting operation.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    let documents = document.split([0,2,3])
+
+The example above would return three new documents from a **10 page PDF** as the following:
+
+- Document containing pages 1 & 2 (from index `0`)
+- Document containing page 3 (from index `2`)
+- Document containing pages 4-10 (from final index `3`)
+
+
+
 
 Merging Documents
 -----------------------------
@@ -116,24 +135,6 @@ See the script below for an example implementation.
     // now merge this document onto page 2 of our document and rotate it by 90 degrees
     document.merge(sourcePDF, 0, -1, 1, 90);
 
-
-Splitting a Document
------------------------------
-
-|TODO|
-
-To split a document we can take the :ref:`pages <Node_How_To_Guide_Page>` we want to use and create new documents from them with the `graftPage` method in the order we require.
-
-The following example would split all of a **PDF** document's :ref:`pages <Node_How_To_Guide_Page>` into separate single page **PDF** files.
-
-This script can be found in `examples/tools/split-pages.js`.
-
-|example_tag|
-
-.. literalinclude:: ../../../../examples/tools/split-pages.js
-   :language: javascript
-   :emphasize-lines: 16
-   :name: examples/tools/split-pages.js
 
 Extracting Document Text
 -----------------------------
@@ -210,6 +211,35 @@ You can use the :meth:`bake` method as follows:
     document.bake()
 
 
+.. _Node_How_To_Attach_File_To_Document:
+
+Attaching a File to a Document
+-----------------------------------
+
+Use the :meth:`attachFile` method on a document instance with a supplied name and :doc:`../../../classes/Buffer` for the data.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    const content = "Test content";
+    const buffer = new mupdfjs.Buffer();
+    buffer.writeLine(content);
+    doc.attachFile("test.txt", buffer);
+
+
+Removing a File from a Document
+----------------------------------------------------------------------
+
+Use the :meth:`deleteEmbeddedFile` method on a document instance to remove an attached file.
+
+|example_tag|
+
+.. code-block:: javascript
+
+    document.deleteEmbeddedFile("test.txt")
+
+
 Searching a Document
 ------------------------------------------
 
@@ -275,10 +305,6 @@ To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide
     The resulting array contains an array of :doc:`../../../classes/Link` objects which have their own bounds and `uri` for the link.
 
 
-Embedding Files
---------------------------
-
-Embedding files uses the :ref:`addEmbeddedFile <Node_How_To_Guide_Annotations_Embedding_Files>` method on the document instance.
 
 
 

@@ -4,13 +4,16 @@
 .. _Node_How_To_Guide_Annotations_Embedding_Files:
 
 
+File Attachment Annotations
+============================================
 
-Embedding Files
-===============================
+
+There are two ways to embed files - :ref:`directly to a document <Node_How_To_Attach_File_To_Document>` (attaching a file to the whole document)
+or as an embedded file on a `"FileAttachment"` annotation.
 
 
-Adding an Embedded File
------------------------------
+Creating an Annotation File Attachment
+-----------------------------------------
 
 Embedding files onto annotation objects requires us to associate a buffer of file data against a `"FileAttachment"` annotation object.
 
@@ -55,8 +58,8 @@ The file attachment will appear as a "push pin" icon by default on the **PDF** d
 
 You can also change the look of the icon with :meth:`setIcon` for this annotation (to a paper clip for example) if required.
 
-Removing an Embedded File
-------------------------------
+Removing an Embedded File on a File Attachment
+----------------------------------------------------------------------
 
 To remove an embedded file, retrieve the required "FileAttachment" annotation and set it to `null`.
 

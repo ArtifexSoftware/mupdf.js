@@ -62,14 +62,7 @@ PDFDocument
     :arg to: `number`. The page location in the document to copy the page to, `0` = start of document, `-1` = end of document.
 
 
-.. method:: graftPage(insertIndex:number, doc:PDFDocument, pnoIndexToCopy:number)
-
-    :arg insertIndex: `number`. The page location in the document to copy the page to, `0` = start of document, `-1` = end of document.
-    :arg doc: :doc:`PDFDocument`. The document to copy from.
-    :arg pnoIndexToCopy: `number`. The page location in the document to copy the page to, `0` = start of document, note you cannot specify `-1` here for the end of the document as the page tree may not be ready. Therefore the page to copy must be explicity defined.
-
-
-.. method:: deletePage(index:number)
+.. method:: deletePage(index: number)
 
     Deletes a page at a specific index. Zero-indexed.
 
@@ -101,6 +94,30 @@ PDFDocument
     .. note::
 
         Remember pages indexes are **zero-indexed**! Thus `document.deletePages({fromPage:1, toPage:3})` is actually deleting from page 2 of your document.
+
+
+.. method:: split(range: number[] | undefined)
+
+    Splits a document into multiple documents with defined page ranges and returns a new set of documents.
+    
+    Supply a range of page numbers to be considered for how to split the document pages.
+
+    For example if you wanted to split out the first two pages of a document then use: `[0,2]` - this supplies the page indicies to be used - page's referenced by `0` & `1` will be in one document, all pages from index `2` will be in the other document.
+
+    :arg range: `number[]` or `undefined`. Page indicies for operation. If `undefined` then the document splits the document pages into single page document instances (one page for each document).
+
+    :return: `PDFDocument[]`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+        
+        // split out 3 documents, the first two pages, then page three, then everything from page 4 onwards
+        var documents = document.split([0, 2, 3])
+
+    .. note::
+
+        Remember page indexes are zero-indexed! i.e. Page 1 = index `0`!
 
 
 .. method:: merge(sourcePDF: PDFDocument, fromPage: number = 0, toPage: number = -1, startAt: number = -1, rotate: 0 | 90 | 180 | 270 = 0, copyLinks: boolean = true, copyAnnotations: boolean = true) 
@@ -174,6 +191,64 @@ PDFDocument
     .. code-block:: javascript
 
         pdfDocument.graftPage(-1, srcDoc, 0);
+
+
+.. method:: attachFile(name: string, data: Buffer | ArrayBuffer | Uint8Array, options?: {filename?: string; creationDate?: Date; modificationDate?: Date;})
+
+    Attach a file to a document by supplying a name and buffer of data.
+
+    :arg name: `string`. The name of the file.
+    :arg data: `Buffer | ArrayBuffer | Uint8Array`. Data for file.
+    :arg options: `{filename?: string; creationDate?: Date; modificationDate?: Date;}`. Optional metadata.
+
+        - `filename`. Optionally supply a file name separately from the previous `name` parameter. (Defaults to `name` if not supplied)
+        - `creationDate`. Optionally supply a JavaScript `Date` object for the creation date. (Defaults to "now" `Date()` if not supplied))
+        - `modificationDate`. Optionally supply a JavaScript `Date` object for the modification date. (Defaults to "now" `Date()` if not supplied))
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        const content = "Test content";
+        const buffer = new Buffer();
+        buffer.writeLine(content);
+        pdfDocument.attachFile("test.txt", buffer);
+
+
+.. method:: deleteEmbeddedFile(filename: string)
+
+    Delete an embedded file by name.
+
+    :arg filename: `string`. The name of the file.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        pdfDocument.deleteEmbeddedFile("test.txt");
+
+
+.. method:: getEmbeddedFiles()
+
+    Returns a record of any embedded files on the `PDFDocument`.
+
+    :return: ``Record<string,PDFObject>``
+
+.. method:: getEmbeddedFileParams(ref: PDFObject)
+
+    Gets the embedded file parameters from a `PDFObject` reference.
+
+    :arg ref: `PDFObject`.
+
+    :return: `{filename:string, mimetype:string, size:number, creationDate:Date, modificationDate:Date}`
+
+.. method:: getEmbeddedFileContents(ref: PDFObject)
+
+    Gets the embedded file content from a `PDFObject` reference.
+
+    :arg ref: `PDFObject`.
+
+    :return: `Buffer` | `null`.
 
 
 .. method:: needsPassword()

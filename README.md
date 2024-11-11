@@ -10,10 +10,11 @@ The **MuPDF.js** library can be used both in browsers and in Node.js.
 ## Features
 
 - Render PDF pages to images
+- Extract text and images from PDF
+- Edit PDF documents
 - Search PDF file text contents
 - Create and edit PDF annotations
 - Access and fill out PDF forms
-- Edit PDF documents
 - Supports basic CJK (Chinese, Japanese, Korean) fonts
 
 ## Installing
@@ -40,7 +41,7 @@ Create a file `count-pages.mjs`:
 ```js
 import * as process from "node:process"
 import * as fs from "node:fs"
-import * as mupdf from "mupdf"
+import * as mupdfjs from "mupdf/mupdfjs"
 
 if (process.argv.length < 3) {
     console.error("usage: node count-pages.mjs file.pdf");
@@ -48,7 +49,7 @@ if (process.argv.length < 3) {
 }
 
 const filename = process.argv[2];
-const doc = mupdf.Document.openDocument(fs.readFileSync(filename), "application/pdf");
+const doc = mupdfjs.PDFDocument.openDocument(fs.readFileSync(filename), "application/pdf");
 const count = doc.countPages();
 
 console.log(`${filename} has ${count} pages.`);
@@ -85,7 +86,7 @@ For documentation please refer to [mupdfjs.readthedocs.io](https://mupdfjs.readt
 ## Code Examples
 
 Check out the [example projects](https://github.com/ArtifexSoftware/mupdf.js/tree/master/examples) to help you get started.
-The examples include a simple PDF Viewer that runs mupdf in the browser, several command line scripts, and more! 
+The examples include a simple PDF Viewer that runs MuPDF in the browser, several command line scripts, and more! 
 
 ## Getting Started with Local Development
 

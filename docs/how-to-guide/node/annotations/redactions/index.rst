@@ -21,7 +21,7 @@ Applying a Redaction
 
 Once a redaction has been created it will not commit the redaction to the document area until it is applied.
 
-The following example creates a redaction area on the page and then `applies the redaction <https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-annotation.html#applyRedaction>`_, with options to paint the redacted area in black, and then saves the result as a new file.
+The following example creates a redaction area on the page and then applies the redaction, with options to paint the redacted area in black, and then saves the result as a new file.
 
 
 |example_tag|
@@ -31,7 +31,7 @@ The following example creates a redaction area on the page and then `applies the
     let fileData = fs.readFileSync("test.pdf")
 
     let document = mupdf.Document.openDocument(fileData, "application/pdf")
-    let page = document.loadPage(0)
+    let page = new mupdfjs.PDFPage(document, 0)
     let annotation = page.createAnnotation("Redact")
     annotation.setRect([40, 40, 300, 20])
     annotation.applyRedaction(true)
@@ -52,7 +52,7 @@ You can also apply all the current redaction annotations on a page at the page-l
 
     Redactions are secure and any textual or pixel data is irretrievable.
 
-    Find out more on the `applyRedaction <https://mupdf.readthedocs.io/en/latest/mutool-object-pdf-annotation.html#applyRedaction>`_ method.
+    Find out more on the :meth:`applyRedaction` method.
 
 
 

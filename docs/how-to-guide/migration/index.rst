@@ -2,8 +2,8 @@
 
 .. _How_To_Guide_Migration:
 
-Migrating from `mupdf-js`
-===========================
+Migrating from NPM's `mupdf-js` package
+=============================================
 
 This guide is intended to help you migrate from the https://github.com/andytango/mupdf-js
 library to this one.
@@ -31,8 +31,8 @@ So you can remove code like this:
 2. Loading a document
 -------------------
 
-Just like with `mupdf-js`, you can load a document either as a Buffer
-(in Node.js), an ArrayBuffer (in the browser), or a Uint8Array (in both environments).
+Just like with `mupdf-js`, you can load a document either as a ``Buffer``
+(in Node.js), an ``ArrayBuffer`` (in the browser), or a ``Uint8Array`` (in both environments).
 
 We provide a `loadPDF` function that is similar to the `load` method in `mupdf-js`.
 So you can replace this:

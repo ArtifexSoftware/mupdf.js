@@ -1,26 +1,32 @@
 .. |example_tag| raw:: html
 
-   <span class="example-tag"></span>
+   <span class="example-tag">EXAMPLE</span>
 
-.. |post_tag| raw:: html
+.. |constructor_tag| raw:: html
 
-   <span class="post-tag"></span>
+   <span class="constructor-tag">CONSTRUCTOR METHODS</span>
 
-.. |get_tag| raw:: html
+.. |instance_method_tag| raw:: html
 
-   <span class="get-tag"></span>
+   <span class="instance-method-tag">INSTANCE METHODS</span>
 
-.. |put_tag| raw:: html
+.. |static_method_tag| raw:: html
 
-   <span class="put-tag"></span>
+   <span class="static-method-tag">STATIC METHODS</span>
+
+.. |instance_property_tag| raw:: html
+
+   <span class="instance-properties-tag">INSTANCE PROPERTIES</span>
+   
 
 .. |page_spacer| raw:: html
 
    <div class="page-spacer" style="margin:40px 0 20px;"><hr/></div>
 
-.. |node_js_logo| raw:: html
 
-   <div class="node-js-logo"></div>
+.. |TODO| raw:: html
+
+   <div style="color:red;padding:10px;border:1px solid red;">TODO</div>
 
 .. meta::
    :description: MuPDF.js Developer documentation.
@@ -46,7 +52,8 @@
         <div class="discordLink" style="display:flex;align-items:center;margin-top: -5px;">
             <a href="https://discord.gg/zpyAHM7XtF" id="findOnDiscord" target=_blank>Find <b>#mupdf.js</b> on <b>Discord</b></a>
             <a href="https://discord.gg/zpyAHM7XtF" target=_blank>
-               <div style="width:30px;height:30px;margin-left:5px;">
+            
+                <div style="width:30px;height:30px;margin-left:5px;">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36">
                         <defs>
                             <style>.discordLogoFill{fill:#5865f2;}</style>

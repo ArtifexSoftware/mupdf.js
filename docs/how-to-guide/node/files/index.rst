@@ -11,22 +11,19 @@ Working with Files
 Local Files
 ----------------------------------
 
-An example of loading a local file using the `mupdf.Document.openDocument` method with a local string to reference the file path.
+An example of loading a local file using the :meth:`openDocument` method with a local string to reference the file path.
 
 |example_tag|
 
 .. code-block:: javascript
 
-    function loadLocalFile(url) {
-        let document = mupdf.Document.openDocument(fs.readFileSync(url), "application/pdf")
-    }
-
-    loadLocalFile("test.pdf")
+    let document = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"), 
+                                                    "application/pdf")
 
 Remote Files
 ----------------------------------
 
-An example of loading a remote file which waits for the remote data and then uses the `mupdf.Document.openDocument` method with the resulting buffer data.
+An example of loading a remote file which waits for the remote data and then uses the :meth:`openDocument` method with the resulting buffer data.
 
 |example_tag|
 
@@ -39,7 +36,7 @@ An example of loading a remote file which waits for the remote data and then use
             return
         }
         let data = await response.arrayBuffer()
-        let document = mupdf.Document.openDocument(data, url)
+        let document = mupdfjs.PDFDocument.openDocument(data, url)
     }
 
     loadRemoteFile("https://mupdf.com/docs/mupdf_explored.pdf")
@@ -64,11 +61,10 @@ For the simplest implementation, which saves the file locally to the current fol
     fs.writeFileSync("output.pdf", document.saveToBuffer("incremental").asUint8Array())
 
 
-For full details refer to the `saveToBuffer`_ method.
+
+For full details refer to the :meth:`saveToBuffer` method.
 
 .. include:: ../node-footer.rst
 
 .. include:: ../../../footer.rst
-
-
 

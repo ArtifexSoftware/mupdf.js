@@ -1,6 +1,6 @@
 {
   "name": "mupdf",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "MuPDF.js",
   "author": "Artifex Software, Inc.",
   "license": "AGPL-3.0-or-later",
@@ -22,6 +22,10 @@
       "types": "./dist/mupdf.d.ts",
       "default": "./dist/mupdf.js"
     },
+    "./mupdfjs": {
+        "types": "./dist/mupdfjs.d.ts",
+        "default": "./dist/mupdfjs.js"
+    },
     "./tasks": {
       "types": "./dist/tasks.d.ts",
       "default": "./dist/tasks.js"
@@ -32,6 +36,8 @@
     "dist/mupdf-wasm.wasm",
     "dist/mupdf.d.ts",
     "dist/mupdf.js",
+    "dist/mupdfjs.d.ts",
+    "dist/mupdfjs.js",
     "dist/tasks.d.ts",
     "dist/tasks.js"
   ],

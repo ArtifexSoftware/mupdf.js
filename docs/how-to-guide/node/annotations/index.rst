@@ -11,7 +11,7 @@ Working with Annotations
 Overview
 -----------------------
 
-**Annotations** relate to the objects a user puts onto **PDF** documents, for example **notes**, **highlights**, **shapes**, **drawings** or **file attachments**.
+**Annotations** relate to the objects a user puts onto **PDF** documents, for example **notes**, **highlights**, **shapes**, **drawings**, **redactions** or **file attachments**.
 
 .. toctree::
     :caption: Table of Contents

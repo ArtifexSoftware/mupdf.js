@@ -27,13 +27,19 @@ Developer documentation to help you get started
 
 
 .. toctree::
-    :caption: Welcome
+    :caption: WELCOME
     :maxdepth: 2
 
     getting-started/index.rst
     how-to-guide/index.rst
-    api/index.rst
+    
 
+.. toctree::
+    :caption: API REFERENCE
+    :maxdepth: 2
+
+    classes/index.rst
+    glossary/index.rst
 
 
 Find us

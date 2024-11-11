@@ -201,7 +201,7 @@ PDFPage
         page.delete(annots[0]);
 
     
-.. method:: search(needle:string, maxHits:number = 500)
+.. method:: search(needle:string, maxHits:number = 50)
 
 
     Search the page text for all instances of the `needle` value, and return an array of search hits.
@@ -209,7 +209,7 @@ PDFPage
     Each search hit is an array of :ref:`Quadpoints <Glossary_Quads>` corresponding to all characters in the search hit.
 
     :arg needle: `string`.
-    :arg maxHits: `number`. Defaults to 500 unless otherwise specified.
+    :arg maxHits: `number`. Defaults to 50 unless otherwise specified.
     :return: `Quad[][]`.
 
     |example_tag|

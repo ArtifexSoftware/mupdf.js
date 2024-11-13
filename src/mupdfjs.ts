@@ -75,18 +75,7 @@ export class PDFDocument extends mupdf.PDFDocument {
     // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
     static createBlankDocument(width: number = 595, height: number = 842): PDFDocument {
         let doc = new mupdf.PDFDocument()
-        let helvetica = doc.newDictionary();
-        helvetica.put("Type", doc.newName("Font"));
-        helvetica.put("Subtype", doc.newName("Type1"));
-        helvetica.put("Name", doc.newName("Helv"));
-        helvetica.put("BaseFont", doc.newName("Helvetica"));
-        helvetica.put("Encoding", doc.newName("WinAnsiEncoding"));
-        let fonts = doc.newDictionary();
-        fonts.put("Helv", helvetica);
-        let resources = doc.addObject(doc.newDictionary());
-        resources.put("Font", fonts);
-
-        let pageObj = doc.addPage([0, 0, width, height], 0, resources, "BT /Helv ET")
+        let pageObj = doc.addPage([0, 0, width, height], 0, {}, "")
         doc.insertPage(-1, pageObj)
 
         if (doc instanceof mupdf.PDFDocument) {
@@ -800,7 +789,11 @@ export class PDFPage extends mupdf.PDFPage {
 
         // Add drawing operations to page contents
         var page_contents = page_obj.get("Contents")
-        if (page_contents.isArray()) {
+
+        if (page_contents.isNull()) {
+            page_obj.put("Contents", extra_contents)
+        }
+        else if (page_contents.isArray()) {
             // Contents is already an array, so append our new buffer object.
             page_contents.push(extra_contents)
         } else {
@@ -870,7 +863,11 @@ export class PDFPage extends mupdf.PDFPage {
 
         // add drawing operations to page contents
         var page_contents = page_obj.get("Contents")
-        if (page_contents.isArray()) {
+        
+        if (page_contents.isNull()) {
+            page_obj.put("Contents", extra_contents)
+        }
+        else if (page_contents.isArray()) {
             // Contents is already an array, so append our new buffer object.
             page_contents.push(extra_contents)
         } else {

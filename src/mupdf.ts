@@ -2306,6 +2306,24 @@ export class PDFDocument extends Document {
 		return _getEmbeddedFilesRec({}, this.getTrailer().get("Root", "Names", "EmbeddedFiles"))
 	}
 
+	loadNameTree(treeName: string): Record<string,PDFObject> {
+		function _loadNameTreeRec(dict: Record<string,PDFObject>, node: PDFObject) {
+			var kids = node.get("Kids")
+			if (kids && kids.isArray())
+				for (var i = 0; i < kids.length; i += 1)
+					_loadNameTreeRec(dict, kids.get(i))
+			var names = node.get("Names")
+			if (names && names.isArray())
+				for (var i = 0; i < names.length; i += 2)
+					dict[names.get(i).asString()] = names.get(i+1)
+		}
+		var node = this.getTrailer().get("Root").get("Names").get(treeName)
+		var dict = {}
+		if (node.isDictionary())
+			_loadNameTreeRec(dict, node)
+		return dict
+	}
+
 	insertEmbeddedFile(filename: string, filespec: PDFObject) {
 		var efs = this.getEmbeddedFiles()
 		efs[filename] = filespec

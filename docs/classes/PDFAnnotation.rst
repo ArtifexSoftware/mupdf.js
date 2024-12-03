@@ -513,7 +513,7 @@ These properties are only present for some annotation types, so support for them
 
 
 
-.. method:: setDefaultAppearance(font: number, size: number, color: Color)
+.. method:: setDefaultAppearance(font: string, size: number, color: Color)
 
     Set the default text appearance used for free text annotations.
 

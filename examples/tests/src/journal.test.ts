@@ -70,4 +70,45 @@ describe("mupdfjs journal operations", () => {
       steps: ["deletePage"],
     });
   });
+
+  it("should undo a page deletion", () => {
+
+    const structedTextFirstPage = document
+        .loadPage(0)
+        .toStructuredText()
+        .asJSON();
+    const structedTextSecondPage = document
+        .loadPage(1)
+        .toStructuredText()
+        .asJSON();
+    const structedTextThirdPage = document
+        .loadPage(2)
+        .toStructuredText()
+        .asJSON();
+
+    document.beginOperation("delete page");
+    document.deletePage(0);
+    document.endOperation();
+
+    let canUndo = document.canUndo();
+    expect(canUndo).toBe(true); 
+    document.undo();
+
+    expect(document.countPages()).toBe(3);
+    expect(document.hasUnsavedChanges()).toBe(false);
+    expect(document.getJournal()).toStrictEqual({
+        position: 0,
+        steps: ["delete page"],
+    });
+    expect(document.loadPage(0).toStructuredText().asJSON()).toStrictEqual(
+        structedTextFirstPage
+    );
+    expect(document.loadPage(1).toStructuredText().asJSON()).toStrictEqual(
+        structedTextSecondPage
+    );
+    expect(document.loadPage(2).toStructuredText().asJSON()).toStrictEqual(
+        structedTextThirdPage
+    );
+  });
+
 });

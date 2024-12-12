@@ -5,15 +5,13 @@
 Font
 ===================
 
-
-
 `Font` objects can be created from :title:`TrueType`, :title:`OpenType`, :title:`Type1` or :title:`CFF` fonts. In :title:`PDF` there are also special :title:`Type3` fonts.
 
 |constructor_tag|
 
 .. method:: Font(ref: string)
 
-    Create a new font, either using a built-in font name or a file name.
+    Create a new font from a built-in font name.
 
     The built-in standard :title:`PDF` fonts are:
 
@@ -44,6 +42,23 @@ Font
 
         var font = new mupdfjs.Font("Times-Roman");
 
+
+
+.. method:: Font(name: string, data: AnyBuffer)
+
+    Create a new font with a designated name and the data buffer for the supplied font.
+
+    :arg name: `string`. Font name.
+    :arg data: `AnyBuffer`. Buffer of font data.
+
+    :return: `Font`.
+
+    |example_tag|
+
+    .. code-block:: javascript
+
+        let fontBuffer = fs.readFileSync("FreigSans.ttf");
+        let font = new mupdfjs.Font("Freight Sans", fontBuffer);
 
 
 |instance_method_tag|

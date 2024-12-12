@@ -29,7 +29,7 @@ So you can remove code like this:
 ----
 
 2. Loading a document
--------------------
+--------------------------
 
 Just like with `mupdf-js`, you can load a document either as a ``Buffer``
 (in Node.js), an ``ArrayBuffer`` (in the browser), or a ``Uint8Array`` (in both environments).
@@ -63,7 +63,7 @@ With this:
 ----
 
 3. Converting a page to an image
--------------------
+----------------------------------------
 
 In `mupdf-js`, you would convert a page to an image like this:
 
@@ -83,6 +83,7 @@ In `mupdf-js`, you would convert a page to an image like this:
       const svg = mupdf.drawPageAsSVG(doc, 1);
       const html = mupdf.drawPageAsHTML(doc, 1);
     }
+    
 ----
 
 Here's how you would do it with this package:

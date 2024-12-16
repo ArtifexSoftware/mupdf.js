@@ -175,9 +175,32 @@ To get the images for an entire document use the :meth:`getImages` method on eac
     let i = 0
     while (i < document.countPages()) {
         const page = new mupdfjs.PDFPage(document, i)
-        let images = page.getImages()
+        let imageStack = page.getImages()
         i++
     }
+
+
+The following example would extract all the images from a document and save them as individual files:
+
+.. code-block:: javascript
+
+    let i = 0
+    while (i < document.countPages()) {
+        const page = new mupdfjs.PDFPage(document, i)
+        let imageStack = page.getImages()
+
+        for (var j in imageStack) {
+            var image = imageStack[j].image;
+            var pixmap = image.toPixmap();
+            let raster = pixmap.asJPEG(80);
+            fs.writeFileSync('page-'+i+'-image-'+j+'.jpg', raster);
+        }
+
+        i++
+    }
+
+
+
 
 Extracting Document Annotations
 -----------------------------------

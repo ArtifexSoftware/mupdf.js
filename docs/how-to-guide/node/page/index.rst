@@ -102,6 +102,20 @@ To get the images for a page we can use the :meth:`getImages` method as follows:
 This returns an array of objects which includes the image (:doc:`../../../classes/Image`) along with the bounding box and matrix transform.
 
 
+The following example would extract all the images from a page and save them as individual files:
+
+.. code-block:: javascript
+
+    var imageStack = page.getImages()
+
+    for (var i in imageStack) {
+        var image = imageStack[i].image;
+        var pixmap = image.toPixmap();
+        let raster = pixmap.asJPEG(80);
+        fs.writeFileSync('image-'+i+'.jpg', raster);
+    }
+
+
 Extracting Page Annotations
 -----------------------------------
 

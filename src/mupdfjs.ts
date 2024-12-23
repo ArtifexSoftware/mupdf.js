@@ -560,8 +560,16 @@ export class PDFDocument extends mupdf.PDFDocument {
 
         // Metadata cleaning
         if (metadata) {
-            // TODO: Implement metadata cleaning
-        }
+			// Clear all standard PDF metadata fields
+			this.setMetaData("info:Title", "");
+			this.setMetaData("info:Author", "");
+			this.setMetaData("info:Subject", "");
+			this.setMetaData("info:Keywords", "");
+			this.setMetaData("info:Creator", "");
+			this.setMetaData("info:Producer", "");
+			this.setMetaData("info:CreationDate", "");
+			this.setMetaData("info:ModDate", "");
+		}
 
         // Process each page
         const pageCount = this.countPages();

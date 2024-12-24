@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { PDFDocument } from "../../../dist/mupdfjs";
 
-describe("PDFDocument scrub metadata test", () => {
+describe("PDFDocument scrub test", () => {
 	it("should clean metadata from a new document", () => {
 		// Create a new document
 		const doc = PDFDocument.createBlankDocument();
@@ -38,6 +38,31 @@ describe("PDFDocument scrub metadata test", () => {
 			expect(doc.getMetaData("info:Producer")).toBeUndefined();
 			expect(doc.getMetaData("info:CreationDate")).toBeUndefined();
 			expect(doc.getMetaData("info:ModDate")).toBeUndefined();
+		} finally {
+			doc.destroy();
+		}
+	});
+
+	it("should remove all links from pages", () => {
+		// Create a new document
+		const doc = PDFDocument.createBlankDocument();
+
+		try {
+			// Add a link to the first page
+			const page = doc.loadPage(0);
+			page.createLink([50, 50, 150, 100], "https://example.com");
+
+			// Verify link exists
+			const linksBeforeScrub = page.getLinks();
+			expect(linksBeforeScrub.length).toBe(1);
+			expect(linksBeforeScrub[0].getURI()).toBe("https://example.com");
+
+			// Scrub links
+			doc.scrub({ removeLinks: true });
+
+			// Verify links are removed
+			const linksAfterScrub = page.getLinks();
+			expect(linksAfterScrub.length).toBe(0);
 		} finally {
 			doc.destroy();
 		}

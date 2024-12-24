@@ -578,7 +578,11 @@ export class PDFDocument extends mupdf.PDFDocument {
 
             // Remove links
             if (removeLinks) {
-                // TODO: Implement link removal
+                const page = this.loadPage(i);
+                const links = page.getLinks();
+                for (const link of links) {
+                    page.deleteLink(link);
+                }
             }
 
             // Handle attached files

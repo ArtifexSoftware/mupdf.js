@@ -67,4 +67,49 @@ describe("PDFDocument scrub test", () => {
 			doc.destroy();
 		}
 	});
+
+	it("should remove file attachment annotations", () => {
+		// Create a new document
+		const doc = PDFDocument.createBlankDocument();
+
+		try {
+			// Add a file attachment annotation to the first page
+			const page = doc.loadPage(0);
+			const annot = page.createAnnotation("FileAttachment");
+			annot.setRect([50, 50, 100, 100]);
+			annot.setContents("Test attachment");
+			annot.update();
+
+			// Verify file attachment exists
+			const annotationsBeforeScrub = page.getAnnotations();
+			const fileAttachment = annotationsBeforeScrub.find(a => a.getType() === "FileAttachment");
+			expect(fileAttachment).toBeDefined();
+
+			// Scrub file attachments
+			doc.scrub({ attachedFiles: true });
+
+			// Verify file attachment exists but content is empty
+			const annotationsAfterScrub = page.getAnnotations();
+			const scrubbedAttachment = annotationsAfterScrub.find(a => a.getType() === "FileAttachment");
+			expect(scrubbedAttachment).toBeDefined();
+			expect(annotationsAfterScrub.length).toBe(annotationsBeforeScrub.length);
+
+			// Verify file content is empty
+			const fileSpec = scrubbedAttachment!.getFileSpec();
+			expect(fileSpec).toBeDefined();
+			
+			// Get embedded file stream
+			const ef = fileSpec.get("EF");
+			expect(ef.isDictionary()).toBe(true);
+			
+			// Verify stream content is empty
+			const stream = ef.get("F");
+			expect(stream.isStream()).toBe(true);
+			const content = stream.readStream();
+			expect(content.getLength()).toBe(1);
+			expect(content.readByte(0)).toBe(32); // space character
+		} finally {
+			doc.destroy();
+		}
+	});
 });

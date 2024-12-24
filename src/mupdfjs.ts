@@ -587,7 +587,22 @@ export class PDFDocument extends mupdf.PDFDocument {
 
             // Handle attached files
             if (attachedFiles) {
-                // TODO: Implement attached files handling
+                const page = this.loadPage(i);
+                const annotations = page.getAnnotations();
+                for (const annot of annotations) {
+                    if (annot.getType() === "FileAttachment") {
+                        // Empty the file content but keep the annotation
+                        const emptyBuffer = new Buffer(" ");
+                        const emptyFileSpec = this.addEmbeddedFile(
+                            "empty",
+                            "application/octet-stream",
+                            emptyBuffer,
+                            new Date(),
+                            new Date()
+                        );
+                        annot.setFileSpec(emptyFileSpec);
+                    }
+                }
             }
 
             // Clean pages

@@ -139,4 +139,40 @@ describe("PDFDocument scrub test", () => {
 			doc.destroy();
 		}
 	});
+
+	it("should remove XML metadata", () => {
+		// Create a new document
+		const doc = PDFDocument.createBlankDocument();
+
+		try {
+			// Add XML metadata
+			const xmlMetadata = `<?xml version="1.0" encoding="UTF-8"?>
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+					<rdf:Description>
+						<test>Test Value</test>
+					</rdf:Description>
+				</rdf:RDF>`;
+			const root = doc.getTrailer().get("Root");
+			const metadata = doc.newDictionary();
+			metadata.put("Type", doc.newName("Metadata"));
+			metadata.put("Subtype", doc.newName("XML"));
+			const stream = doc.addStream(xmlMetadata, {});
+			root.put("Metadata", stream);
+
+			// Verify XML metadata exists
+			const metadataBeforeScrub = root.get("Metadata");
+			expect(metadataBeforeScrub.isStream()).toBe(true);
+			const streamBeforeScrub = metadataBeforeScrub.readStream().asString();
+			expect(streamBeforeScrub).toContain("Test Value");
+
+			// Scrub XML metadata
+			doc.scrub({ xmlMetadata: true });
+
+			// Verify XML metadata is removed
+			const metadataAfterScrub = root.get("Metadata");
+			expect(metadataAfterScrub.isNull()).toBe(true);
+		} finally {
+			doc.destroy();
+		}
+	});
 });

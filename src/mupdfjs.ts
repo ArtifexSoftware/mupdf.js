@@ -646,7 +646,20 @@ export class PDFDocument extends mupdf.PDFDocument {
 
         // Handle JavaScript
         if (javascript) {
-            // TODO: Implement JavaScript removal
+            const xrefLength = this.countObjects();
+            for (let xref = 1; xref < xrefLength; xref++) {
+                const obj = this.newIndirect(xref);
+                const resolvedObj = obj.resolve();
+                if (resolvedObj.isDictionary()) {
+                    const type = resolvedObj.get("S");
+                    if (!type.isNull() && type.asName() === "JavaScript") {
+                        const newObj = this.newDictionary();
+                        newObj.put("S", this.newName("JavaScript"));
+                        newObj.put("JS", this.newString(""));
+                        obj.writeObject(newObj);
+                    }
+                }
+            }
         }
 
         // Handle XML metadata

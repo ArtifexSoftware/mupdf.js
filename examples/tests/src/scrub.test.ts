@@ -112,4 +112,31 @@ describe("PDFDocument scrub test", () => {
 			doc.destroy();
 		}
 	});
+
+	it("should remove JavaScript actions", () => {
+		// Create a new document
+		const doc = PDFDocument.createBlankDocument();
+
+		try {
+			// Add JavaScript action
+			const jsAction = doc.newDictionary();
+			jsAction.put("S", doc.newName("JavaScript"));
+			jsAction.put("JS", doc.newString("app.alert('Hello');"));
+			const actionObj = doc.addObject(jsAction);
+
+			// Verify JavaScript exists
+			expect(actionObj.get("S").asName()).toBe("JavaScript");
+			expect(actionObj.get("JS").asString()).toBe("app.alert('Hello');");
+
+			// Scrub JavaScript
+			doc.scrub({ javascript: true });
+
+			// Verify JavaScript is removed
+			const scrubbedObj = doc.newIndirect(actionObj.asIndirect()).resolve();
+			expect(scrubbedObj.get("S").asName()).toBe("JavaScript");
+			expect(scrubbedObj.get("JS").asString()).toBe("");
+		} finally {
+			doc.destroy();
+		}
+	});
 });

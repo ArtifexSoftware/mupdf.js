@@ -16,7 +16,7 @@ describe("PDFDocument scrub test", () => {
 			doc.setMetaData("info:Producer", "Test Producer");
 			doc.setMetaData("info:CreationDate", "D:20240101000000Z");
 			doc.setMetaData("info:ModDate", "D:20240101120000Z");
-			
+
 			expect(doc.getMetaData("info:Title")).toBe("Test Document");
 			expect(doc.getMetaData("info:Author")).toBe("Test Author");
 			expect(doc.getMetaData("info:Subject")).toBe("Test Subject");
@@ -82,7 +82,9 @@ describe("PDFDocument scrub test", () => {
 
 			// Verify file attachment exists
 			const annotationsBeforeScrub = page.getAnnotations();
-			const fileAttachment = annotationsBeforeScrub.find(a => a.getType() === "FileAttachment");
+			const fileAttachment = annotationsBeforeScrub.find(
+				(a) => a.getType() === "FileAttachment",
+			);
 			expect(fileAttachment).toBeDefined();
 
 			// Scrub file attachments
@@ -90,18 +92,24 @@ describe("PDFDocument scrub test", () => {
 
 			// Verify file attachment exists but content is empty
 			const annotationsAfterScrub = page.getAnnotations();
-			const scrubbedAttachment = annotationsAfterScrub.find(a => a.getType() === "FileAttachment");
+			const scrubbedAttachment = annotationsAfterScrub.find(
+				(a) => a.getType() === "FileAttachment",
+			);
 			expect(scrubbedAttachment).toBeDefined();
 			expect(annotationsAfterScrub.length).toBe(annotationsBeforeScrub.length);
 
 			// Verify file content is empty
-			const fileSpec = scrubbedAttachment!.getFileSpec();
+			expect(scrubbedAttachment).toBeDefined();
+			if (!scrubbedAttachment) {
+				throw new Error("File attachment not found");
+			}
+			const fileSpec = scrubbedAttachment.getFileSpec();
 			expect(fileSpec).toBeDefined();
-			
+
 			// Get embedded file stream
 			const ef = fileSpec.get("EF");
 			expect(ef.isDictionary()).toBe(true);
-			
+
 			// Verify stream content is empty
 			const stream = ef.get("F");
 			expect(stream.isStream()).toBe(true);
@@ -171,6 +179,40 @@ describe("PDFDocument scrub test", () => {
 			// Verify XML metadata is removed
 			const metadataAfterScrub = root.get("Metadata");
 			expect(metadataAfterScrub.isNull()).toBe(true);
+		} finally {
+			doc.destroy();
+		}
+	});
+
+	it("should remove embedded files", () => {
+		// Create a new document
+		const doc = PDFDocument.createBlankDocument();
+
+		try {
+			// Add embedded file
+			const data = Buffer.from("test data");
+			doc.attachFile("test.txt", data);
+
+			// Verify embedded file exists
+			const root = doc.getTrailer().get("Root");
+			const names = root.get("Names");
+			expect(names.isDictionary()).toBe(true);
+			const embeddedFiles = names.get("EmbeddedFiles");
+			expect(embeddedFiles.isDictionary()).toBe(true);
+			const dests = embeddedFiles.get("Names");
+			expect(dests.isArray()).toBe(true);
+			expect(dests.length).toBe(2); // [name, filespec]
+			expect(dests.get(0).asString()).toBe("test.txt");
+
+			// Scrub embedded files
+			doc.scrub({ embeddedFiles: true });
+
+			// Verify embedded files are removed
+			const namesAfterScrub = root.get("Names");
+			const embeddedFilesAfterScrub = namesAfterScrub.get("EmbeddedFiles");
+			const destsAfterScrub = embeddedFilesAfterScrub.get("Names");
+			expect(destsAfterScrub.isArray()).toBe(true);
+			expect(destsAfterScrub.length).toBe(0);
 		} finally {
 			doc.destroy();
 		}

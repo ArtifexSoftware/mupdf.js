@@ -641,7 +641,15 @@ export class PDFDocument extends mupdf.PDFDocument {
 
         // Handle embedded files
         if (embeddedFiles) {
-            // TODO: Implement embedded files handling
+            const root = this.getTrailer().get("Root");
+            const names = root.get("Names");
+            if (!names.isNull() && names.isDictionary()) {
+                const embeddedFilesDict = names.get("EmbeddedFiles");
+                if (!embeddedFilesDict.isNull() && embeddedFilesDict.isDictionary()) {
+                    const emptyArray = this.newArray();
+                    embeddedFilesDict.put("Names", emptyArray);
+                }
+            }
         }
 
         // Handle JavaScript

@@ -2236,7 +2236,7 @@ char * wasm_pdf_to_string(pdf_obj *obj, size_t *size)
 	POINTER(pdf_to_string, obj, size)
 }
 
-/* STREAMS */
+// --- STREAMS ---
 
 struct js_stm_state {
 	int id;
@@ -2305,4 +2305,327 @@ fz_stream *wasm_new_stream(int id)
 		stm->seek = js_stm_seek;
 	})
 	return stm;
+}
+
+// --- JAVASCRIPT CALLBACK DEVICE ---
+
+typedef struct
+{
+	fz_device super;
+	int id;
+} js_device;
+
+static void
+js_dev_drop_device(fz_context *ctx, fz_device *dev)
+{
+	EM_ASM({ globalThis.$libmupdf_device.drop_device($0) }, ((js_device*)dev)->id);
+}
+
+static void
+js_dev_close_device(fz_context *ctx, fz_device *dev)
+{
+	EM_ASM({ globalThis.$libmupdf_device.close_device($0) }, ((js_device*)dev)->id);
+}
+
+static void
+js_dev_fill_path(fz_context *ctx, fz_device *dev, const fz_path *path, int even_odd, fz_matrix ctm,
+	fz_colorspace *colorspace, const float *color, float alpha, fz_color_params color_params)
+{
+	EM_ASM({ globalThis.$libmupdf_device.fill_path($0, $1, $2, $3, $4, $5, $6, $7) },
+		((js_device*)dev)->id,
+		path,
+		even_odd,
+		&ctm,
+		colorspace,
+		colorspace->n,
+		color,
+		alpha
+	);
+}
+
+static void
+js_dev_clip_path(fz_context *ctx, fz_device *dev, const fz_path *path, int even_odd, fz_matrix ctm,
+	fz_rect scissor)
+{
+	EM_ASM({ globalThis.$libmupdf_device.clip_path($0, $1, $2, $3) },
+		((js_device*)dev)->id,
+		path,
+		even_odd,
+		&ctm
+	);
+}
+
+static void
+js_dev_stroke_path(fz_context *ctx, fz_device *dev, const fz_path *path,
+	const fz_stroke_state *stroke, fz_matrix ctm,
+	fz_colorspace *colorspace, const float *color, float alpha, fz_color_params color_params)
+{
+	EM_ASM({ globalThis.$libmupdf_device.stroke_path($0, $1, $2, $3, $4, $5, $6, $7) },
+		((js_device*)dev)->id,
+		path,
+		stroke,
+		&ctm,
+		colorspace,
+		colorspace->n,
+		color,
+		alpha
+	);
+}
+
+static void
+js_dev_clip_stroke_path(fz_context *ctx, fz_device *dev, const fz_path *path, const fz_stroke_state *stroke,
+	fz_matrix ctm, fz_rect scissor)
+{
+	EM_ASM({ globalThis.$libmupdf_device.clip_stroke_path($0, $1, $2, $3) },
+		((js_device*)dev)->id,
+		path,
+		stroke,
+		&ctm
+	);
+}
+
+static void
+js_dev_fill_text(fz_context *ctx, fz_device *dev, const fz_text *text, fz_matrix ctm,
+	fz_colorspace *colorspace, const float *color, float alpha, fz_color_params color_params)
+{
+	EM_ASM({ globalThis.$libmupdf_device.fill_text($0, $1, $2, $3, $4, $5, $6) },
+		((js_device*)dev)->id,
+		text,
+		&ctm,
+		colorspace,
+		colorspace->n,
+		color,
+		alpha
+	);
+}
+
+static void
+js_dev_stroke_text(fz_context *ctx, fz_device *dev, const fz_text *text, const fz_stroke_state *stroke,
+	fz_matrix ctm, fz_colorspace *colorspace, const float *color, float alpha, fz_color_params color_params)
+{
+	EM_ASM({ globalThis.$libmupdf_device.stroke_text($0, $1, $2, $3, $4, $5, $6, $7) },
+		((js_device*)dev)->id,
+		text,
+		stroke,
+		&ctm,
+		colorspace,
+		colorspace->n,
+		color,
+		alpha
+	);
+}
+
+static void
+js_dev_clip_text(fz_context *ctx, fz_device *dev, const fz_text *text, fz_matrix ctm, fz_rect scissor)
+{
+	EM_ASM({ globalThis.$libmupdf_device.clip_text($0, $1, $2) },
+		((js_device*)dev)->id,
+		text,
+		&ctm
+	);
+}
+
+static void
+js_dev_clip_stroke_text(fz_context *ctx, fz_device *dev, const fz_text *text, const fz_stroke_state *stroke,
+	fz_matrix ctm, fz_rect scissor)
+{
+	EM_ASM({ globalThis.$libmupdf_device.clip_stroke_text($0, $1, $2, $3) },
+		((js_device*)dev)->id,
+		text,
+		stroke,
+		&ctm
+	);
+}
+
+static void
+js_dev_ignore_text(fz_context *ctx, fz_device *dev, const fz_text *text, fz_matrix ctm)
+{
+	EM_ASM({ globalThis.$libmupdf_device.ignore_text($0, $1, $2) },
+		((js_device*)dev)->id,
+		text,
+		&ctm
+	);
+}
+
+static void
+js_dev_fill_shade(fz_context *ctx, fz_device *dev, fz_shade *shade, fz_matrix ctm, float alpha, fz_color_params color_params)
+{
+	EM_ASM({ globalThis.$libmupdf_device.fill_shade($0, $1, $2, $3) },
+		((js_device*)dev)->id,
+		shade,
+		&ctm,
+		alpha
+	);
+}
+
+static void
+js_dev_fill_image(fz_context *ctx, fz_device *dev, fz_image *image, fz_matrix ctm, float alpha, fz_color_params color_params)
+{
+	EM_ASM({ globalThis.$libmupdf_device.fill_image($0, $1, $2, $3) },
+		((js_device*)dev)->id,
+		image,
+		&ctm,
+		alpha
+	);
+}
+
+static void
+js_dev_fill_image_mask(fz_context *ctx, fz_device *dev, fz_image *image, fz_matrix ctm,
+	fz_colorspace *colorspace, const float *color, float alpha, fz_color_params color_params)
+{
+	EM_ASM({ globalThis.$libmupdf_device.fill_image_mask($0, $1, $2, $3, $4, $5, $6) },
+		((js_device*)dev)->id,
+		image,
+		&ctm,
+		colorspace,
+		colorspace->n,
+		color,
+		alpha
+	);
+}
+
+static void
+js_dev_clip_image_mask(fz_context *ctx, fz_device *dev, fz_image *image, fz_matrix ctm, fz_rect scissor)
+{
+	EM_ASM({ globalThis.$libmupdf_device.clip_image_mask($0, $1, $2) },
+		((js_device*)dev)->id,
+		image,
+		&ctm
+	);
+}
+
+static void
+js_dev_pop_clip(fz_context *ctx, fz_device *dev)
+{
+	EM_ASM({ globalThis.$libmupdf_device.pop_clip($0) },
+		((js_device*)dev)->id
+	);
+}
+
+static void
+js_dev_begin_mask(fz_context *ctx, fz_device *dev, fz_rect bbox, int luminosity,
+	fz_colorspace *colorspace, const float *color, fz_color_params color_params)
+{
+	EM_ASM({ globalThis.$libmupdf_device.begin_mask($0, $1, $2, $3, $4, $5) },
+		((js_device*)dev)->id,
+		&bbox,
+		luminosity,
+		colorspace,
+		colorspace->n,
+		color
+	);
+}
+
+static void
+js_dev_end_mask(fz_context *ctx, fz_device *dev, fz_function *tr)
+{
+	EM_ASM({ globalThis.$libmupdf_device.end_mask($0, $1) },
+		((js_device*)dev)->id,
+		tr
+	);
+}
+
+static void
+js_dev_begin_group(fz_context *ctx, fz_device *dev, fz_rect bbox,
+	fz_colorspace *colorspace, int isolated, int knockout, int blendmode, float alpha)
+{
+	EM_ASM({ globalThis.$libmupdf_device.begin_mask($0, $1, $2, $3, $4, $5, $6) },
+		((js_device*)dev)->id,
+		&bbox,
+		colorspace,
+		isolated,
+		knockout,
+		blendmode,
+		alpha
+	);
+}
+
+static void
+js_dev_end_group(fz_context *ctx, fz_device *dev)
+{
+	EM_ASM({ globalThis.$libmupdf_device.end_group($0) },
+		((js_device*)dev)->id
+	);
+}
+
+static int
+js_dev_begin_tile(fz_context *ctx, fz_device *dev, fz_rect area, fz_rect view,
+	float xstep, float ystep, fz_matrix ctm, int id)
+{
+	return EM_ASM_INT({ return globalThis.$libmupdf_device.begin_mask($0, $1, $2, $3, $4, $5, $6) },
+		((js_device*)dev)->id,
+		&area,
+		&view,
+		xstep,
+		ystep,
+		&ctm,
+		id
+	);
+}
+
+static void
+js_dev_end_tile(fz_context *ctx, fz_device *dev)
+{
+	EM_ASM({ globalThis.$libmupdf_device.end_tile($0) },
+		((js_device*)dev)->id
+	);
+}
+
+static void
+js_dev_begin_layer(fz_context *ctx, fz_device *dev, const char *name)
+{
+	EM_ASM({ globalThis.$libmupdf_device.begin_layer($0, $1) },
+		((js_device*)dev)->id,
+		name
+	);
+}
+
+static void
+js_dev_end_layer(fz_context *ctx, fz_device *dev)
+{
+	EM_ASM({ globalThis.$libmupdf_device.end_layer($0) },
+		((js_device*)dev)->id
+	);
+}
+
+EXPORT
+fz_device *wasm_new_js_device(int id)
+{
+	js_device *dev = fz_new_derived_device(ctx, js_device);
+
+	dev->super.close_device = js_dev_close_device;
+	dev->super.drop_device = js_dev_drop_device;
+
+	dev->super.fill_path = js_dev_fill_path;
+	dev->super.stroke_path = js_dev_stroke_path;
+	dev->super.clip_path = js_dev_clip_path;
+	dev->super.clip_stroke_path = js_dev_clip_stroke_path;
+
+	dev->super.fill_text = js_dev_fill_text;
+	dev->super.stroke_text = js_dev_stroke_text;
+	dev->super.clip_text = js_dev_clip_text;
+	dev->super.clip_stroke_text = js_dev_clip_stroke_text;
+	dev->super.ignore_text = js_dev_ignore_text;
+
+	dev->super.fill_shade = js_dev_fill_shade;
+	dev->super.fill_image = js_dev_fill_image;
+	dev->super.fill_image_mask = js_dev_fill_image_mask;
+	dev->super.clip_image_mask = js_dev_clip_image_mask;
+
+	dev->super.pop_clip = js_dev_pop_clip;
+
+	dev->super.begin_mask = js_dev_begin_mask;
+	dev->super.end_mask = js_dev_end_mask;
+	dev->super.begin_group = js_dev_begin_group;
+	dev->super.end_group = js_dev_end_group;
+
+	dev->super.begin_tile = js_dev_begin_tile;
+	dev->super.end_tile = js_dev_end_tile;
+
+	dev->super.begin_layer = js_dev_begin_layer;
+	dev->super.end_layer = js_dev_end_layer;
+
+	dev->id = id;
+
+	return (fz_device*)dev;
 }

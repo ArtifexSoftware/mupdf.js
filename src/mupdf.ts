@@ -415,6 +415,14 @@ function fromColor(n: number): Color {
 	throw new TypeError("invalid number of components for Color: " + n)
 }
 
+function fromColorArray(n: number, ptr: Pointer<"float">): number[] {
+	let addr = ptr >> 2
+	let color: number[] = []
+	for (let i = 0; i < n; ++i)
+		color.push(libmupdf.HEAPF32[addr + i] as number)
+	return color
+}
+
 function fromString(ptr: Pointer<"char">): string {
 	return libmupdf.UTF8ToString(ptr)
 }
@@ -1404,6 +1412,19 @@ export class Device extends Userdata<"fz_device"> {
 		"Color",
 		"Luminosity",
 	]
+
+	constructor(pointer: Pointer<"fz_device">)
+	constructor(callbacks: DeviceFunctions)
+
+	constructor(pointer_or_callbacks: Pointer<"fz_device"> | DeviceFunctions) {
+		if (typeof pointer_or_callbacks === "number")
+			super(pointer_or_callbacks)
+		else {
+			let id = $libmupdf_device_id++
+			$libmupdf_device_table.set(id, pointer_or_callbacks)
+			super(libmupdf._wasm_new_js_device(id))
+		}
+	}
 
 	fillPath(path: Path, evenOdd: boolean, ctm: Matrix, colorspace: ColorSpace, color: Color, alpha: number) {
 		checkType(path, Path)
@@ -3707,4 +3728,335 @@ export class Stream extends Userdata<"fz_stream"> {
 		$libmupdf_stm_table.set(id, handle)
 		super(libmupdf._wasm_new_stream(id))
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+interface DeviceFunctions {
+	drop?(): void,
+	close?(): void,
+
+	fillPath?(path: Path, evenOdd: boolean, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	strokePath?(path: Path, stroke: StrokeState, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	clipPath?(path: Path, evenOdd: boolean, ctm: Matrix): void,
+	clipStrokePath?(path: Path, stroke: StrokeState, ctm: Matrix): void,
+
+	fillText?(text: Text, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	strokeText?(text: Text, stroke: StrokeState, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	clipText?(text: Text, ctm: Matrix): void,
+	clipStrokeText?(text: Text, stroke: StrokeState, ctm: Matrix): void,
+	ignoreText?(text: Text, ctm: Matrix): void,
+
+	fillShade?(shade: Shade, ctm: Matrix, alpha: number): void,
+
+	fillImage?(image: Image, ctm: Matrix, alpha: number): void,
+	fillImageMask?(image: Image, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	clipImageMask?(image: Image, ctm: Matrix): void,
+
+	popClip?(): void,
+
+	beginMask?(bbox: Rect, luminosity: boolean, colorspace: ColorSpace, color: number[]): void,
+	endMask?(): void,
+
+	beginGroup?(bbox: Rect, colorspace: ColorSpace, isolated: boolean, knockout: boolean, blendmode: BlendMode, alpha: number): void,
+	endGroup?(): void,
+
+	beginTile?(area: Rect, view: Rect, xstep: number, ystep: number, ctm: Matrix, id: number): number,
+	endTile?(): void,
+
+	beginLayer?(name: string): void,
+	endLayer?(): void,
+}
+
+var $libmupdf_device_id = 0
+var $libmupdf_device_table: Map<number,DeviceFunctions> = new Map()
+
+declare global {
+	var $libmupdf_device: any
+}
+
+globalThis.$libmupdf_device = {
+	drop_device(id: number): void {
+		$libmupdf_device_table.get(id)?.drop?.()
+		$libmupdf_device_table.delete(id)
+	},
+
+	close_device(id: number): void {
+		$libmupdf_device_table.get(id)?.close?.()
+	},
+
+	fill_path(
+		id: number,
+		path: Pointer<"fz_path">,
+		even_odd: number,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillPath?.(
+			new Path(path),
+			!!even_odd,
+			fromMatrix(ctm),
+			new ColorSpace(colorspace),
+			fromColorArray(color_n, color_arr),
+			alpha
+		)
+	},
+
+	clip_path(
+		id: number,
+		path: Pointer<"fz_path">,
+		even_odd: number,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.clipPath?.(
+				new Path(path),
+				!!even_odd,
+				fromMatrix(ctm)
+			)
+	},
+
+	stroke_path(
+		id: number,
+		path: Pointer<"fz_path">,
+		stroke: Pointer<"fz_stroke_state">,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.strokePath?.(
+			new Path(path),
+			new StrokeState(stroke),
+			fromMatrix(ctm),
+			new ColorSpace(colorspace),
+			fromColorArray(color_n, color_arr),
+			alpha
+		)
+	},
+
+	clip_stroke_path(
+		id: number,
+		path: Pointer<"fz_path">,
+		stroke: Pointer<"fz_stroke_state">,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.clipStrokePath?.(
+			new Path(path),
+			new StrokeState(stroke),
+			fromMatrix(ctm)
+		)
+	},
+
+	fill_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillText?.(
+				new Text(text),
+				fromMatrix(ctm),
+				new ColorSpace(colorspace),
+				fromColorArray(color_n, color_arr),
+				alpha
+			)
+	},
+
+	stroke_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		stroke: Pointer<"fz_stroke_state">,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.strokeText?.(
+				new Text(text),
+				new StrokeState(stroke),
+				fromMatrix(ctm),
+				new ColorSpace(colorspace),
+				fromColorArray(color_n, color_arr),
+				alpha
+			)
+	},
+
+	clip_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.clipText?.(
+				new Text(text),
+				fromMatrix(ctm)
+			)
+	},
+
+	clip_stroke_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		stroke: Pointer<"fz_stroke_state">,
+		ctm: Pointer<"fz_matrix">,
+	): void {
+		$libmupdf_device_table.get(id)?.clipStrokeText?.(
+				new Text(text),
+				new StrokeState(stroke),
+				fromMatrix(ctm)
+			)
+	},
+
+	ignore_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.ignoreText?.(
+				new Text(text),
+				fromMatrix(ctm)
+			)
+	},
+
+	fill_shade(
+		id: number,
+		shade: Pointer<"fz_shade">,
+		ctm: Pointer<"fz_matrix">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillShade?.(
+				new Shade(shade),
+				fromMatrix(ctm),
+				alpha
+			)
+	},
+
+	fill_image(
+		id: number,
+		image: Pointer<"fz_image">,
+		ctm: Pointer<"fz_matrix">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillImage?.(
+			new Image(image),
+			fromMatrix(ctm),
+			alpha
+		)
+	},
+
+	fill_image_mask(
+		id: number,
+		image: Pointer<"fz_image">,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillImageMask?.(
+			new Image(image),
+			fromMatrix(ctm),
+			new ColorSpace(colorspace),
+			fromColorArray(color_n, color_arr),
+			alpha
+		)
+	},
+
+	clip_image_mask(
+		id: number,
+		image: Pointer<"fz_image">,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.clipImageMask?.(
+			new Image(image),
+			fromMatrix(ctm)
+		)
+	},
+
+	pop_clip(id: number): void {
+		$libmupdf_device_table.get(id)?.popClip?.()
+	},
+
+	begin_mask(
+		id: number,
+		bbox: Pointer<"fz_rect">,
+		luminosity: number,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">
+	): void {
+		$libmupdf_device_table.get(id)?.beginMask?.(
+			fromRect(bbox),
+			!!luminosity,
+			new ColorSpace(colorspace),
+			fromColorArray(color_n, color_arr)
+		)
+	},
+
+	begin_group(
+		id: number,
+		bbox: Pointer<"fz_rect">,
+		colorspace: Pointer<"fz_colorspace">,
+		isolated: number,
+		knockout: number,
+		blendmode: number,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.beginGroup?.(
+			fromRect(bbox),
+			new ColorSpace(colorspace),
+			!!isolated,
+			!!knockout,
+			Device.BLEND_MODES[blendmode] as BlendMode,
+			alpha
+		)
+	},
+
+	begin_tile(
+		id: number,
+		area: Pointer<"fz_rect">,
+		view: Pointer<"fz_rect">,
+		xstep: number,
+		ystep: number,
+		ctm: Pointer<"fz_matrix">,
+		tile_id: number
+	): number {
+		return $libmupdf_device_table.get(id)?.beginTile?.(
+			fromRect(area),
+			fromRect(view),
+			xstep,
+			ystep,
+			fromMatrix(ctm),
+			tile_id
+		) || 0
+	},
+
+	begin_layer(id: number, name: Pointer<"char">): void {
+		$libmupdf_device_table.get(id)?.beginLayer?.(
+			fromString(name)
+		)
+	},
+
+	end_mask(id: number): void {
+		$libmupdf_device_table.get(id)?.endMask?.()
+	},
+
+	end_group(id: number): void {
+		$libmupdf_device_table.get(id)?.endGroup?.()
+	},
+
+	end_tile(id: number): void {
+		$libmupdf_device_table.get(id)?.endTile?.()
+	},
+
+	end_layer(id: number): void {
+		$libmupdf_device_table.get(id)?.endLayer?.()
+	},
+
 }

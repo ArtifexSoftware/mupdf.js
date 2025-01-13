@@ -2351,10 +2351,23 @@ export class PDFDocument extends Document {
 		}
 	}
 
-	saveToBuffer(options = "") {
-		checkType(options, "string")
-		// TODO: object options to string options?
-		return new Buffer(libmupdf._wasm_pdf_write_document_buffer(this.pointer, STRING(options)))
+	saveToBuffer(options: string | Record<string,any> = "") {
+		var options_string
+		if (typeof options === "object") {
+			options_string = Object.entries(options).map(kv => {
+				var k: string = kv[0]
+				var v: any = kv[1]
+				if (v === true)
+					return k + "=" + "yes"
+				else if (v === false)
+					return k + "=" + "no"
+				else
+					return k + "=" + String(v).replaceAll(",", ":")
+			}).join(",")
+		} else {
+			options_string = ""
+		}
+		return new Buffer(libmupdf._wasm_pdf_write_document_buffer(this.pointer, STRING(options_string)))
 	}
 
 	static readonly PAGE_LABEL_NONE = "\0"

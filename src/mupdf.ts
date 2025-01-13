@@ -2473,6 +2473,10 @@ export class PDFDocument extends Document {
 		}
 	}
 
+	subsetFonts() {
+		libmupdf._wasm_pdf_subset_fonts(this.pointer)
+	}
+
 	bake(bakeAnnots = true, bakeWidgets = true) {
 		libmupdf._wasm_pdf_bake_document(this.pointer, bakeAnnots, bakeWidgets)
 	}

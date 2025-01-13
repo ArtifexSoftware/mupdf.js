@@ -337,6 +337,7 @@ interface Libmupdf {
 	_wasm_pdf_enable_js(doc: Pointer<"any_document">): void,
 	_wasm_pdf_disable_js(doc: Pointer<"any_document">): void,
 	_wasm_pdf_rearrange_pages(doc: Pointer<"any_document">, n: number, pages: Pointer<"int">): void,
+	_wasm_pdf_subset_fonts(doc: Pointer<"any_document">): void,
 	_wasm_pdf_bake_document(doc: Pointer<"any_document">, bake_annots: boolean, bake_widgets: boolean): void,
 	_wasm_pdf_page_transform(page: Pointer<"any_page">): Pointer<"fz_matrix">,
 	_wasm_pdf_set_page_box(page: Pointer<"any_page">, which: number, rect: Pointer<"fz_rect">): void,

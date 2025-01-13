@@ -1492,6 +1492,12 @@ void wasm_pdf_rearrange_pages(pdf_document *doc, int n, int *pages)
 }
 
 EXPORT
+void wasm_pdf_subset_fonts(pdf_document *doc)
+{
+	VOID(pdf_subset_fonts, doc, 0, NULL);
+}
+
+EXPORT
 void wasm_pdf_bake_document(pdf_document *doc, boolean bake_annots, boolean bake_widgets)
 {
 	VOID(pdf_bake_document, doc, bake_annots, bake_widgets)

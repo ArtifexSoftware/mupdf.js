@@ -154,6 +154,10 @@ Generally the more `-DTOFU` type options you give then the fewer fonts are inclu
           - To skip the SIL fonts
 
 
+.. note::
+
+    If you do change the build options, then ensure to run `make clean` before `make` to get up-to-date build results in the `dist` folder.
+
 4. Create **HTML** & **JS** Test Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

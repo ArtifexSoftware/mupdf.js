@@ -941,6 +941,13 @@ export class StrokeState extends Userdata<"fz_stroke_state"> {
 	// TODO: dashes
 }
 
+interface PathWalker {
+	moveTo?(x: number, y: number): void
+	lineTo?(x: number, y: number): void
+	curveTo?(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): void
+	closePath?(): void
+}
+
 export class Path extends Userdata<"fz_path"> {
 	static override readonly _drop = libmupdf._wasm_drop_path
 
@@ -995,9 +1002,18 @@ export class Path extends Userdata<"fz_path"> {
 		libmupdf._wasm_transform_path(this.pointer, MATRIX(matrix))
 	}
 
-	walk(_walker: any) {
-		throw "TODO"
+	walk(walker: PathWalker) {
+		let id = $libmupdf_path_id++
+		$libmupdf_path_table.set(id, walker)
+		libmupdf._wasm_walk_path(this.pointer, id)
+		$libmupdf_path_table.delete(id)
 	}
+}
+
+interface TextWalker {
+	beginSpan?(font: Font, trm: Matrix, wmode: number, bidi: number, markupDirection: number, language: string): void
+	showGlyph?(font: Font, trm: Matrix, glyph: number, unicode: number, wmode: number, bidi: number): void
+	endSpan?(): void
 }
 
 export class Text extends Userdata<"fz_text"> {
@@ -1047,8 +1063,11 @@ export class Text extends Userdata<"fz_text"> {
 		)
 	}
 
-	walk(_walker: any) {
-		throw "TODO"
+	walk(walker: TextWalker) {
+		let id = $libmupdf_text_id++
+		$libmupdf_text_table.set(id, walker)
+		libmupdf._wasm_walk_text(this.pointer, id)
+		$libmupdf_text_table.delete(id)
 	}
 }
 
@@ -3671,9 +3690,9 @@ export class PDFWidget extends PDFAnnotation {
 /* We need a certain level of ugliness to allow callbacks from C to JS */
 
 declare global {
-	function $libmupdf_stm_close(ptr: number): void;
-	function $libmupdf_stm_seek(ptr: number, pos: number, offset: number, whence: number): number;
-	function $libmupdf_stm_read(ptr: number, pos: number, addr: number, size: number): number;
+	function $libmupdf_stm_close(ptr: number): void
+	function $libmupdf_stm_seek(ptr: number, pos: number, offset: number, whence: number): number
+	function $libmupdf_stm_read(ptr: number, pos: number, addr: number, size: number): number
 }
 
 interface StreamHandle {
@@ -3771,8 +3790,79 @@ interface DeviceFunctions {
 var $libmupdf_device_id = 0
 var $libmupdf_device_table: Map<number,DeviceFunctions> = new Map()
 
+var $libmupdf_path_id = 0
+var $libmupdf_path_table: Map<number,PathWalker> = new Map()
+
+var $libmupdf_text_id = 0
+var $libmupdf_text_table: Map<number,TextWalker> = new Map()
+
 declare global {
+	var $libmupdf_path_walk: any
+	var $libmupdf_text_walk: any
 	var $libmupdf_device: any
+}
+
+globalThis.$libmupdf_path_walk = {
+	moveto(id: number, x: number, y: number): void {
+		$libmupdf_path_table.get(id)?.moveTo?.(x, y)
+	},
+	lineto(id: number, x: number, y: number): void {
+		$libmupdf_path_table.get(id)?.lineTo?.(x, y)
+	},
+	curveto(id: number, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): void {
+		$libmupdf_path_table.get(id)?.curveTo?.(x1, y1, x2, y2, x3, y3)
+	},
+	closepath(id: number): void {
+		$libmupdf_path_table.get(id)?.closePath?.()
+	},
+}
+
+var $libmupdf_text_font: Font | null = null
+
+globalThis.$libmupdf_text_walk = {
+	begin_span(
+		id: number,
+		font: Pointer<"fz_font">,
+		trm: Pointer<"fz_matrix">,
+		wmode: number,
+		bidi: number,
+		dir: number,
+		lang: Pointer<"char">
+	): void {
+		if (font !== $libmupdf_text_font?.pointer)
+			$libmupdf_text_font = new Font(font)
+		$libmupdf_text_table.get(id)?.beginSpan?.(
+			$libmupdf_text_font,
+			fromMatrix(trm),
+			wmode,
+			bidi,
+			dir,
+			fromString(lang)
+		)
+	},
+	end_span(id: number): void {
+		$libmupdf_text_table.get(id)?.endSpan?.()
+	},
+	show_glyph(
+		id: number,
+		font: Pointer<"fz_font">,
+		trm: Pointer<"fz_matrix">,
+		glyph: number,
+		unicode: number,
+		wmode: number,
+		bidi: number
+	): void {
+		if (font !== $libmupdf_text_font?.pointer)
+			$libmupdf_text_font = new Font(font)
+		$libmupdf_text_table.get(id)?.showGlyph?.(
+			$libmupdf_text_font,
+			fromMatrix(trm),
+			glyph,
+			unicode,
+			wmode,
+			bidi
+		)
+	},
 }
 
 globalThis.$libmupdf_device = {

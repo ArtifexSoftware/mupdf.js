@@ -2307,6 +2307,85 @@ fz_stream *wasm_new_stream(int id)
 	return stm;
 }
 
+// --- PATH WALKER CALLBACK DEVICE ---
+
+static void
+path_walk_moveto(fz_context *ctx, void *arg, float x, float y)
+{
+	EM_ASM({ globalThis.$libmupdf_path_walk.moveto($0, $1, $2) }, (int)arg, x, y);
+}
+
+static void
+path_walk_lineto(fz_context *ctx, void *arg, float x, float y)
+{
+	EM_ASM({ globalThis.$libmupdf_path_walk.lineto($0, $1, $2) }, (int)arg, x, y);
+}
+
+static void
+path_walk_curveto(fz_context *ctx, void *arg, float x1, float y1, float x2, float y2, float x3, float y3)
+{
+	EM_ASM({ globalThis.$libmupdf_path_walk.curveto($0, $1, $2, $3, $4, $5, $6) }, (int)arg, x1, y1, x2, y2, x3, y3);
+}
+
+static void
+path_walk_closepath(fz_context *ctx, void *arg)
+{
+	EM_ASM({ globalThis.$libmupdf_path_walk.closepath($0) }, (int)arg);
+}
+
+EXPORT
+void wasm_walk_path(fz_path *path, int walk_id)
+{
+	fz_path_walker walker = {
+		path_walk_moveto,
+		path_walk_lineto,
+		path_walk_curveto,
+		path_walk_closepath,
+	};
+	TRY({
+		fz_walk_path(ctx, path, &walker, (void*)walk_id);
+	})
+}
+
+// --- TEXT WALKER CALLBACK DEVICE ---
+
+EXPORT
+void wasm_walk_text(fz_text *text, int walk_id)
+{
+	char buf[8];
+	fz_text_span *span;
+	fz_matrix trm;
+	int i;
+
+	for (span = text->head; span; span = span->next) {
+		trm = span->trm;
+		EM_ASM({ globalThis.$libmupdf_text_walk.begin_span($0, $1, $2, $3, $4, $5, $6) },
+			walk_id,
+			span->font,
+			&trm,
+			span->wmode,
+			span->bidi_level,
+			span->markup_dir,
+			fz_string_from_text_language(buf, span->language)
+		);
+		for (i = 0; i < span->len; ++i) {
+			trm.e = span->items[i].x;
+			trm.f = span->items[i].y;
+			EM_ASM({ globalThis.$libmupdf_text_walk.show_glyph($0, $1, $2, $3, $4, $5, $6, $7) },
+				walk_id,
+				span->font,
+				&trm,
+				span->items[i].gid,
+				span->items[i].ucs,
+				span->wmode,
+				span->bidi_level,
+				span->markup_dir
+			);
+		}
+		EM_ASM({ globalThis.$libmupdf_text_walk.end_span($0) }, walk_id);
+	}
+}
+
 // --- JAVASCRIPT CALLBACK DEVICE ---
 
 typedef struct

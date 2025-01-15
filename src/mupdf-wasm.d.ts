@@ -522,5 +522,7 @@ interface Libmupdf {
 	_wasm_pdf_update_stream(doc: Pointer<"any_document">, ref: Pointer<"pdf_obj">, buf: Pointer<"fz_buffer">, raw: number): void,
 	_wasm_pdf_to_string(obj: Pointer<"pdf_obj">, size: Pointer<"int">): Pointer<"char">,
 	_wasm_new_stream(id: number): Pointer<"fz_stream">,
+	_wasm_walk_path(path: Pointer<"fz_path">, walk_id: number): void,
+	_wasm_walk_text(text: Pointer<"fz_text">, walk_id: number): void,
 	_wasm_new_js_device(id: number): Pointer<"fz_device">,
 }

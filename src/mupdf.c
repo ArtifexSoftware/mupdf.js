@@ -31,6 +31,7 @@
 #include "emscripten.h"
 #include "mupdf/fitz.h"
 #include "mupdf/pdf.h"
+#include "mupdf/ucdn.h"
 #include <string.h>
 #include <math.h>
 
@@ -72,6 +73,212 @@ wasm_rethrow(fz_context *ctx)
 		EM_ASM({ throw new Error(UTF8ToString($0)); }, message);
 }
 
+static fz_font *load_wasm_font_file(const char *name, const char *script)
+{
+	fz_buffer *mem = EM_ASM_PTR({ return globalThis.$libmupdf_load_font_file($0, $1) }, name, script);
+	if (mem)
+		return fz_new_font_from_buffer(ctx, name, mem, 0, 0);
+	return NULL;
+}
+
+static fz_font *load_wasm_font(fz_context *ctx, const char *name, int bold, int italic, int needs_exact_metrics)
+{
+	return load_wasm_font_file(name, "undefined");
+}
+
+static fz_font *load_wasm_cjk_font(fz_context *ctx, const char *name, int ordering, int serif)
+{
+	switch (ordering)
+	{
+	case FZ_ADOBE_CNS: return load_wasm_font_file(name, "TC");
+	case FZ_ADOBE_GB: return load_wasm_font_file(name, "SC");
+	case FZ_ADOBE_JAPAN: return load_wasm_font_file(name, "JP");
+	case FZ_ADOBE_KOREA: return load_wasm_font_file(name, "KR");
+	}
+	return NULL;
+}
+
+static fz_font *load_wasm_fallback_font(fz_context *ctx, int script, int language, int serif, int bold, int italic)
+{
+	switch (script)
+	{
+	default:
+	case UCDN_SCRIPT_COMMON:
+	case UCDN_SCRIPT_INHERITED:
+	case UCDN_SCRIPT_UNKNOWN:
+		return NULL;
+
+	case UCDN_SCRIPT_HANGUL: return load_wasm_font_file("undefined", "KR");
+	case UCDN_SCRIPT_HIRAGANA: return load_wasm_font_file("undefined", "JP");
+	case UCDN_SCRIPT_KATAKANA: return load_wasm_font_file("undefined", "JP");
+	case UCDN_SCRIPT_BOPOMOFO: return load_wasm_font_file("undefined", "TC");
+	case UCDN_SCRIPT_HAN:
+		switch (language)
+		{
+		case FZ_LANG_ja: return load_wasm_font_file("undefined", "JP");
+		case FZ_LANG_ko: return load_wasm_font_file("undefined", "KR");
+		case FZ_LANG_zh_Hans: return load_wasm_font_file("undefined", "SC");
+		default:
+		case FZ_LANG_zh_Hant: return load_wasm_font_file("undefined", "TC");
+		}
+
+	case UCDN_SCRIPT_LATIN: return load_wasm_font_file("undefined", "Latin");
+	case UCDN_SCRIPT_GREEK: return load_wasm_font_file("undefined", "Greek");
+	case UCDN_SCRIPT_CYRILLIC: return load_wasm_font_file("undefined", "Cyrillic");
+	case UCDN_SCRIPT_ARABIC: return load_wasm_font_file("undefined", "Arabic");
+	case UCDN_SCRIPT_ARMENIAN: return load_wasm_font_file("undefined", "Armenian");
+	case UCDN_SCRIPT_HEBREW: return load_wasm_font_file("undefined", "Hebrew");
+	case UCDN_SCRIPT_SYRIAC: return load_wasm_font_file("undefined", "Syriac");
+	case UCDN_SCRIPT_THAANA: return load_wasm_font_file("undefined", "Thaana");
+	case UCDN_SCRIPT_DEVANAGARI: return load_wasm_font_file("undefined", "Devanagari");
+	case UCDN_SCRIPT_BENGALI: return load_wasm_font_file("undefined", "Bengali");
+	case UCDN_SCRIPT_GURMUKHI: return load_wasm_font_file("undefined", "Gurmukhi");
+	case UCDN_SCRIPT_GUJARATI: return load_wasm_font_file("undefined", "Gujarati");
+	case UCDN_SCRIPT_ORIYA: return load_wasm_font_file("undefined", "Oriya");
+	case UCDN_SCRIPT_TAMIL: return load_wasm_font_file("undefined", "Tamil");
+	case UCDN_SCRIPT_TELUGU: return load_wasm_font_file("undefined", "Telugu");
+	case UCDN_SCRIPT_KANNADA: return load_wasm_font_file("undefined", "Kannada");
+	case UCDN_SCRIPT_MALAYALAM: return load_wasm_font_file("undefined", "Malayalam");
+	case UCDN_SCRIPT_SINHALA: return load_wasm_font_file("undefined", "Sinhala");
+	case UCDN_SCRIPT_THAI: return load_wasm_font_file("undefined", "Thai");
+	case UCDN_SCRIPT_LAO: return load_wasm_font_file("undefined", "Lao");
+	case UCDN_SCRIPT_TIBETAN: return load_wasm_font_file("undefined", "Tibetan");
+	case UCDN_SCRIPT_MYANMAR: return load_wasm_font_file("undefined", "Myanmar");
+	case UCDN_SCRIPT_GEORGIAN: return load_wasm_font_file("undefined", "Georgian");
+	case UCDN_SCRIPT_ETHIOPIC: return load_wasm_font_file("undefined", "Ethiopic");
+	case UCDN_SCRIPT_CHEROKEE: return load_wasm_font_file("undefined", "Cherokee");
+	case UCDN_SCRIPT_CANADIAN_ABORIGINAL: return load_wasm_font_file("undefined", "Canadian Aboriginal");
+	case UCDN_SCRIPT_OGHAM: return load_wasm_font_file("undefined", "Ogham");
+	case UCDN_SCRIPT_RUNIC: return load_wasm_font_file("undefined", "Runic");
+	case UCDN_SCRIPT_KHMER: return load_wasm_font_file("undefined", "Khmer");
+	case UCDN_SCRIPT_MONGOLIAN: return load_wasm_font_file("undefined", "Mongolian");
+	case UCDN_SCRIPT_YI: return load_wasm_font_file("undefined", "Yi");
+	case UCDN_SCRIPT_OLD_ITALIC: return load_wasm_font_file("undefined", "Old Italic");
+	case UCDN_SCRIPT_GOTHIC: return load_wasm_font_file("undefined", "Gothic");
+	case UCDN_SCRIPT_DESERET: return load_wasm_font_file("undefined", "Deseret");
+	case UCDN_SCRIPT_TAGALOG: return load_wasm_font_file("undefined", "Tagalog");
+	case UCDN_SCRIPT_HANUNOO: return load_wasm_font_file("undefined", "Hanunoo");
+	case UCDN_SCRIPT_BUHID: return load_wasm_font_file("undefined", "Buhid");
+	case UCDN_SCRIPT_TAGBANWA: return load_wasm_font_file("undefined", "Tagbanwa");
+	case UCDN_SCRIPT_LIMBU: return load_wasm_font_file("undefined", "Limbu");
+	case UCDN_SCRIPT_TAI_LE: return load_wasm_font_file("undefined", "Tai Le");
+	case UCDN_SCRIPT_LINEAR_B: return load_wasm_font_file("undefined", "Linear B");
+	case UCDN_SCRIPT_UGARITIC: return load_wasm_font_file("undefined", "Ugaritic");
+	case UCDN_SCRIPT_SHAVIAN: return load_wasm_font_file("undefined", "Shavian");
+	case UCDN_SCRIPT_OSMANYA: return load_wasm_font_file("undefined", "Osmanya");
+	case UCDN_SCRIPT_CYPRIOT: return load_wasm_font_file("undefined", "Cypriot");
+	case UCDN_SCRIPT_BUGINESE: return load_wasm_font_file("undefined", "Buginese");
+	case UCDN_SCRIPT_COPTIC: return load_wasm_font_file("undefined", "Coptic");
+	case UCDN_SCRIPT_NEW_TAI_LUE: return load_wasm_font_file("undefined", "New Tai Lue");
+	case UCDN_SCRIPT_GLAGOLITIC: return load_wasm_font_file("undefined", "Glagolitic");
+	case UCDN_SCRIPT_TIFINAGH: return load_wasm_font_file("undefined", "Tifinagh");
+	case UCDN_SCRIPT_SYLOTI_NAGRI: return load_wasm_font_file("undefined", "Syloti Nagri");
+	case UCDN_SCRIPT_OLD_PERSIAN: return load_wasm_font_file("undefined", "Old Persian");
+	case UCDN_SCRIPT_KHAROSHTHI: return load_wasm_font_file("undefined", "Kharoshthi");
+	case UCDN_SCRIPT_BALINESE: return load_wasm_font_file("undefined", "Balinese");
+	case UCDN_SCRIPT_CUNEIFORM: return load_wasm_font_file("undefined", "Cuneiform");
+	case UCDN_SCRIPT_PHOENICIAN: return load_wasm_font_file("undefined", "Phoenician");
+	case UCDN_SCRIPT_PHAGS_PA: return load_wasm_font_file("undefined", "Phags Pa");
+	case UCDN_SCRIPT_NKO: return load_wasm_font_file("undefined", "NKo");
+	case UCDN_SCRIPT_SUNDANESE: return load_wasm_font_file("undefined", "Sundanese");
+	case UCDN_SCRIPT_LEPCHA: return load_wasm_font_file("undefined", "Lepcha");
+	case UCDN_SCRIPT_OL_CHIKI: return load_wasm_font_file("undefined", "Ol Chiki");
+	case UCDN_SCRIPT_VAI: return load_wasm_font_file("undefined", "Vai");
+	case UCDN_SCRIPT_SAURASHTRA: return load_wasm_font_file("undefined", "Saurashtra");
+	case UCDN_SCRIPT_KAYAH_LI: return load_wasm_font_file("undefined", "Kayah Li");
+	case UCDN_SCRIPT_REJANG: return load_wasm_font_file("undefined", "Rejang");
+	case UCDN_SCRIPT_LYCIAN: return load_wasm_font_file("undefined", "Lycian");
+	case UCDN_SCRIPT_CARIAN: return load_wasm_font_file("undefined", "Carian");
+	case UCDN_SCRIPT_LYDIAN: return load_wasm_font_file("undefined", "Lydian");
+	case UCDN_SCRIPT_CHAM: return load_wasm_font_file("undefined", "Cham");
+	case UCDN_SCRIPT_TAI_THAM: return load_wasm_font_file("undefined", "Tai Tham");
+	case UCDN_SCRIPT_TAI_VIET: return load_wasm_font_file("undefined", "Tai Viet");
+	case UCDN_SCRIPT_AVESTAN: return load_wasm_font_file("undefined", "Avestan");
+	case UCDN_SCRIPT_EGYPTIAN_HIEROGLYPHS: return load_wasm_font_file("undefined", "Egyptian Hieroglyphs");
+	case UCDN_SCRIPT_SAMARITAN: return load_wasm_font_file("undefined", "Samaritan");
+	case UCDN_SCRIPT_LISU: return load_wasm_font_file("undefined", "Lisu");
+	case UCDN_SCRIPT_BAMUM: return load_wasm_font_file("undefined", "Bamum");
+	case UCDN_SCRIPT_JAVANESE: return load_wasm_font_file("undefined", "Javanese");
+	case UCDN_SCRIPT_MEETEI_MAYEK: return load_wasm_font_file("undefined", "Meetei Mayek");
+	case UCDN_SCRIPT_IMPERIAL_ARAMAIC: return load_wasm_font_file("undefined", "Imperial Aramaic");
+	case UCDN_SCRIPT_OLD_SOUTH_ARABIAN: return load_wasm_font_file("undefined", "Old South Arabian");
+	case UCDN_SCRIPT_INSCRIPTIONAL_PARTHIAN: return load_wasm_font_file("undefined", "Inscriptional Parthian");
+	case UCDN_SCRIPT_INSCRIPTIONAL_PAHLAVI: return load_wasm_font_file("undefined", "Inscriptional Pahlavi");
+	case UCDN_SCRIPT_OLD_TURKIC: return load_wasm_font_file("undefined", "Old Turkic");
+	case UCDN_SCRIPT_KAITHI: return load_wasm_font_file("undefined", "Kaithi");
+	case UCDN_SCRIPT_BATAK: return load_wasm_font_file("undefined", "Batak");
+	case UCDN_SCRIPT_BRAHMI: return load_wasm_font_file("undefined", "Brahmi");
+	case UCDN_SCRIPT_MANDAIC: return load_wasm_font_file("undefined", "Mandaic");
+	case UCDN_SCRIPT_CHAKMA: return load_wasm_font_file("undefined", "Chakma");
+	case UCDN_SCRIPT_MIAO: return load_wasm_font_file("undefined", "Miao");
+	case UCDN_SCRIPT_MEROITIC_CURSIVE: return load_wasm_font_file("undefined", "Meroitic");
+	case UCDN_SCRIPT_MEROITIC_HIEROGLYPHS: return load_wasm_font_file("undefined", "Meroitic");
+	case UCDN_SCRIPT_SHARADA: return load_wasm_font_file("undefined", "Sharada");
+	case UCDN_SCRIPT_SORA_SOMPENG: return load_wasm_font_file("undefined", "Sora Sompeng");
+	case UCDN_SCRIPT_TAKRI: return load_wasm_font_file("undefined", "Takri");
+	case UCDN_SCRIPT_BASSA_VAH: return load_wasm_font_file("undefined", "Bassa Vah");
+	case UCDN_SCRIPT_CAUCASIAN_ALBANIAN: return load_wasm_font_file("undefined", "Caucasian Albanian");
+	case UCDN_SCRIPT_DUPLOYAN: return load_wasm_font_file("undefined", "Duployan");
+	case UCDN_SCRIPT_ELBASAN: return load_wasm_font_file("undefined", "Elbasan");
+	case UCDN_SCRIPT_GRANTHA: return load_wasm_font_file("undefined", "Grantha");
+	case UCDN_SCRIPT_KHOJKI: return load_wasm_font_file("undefined", "Khojki");
+	case UCDN_SCRIPT_KHUDAWADI: return load_wasm_font_file("undefined", "Khudawadi");
+	case UCDN_SCRIPT_LINEAR_A: return load_wasm_font_file("undefined", "Linear A");
+	case UCDN_SCRIPT_MAHAJANI: return load_wasm_font_file("undefined", "Mahajani");
+	case UCDN_SCRIPT_MANICHAEAN: return load_wasm_font_file("undefined", "Manichaean");
+	case UCDN_SCRIPT_MENDE_KIKAKUI: return load_wasm_font_file("undefined", "Mende Kikakui");
+	case UCDN_SCRIPT_MODI: return load_wasm_font_file("undefined", "Modi");
+	case UCDN_SCRIPT_MRO: return load_wasm_font_file("undefined", "Mro");
+	case UCDN_SCRIPT_NABATAEAN: return load_wasm_font_file("undefined", "Nabataean");
+	case UCDN_SCRIPT_OLD_NORTH_ARABIAN: return load_wasm_font_file("undefined", "Old North Arabian");
+	case UCDN_SCRIPT_OLD_PERMIC: return load_wasm_font_file("undefined", "Old Permic");
+	case UCDN_SCRIPT_PAHAWH_HMONG: return load_wasm_font_file("undefined", "Pahawh Hmong");
+	case UCDN_SCRIPT_PALMYRENE: return load_wasm_font_file("undefined", "Palmyrene");
+	case UCDN_SCRIPT_PAU_CIN_HAU: return load_wasm_font_file("undefined", "Pau Cin Hau");
+	case UCDN_SCRIPT_PSALTER_PAHLAVI: return load_wasm_font_file("undefined", "Psalter Pahlavi");
+	case UCDN_SCRIPT_SIDDHAM: return load_wasm_font_file("undefined", "Siddham");
+	case UCDN_SCRIPT_TIRHUTA: return load_wasm_font_file("undefined", "Tirhuta");
+	case UCDN_SCRIPT_WARANG_CITI: return load_wasm_font_file("undefined", "Warang Citi");
+	case UCDN_SCRIPT_AHOM: return load_wasm_font_file("undefined", "Ahom");
+	case UCDN_SCRIPT_ANATOLIAN_HIEROGLYPHS: return load_wasm_font_file("undefined", "Anatolian Hieroglyphs");
+	case UCDN_SCRIPT_HATRAN: return load_wasm_font_file("undefined", "Hatran");
+	case UCDN_SCRIPT_MULTANI: return load_wasm_font_file("undefined", "Multani");
+	case UCDN_SCRIPT_OLD_HUNGARIAN: return load_wasm_font_file("undefined", "Old Hungarian");
+	case UCDN_SCRIPT_SIGNWRITING: return load_wasm_font_file("undefined", "Signwriting");
+	case UCDN_SCRIPT_ADLAM: return load_wasm_font_file("undefined", "Adlam");
+	case UCDN_SCRIPT_BHAIKSUKI: return load_wasm_font_file("undefined", "Bhaiksuki");
+	case UCDN_SCRIPT_MARCHEN: return load_wasm_font_file("undefined", "Marchen");
+	case UCDN_SCRIPT_NEWA: return load_wasm_font_file("undefined", "Newa");
+	case UCDN_SCRIPT_OSAGE: return load_wasm_font_file("undefined", "Osage");
+	case UCDN_SCRIPT_TANGUT: return load_wasm_font_file("undefined", "Tangut");
+	case UCDN_SCRIPT_MASARAM_GONDI: return load_wasm_font_file("undefined", "Masaram Gondi");
+	case UCDN_SCRIPT_NUSHU: return load_wasm_font_file("undefined", "Nushu");
+	case UCDN_SCRIPT_SOYOMBO: return load_wasm_font_file("undefined", "Soyombo");
+	case UCDN_SCRIPT_ZANABAZAR_SQUARE: return load_wasm_font_file("undefined", "Zanabazar Square");
+	case UCDN_SCRIPT_DOGRA: return load_wasm_font_file("undefined", "Dogra");
+	case UCDN_SCRIPT_GUNJALA_GONDI: return load_wasm_font_file("undefined", "Gunjala Gondi");
+	case UCDN_SCRIPT_HANIFI_ROHINGYA: return load_wasm_font_file("undefined", "Hanifi Rohingya");
+	case UCDN_SCRIPT_MAKASAR: return load_wasm_font_file("undefined", "Makasar");
+	case UCDN_SCRIPT_MEDEFAIDRIN: return load_wasm_font_file("undefined", "Medefaidrin");
+	case UCDN_SCRIPT_OLD_SOGDIAN: return load_wasm_font_file("undefined", "Old Sogdian");
+	case UCDN_SCRIPT_SOGDIAN: return load_wasm_font_file("undefined", "Sogdian");
+	case UCDN_SCRIPT_ELYMAIC: return load_wasm_font_file("undefined", "Elymaic");
+	case UCDN_SCRIPT_NANDINAGARI: return load_wasm_font_file("undefined", "Nandinagari");
+	case UCDN_SCRIPT_NYIAKENG_PUACHUE_HMONG: return load_wasm_font_file("undefined", "Nyiakeng Puachue Hmong");
+	case UCDN_SCRIPT_WANCHO: return load_wasm_font_file("undefined", "Wancho");
+	case UCDN_SCRIPT_CHORASMIAN: return load_wasm_font_file("undefined", "Chorasmian");
+	case UCDN_SCRIPT_DIVES_AKURU: return load_wasm_font_file("undefined", "Dives Akuru");
+	case UCDN_SCRIPT_KHITAN_SMALL_SCRIPT: return load_wasm_font_file("undefined", "Khitan Small Script");
+	case UCDN_SCRIPT_YEZIDI: return load_wasm_font_file("undefined", "Yezidi");
+	case UCDN_SCRIPT_VITHKUQI: return load_wasm_font_file("undefined", "Vithkuqi");
+	case UCDN_SCRIPT_OLD_UYGHUR: return load_wasm_font_file("undefined", "Old Uyghur");
+	case UCDN_SCRIPT_CYPRO_MINOAN: return load_wasm_font_file("undefined", "Cypro Minoan");
+	case UCDN_SCRIPT_TANGSA: return load_wasm_font_file("undefined", "Tangsa");
+	case UCDN_SCRIPT_TOTO: return load_wasm_font_file("undefined", "Toto");
+	}
+	return NULL;
+}
+
 EXPORT
 void wasm_init_context(void)
 {
@@ -79,6 +286,10 @@ void wasm_init_context(void)
 	if (!ctx)
 		EM_ASM({ throw new Error("Cannot create MuPDF context!"); });
 	fz_register_document_handlers(ctx);
+	fz_install_load_system_font_funcs(ctx,
+		load_wasm_font,
+		load_wasm_cjk_font,
+		load_wasm_fallback_font);
 }
 
 EXPORT

@@ -214,6 +214,10 @@ export function setUserCSS(text: string) {
 	libmupdf._wasm_set_user_css(STRING(text))
 }
 
+export function installLoadFontFunction(f: (name: string, script: string) => Buffer | null) {
+	$libmupdf_load_font_file_js = f
+}
+
 /* -------------------------------------------------------------------------- */
 
 // To pass Rect and Matrix as pointer arguments
@@ -3758,6 +3762,21 @@ export class Stream extends Userdata<"fz_stream"> {
 }
 
 /* -------------------------------------------------------------------------- */
+
+var $libmupdf_load_font_file_js: (name: string, script: string) => Buffer | null
+
+declare global {
+	function $libmupdf_load_font_file(name: Pointer<"char">, script: Pointer<"char">): Pointer<"fz_buffer">
+}
+
+globalThis.$libmupdf_load_font_file = function (name, script) {
+	if ($libmupdf_load_font_file_js) {
+		var buf = $libmupdf_load_font_file_js(fromString(name), fromString(script))
+		if (buf)
+			return buf.pointer
+	}
+	return 0 as Pointer<"fz_buffer">
+}
 
 interface DeviceFunctions {
 	drop?(): void,

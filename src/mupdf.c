@@ -1563,9 +1563,9 @@ int wasm_pdf_update_page(pdf_page *page)
 }
 
 EXPORT
-void wasm_pdf_redact_page(pdf_page *page, int black_boxes, int image_method)
+void wasm_pdf_redact_page(pdf_page *page, int black_boxes, int image_method, int line_art_method, int text_method)
 {
-	pdf_redact_options opts = { black_boxes, image_method };
+	pdf_redact_options opts = { black_boxes, image_method, line_art_method, text_method };
 	VOID(pdf_redact_page, page->doc, page, &opts)
 }
 

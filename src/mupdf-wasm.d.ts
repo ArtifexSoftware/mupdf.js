@@ -348,7 +348,7 @@ interface Libmupdf {
 	_wasm_pdf_create_annot(page: Pointer<"any_page">, type: number): Pointer<"pdf_annot">,
 	_wasm_pdf_delete_annot(page: Pointer<"any_page">, annot: Pointer<"pdf_annot">): void,
 	_wasm_pdf_update_page(page: Pointer<"any_page">): number,
-	_wasm_pdf_redact_page(page: Pointer<"any_page">, black_boxes: number, image_method: number): void,
+	_wasm_pdf_redact_page(page: Pointer<"any_page">, black_boxes: number, image_method: number, line_art_method: number, text_method: number): void,
 	_wasm_pdf_new_graft_map(doc: Pointer<"any_document">): Pointer<"pdf_graft_map">,
 	_wasm_pdf_graft_mapped_object(map: Pointer<"pdf_graft_map">, obj: Pointer<"pdf_obj">): Pointer<"pdf_obj">,
 	_wasm_pdf_graft_object(dst: Pointer<"any_document">, obj: Pointer<"pdf_obj">): Pointer<"pdf_obj">,

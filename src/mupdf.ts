@@ -2629,9 +2629,17 @@ export class PDFPage extends Page {
 	static readonly REDACT_IMAGE_NONE = 0
 	static readonly REDACT_IMAGE_REMOVE = 1
 	static readonly REDACT_IMAGE_PIXELS = 2
+	static readonly REDACT_IMAGE_UNLESS_INVISIBLE = 3
 
-	applyRedactions(black_boxes = 1, image_method = 2) {
-		libmupdf._wasm_pdf_redact_page(this.pointer, black_boxes, image_method)
+	static readonly REDACT_LINE_ART_NONE = 0
+	static readonly REDACT_LINE_ART_REMOVE_IF_COVERED = 1
+	static readonly REDACT_LINE_ART_REMOVE_IF_TOUCHED = 2
+
+	static readonly REDACT_TEXT_REMOVE = 0
+	static readonly REDACT_TEXT_NONE = 1
+
+	applyRedactions(black_boxes = 1, image_method = 2, line_art_method = 1, text_method = 0) {
+		libmupdf._wasm_pdf_redact_page(this.pointer, black_boxes, image_method, line_art_method, text_method)
 	}
 
 	update() {

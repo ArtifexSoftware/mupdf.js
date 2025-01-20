@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import { useMupdf } from "./hooks/useMupdf.hook";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { isWorkerInitialized, renderPage, loadDocument, currentPage } =
+    useMupdf();
+  const [pageImgUrl, setPageImgUrl] = useState<string | null>(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  // ===> This is a demo effect which uses hooks <===
+  // ===> from useMupdf to load and display the first page <===
+  // ===> of the pdf as an image. <===
+  useEffect(() => {
+    if (!isWorkerInitialized) {
+      return;
+    }
+
+    const loadAndRender = async () => {
+      const response = await fetch("/test.pdf");
+      const arrayBuffer = await response.arrayBuffer();
+      await loadDocument(arrayBuffer);
+      const pngData = await renderPage(currentPage);
+      setPageImgUrl(
+        URL.createObjectURL(new Blob([pngData], { type: "image/png" }))
+      );
+    };
+
+    loadAndRender();
+  }, [currentPage, isWorkerInitialized, loadDocument, renderPage]);
+
+  return <>{pageImgUrl && <img src={pageImgUrl} />}</>;
 }
 
-export default App
+export default App;

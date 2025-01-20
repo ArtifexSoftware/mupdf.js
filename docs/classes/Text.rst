@@ -73,6 +73,57 @@ A `Text` object contains text. See the :meth:`fillText` method on :doc:`Device` 
         text.showString(new mupdfjs.Font("Times-Roman"), mupdfjs.Matrix.identity, "Hello World");
 
 
+.. method:: walk(walker: TextWalker)
+
+    :arg walker: `TextWalker`. Function with protocol methods, see example below for details.
+
+
+    |example_tag|
+
+    .. code-block:: javascript
+            
+        function print(...args) {
+            console.log(args.join(" "))
+        }
+
+        var textPrinter = {
+            beginSpan: function (f,m,wmode, bidi, dir, lang) {
+                print("beginSpan",f,m,wmode,bidi,dir,Q(lang));
+            },
+            showGlyph: function (f,m,g,u,v,b) { print("glyph",f,m,g,String.fromCodePoint(u),v,b)},
+            endSpan: function () { print("endSpan"); }
+        }
+
+        var traceDevice = {
+            fillText: function (text, ctm, colorSpace, color, alpha) {
+                print("fillText", ctm, colorSpace, color, alpha)
+                text.walk(textPrinter)
+            },
+            clipText: function (text, ctm) {
+                print("clipText", ctm)
+                text.walk(textPrinter)
+            },
+            strokeText: function (text, stroke, ctm, colorSpace, color, alpha) {
+                print("strokeText", Q(stroke), ctm, colorSpace, color, alpha)
+                text.walk(textPrinter)
+            },
+            clipStrokeText: function (text, stroke, ctm) {
+                print("clipStrokeText", Q(stroke), ctm)
+                text.walk(textPrinter)
+            },
+            ignoreText: function (text, ctm) {
+                print("ignoreText", ctm)
+                text.walk(textPrinter)
+            }
+        }
+
+        var doc = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
+        var page = doc.loadPage(0)
+        var device = new mupdfjs.Device(traceDevice)
+        page.run(device, mupdfjs.Matrix.identity)
+
+
+
 .. include:: footer.rst
 .. include:: ../footer.rst
 

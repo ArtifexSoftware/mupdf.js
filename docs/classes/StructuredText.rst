@@ -67,9 +67,9 @@ instance use :meth:`toStructuredText`.
 
 
 
-.. method:: walk(walker: {})
+.. method:: walk(walker: StructuredTextWalker)
 
-    :arg walker: `{}`. Function with protocol methods, see example below for details.
+    :arg walker: `StructuredTextWalker`. Function with protocol methods, see example below for details.
 
     Walk through the blocks (images or text blocks) of the structured text.
     For each text block walk over its lines of text, and for each line each

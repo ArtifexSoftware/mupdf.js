@@ -13,6 +13,15 @@ Colors are specified as arrays with the appropriate number of components for the
 
 The methods that clip graphics must be balanced with a corresponding `popClip`.
 
+|constructor_tag|
+
+
+.. method:: constructor(callbacks: DeviceFunctions)
+
+    Create a `Device` with callback functions.
+
+    :arg callbacks: object containing optional functions which conform to the `DeviceFunctions` interface.
+
 
 |instance_method_tag|
 

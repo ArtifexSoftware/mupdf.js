@@ -1,9 +1,9 @@
 # MuPDF with React, TypeScript, Vite
 
 ## Notable files
-- `src/hooks/mupdf.worker.ts`: imports the worker script, exposes functionality from it.
-- `src\hooks\useMupdf.hook.ts`: enables and initializes the worker, exposes hooks to interact with it.
-- `src\App.tsx`: calls the hook, and uses some demo functionality.
+- `src/workers/mupdf.worker.ts`: imports the worker script, exposes functionality from it.
+- `src/hooks/useMupdf.hook.ts`: enables and initializes the worker, exposes hooks to interact with it.
+- `src/App.tsx`: calls the hook, and uses some demo functionality.
 
 ## Setup
 

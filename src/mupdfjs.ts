@@ -607,7 +607,17 @@ export class PDFDocument extends mupdf.PDFDocument {
 
             // Clean pages
             if (cleanPages) {
-                // TODO: Implement page cleaning
+                const cleanBuffer = this.saveToBuffer("clean=yes");
+                const cleanDoc = PDFDocument.openDocument(cleanBuffer, "application/pdf");
+                // Copy all objects from the cleaned document back to this document
+                const pageCount = cleanDoc.countPages();
+                for (let j = 0; j < pageCount; j++) {
+                    const cleanPage = cleanDoc.loadPage(j);
+                    const cleanPageObj = cleanPage.getObject();
+                    const thisPage = this.loadPage(j);
+                    const thisPageObj = thisPage.getObject();
+                    thisPageObj.put("Contents", this.graftObject(cleanPageObj.get("Contents")));
+                }
             }
 
             // Handle hidden text

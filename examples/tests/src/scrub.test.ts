@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { PDFDocument } from "../../../dist/mupdfjs";
+import { PDFDocument, Buffer } from "../../../dist/mupdfjs";
 
 describe("PDFDocument scrub test", () => {
 	it("should clean metadata from a new document", () => {
@@ -190,7 +190,7 @@ describe("PDFDocument scrub test", () => {
 
 		try {
 			// Add embedded file
-			const data = Buffer.from("test data");
+			const data = new Buffer("test data");
 			doc.attachFile("test.txt", data);
 
 			// Verify embedded file exists
@@ -213,6 +213,55 @@ describe("PDFDocument scrub test", () => {
 			const destsAfterScrub = embeddedFilesAfterScrub.get("Names");
 			expect(destsAfterScrub.isArray()).toBe(true);
 			expect(destsAfterScrub.length).toBe(0);
+		} finally {
+			doc.destroy();
+		}
+	});
+
+	it("should clean page contents", () => {
+		// Create a new document
+		const doc = PDFDocument.createBlankDocument();
+
+		try {
+			// Create redundant graphics state by adding text content
+			const page = doc.loadPage(0);
+			const pageObj = page.getObject();
+
+			// Create content with redundant graphics state commands
+			const contentStream = `
+				BT
+				/F1 12 Tf
+				1 0 0 1 50 750 Tm
+				1 0 0 1 0 0 Tm
+				1 0 0 1 0 0 Tm
+				(Test) Tj
+				1 0 0 1 0 -20 Tm
+				1 0 0 1 0 0 Tm
+				(Test) Tj
+				ET
+			`;
+
+			// Add content to page
+			const contents = doc.addStream(contentStream, {});
+			pageObj.put("Contents", contents);
+
+			// Get initial content size
+			const contentsBefore = pageObj.get("Contents");
+			const sizeBefore = contentsBefore.readStream().getLength();
+
+			// Scrub with cleanPages option
+			doc.scrub({ cleanPages: true });
+
+			// Verify content is cleaned (should be smaller due to optimization)
+			const contentsAfter = pageObj.get("Contents");
+			const sizeAfter = contentsAfter.readStream().getLength();
+
+			// Content should be smaller after cleaning
+			expect(sizeAfter).toBeLessThan(sizeBefore);
+
+			// Content should still be readable
+			const text = page.toStructuredText().asText();
+			expect(text.trim()).toBe("Test\nTest");
 		} finally {
 			doc.destroy();
 		}

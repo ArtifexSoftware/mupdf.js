@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { useMupdf } from '@/composables/useMupdf'
-import { watch, ref } from 'vue'
+import { useMupdf } from '@/composables/useMupdf';
+import { ref, watch } from 'vue';
 
-const { workerInitialized, loadDocument, renderPage, currentPage } = useMupdf()
+const { workerInitialized, loadDocument, renderPage } = useMupdf()
 const pdfUrl = ref<string | null>(null)
 
+// ===> This is a demo callback which uses functions <===
+// ===> from useMupdf to load and display the first page <===
+// ===> of the pdf as an image. <===
 watch(workerInitialized, async (isInitialized) => {
   if (isInitialized) {
     const response = await fetch('/test.pdf')

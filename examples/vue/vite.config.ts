@@ -1,45 +1,17 @@
-import vue from '@vitejs/plugin-vue'
-import fs from 'fs'
-import path, { resolve } from 'path'
-import { fileURLToPath } from 'url'
-import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue';
+import { resolve } from 'path';
+import { fileURLToPath } from 'url';
+import { defineConfig } from 'vite';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-function copyMupdfFiles() {
-  return {
-    name: 'copy-mupdf-files',
-    writeBundle() {
-      const srcDir = resolve(__dirname, 'node_modules/mupdf/dist')
-      const destDir = resolve(__dirname, 'dist/assets')
-      const filesToCopy = [
-        'mupdf-wasm.js',
-        'mupdf-wasm.wasm',
-        'mupdf.js',
-        'tasks.js'
-      ]
-
-      if (!fs.existsSync(destDir)) {
-        fs.mkdirSync(destDir, { recursive: true })
-      }
-
-      filesToCopy.forEach(file => {
-        const src = path.join(srcDir, file)
-        const dest = path.join(destDir, file)
-        if (fs.existsSync(src)) {
-          fs.copyFileSync(src, dest)
-          console.log(`Copied ${file} to ${destDir}`)
-        } else {
-          console.warn(`Warning: ${file} not found in ${srcDir}`)
-        }
-      })
-    }
-  }
-}
-
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), copyMupdfFiles()],
+  plugins: [vue()],
+  worker: {
+    format: 'es'
+  },
+  optimizeDeps: {
+    exclude: ['mupdf'] // Exclude mupdf from pre-bundling
+  },
   build: {
     target: 'esnext',
     rollupOptions: {
@@ -49,12 +21,9 @@ export default defineConfig({
       }
     }
   },
-  worker: {
-    format: 'es'
-  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   }
-})
+});

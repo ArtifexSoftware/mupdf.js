@@ -1,6 +1,9 @@
-# Vue
+# MuPDF with Vue, TypeScript, Vite
 
-This project was generated with [Vite](https://vitejs.dev/).
+## Notable files
+- `src/workers/mupdf.worker.ts`: imports the worker script, exposes functionality from it.
+- `src/composables/useMupdf.ts`: enables and initializes the worker, exposes functions to interact with it.
+- `src/App.vue`: calls useMupdf, and uses some demo functionality.
 
 ## Setup
 

@@ -3533,8 +3533,8 @@ export class PDFAnnotation extends Userdata<"pdf_annot"> {
 		)
 	}
 
-	applyRedaction(black_boxes = 1, image_method = 2) {
-		libmupdf._wasm_pdf_apply_redaction(this.pointer, black_boxes, image_method)
+	applyRedaction(black_boxes = 1, image_method = 2, line_art_method = 1, text_method = 0) {
+		libmupdf._wasm_pdf_apply_redaction(this.pointer, black_boxes, image_method, line_art_method, text_method)
 	}
 }
 

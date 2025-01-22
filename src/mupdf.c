@@ -2165,9 +2165,9 @@ void wasm_pdf_set_annot_appearance(pdf_annot *annot, char *appearance, char *sta
 }
 
 EXPORT
-void wasm_pdf_apply_redaction(pdf_annot *annot, int black_boxes, int image_method)
+void wasm_pdf_apply_redaction(pdf_annot *annot, int black_boxes, int image_method, int line_art_method, int text_method)
 {
-	pdf_redact_options opts = { black_boxes, image_method };
+	pdf_redact_options opts = { black_boxes, image_method, line_art_method, text_method };
 	VOID(pdf_apply_redaction, annot, &opts)
 }
 

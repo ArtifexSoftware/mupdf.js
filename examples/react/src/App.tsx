@@ -1,6 +1,6 @@
+import "@/App.css";
+import { useMupdf } from "@/hooks/useMupdf.hook";
 import { useEffect, useState } from "react";
-import "./App.css";
-import { useMupdf } from "./hooks/useMupdf.hook";
 
 function App() {
   const { isWorkerInitialized, renderPage, loadDocument, currentPage } =

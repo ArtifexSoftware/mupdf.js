@@ -22,7 +22,7 @@ export class MupdfWorker {
 
   // ===> Here you can create methods <===
   // ===> that call statics and methods <===
-  // ===> from ./node_modules/mupdf/dist/mupdfjs.js <===
+  // ===> from mupdfjs which wraps ./node_modules/mupdf/dist/mupdf.js <===
 
   loadDocument(document: ArrayBuffer): boolean {
     this.document = mupdfjs.PDFDocument.openDocument(

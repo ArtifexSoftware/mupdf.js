@@ -1,7 +1,7 @@
+import { MUPDF_LOADED, type MupdfWorker } from "@/workers/mupdf.worker";
 import * as Comlink from "comlink";
 import { Remote } from "comlink";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MUPDF_LOADED, type MupdfWorker } from "../workers/mupdf.worker";
 
 export function useMupdf() {
   const [currentPage, setCurrentPage] = useState(0);

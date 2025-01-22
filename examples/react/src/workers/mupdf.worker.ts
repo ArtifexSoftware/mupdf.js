@@ -1,30 +1,19 @@
 /// <reference lib="webworker" />
 import * as Comlink from "comlink";
-import { ColorSpace, PDFDocument } from "mupdf/mupdfjs";
+import * as mupdfjs from "mupdf/mupdfjs";
+import { PDFDocument } from "mupdf/mupdfjs";
 
 export const MUPDF_LOADED = "MUPDF_LOADED";
 
-const mupdfScript = import.meta.env.PROD
-  ? "/assets/mupdfjs.js"
-  : "/node_modules/mupdf/dist/mupdfjs.js";
-
 export class MupdfWorker {
-  private mupdfjs?: {
-    PDFDocument: typeof PDFDocument;
-    ColorSpace: typeof ColorSpace;
-  };
   private document?: PDFDocument;
 
   constructor() {
-    this.initializeMupdf().catch(console.error);
+    this.initializeMupdf();
   }
 
-  private async initializeMupdf() {
+  private initializeMupdf() {
     try {
-      const mupdfjsModule = (await import(
-        /* @vite-ignore */ mupdfScript
-      )) as MupdfWorker["mupdfjs"];
-      this.mupdfjs = mupdfjsModule;
       postMessage(MUPDF_LOADED);
     } catch (error) {
       console.error("Failed to initialize MuPDF:", error);
@@ -33,12 +22,10 @@ export class MupdfWorker {
 
   // ===> Here you can create methods <===
   // ===> that call statics and methods <===
-  // ===> from .\node_modules\mupdf\dist\mupdf.js <===
+  // ===> from ./node_modules/mupdf/dist/mupdfjs.js <===
 
   loadDocument(document: ArrayBuffer): boolean {
-    if (!this.mupdfjs) throw new Error("MuPDF not initialized");
-
-    this.document = this.mupdfjs.PDFDocument.openDocument(
+    this.document = mupdfjs.PDFDocument.openDocument(
       document,
       "application/pdf"
     );
@@ -47,12 +34,12 @@ export class MupdfWorker {
   }
 
   renderPageAsImage(pageIndex = 0, scale = 1): Uint8Array {
-    if (!this.mupdfjs || !this.document) throw new Error("Document not loaded");
+    if (!this.document) throw new Error("Document not loaded");
 
     const page = this.document.loadPage(pageIndex);
     const pixmap = page.toPixmap(
       [scale, 0, 0, scale, 0, 0],
-      this.mupdfjs.ColorSpace.DeviceRGB
+      mupdfjs.ColorSpace.DeviceRGB
     );
 
     return pixmap.asPNG();

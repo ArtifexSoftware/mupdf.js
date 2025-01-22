@@ -51,6 +51,10 @@ export class StrokeState extends mupdf.StrokeState { }
 export class StructuredText extends mupdf.StructuredText { }
 export class Text extends mupdf.Text { }
 
+export function installLoadFontFunction(f: (name: string, script: string) => Buffer | null) {
+    mupdf.installLoadFontFunction(f) 
+}
+
 export type CreatableAnnotationType =
     "Text" |
     "FreeText" |
@@ -924,14 +928,17 @@ export class PDFPage extends mupdf.PDFPage {
         return redaction
     }
 
-    override applyRedactions(blackBoxes: boolean | number = true, imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS) {
+    override applyRedactions(blackBoxes: boolean | number = true, 
+                             imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS,
+                             lineArtMethod: number = PDFPage.REDACT_LINE_ART_REMOVE_IF_COVERED, 
+                             textMethod: number = PDFPage.REDACT_TEXT_REMOVE) {
         var num: number
         if (typeof blackBoxes === "boolean") {
             num = blackBoxes ? 1 : 0
         } else {
             num = blackBoxes
         }
-        super.applyRedactions(num, imageMethod)
+        super.applyRedactions(num, imageMethod, lineArtMethod, textMethod)
     }
 
     override search(needle: string, maxHits: number = 50): Quad[][] {

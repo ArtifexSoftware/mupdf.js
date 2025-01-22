@@ -1,28 +1,30 @@
 /// <reference lib="webworker" />
 import * as Comlink from "comlink";
-import { ColorSpace, Document } from "mupdf";
+import { ColorSpace, PDFDocument } from "mupdf/mupdfjs";
 
 export const MUPDF_LOADED = "MUPDF_LOADED";
 
 const mupdfScript = import.meta.env.PROD
-  ? "/assets/mupdf.js"
-  : "/node_modules/mupdf/dist/mupdf.js";
+  ? "/assets/mupdfjs.js"
+  : "/node_modules/mupdf/dist/mupdfjs.js";
 
 export class MupdfWorker {
-  private mupdf?: {
-    Document: typeof Document;
+  private mupdfjs?: {
+    PDFDocument: typeof PDFDocument;
     ColorSpace: typeof ColorSpace;
   };
-  private document?: Document;
+  private document?: PDFDocument;
 
   constructor() {
-    this.initializeMupdf();
+    this.initializeMupdf().catch(console.error);
   }
 
   private async initializeMupdf() {
     try {
-      const mupdfModule = await import(mupdfScript);
-      this.mupdf = mupdfModule;
+      const mupdfjsModule = (await import(
+        /* @vite-ignore */ mupdfScript
+      )) as MupdfWorker["mupdfjs"];
+      this.mupdfjs = mupdfjsModule;
       postMessage(MUPDF_LOADED);
     } catch (error) {
       console.error("Failed to initialize MuPDF:", error);
@@ -33,10 +35,10 @@ export class MupdfWorker {
   // ===> that call statics and methods <===
   // ===> from .\node_modules\mupdf\dist\mupdf.js <===
 
-  async loadDocument(document: ArrayBuffer): Promise<boolean> {
-    if (!this.mupdf) throw new Error("MuPDF not initialized");
+  loadDocument(document: ArrayBuffer): boolean {
+    if (!this.mupdfjs) throw new Error("MuPDF not initialized");
 
-    this.document = this.mupdf.Document.openDocument(
+    this.document = this.mupdfjs.PDFDocument.openDocument(
       document,
       "application/pdf"
     );
@@ -44,16 +46,13 @@ export class MupdfWorker {
     return true;
   }
 
-  async renderPageAsImage(
-    pageIndex: number = 0,
-    scale: number = 1
-  ): Promise<Uint8Array> {
-    if (!this.mupdf || !this.document) throw new Error("Document not loaded");
+  renderPageAsImage(pageIndex = 0, scale = 1): Uint8Array {
+    if (!this.mupdfjs || !this.document) throw new Error("Document not loaded");
 
     const page = this.document.loadPage(pageIndex);
     const pixmap = page.toPixmap(
       [scale, 0, 0, scale, 0, 0],
-      this.mupdf.ColorSpace.DeviceRGB
+      this.mupdfjs.ColorSpace.DeviceRGB
     );
 
     return pixmap.asPNG();

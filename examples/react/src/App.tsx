@@ -25,7 +25,7 @@ function App() {
       );
     };
 
-    loadAndRender();
+    loadAndRender().catch(console.error);
   }, [currentPage, isWorkerInitialized, loadDocument, renderPage]);
 
   return <>{pageImgUrl && <img src={pageImgUrl} />}</>;

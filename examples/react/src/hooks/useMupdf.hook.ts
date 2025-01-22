@@ -29,7 +29,7 @@ export function useMupdf() {
     };
   }, []);
 
-  const loadDocument = useCallback(async (arrayBuffer: ArrayBuffer) => {
+  const loadDocument = useCallback((arrayBuffer: ArrayBuffer) => {
     document.current = arrayBuffer;
     return mupdfWorker.current!.loadDocument(arrayBuffer);
   }, []);
@@ -38,7 +38,7 @@ export function useMupdf() {
   // ===> that use the methods of the worker. <===
   // ===> You can use useCallback to avoid unnecessary rerenders <===
 
-  const renderPage = useCallback(async (pageIndex: number) => {
+  const renderPage = useCallback((pageIndex: number) => {
     if (!document.current) {
       throw new Error("Document not loaded");
     }

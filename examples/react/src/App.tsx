@@ -6,7 +6,7 @@ function App() {
   const { isWorkerInitialized, renderPage, loadDocument, currentPage } =
     useMupdf();
   const [pageImgUrl, setPageImgUrl] = useState<string | null>(null);
-
+  
   // ===> This is a demo effect which uses hooks <===
   // ===> from useMupdf to load and display the first page <===
   // ===> of the pdf as an image. <===
@@ -19,14 +19,14 @@ function App() {
       const response = await fetch("/test.pdf");
       const arrayBuffer = await response.arrayBuffer();
       await loadDocument(arrayBuffer);
-      const pngData = await renderPage(currentPage);
+      const pngData = await renderPage(parseInt(location.pathname.slice(1)));
       setPageImgUrl(
         URL.createObjectURL(new Blob([pngData], { type: "image/png" }))
       );
     };
 
     loadAndRender().catch(console.error);
-  }, [currentPage, isWorkerInitialized, loadDocument, renderPage]);
+  }, [currentPage, isWorkerInitialized, loadDocument, renderPage, location]);
 
   return <>{pageImgUrl && <img src={pageImgUrl} />}</>;
 }

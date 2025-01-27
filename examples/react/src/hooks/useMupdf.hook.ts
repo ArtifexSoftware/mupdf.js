@@ -44,7 +44,7 @@ export function useMupdf() {
     }
 
     setCurrentPage(pageIndex);
-
+    setIsWorkerInitialized(false);
     return mupdfWorker.current!.renderPageAsImage(
       pageIndex,
       (window.devicePixelRatio * 96) / 72
@@ -56,5 +56,6 @@ export function useMupdf() {
     loadDocument,
     renderPage,
     currentPage,
+    setCurrentPage
   };
 }

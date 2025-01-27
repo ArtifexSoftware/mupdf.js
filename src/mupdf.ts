@@ -1300,12 +1300,20 @@ interface StructuredTextWalker {
 	endTextBlock?(): void
 }
 
+type SelectMode = "chars" | "words" | "lines"
+
 export class StructuredText extends Userdata<"fz_stext_page"> {
 	static override readonly _drop = libmupdf._wasm_drop_stext_page
 
-	static readonly SELECT_CHARS = 0
-	static readonly SELECT_WORDS = 1
-	static readonly SELECT_LINES = 2
+	static readonly SELECT_MODE: SelectMode[] = [
+		"chars",
+		"words",
+		"lines"
+	]
+
+	static readonly SELECT_CHARS = "chars"
+	static readonly SELECT_WORDS = "words"
+	static readonly SELECT_LINES = "lines"
 
 	walk(walker: StructuredTextWalker) {
 		let block = libmupdf._wasm_stext_page_get_first_block(this.pointer)
@@ -1371,6 +1379,11 @@ export class StructuredText extends Userdata<"fz_stext_page"> {
 
 	asText() {
 		return fromStringFree(libmupdf._wasm_print_stext_page_as_text(this.pointer))
+	}
+
+	snap(p: Point, q: Point, mode: SelectMode): Quad {
+		let mm = ENUM<SelectMode>(mode, StructuredText.SELECT_MODE)
+		return fromQuad(libmupdf._wasm_snap_selection(this.pointer, POINT(p), POINT2(q), mm))
 	}
 
 	copy(p: Point, q: Point): string {

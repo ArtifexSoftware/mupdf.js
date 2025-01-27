@@ -243,6 +243,7 @@ interface Libmupdf {
 	_wasm_close_document_writer(wri: Pointer<"fz_document_writer">): void,
 	_wasm_print_stext_page_as_json(page: Pointer<"fz_stext_page">, scale: number): Pointer<"char">,
 	_wasm_search_stext_page(text: Pointer<"fz_stext_page">, needle: Pointer<"char">, marks: Pointer<"int">, hits: Pointer<"fz_quad">, hit_max: number): number,
+	_wasm_snap_selection(text: Pointer<"fz_stext_page">, a: Pointer<"fz_point">, b: Pointer<"fz_point">, mode: number): Pointer<"fz_quad">,
 	_wasm_copy_selection(text: Pointer<"fz_stext_page">, a: Pointer<"fz_point">, b: Pointer<"fz_point">): Pointer<"char">,
 	_wasm_highlight_selection(text: Pointer<"fz_stext_page">, a: Pointer<"fz_point">, b: Pointer<"fz_point">, hits: Pointer<"fz_quad">, n: number): number,
 	_wasm_print_stext_page_as_html(page: Pointer<"fz_stext_page">, id: number): Pointer<"char">,

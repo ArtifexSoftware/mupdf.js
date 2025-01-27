@@ -1062,6 +1062,12 @@ int wasm_search_stext_page(fz_stext_page *text, char *needle, int *marks, fz_qua
 }
 
 EXPORT
+fz_quad * wasm_snap_selection(fz_stext_page *text, fz_point *a, fz_point *b, int mode)
+{
+	QUAD(fz_snap_selection, text, a, b, mode);
+}
+
+EXPORT
 char * wasm_copy_selection(fz_stext_page *text, fz_point *a, fz_point *b)
 {
 	POINTER(fz_copy_selection, text, *a, *b, 0);

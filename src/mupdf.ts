@@ -2550,6 +2550,22 @@ export class PDFDocument extends Document {
 	bake(bakeAnnots = true, bakeWidgets = true) {
 		libmupdf._wasm_pdf_bake_document(this.pointer, bakeAnnots, bakeWidgets)
 	}
+
+	countLayers(): number {
+		return libmupdf._wasm_pdf_count_layers(this.pointer)
+	}
+
+	isLayerVisible(layer: number): boolean {
+		return !!libmupdf._wasm_pdf_layer_is_enabled(this.pointer, layer)
+	}
+
+	setLayerVisible(layer: number, visible: boolean): void {
+		libmupdf._wasm_pdf_enable_layer(this.pointer, layer, Number(visible))
+	}
+
+	getLayerName(layer: number): string {
+		return fromString(libmupdf._wasm_pdf_layer_name(this.pointer, layer))
+	}
 }
 
 export class PDFPage extends Page {

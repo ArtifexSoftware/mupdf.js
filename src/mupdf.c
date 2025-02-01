@@ -1720,6 +1720,30 @@ void wasm_pdf_bake_document(pdf_document *doc, boolean bake_annots, boolean bake
 	VOID(pdf_bake_document, doc, bake_annots, bake_widgets)
 }
 
+EXPORT
+int wasm_pdf_count_layers(pdf_document *doc)
+{
+	INTEGER(pdf_count_layers, doc)
+}
+
+EXPORT
+const char * wasm_pdf_layer_name(pdf_document *doc, int layer)
+{
+	POINTER(pdf_layer_name, doc, layer)
+}
+
+EXPORT
+int wasm_pdf_layer_is_enabled(pdf_document *doc, int layer)
+{
+	INTEGER(pdf_layer_is_enabled, doc, layer)
+}
+
+EXPORT
+void wasm_pdf_enable_layer(pdf_document *doc, int layer, int state)
+{
+	VOID(pdf_enable_layer, doc, layer, state)
+}
+
 // --- PDFPage ---
 
 EXPORT

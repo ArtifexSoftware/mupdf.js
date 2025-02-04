@@ -2,6 +2,7 @@
 import * as Comlink from "comlink";
 import * as mupdfjs from "mupdf/mupdfjs";
 import { PDFDocument,PDFPage } from "mupdf/mupdfjs";
+import { useRef } from 'react';
 
 export const MUPDF_LOADED = "MUPDF_LOADED";
 
@@ -37,7 +38,12 @@ export class MupdfWorker {
   renderPageAsImage(pageIndex:number = 0, scale:number = 1): Uint8Array {
     if (!this.document) throw new Error("Document not loaded");
 
-    const pixmap = new mupdfjs.PDFPage(this.document, pageIndex).toPixmap(
+    console.log("this.document",this.document);
+    const page = new mupdfjs.PDFPage(this.document, pageIndex);
+
+    console.log("page",page);
+
+    const pixmap = page.toPixmap(
       [scale, 0, 0, scale, 0, 0],
       mupdfjs.ColorSpace.DeviceRGB
     );

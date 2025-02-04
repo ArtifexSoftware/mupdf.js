@@ -2,6 +2,7 @@ import "@/App.css";
 import { useMupdf } from "@/hooks/useMupdf.hook";
 import { useEffect, useState } from "react";
 
+
 function App() {
 
   const [docLoaded, setDocLoaded] = useState(false);
@@ -35,21 +36,31 @@ function App() {
         console.log("load pages");
         let pageStack = new Array();
         //const totalPages = 1; // this works, but is not what we want :)
-        const totalPages = await countPages();
+        const totalPages: number | void = await countPages().catch(console.error);
         
-	    for (let i:number = 0; i < totalPages; ++i) {
-            setTimeout(() => timerRenderPage(i), 10*i)
-        }
+        if (totalPages) {
+            for (let i:number = 0; i < totalPages; ++i) {
+                setTimeout(() => timerRenderPage(i), 5000*i)
+            }
+    
+            async function timerRenderPage(i:number) {
+                console.log("timerRenderPage",i)
+                let pngData = await renderPage(i).catch(console.error);
 
-        async function timerRenderPage(i:number) {
-            console.log("timerRenderPage",i)
-            let pngData = await renderPage(i)
-            pageStack.push(URL.createObjectURL(new Blob([pngData], { type: "image/png" })));
-            
-            if (pageStack.length == totalPages) {
-                setPageImages(pageStack);
+                console.log("pngData",pngData);
+
+                if (pngData) {
+                    pageStack.push(URL.createObjectURL(new Blob([pngData], { type: "image/png" })));
+                
+                    if (pageStack.length == totalPages) {
+                        setPageImages(pageStack);
+                    }
+                }
+                
             }
         }
+
+	    
         
     }
 

@@ -51,10 +51,21 @@ export function useMupdf() {
     );
   }, []);
 
+  const countPages = useCallback(() => {
+    if (!document.current) {
+        throw new Error("Document not loaded");
+    }
+    
+    return mupdfWorker.current!.getPageCount();
+  }, []);
+
+  
+
   return {
     isWorkerInitialized,
     loadDocument,
     renderPage,
     currentPage,
+    countPages,
   };
 }

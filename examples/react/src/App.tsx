@@ -40,7 +40,7 @@ function App() {
         
         if (totalPages) {
             for (let i:number = 0; i < totalPages; ++i) {
-                setTimeout(() => timerRenderPage(i), 5000*i)
+                setTimeout(() => timerRenderPage(i), 10*i)
             }
     
             async function timerRenderPage(i:number) {

@@ -406,6 +406,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 
         const sourcePageCount = sourcePDF.countPages();
         const targetPageCount = this.countPages();
+	const graftMap = this.newGraftMap()
 
         // Normalize page numbers
         fromPage = Math.max(0, Math.min(fromPage, sourcePageCount - 1));
@@ -427,13 +428,13 @@ export class PDFDocument extends mupdf.PDFDocument {
             // Copy page contents
             const contents = pageObj.get("Contents");
             if (contents) {
-                newPageObj.put("Contents", this.graftObject(contents));
+                newPageObj.put("Contents", graftMap.graftObject(contents));
             }
 
             // Copy page resources
             const resources = pageObj.get("Resources");
             if (resources) {
-                newPageObj.put("Resources", this.graftObject(resources));
+                newPageObj.put("Resources", graftMap.graftObject(resources));
             }
 
             // Insert the new page at the specified position
@@ -517,11 +518,12 @@ export class PDFDocument extends mupdf.PDFDocument {
             var n: number = 0;
             while (n < ranges.length) { 
                 let newDoc = new mupdf.PDFDocument() as PDFDocument;
+		let graftMap = newDoc.newGraftMap()
                 
                 if (ranges[n] != undefined) {
                     for (let o: number = 0; o < ranges[n]!.length; o++) {
                         // note: "o" is the "to" number for graftPage()
-                        newDoc.graftPage(o, document, ranges[n]![o]!);
+                        graftMap.graftPage(o, document, ranges[n]![o]!);
                     }
                     documents.push(newDoc);
                 }

@@ -1,12 +1,12 @@
 /// <reference lib="webworker" />
 import * as Comlink from "comlink";
-import * as mupdfjs from "mupdf/mupdfjs";
+import * as mupdfjs from "mupdf/mupdfjs"
 import { PDFDocument } from "mupdf/mupdfjs";
 
 export const MUPDF_LOADED = "MUPDF_LOADED";
 
 export class MupdfWorker {
-  private document?: PDFDocument;
+  private pdfdocument?: PDFDocument;
 
   constructor() {
     this.initializeMupdf();
@@ -25,24 +25,34 @@ export class MupdfWorker {
   // ===> from mupdfjs which wraps ./node_modules/mupdf/dist/mupdf.js <===
 
   loadDocument(document: ArrayBuffer): boolean {
-    this.document = mupdfjs.PDFDocument.openDocument(
+
+    this.pdfdocument = mupdfjs.PDFDocument.openDocument(
       document,
       "application/pdf"
-    );
+    ) as PDFDocument;
 
     return true;
   }
 
-  renderPageAsImage(pageIndex = 0, scale = 1): Uint8Array {
-    if (!this.document) throw new Error("Document not loaded");
+  renderPageAsImage(pageIndex:number = 0, scale:number = 1): Uint8Array {
+    if (!this.pdfdocument) throw new Error("Document not loaded");
 
-    const page = this.document.loadPage(pageIndex);
+    const page = new mupdfjs.PDFPage(this.pdfdocument, pageIndex);
+
     const pixmap = page.toPixmap(
       [scale, 0, 0, scale, 0, 0],
       mupdfjs.ColorSpace.DeviceRGB
     );
 
-    return pixmap.asPNG();
+    let png = pixmap.asPNG();
+    pixmap.destroy();
+    return png;
+  }
+
+  getPageCount(): number {
+    if (!this.pdfdocument) throw new Error("Document not loaded");
+
+    return this.pdfdocument.countPages();
   }
 }
 

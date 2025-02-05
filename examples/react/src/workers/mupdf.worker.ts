@@ -1,14 +1,12 @@
 /// <reference lib="webworker" />
 import * as Comlink from "comlink";
-import * as mupdfjs from "mupdf"
-import { PDFDocument,PDFPage } from "mupdf";
-import { useRef } from 'react';
+import * as mupdfjs from "mupdf/mupdfjs"
+import { PDFDocument } from "mupdf/mupdfjs";
 
 export const MUPDF_LOADED = "MUPDF_LOADED";
 
 export class MupdfWorker {
   private pdfdocument?: PDFDocument;
-  //private page?: PDFPage;
 
   constructor() {
     this.initializeMupdf();
@@ -28,7 +26,7 @@ export class MupdfWorker {
 
   loadDocument(document: ArrayBuffer): boolean {
 
-    this.pdfdocument = mupdfjs.Document.openDocument(
+    this.pdfdocument = mupdfjs.PDFDocument.openDocument(
       document,
       "application/pdf"
     ) as PDFDocument;
@@ -39,11 +37,7 @@ export class MupdfWorker {
   renderPageAsImage(pageIndex:number = 0, scale:number = 1): Uint8Array {
     if (!this.pdfdocument) throw new Error("Document not loaded");
 
-    console.log("this.document",this.pdfdocument);
-    const page = this.pdfdocument.loadPage(pageIndex)
-    //const page = new mupdfjs.PDFPage(this.pdfdocument, pageIndex);
-
-    console.log("page",page);
+    const page = new mupdfjs.PDFPage(this.pdfdocument, pageIndex);
 
     const pixmap = page.toPixmap(
       [scale, 0, 0, scale, 0, 0],

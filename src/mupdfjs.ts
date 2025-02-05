@@ -73,8 +73,18 @@ export type CreatableAnnotationType =
     "Ink" |
     "FileAttachment"
 
-
 export class PDFDocument extends mupdf.PDFDocument {
+
+    // this is required so the doc reference doesn't get garbage collected
+    _doc: mupdf.PDFDocument | undefined
+
+    // bespoke constructor to ensure we get the correct type of PDFDocument instance
+    constructor(doc:mupdf.PDFDocument, isMuPDFJSDoc:boolean) {
+        super(doc.pointer)
+        if (isMuPDFJSDoc) {
+            this._doc = doc;
+        }
+    }
 
     // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
     static createBlankDocument(width: number = 595, height: number = 842): PDFDocument {
@@ -83,15 +93,16 @@ export class PDFDocument extends mupdf.PDFDocument {
         doc.insertPage(-1, pageObj)
 
         if (doc instanceof mupdf.PDFDocument) {
-            return new PDFDocument(doc.pointer);
+            return new PDFDocument(doc, true);
         }
         throw new Error("Not a PDF document");
     }
 
     static override openDocument(from: mupdf.Buffer | ArrayBuffer | Uint8Array | mupdf.Stream, magic: string): PDFDocument {
-        const doc = mupdf.Document.openDocument(from, magic);
+        let doc = super.openDocument(from, magic);
+
         if (doc instanceof mupdf.PDFDocument) {
-            return new PDFDocument(doc.pointer);
+            return new PDFDocument(doc, true);
         }
         throw new Error("Not a PDF document");
     }

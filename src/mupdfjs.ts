@@ -79,11 +79,9 @@ export class PDFDocument extends mupdf.PDFDocument {
     _doc: mupdf.PDFDocument | undefined
 
     // bespoke constructor to ensure we get the correct type of PDFDocument instance
-    constructor(doc:mupdf.PDFDocument, isMuPDFJSDoc:boolean) {
+    constructor(doc:mupdf.PDFDocument) {
         super(doc.pointer)
-        if (isMuPDFJSDoc) {
-            this._doc = doc;
-        }
+	this._doc = doc;
     }
 
     // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
@@ -93,7 +91,7 @@ export class PDFDocument extends mupdf.PDFDocument {
         doc.insertPage(-1, pageObj)
 
         if (doc instanceof mupdf.PDFDocument) {
-            return new PDFDocument(doc, true);
+            return new PDFDocument(doc);
         }
         throw new Error("Not a PDF document");
     }
@@ -102,7 +100,7 @@ export class PDFDocument extends mupdf.PDFDocument {
         let doc = super.openDocument(from, magic);
 
         if (doc instanceof mupdf.PDFDocument) {
-            return new PDFDocument(doc, true);
+            return new PDFDocument(doc);
         }
         throw new Error("Not a PDF document");
     }
@@ -708,6 +706,8 @@ export class PDFDocument extends mupdf.PDFDocument {
 }
 
 export class PDFPage extends mupdf.PDFPage {
+    // this is required so the page reference doesn't get garbage collected
+    _page: mupdf.PDFPage | undefined
 
     // note page number is zero-indexed here
     constructor(doc: mupdf.PDFDocument, pno: number) {
@@ -716,6 +716,7 @@ export class PDFPage extends mupdf.PDFPage {
         }
         let page: mupdf.PDFPage = doc.loadPage(pno)
         super(doc, page.pointer)
+	this._page = page
     }
 
     insertText(value: string,

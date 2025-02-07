@@ -81,7 +81,7 @@ export class PDFDocument extends mupdf.PDFDocument {
     // bespoke constructor to ensure we get the correct type of PDFDocument instance
     constructor(doc:mupdf.PDFDocument) {
         super(doc.pointer)
-	this._doc = doc;
+	    this._doc = doc;
     }
 
     // creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
@@ -406,7 +406,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 
         const sourcePageCount = sourcePDF.countPages();
         const targetPageCount = this.countPages();
-	const graftMap = this.newGraftMap()
+	    const graftMap = this.newGraftMap()
 
         // Normalize page numbers
         fromPage = Math.max(0, Math.min(fromPage, sourcePageCount - 1));
@@ -518,7 +518,7 @@ export class PDFDocument extends mupdf.PDFDocument {
             var n: number = 0;
             while (n < ranges.length) { 
                 let newDoc = new mupdf.PDFDocument() as PDFDocument;
-		let graftMap = newDoc.newGraftMap()
+		        let graftMap = newDoc.newGraftMap()
                 
                 if (ranges[n] != undefined) {
                     for (let o: number = 0; o < ranges[n]!.length; o++) {
@@ -718,7 +718,7 @@ export class PDFPage extends mupdf.PDFPage {
         }
         let page: mupdf.PDFPage = doc.loadPage(pno)
         super(doc, page.pointer)
-	this._page = page
+	    this._page = page
     }
 
     insertText(value: string,

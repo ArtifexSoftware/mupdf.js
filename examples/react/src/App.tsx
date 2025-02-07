@@ -1,63 +1,10 @@
 import "@/App.css";
-import { useMupdf } from "@/hooks/useMupdf.hook";
-import { useEffect, useState } from "react";
+
+import WebViewer from '@/components/WebViewer.js';
 
 function App() {
 
-  const [docLoaded, setDocLoaded] = useState(false);
-
-  const { isWorkerInitialized, renderPage, loadDocument, currentPage, countPages } =
-    useMupdf();
-  const [pageImages, setPageImages] = useState<any>([]);
-
-  // ===> This is a demo effect which uses hooks <===
-  // ===> from useMupdf to load and display the first page <===
-  // ===> of the pdf as an image. <===
-  useEffect(() => {
-
-    if (!isWorkerInitialized) {
-      return;
-    }
-
-    // load the document and then load the pages
-    const init = async () => {
-        const response = await fetch("/test.pdf");
-        const arrayBuffer = await response.arrayBuffer();
-        await loadDocument(arrayBuffer)
-        setDocLoaded(true);
-        await loadPages().catch(console.error);
-    }
-    
-
-    const loadPages = async () => {
-
-        let pageStack = new Array();
-        const totalPages: number | void = await countPages().catch(console.error);
-        
-        if (totalPages) {
-            for (let i:number = 0; i < totalPages; ++i) {
-                let pngData = await renderPage(i).catch(console.error);
-
-                if (pngData) {
-                    pageStack.push(URL.createObjectURL(new Blob([pngData], { type: "image/png" })));
-                
-                    if (pageStack.length == totalPages) {
-                        setPageImages(pageStack);
-                    }
-                }
-            }
-        }
-    }
-
-    init();
-    
-  }, [isWorkerInitialized, loadDocument, renderPage]);
-
-  return <div id="pages">
-  { pageImages.map((item:any, i) => {
-    return <div key={i}><img src={item} /></div>;
-  }) }
-</div>
+  return <WebViewer file="/test.pdf" />
 
 }
 

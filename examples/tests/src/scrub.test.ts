@@ -331,4 +331,42 @@ describe("PDFDocument scrub test", () => {
 			doc.destroy();
 		}
 	});
+
+	it("should reset annotation responses", () => {
+		// Create a new document
+		const doc = PDFDocument.createBlankDocument();
+
+		try {
+			// Create parent annotation
+			const page = doc.loadPage(0);
+			const parentAnnot = page.createAnnotation("Text");
+			parentAnnot.setRect([50, 50, 70, 70]);
+			parentAnnot.setContents("Parent comment");
+			parentAnnot.update();
+
+			// Create response annotation
+			const responseAnnot = page.createAnnotation("Text");
+			responseAnnot.setRect([80, 50, 100, 70]);
+			responseAnnot.setContents("Response comment");
+
+			// Set basic response properties
+			const responseObj = responseAnnot.getObject();
+			responseObj.put("IRT", parentAnnot.getObject());
+			responseObj.put("RT", doc.newName("R"));
+			responseAnnot.update();
+
+			// Verify response properties exist
+			expect(responseObj.get("IRT").isIndirect()).toBe(true);
+			expect(responseObj.get("RT").asName()).toBe("R");
+
+			// Scrub responses
+			doc.scrub({ resetResponses: true });
+
+			// Verify response properties are removed
+			expect(responseObj.get("IRT").isNull()).toBe(true);
+			expect(responseObj.get("RT").isNull()).toBe(true);
+		} finally {
+			doc.destroy();
+		}
+	});
 });

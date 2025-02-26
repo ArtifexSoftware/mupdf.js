@@ -658,7 +658,15 @@ export class PDFDocument extends mupdf.PDFDocument {
 
             // Reset responses
             if (resetResponses) {
-                // TODO: Implement response reset
+                const page = this.loadPage(i);
+                const annotations = page.getAnnotations();
+                for (const annot of annotations) {
+                    const annotObj = annot.getObject();
+                    // Remove response type and in-response-to reference
+                    annotObj.delete("RT");
+                    annotObj.delete("IRT");
+                    annot.update();
+                }
             }
 
             // Remove thumbnails

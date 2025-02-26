@@ -469,6 +469,7 @@ interface Libmupdf {
 	_wasm_pdf_set_annot_appearance_from_display_list(annot: Pointer<"pdf_annot">, appearance: Pointer<"char">, state: Pointer<"char">, ctm: Pointer<"fz_matrix">, list: Pointer<"fz_display_list">): void,
 	_wasm_pdf_set_annot_appearance(annot: Pointer<"pdf_annot">, appearance: Pointer<"char">, state: Pointer<"char">, ctm: Pointer<"fz_matrix">, bbox: Pointer<"fz_rect">, resources: Pointer<"pdf_obj">, contents: Pointer<"fz_buffer">): void,
 	_wasm_pdf_apply_redaction(annot: Pointer<"pdf_annot">, black_boxes: number, image_method: number, line_art_method: number, text_method: number): void,
+	_wasm_pdf_reset_form(doc: Pointer<"any_document">, fields: Pointer<"pdf_obj">, exclude: number): void,
 	_wasm_pdf_annot_field_type(widget: Pointer<"pdf_annot">): number,
 	_wasm_pdf_annot_field_flags(widget: Pointer<"pdf_annot">): number,
 	_wasm_pdf_annot_field_label(annot: Pointer<"pdf_annot">): Pointer<"char">,

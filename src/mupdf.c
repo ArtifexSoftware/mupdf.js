@@ -2204,6 +2204,12 @@ void wasm_pdf_apply_redaction(pdf_annot *annot, int black_boxes, int image_metho
 // --- PDFWidget ---
 
 EXPORT
+void wasm_pdf_reset_form(pdf_document *doc, pdf_obj *fields, int exclude)
+{
+	VOID(pdf_reset_form, doc, fields, exclude)
+}
+
+EXPORT
 int wasm_pdf_annot_field_type(pdf_annot *widget)
 {
 	INTEGER(pdf_field_type, pdf_annot_obj(ctx, widget))

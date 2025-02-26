@@ -2566,6 +2566,10 @@ export class PDFDocument extends Document {
 	getLayerName(layer: number): string {
 		return fromString(libmupdf._wasm_pdf_layer_name(this.pointer, layer))
 	}
+
+	resetForm(fields: PDFObject, exclude: boolean) {
+		libmupdf._wasm_pdf_reset_form(this.pointer, this._PDFOBJ(fields), Number(exclude))
+	}
 }
 
 export class PDFPage extends Page {

@@ -645,7 +645,11 @@ export class PDFDocument extends mupdf.PDFDocument {
 
             // Remove thumbnails
             if (thumbnails) {
-                // TODO: Implement thumbnail removal
+                const page = this.loadPage(i);
+                const pageObj = page.getObject();
+                if (pageObj.get("Thumb").isStream()) {
+                    pageObj.put("Thumb", PDFObject.Null);
+                }
             }
         }
 

@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it } from "vitest";
-import { PDFDocument, Buffer } from "../../../dist/mupdfjs";
+import { describe, expect, it } from "vitest";
+import { Buffer, PDFDocument } from "../../../dist/mupdfjs";
 
 describe("PDFDocument scrub test", () => {
 	it("should clean metadata from a new document", () => {
@@ -262,6 +262,31 @@ describe("PDFDocument scrub test", () => {
 			// Content should still be readable
 			const text = page.toStructuredText().asText();
 			expect(text.trim()).toBe("Test\nTest");
+		} finally {
+			doc.destroy();
+		}
+	});
+
+	it("should remove page thumbnails", () => {
+		// Create a new document
+		const doc = PDFDocument.createBlankDocument();
+
+		try {
+			// Add a thumbnail to the first page
+			const page = doc.loadPage(0);
+			const pageObj = page.getObject();
+			const thumbData = new Buffer("dummy thumbnail data");
+			const thumbStream = doc.addStream(thumbData, {});
+			pageObj.put("Thumb", thumbStream);
+
+			// Verify thumbnail exists
+			expect(pageObj.get("Thumb").isStream()).toBe(true);
+
+			// Scrub thumbnails
+			doc.scrub({ thumbnails: true });
+
+			// Verify thumbnail is removed
+			expect(pageObj.get("Thumb").isNull()).toBe(true);
 		} finally {
 			doc.destroy();
 		}

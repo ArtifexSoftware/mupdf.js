@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Buffer, PDFDocument } from "../../../dist/mupdfjs";
+import { Buffer, PDFDocument, PDFWidget } from "../../../dist/mupdfjs";
 
 describe("PDFDocument scrub test", () => {
 	it("should clean metadata from a new document", () => {
@@ -287,6 +287,46 @@ describe("PDFDocument scrub test", () => {
 
 			// Verify thumbnail is removed
 			expect(pageObj.get("Thumb").isNull()).toBe(true);
+		} finally {
+			doc.destroy();
+		}
+	});
+
+	it("should reset form fields", () => {
+		const doc = PDFDocument.createBlankDocument();
+
+		try {
+			// Create and test checkbox
+			const page = doc.loadPage(0);
+			const checkbox = page.createAnnotation("Widget") as PDFWidget;
+			checkbox.setRect([10, 10, 30, 30]);
+			const checkboxObj = checkbox.getObject();
+			checkboxObj.put("FT", doc.newName("Btn"));
+			checkboxObj.put("V", doc.newName("Yes"));
+			checkboxObj.put("DV", doc.newName("Off"));
+			checkbox.update();
+
+			// Create and test text field
+			const textfield = page.createAnnotation("Widget") as PDFWidget;
+			textfield.setRect([40, 10, 140, 30]);
+			const textObj = textfield.getObject();
+			textObj.put("FT", doc.newName("Tx"));
+			textObj.put("V", doc.newString("Current Value"));
+			textObj.put("DV", doc.newString("Default Value"));
+			textfield.update();
+
+			// Verify initial values
+			const widgets = page.getWidgets();
+			expect(widgets.length).toBe(2);
+			expect(widgets[0].getObject().get("V").asName()).toBe("Yes");
+			expect(widgets[1].getObject().get("V").asString()).toBe("Current Value");
+
+			// Reset fields
+			doc.scrub({ resetFields: true });
+
+			// Verify reset values
+			expect(widgets[0].getObject().get("V").asName()).toBe("Off");
+			expect(widgets[1].getObject().get("V").asString()).toBe("Default Value");
 		} finally {
 			doc.destroy();
 		}

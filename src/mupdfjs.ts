@@ -635,7 +635,25 @@ export class PDFDocument extends mupdf.PDFDocument {
 
             // Reset form fields
             if (resetFields) {
-                // TODO: Implement form fields reset
+                const page = this.loadPage(i);
+                const widgets = page.getWidgets();
+                for (const widget of widgets) {
+                    const widgetObj = widget.getObject();
+                    // Get default value
+                    const defaultValue = widgetObj.get("DV");
+                    // Reset value
+                    if (defaultValue.isNull()) {
+                        widgetObj.delete("V");
+                    } else {
+                        widgetObj.put("V", defaultValue);
+                    }
+                    // Update appearance state for checkboxes and radio buttons
+                    const widgetType = widget.getFieldType();
+                    if (widgetType === "checkbox" || widgetType === "radiobutton") {
+                        widgetObj.put("AS", defaultValue.isNull() ? this.newName("Off") : defaultValue);
+                    }
+                    widget.update();
+                }
             }
 
             // Reset responses

@@ -664,9 +664,7 @@ export class PDFDocument extends mupdf.PDFDocument {
             if (thumbnails) {
                 const page = this.loadPage(i);
                 const pageObj = page.getObject();
-                if (pageObj.get("Thumb").isStream()) {
-                    pageObj.put("Thumb", PDFObject.Null);
-                }
+                pageObj.delete("Thumb");
             }
         }
 

@@ -591,7 +591,6 @@ export class PDFDocument extends mupdf.PDFDocument {
                 const annotations = page.getAnnotations();
                 for (const annot of annotations) {
                     if (annot.getType() === "FileAttachment") {
-                        // Remove the file attachment
                         annot.setFileSpec(this.newNull());
                     }
                 }

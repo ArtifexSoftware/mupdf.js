@@ -777,7 +777,8 @@ export class PDFPage extends mupdf.PDFPage {
         if (pno < 0) {
             pno = 0
         }
-        let page: mupdf.PDFPage = doc.loadPage(pno)
+        const page = doc.loadPage(pno)
+        super(doc, page.pointer)
     }
 
     insertText(value: string,

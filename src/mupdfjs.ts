@@ -713,7 +713,7 @@ export class PDFDocument extends mupdf.PDFDocument {
         // Handle XML metadata
         if (xmlMetadata) {
             const root = this.getTrailer().get("Root");
-            root.put("Metadata", this.newNull());
+            root.delete("Metadata");
         }
     }
 

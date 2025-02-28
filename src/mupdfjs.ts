@@ -591,16 +591,8 @@ export class PDFDocument extends mupdf.PDFDocument {
                 const annotations = page.getAnnotations();
                 for (const annot of annotations) {
                     if (annot.getType() === "FileAttachment") {
-                        // Empty the file content but keep the annotation
-                        const emptyBuffer = new Buffer(" ");
-                        const emptyFileSpec = this.addEmbeddedFile(
-                            "empty",
-                            "application/octet-stream",
-                            emptyBuffer,
-                            new Date(),
-                            new Date()
-                        );
-                        annot.setFileSpec(emptyFileSpec);
+                        // Remove the file attachment
+                        annot.setFileSpec(this.newNull());
                     }
                 }
             }
@@ -789,7 +781,6 @@ export class PDFPage extends mupdf.PDFPage {
             pno = 0
         }
         let page: mupdf.PDFPage = doc.loadPage(pno)
-        super(doc, page.pointer)
     }
 
     insertText(value: string,

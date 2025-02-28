@@ -104,18 +104,7 @@ describe("PDFDocument scrub test", () => {
 				throw new Error("File attachment not found");
 			}
 			const fileSpec = scrubbedAttachment.getFileSpec();
-			expect(fileSpec).toBeDefined();
-
-			// Get embedded file stream
-			const ef = fileSpec.get("EF");
-			expect(ef.isDictionary()).toBe(true);
-
-			// Verify stream content is empty
-			const stream = ef.get("F");
-			expect(stream.isStream()).toBe(true);
-			const content = stream.readStream();
-			expect(content.getLength()).toBe(1);
-			expect(content.readByte(0)).toBe(32); // space character
+			expect(fileSpec.isNull()).toBe(true);
 		} finally {
 			doc.destroy();
 		}

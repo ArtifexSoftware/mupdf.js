@@ -272,16 +272,33 @@ PDFPage
         let redactionAnnotation = page.addRedaction({x:100, y:200, width:300, height:50})
 
 
-.. method:: applyRedactions(blackBoxes: boolean | number = true, imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS)
+.. method:: applyRedactions(blackBoxes: boolean | number = true, imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS, lineArtMethod: number = PDFPage.REDACT_LINE_ART_REMOVE_IF_COVERED, textMethod: number = PDFPage.REDACT_TEXT_REMOVE)
 
     Applies redactions to the page.
 
     :arg blackBoxes: `boolean` | `number`.  Whether to use black boxes at each redaction or not.
     :arg imageMethod: `number`. Default is `PDFPage.REDACT_IMAGE_PIXELS`.
+    :arg lineArtMethod: `number`. Default is `PDFPage.REDACT_LINE_ART_REMOVE_IF_COVERED`.
+    :arg textMethod: `number`. Default is `PDFPage.REDACT_TEXT_REMOVE`.
 
-        - `PDFPage.REDACT_IMAGE_NONE` for no redactions.
-        - `PDFPage.REDACT_IMAGE_REMOVE` to redact entire images.
-        - `PDFPage.REDACT_IMAGE_PIXELS` for redacting just the covered pixels.
+
+    **Image redaction options**
+
+    - `PDFPage.REDACT_IMAGE_NONE` for no image redactions.
+    - `PDFPage.REDACT_IMAGE_REMOVE` to redact entire images.
+    - `PDFPage.REDACT_IMAGE_PIXELS` for redacting just the covered pixels.
+    - `PDFPage.REDACT_IMAGE_UNLESS_INVISIBLE` only redact visible images.
+
+    **Line Art redaction options**
+
+    - `PDFPage.REDACT_LINE_ART_NONE` for no line art redactions.
+    - `PDFPage.REDACT_LINE_ART_REMOVE_IF_COVERED` redacts line art if covered.
+    - `PDFPage.REDACT_LINE_ART_REMOVE_IF_TOUCHED` redacts line art if touched.
+
+    **Text redaction options**
+
+    - `PDFPage.REDACT_TEXT_REMOVE` to redact text.
+    - `PDFPage.REDACT_TEXT_NONE` for no text redaction.
 
     .. note::
 

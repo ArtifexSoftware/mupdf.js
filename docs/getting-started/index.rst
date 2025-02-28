@@ -114,7 +114,51 @@ On the root of your checkout run:
 
 This will then create the `dist` folder with the required **Wasm** library and associated **TypeScript** & **JavaScript** files.
 
-4. Create a Simple **HTML** & **JS** Test Files
+
+3.1. Building smaller WASM builds
+""""""""""""""""""""""""""""""""""
+
+Please note the `build.sh` file includes build options which can configure what you might want to include in your WASM build from MuPDF
+
+The line which defines this with the `MUPDF_OPTS` variable, e.g.:
+
+`MUPDF_OPTS="-Os -DTOFU -DTOFU_CJK_EXT -DFZ_ENABLE_XPS=0 -DFZ_ENABLE_SVG=0 -DFZ_ENABLE_CBZ=0 -DFZ_ENABLE_IMG=0 -DFZ_ENABLE_HTML=0 -DFZ_ENABLE_EPUB=0 -DFZ_ENABLE_JS=0 -DFZ_ENABLE_OCR_OUTPUT=0 -DFZ_ENABLE_DOCX_OUTPUT=0 -DFZ_ENABLE_ODT_OUTPUT=0"`
+
+You can adjust these definitions to suit the kind of WASM build you need (note: of course this affects the file size of the resulting `mupdf-wasm.wasm`).
+
+Generally the more `-DTOFU` type options you give then the fewer fonts are included.
+
+**Defining settings building with specific font sets**
+
+.. list-table::
+        :header-rows: 1
+        :widths: 50,50
+
+        * - **Name**
+          - **Description**
+        * - `-DTOFU`
+          - To avoid all noto fonts except CJK
+        * - `-DTOFU_CJK`
+          - To skip the CJK font (this implicitly enables `-DTOFU_CJK_EXT` and `-DTOFU_CJK_LANG`)
+        * - `-DTOFU_CJK_EXT`
+          - To skip CJK Extension A (this implicitly enables `-DTOFU_CJK_LANG`)
+        * - `-DTOFU_CJK_LANG`
+          - To skip CJK language specific fonts
+        * - `-DTOFU_EMOJI`
+          - To skip the Emoji font
+        * - `-DTOFU_HISTORIC`
+          - To skip the ancient/historic font
+        * - `-DTOFU_SYMBOL`
+          - To skip the symbol font
+        * - `-DTOFU_SIL`
+          - To skip the SIL fonts
+
+
+.. note::
+
+    If you do change the build options, then ensure to run `make clean` before `make` to get up-to-date build results in the `dist` folder.
+
+4. Create **HTML** & **JS** Test Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Just to try things out we can create a couple of test files to see if we can see the `mupdfjs` object in the browser.

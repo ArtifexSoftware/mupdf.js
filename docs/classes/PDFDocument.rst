@@ -590,7 +590,85 @@ PDFDocument
 
     .. code-block:: javascript
 
-        var buffer = pdfDocument.saveToBuffer();
+        var buffer = pdfDocument.saveToBuffer("garbage=2,compress=yes,user-password=PASSWORD")
+
+    The options which you can use to compose your string parameter are as follows:
+
+    .. list-table::
+        :header-rows: 1
+
+        * - **Name**
+          - **Description**
+          - **Values**
+          - **Default**
+        * - `decompress`
+          - Decompress all streams (except compress-fonts/images).
+          - `yes` | `no`
+          - `no`
+        * - `compress`
+          - Compress all streams.
+          - `yes` | `no`
+          - `no`
+        * - `compress-fonts`
+          - Compress embedded fonts.
+          - `yes` | `no`
+          - `no`
+        * - `compress-images`
+          - Compress images.
+          - `yes` | `no`
+          - `no`
+        * - `ascii`
+          - ASCII hex encode binary streams.
+          - `yes` | `no`
+          - `no`
+        * - `pretty`
+          - Pretty-print objects with indentation.
+          - `yes` | `no`
+          - `no`
+        * - `clean`
+          - Pretty-print graphics commands in content streams.
+          - `yes` | `no`
+          - `no`
+        * - `sanitize`
+          - Sanitize graphics commands in content streams.
+          - `yes` | `no`
+          - `no`
+        * - `incremental`
+          - Write changes as incremental update.
+          - `yes` | `no`
+          - `no`
+        * - `continue-on-error`
+          - Continue saving the document even if there is an error.
+          - `yes` | `no`
+          - `no`
+        * - `garbage`
+          - Garbage collect unused objects.
+          - `yes` | `compact` (and compact cross reference table.) | `deduplicate` (and remove duplicate objects.)
+          - `no`
+        * - `decrypt`
+          - Write unencrypted document.
+          - `yes` | `no`
+          - `no`
+        * - `encrypt`
+          - Write encrypted document.
+          - `rc4-40` | `rc4-128` | `aes-128` | `aes-256` 
+          - `no`
+        * - `permissions`
+          - Document permissions to grant when encrypting.
+          - `number`, see `PDF Reference 1.7`_ - page 123, table 3.20
+          - `no`
+        * - `user-password`
+          - Password required to read document.
+          - *your password*
+          - 
+        * - `owner-password`
+          - Password required to edit document.
+          - *your password*
+          - 
+        * - `regenerate-id`
+          - Regenerate document id.
+          - `yes` | `no`
+          - `yes`  
 
 ----
 

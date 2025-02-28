@@ -214,6 +214,10 @@ export function setUserCSS(text: string) {
 	libmupdf._wasm_set_user_css(STRING(text))
 }
 
+export function installLoadFontFunction(f: (name: string, script: string) => Buffer | null) {
+	$libmupdf_load_font_file_js = f
+}
+
 /* -------------------------------------------------------------------------- */
 
 // To pass Rect and Matrix as pointer arguments
@@ -413,6 +417,14 @@ function fromColor(n: number): Color {
 			libmupdf.HEAPF32[_wasm_color + 3] as number,
 		]
 	throw new TypeError("invalid number of components for Color: " + n)
+}
+
+function fromColorArray(n: number, ptr: Pointer<"float">): number[] {
+	let addr = ptr >> 2
+	let color: number[] = []
+	for (let i = 0; i < n; ++i)
+		color.push(libmupdf.HEAPF32[addr + i] as number)
+	return color
 }
 
 function fromString(ptr: Pointer<"char">): string {
@@ -933,6 +945,13 @@ export class StrokeState extends Userdata<"fz_stroke_state"> {
 	// TODO: dashes
 }
 
+interface PathWalker {
+	moveTo?(x: number, y: number): void
+	lineTo?(x: number, y: number): void
+	curveTo?(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): void
+	closePath?(): void
+}
+
 export class Path extends Userdata<"fz_path"> {
 	static override readonly _drop = libmupdf._wasm_drop_path
 
@@ -987,9 +1006,18 @@ export class Path extends Userdata<"fz_path"> {
 		libmupdf._wasm_transform_path(this.pointer, MATRIX(matrix))
 	}
 
-	walk(_walker: any) {
-		throw "TODO"
+	walk(walker: PathWalker) {
+		let id = $libmupdf_path_id++
+		$libmupdf_path_table.set(id, walker)
+		libmupdf._wasm_walk_path(this.pointer, id)
+		$libmupdf_path_table.delete(id)
 	}
+}
+
+interface TextWalker {
+	beginSpan?(font: Font, trm: Matrix, wmode: number, bidi: number, markupDirection: number, language: string): void
+	showGlyph?(font: Font, trm: Matrix, glyph: number, unicode: number, wmode: number, bidi: number): void
+	endSpan?(): void
 }
 
 export class Text extends Userdata<"fz_text"> {
@@ -1039,8 +1067,11 @@ export class Text extends Userdata<"fz_text"> {
 		)
 	}
 
-	walk(_walker: any) {
-		throw "TODO"
+	walk(walker: TextWalker) {
+		let id = $libmupdf_text_id++
+		$libmupdf_text_table.set(id, walker)
+		libmupdf._wasm_walk_text(this.pointer, id)
+		$libmupdf_text_table.delete(id)
 	}
 }
 
@@ -1269,12 +1300,20 @@ interface StructuredTextWalker {
 	endTextBlock?(): void
 }
 
+type SelectMode = "chars" | "words" | "lines"
+
 export class StructuredText extends Userdata<"fz_stext_page"> {
 	static override readonly _drop = libmupdf._wasm_drop_stext_page
 
-	static readonly SELECT_CHARS = 0
-	static readonly SELECT_WORDS = 1
-	static readonly SELECT_LINES = 2
+	static readonly SELECT_MODE: SelectMode[] = [
+		"chars",
+		"words",
+		"lines"
+	]
+
+	static readonly SELECT_CHARS = "chars"
+	static readonly SELECT_WORDS = "words"
+	static readonly SELECT_LINES = "lines"
 
 	walk(walker: StructuredTextWalker) {
 		let block = libmupdf._wasm_stext_page_get_first_block(this.pointer)
@@ -1342,6 +1381,11 @@ export class StructuredText extends Userdata<"fz_stext_page"> {
 		return fromStringFree(libmupdf._wasm_print_stext_page_as_text(this.pointer))
 	}
 
+	snap(p: Point, q: Point, mode: SelectMode): Quad {
+		let mm = ENUM<SelectMode>(mode, StructuredText.SELECT_MODE)
+		return fromQuad(libmupdf._wasm_snap_selection(this.pointer, POINT(p), POINT2(q), mm))
+	}
+
 	copy(p: Point, q: Point): string {
 		return fromStringFree(libmupdf._wasm_copy_selection(this.pointer, POINT(p), POINT2(q)))
 	}
@@ -1404,6 +1448,19 @@ export class Device extends Userdata<"fz_device"> {
 		"Color",
 		"Luminosity",
 	]
+
+	constructor(pointer: Pointer<"fz_device">)
+	constructor(callbacks: DeviceFunctions)
+
+	constructor(pointer_or_callbacks: Pointer<"fz_device"> | DeviceFunctions) {
+		if (typeof pointer_or_callbacks === "number")
+			super(pointer_or_callbacks)
+		else {
+			let id = $libmupdf_device_id++
+			$libmupdf_device_table.set(id, pointer_or_callbacks)
+			super(libmupdf._wasm_new_js_device(id))
+		}
+	}
 
 	fillPath(path: Path, evenOdd: boolean, ctm: Matrix, colorspace: ColorSpace, color: Color, alpha: number) {
 		checkType(path, Path)
@@ -2306,6 +2363,24 @@ export class PDFDocument extends Document {
 		return _getEmbeddedFilesRec({}, this.getTrailer().get("Root", "Names", "EmbeddedFiles"))
 	}
 
+	loadNameTree(treeName: string): Record<string,PDFObject> {
+		function _loadNameTreeRec(dict: Record<string,PDFObject>, node: PDFObject) {
+			var kids = node.get("Kids")
+			if (kids && kids.isArray())
+				for (var i = 0; i < kids.length; i += 1)
+					_loadNameTreeRec(dict, kids.get(i))
+			var names = node.get("Names")
+			if (names && names.isArray())
+				for (var i = 0; i < names.length; i += 2)
+					dict[names.get(i).asString()] = names.get(i+1)
+		}
+		var node = this.getTrailer().get("Root").get("Names").get(treeName)
+		var dict = {}
+		if (node.isDictionary())
+			_loadNameTreeRec(dict, node)
+		return dict
+	}
+
 	insertEmbeddedFile(filename: string, filespec: PDFObject) {
 		var efs = this.getEmbeddedFiles()
 		efs[filename] = filespec
@@ -2333,10 +2408,23 @@ export class PDFDocument extends Document {
 		}
 	}
 
-	saveToBuffer(options = "") {
-		checkType(options, "string")
-		// TODO: object options to string options?
-		return new Buffer(libmupdf._wasm_pdf_write_document_buffer(this.pointer, STRING(options)))
+	saveToBuffer(options: string | Record<string,any> = "") {
+		var options_string
+		if (typeof options === "object") {
+			options_string = Object.entries(options).map(kv => {
+				var k: string = kv[0]
+				var v: any = kv[1]
+				if (v === true)
+					return k + "=" + "yes"
+				else if (v === false)
+					return k + "=" + "no"
+				else
+					return k + "=" + String(v).replaceAll(",", ":")
+			}).join(",")
+		} else {
+			options_string = ""
+		}
+		return new Buffer(libmupdf._wasm_pdf_write_document_buffer(this.pointer, STRING(options_string)))
 	}
 
 	static readonly PAGE_LABEL_NONE = "\0"
@@ -2455,8 +2543,32 @@ export class PDFDocument extends Document {
 		}
 	}
 
+	subsetFonts() {
+		libmupdf._wasm_pdf_subset_fonts(this.pointer)
+	}
+
 	bake(bakeAnnots = true, bakeWidgets = true) {
 		libmupdf._wasm_pdf_bake_document(this.pointer, bakeAnnots, bakeWidgets)
+	}
+
+	countLayers(): number {
+		return libmupdf._wasm_pdf_count_layers(this.pointer)
+	}
+
+	isLayerVisible(layer: number): boolean {
+		return !!libmupdf._wasm_pdf_layer_is_enabled(this.pointer, layer)
+	}
+
+	setLayerVisible(layer: number, visible: boolean): void {
+		libmupdf._wasm_pdf_enable_layer(this.pointer, layer, Number(visible))
+	}
+
+	getLayerName(layer: number): string {
+		return fromString(libmupdf._wasm_pdf_layer_name(this.pointer, layer))
+	}
+
+	resetForm(fields: PDFObject, exclude: boolean) {
+		libmupdf._wasm_pdf_reset_form(this.pointer, this._PDFOBJ(fields), Number(exclude))
 	}
 }
 
@@ -2554,9 +2666,17 @@ export class PDFPage extends Page {
 	static readonly REDACT_IMAGE_NONE = 0
 	static readonly REDACT_IMAGE_REMOVE = 1
 	static readonly REDACT_IMAGE_PIXELS = 2
+	static readonly REDACT_IMAGE_UNLESS_INVISIBLE = 3
 
-	applyRedactions(black_boxes = 1, image_method = 2) {
-		libmupdf._wasm_pdf_redact_page(this.pointer, black_boxes, image_method)
+	static readonly REDACT_LINE_ART_NONE = 0
+	static readonly REDACT_LINE_ART_REMOVE_IF_COVERED = 1
+	static readonly REDACT_LINE_ART_REMOVE_IF_TOUCHED = 2
+
+	static readonly REDACT_TEXT_REMOVE = 0
+	static readonly REDACT_TEXT_NONE = 1
+
+	applyRedactions(black_boxes = 1, image_method = 2, line_art_method = 1, text_method = 0) {
+		libmupdf._wasm_pdf_redact_page(this.pointer, black_boxes, image_method, line_art_method, text_method)
 	}
 
 	update() {
@@ -3446,8 +3566,8 @@ export class PDFAnnotation extends Userdata<"pdf_annot"> {
 		)
 	}
 
-	applyRedaction(black_boxes = 1, image_method = 2) {
-		libmupdf._wasm_pdf_apply_redaction(this.pointer, black_boxes, image_method)
+	applyRedaction(black_boxes = 1, image_method = 2, line_art_method = 1, text_method = 0) {
+		libmupdf._wasm_pdf_apply_redaction(this.pointer, black_boxes, image_method, line_art_method, text_method)
 	}
 }
 
@@ -3615,9 +3735,9 @@ export class PDFWidget extends PDFAnnotation {
 /* We need a certain level of ugliness to allow callbacks from C to JS */
 
 declare global {
-	function $libmupdf_stm_close(ptr: number): void;
-	function $libmupdf_stm_seek(ptr: number, pos: number, offset: number, whence: number): number;
-	function $libmupdf_stm_read(ptr: number, pos: number, addr: number, size: number): number;
+	function $libmupdf_stm_close(ptr: number): void
+	function $libmupdf_stm_seek(ptr: number, pos: number, offset: number, whence: number): number
+	function $libmupdf_stm_read(ptr: number, pos: number, addr: number, size: number): number
 }
 
 interface StreamHandle {
@@ -3672,4 +3792,421 @@ export class Stream extends Userdata<"fz_stream"> {
 		$libmupdf_stm_table.set(id, handle)
 		super(libmupdf._wasm_new_stream(id))
 	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+var $libmupdf_load_font_file_js: (name: string, script: string) => Buffer | null
+
+declare global {
+	function $libmupdf_load_font_file(name: Pointer<"char">, script: Pointer<"char">): Pointer<"fz_buffer">
+}
+
+globalThis.$libmupdf_load_font_file = function (name, script) {
+	if ($libmupdf_load_font_file_js) {
+		var buf = $libmupdf_load_font_file_js(fromString(name), fromString(script))
+		if (buf)
+			return buf.pointer
+	}
+	return 0 as Pointer<"fz_buffer">
+}
+
+interface DeviceFunctions {
+	drop?(): void,
+	close?(): void,
+
+	fillPath?(path: Path, evenOdd: boolean, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	strokePath?(path: Path, stroke: StrokeState, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	clipPath?(path: Path, evenOdd: boolean, ctm: Matrix): void,
+	clipStrokePath?(path: Path, stroke: StrokeState, ctm: Matrix): void,
+
+	fillText?(text: Text, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	strokeText?(text: Text, stroke: StrokeState, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	clipText?(text: Text, ctm: Matrix): void,
+	clipStrokeText?(text: Text, stroke: StrokeState, ctm: Matrix): void,
+	ignoreText?(text: Text, ctm: Matrix): void,
+
+	fillShade?(shade: Shade, ctm: Matrix, alpha: number): void,
+
+	fillImage?(image: Image, ctm: Matrix, alpha: number): void,
+	fillImageMask?(image: Image, ctm: Matrix, colorspace: ColorSpace, color: number[], alpha: number): void,
+	clipImageMask?(image: Image, ctm: Matrix): void,
+
+	popClip?(): void,
+
+	beginMask?(bbox: Rect, luminosity: boolean, colorspace: ColorSpace, color: number[]): void,
+	endMask?(): void,
+
+	beginGroup?(bbox: Rect, colorspace: ColorSpace, isolated: boolean, knockout: boolean, blendmode: BlendMode, alpha: number): void,
+	endGroup?(): void,
+
+	beginTile?(area: Rect, view: Rect, xstep: number, ystep: number, ctm: Matrix, id: number): number,
+	endTile?(): void,
+
+	beginLayer?(name: string): void,
+	endLayer?(): void,
+}
+
+var $libmupdf_device_id = 0
+var $libmupdf_device_table: Map<number,DeviceFunctions> = new Map()
+
+var $libmupdf_path_id = 0
+var $libmupdf_path_table: Map<number,PathWalker> = new Map()
+
+var $libmupdf_text_id = 0
+var $libmupdf_text_table: Map<number,TextWalker> = new Map()
+
+declare global {
+	var $libmupdf_path_walk: any
+	var $libmupdf_text_walk: any
+	var $libmupdf_device: any
+}
+
+globalThis.$libmupdf_path_walk = {
+	moveto(id: number, x: number, y: number): void {
+		$libmupdf_path_table.get(id)?.moveTo?.(x, y)
+	},
+	lineto(id: number, x: number, y: number): void {
+		$libmupdf_path_table.get(id)?.lineTo?.(x, y)
+	},
+	curveto(id: number, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): void {
+		$libmupdf_path_table.get(id)?.curveTo?.(x1, y1, x2, y2, x3, y3)
+	},
+	closepath(id: number): void {
+		$libmupdf_path_table.get(id)?.closePath?.()
+	},
+}
+
+var $libmupdf_text_font: Font | null = null
+
+globalThis.$libmupdf_text_walk = {
+	begin_span(
+		id: number,
+		font: Pointer<"fz_font">,
+		trm: Pointer<"fz_matrix">,
+		wmode: number,
+		bidi: number,
+		dir: number,
+		lang: Pointer<"char">
+	): void {
+		if (font !== $libmupdf_text_font?.pointer)
+			$libmupdf_text_font = new Font(font)
+		$libmupdf_text_table.get(id)?.beginSpan?.(
+			$libmupdf_text_font,
+			fromMatrix(trm),
+			wmode,
+			bidi,
+			dir,
+			fromString(lang)
+		)
+	},
+	end_span(id: number): void {
+		$libmupdf_text_table.get(id)?.endSpan?.()
+	},
+	show_glyph(
+		id: number,
+		font: Pointer<"fz_font">,
+		trm: Pointer<"fz_matrix">,
+		glyph: number,
+		unicode: number,
+		wmode: number,
+		bidi: number
+	): void {
+		if (font !== $libmupdf_text_font?.pointer)
+			$libmupdf_text_font = new Font(font)
+		$libmupdf_text_table.get(id)?.showGlyph?.(
+			$libmupdf_text_font,
+			fromMatrix(trm),
+			glyph,
+			unicode,
+			wmode,
+			bidi
+		)
+	},
+}
+
+globalThis.$libmupdf_device = {
+	drop_device(id: number): void {
+		$libmupdf_device_table.get(id)?.drop?.()
+		$libmupdf_device_table.delete(id)
+	},
+
+	close_device(id: number): void {
+		$libmupdf_device_table.get(id)?.close?.()
+	},
+
+	fill_path(
+		id: number,
+		path: Pointer<"fz_path">,
+		even_odd: number,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillPath?.(
+			new Path(path),
+			!!even_odd,
+			fromMatrix(ctm),
+			new ColorSpace(colorspace),
+			fromColorArray(color_n, color_arr),
+			alpha
+		)
+	},
+
+	clip_path(
+		id: number,
+		path: Pointer<"fz_path">,
+		even_odd: number,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.clipPath?.(
+				new Path(path),
+				!!even_odd,
+				fromMatrix(ctm)
+			)
+	},
+
+	stroke_path(
+		id: number,
+		path: Pointer<"fz_path">,
+		stroke: Pointer<"fz_stroke_state">,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.strokePath?.(
+			new Path(path),
+			new StrokeState(stroke),
+			fromMatrix(ctm),
+			new ColorSpace(colorspace),
+			fromColorArray(color_n, color_arr),
+			alpha
+		)
+	},
+
+	clip_stroke_path(
+		id: number,
+		path: Pointer<"fz_path">,
+		stroke: Pointer<"fz_stroke_state">,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.clipStrokePath?.(
+			new Path(path),
+			new StrokeState(stroke),
+			fromMatrix(ctm)
+		)
+	},
+
+	fill_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillText?.(
+				new Text(text),
+				fromMatrix(ctm),
+				new ColorSpace(colorspace),
+				fromColorArray(color_n, color_arr),
+				alpha
+			)
+	},
+
+	stroke_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		stroke: Pointer<"fz_stroke_state">,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.strokeText?.(
+				new Text(text),
+				new StrokeState(stroke),
+				fromMatrix(ctm),
+				new ColorSpace(colorspace),
+				fromColorArray(color_n, color_arr),
+				alpha
+			)
+	},
+
+	clip_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.clipText?.(
+				new Text(text),
+				fromMatrix(ctm)
+			)
+	},
+
+	clip_stroke_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		stroke: Pointer<"fz_stroke_state">,
+		ctm: Pointer<"fz_matrix">,
+	): void {
+		$libmupdf_device_table.get(id)?.clipStrokeText?.(
+				new Text(text),
+				new StrokeState(stroke),
+				fromMatrix(ctm)
+			)
+	},
+
+	ignore_text(
+		id: number,
+		text: Pointer<"fz_text">,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.ignoreText?.(
+				new Text(text),
+				fromMatrix(ctm)
+			)
+	},
+
+	fill_shade(
+		id: number,
+		shade: Pointer<"fz_shade">,
+		ctm: Pointer<"fz_matrix">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillShade?.(
+				new Shade(shade),
+				fromMatrix(ctm),
+				alpha
+			)
+	},
+
+	fill_image(
+		id: number,
+		image: Pointer<"fz_image">,
+		ctm: Pointer<"fz_matrix">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillImage?.(
+			new Image(image),
+			fromMatrix(ctm),
+			alpha
+		)
+	},
+
+	fill_image_mask(
+		id: number,
+		image: Pointer<"fz_image">,
+		ctm: Pointer<"fz_matrix">,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.fillImageMask?.(
+			new Image(image),
+			fromMatrix(ctm),
+			new ColorSpace(colorspace),
+			fromColorArray(color_n, color_arr),
+			alpha
+		)
+	},
+
+	clip_image_mask(
+		id: number,
+		image: Pointer<"fz_image">,
+		ctm: Pointer<"fz_matrix">
+	): void {
+		$libmupdf_device_table.get(id)?.clipImageMask?.(
+			new Image(image),
+			fromMatrix(ctm)
+		)
+	},
+
+	pop_clip(id: number): void {
+		$libmupdf_device_table.get(id)?.popClip?.()
+	},
+
+	begin_mask(
+		id: number,
+		bbox: Pointer<"fz_rect">,
+		luminosity: number,
+		colorspace: Pointer<"fz_colorspace">,
+		color_n: number,
+		color_arr: Pointer<"float">
+	): void {
+		$libmupdf_device_table.get(id)?.beginMask?.(
+			fromRect(bbox),
+			!!luminosity,
+			new ColorSpace(colorspace),
+			fromColorArray(color_n, color_arr)
+		)
+	},
+
+	begin_group(
+		id: number,
+		bbox: Pointer<"fz_rect">,
+		colorspace: Pointer<"fz_colorspace">,
+		isolated: number,
+		knockout: number,
+		blendmode: number,
+		alpha: number
+	): void {
+		$libmupdf_device_table.get(id)?.beginGroup?.(
+			fromRect(bbox),
+			new ColorSpace(colorspace),
+			!!isolated,
+			!!knockout,
+			Device.BLEND_MODES[blendmode] as BlendMode,
+			alpha
+		)
+	},
+
+	begin_tile(
+		id: number,
+		area: Pointer<"fz_rect">,
+		view: Pointer<"fz_rect">,
+		xstep: number,
+		ystep: number,
+		ctm: Pointer<"fz_matrix">,
+		tile_id: number
+	): number {
+		return $libmupdf_device_table.get(id)?.beginTile?.(
+			fromRect(area),
+			fromRect(view),
+			xstep,
+			ystep,
+			fromMatrix(ctm),
+			tile_id
+		) || 0
+	},
+
+	begin_layer(id: number, name: Pointer<"char">): void {
+		$libmupdf_device_table.get(id)?.beginLayer?.(
+			fromString(name)
+		)
+	},
+
+	end_mask(id: number): void {
+		$libmupdf_device_table.get(id)?.endMask?.()
+	},
+
+	end_group(id: number): void {
+		$libmupdf_device_table.get(id)?.endGroup?.()
+	},
+
+	end_tile(id: number): void {
+		$libmupdf_device_table.get(id)?.endTile?.()
+	},
+
+	end_layer(id: number): void {
+		$libmupdf_device_table.get(id)?.endLayer?.()
+	},
+
 }

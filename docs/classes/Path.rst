@@ -165,6 +165,51 @@ A `Path` object represents vector graphics as drawn by a pen. A path can be eith
 
 
 
+.. method:: walk(walker: PathWalker)
+
+    :arg walker: `PathWalker`. Function with protocol methods, see example below for details.
+
+    |example_tag|
+
+    .. code-block:: javascript
+            
+        function print(...args) {
+            console.log(args.join(" "))
+        }
+
+        var pathPrinter = {
+            moveTo: function (x,y) { print("moveTo", x, y) },
+            lineTo: function (x,y) { print("lineTo", x, y) },
+            curveTo: function (x1,y1,x2,y2,x3,y3) { print("curveTo", x1, y1, x2, y2, x3, y3) },
+            closePath: function () { print("closePath") },
+        }
+
+        var traceDevice = {
+            fillPath: function (path, evenOdd, ctm, colorSpace, color, alpha) {
+                print("fillPath", evenOdd, ctm, colorSpace, color, alpha)
+                path.walk(pathPrinter)
+            },
+            clipPath: function (path, evenOdd, ctm) {
+                print("clipPath", evenOdd, ctm)
+                path.walk(pathPrinter)
+            },
+            strokePath: function (path, stroke, ctm, colorSpace, color, alpha) {
+                print("strokePath", JSON.stringify(stroke), ctm, colorSpace, color, alpha)
+                path.walk(pathPrinter)
+            },
+            clipStrokePath: function (path, stroke, ctm) {
+                print("clipStrokePath", JSON.stringify(stroke), ctm)
+                path.walk(pathPrinter)
+            }
+        }
+
+        var doc = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
+        var page = doc.loadPage(0)
+        var device = new mupdfjs.Device(traceDevice)
+        page.run(device, mupdfjs.Matrix.identity)
+
+
+
 .. include:: footer.rst
 .. include:: ../footer.rst
 

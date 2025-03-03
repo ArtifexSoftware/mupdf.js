@@ -46,10 +46,10 @@ PDFPage
 
     :arg options: `string`. A comma separated list of flags: 
 
-        - `preserve-ligatures`
-        - `preserve-whitespace`
-        - `preserve-spans`
-        - `preserve-images`
+		- `preserve-ligatures`
+		- `preserve-whitespace`
+		- `preserve-spans`
+		- `preserve-images`
 		- `inhibit-spaces`
 		- `dehyphenate`
 		- `structured`

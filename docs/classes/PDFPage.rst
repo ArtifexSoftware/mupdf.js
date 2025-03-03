@@ -50,6 +50,11 @@ PDFPage
         - `preserve-whitespace`
         - `preserve-spans`
         - `preserve-images`
+		- `inhibit-spaces`
+		- `dehyphenate`
+		- `structured`
+		- `use-cid-for-unknown-unicode`
+		- `ignore-actualtext`
 
     :return: :doc:`StructuredText`.
 
@@ -57,7 +62,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        let sText = page.toStructuredText("preserve-whitespace");
+        let sText = page.toStructuredText("preserve-whitespace,ignore-actualtext");
 
 .. method:: toPixmap(matrix: Matrix, colorspace: ColorSpace, alpha: boolean = false, showExtras: boolean = true, usage: string = "View", box: PageBox = "CropBox")
 

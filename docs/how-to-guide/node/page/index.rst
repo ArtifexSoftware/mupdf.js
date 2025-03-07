@@ -67,7 +67,26 @@ The parameters for the method define:
 Extracting Page Text
 -------------------------
 
-To get the text for a page we can retrieve a :doc:`../../../classes/StructuredText` object as `JSON` as follows:
+
+There are two methods for extracting text, one which simply gives the plain text and another which delivers a more detailed text object.
+
+
+Basic Text
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To get the plain text for a page we can retrieve a `string` as follows:
+
+|example_tag|
+
+.. code-block:: javascript
+
+    const text = page.getText()
+    console.log(`text=${text}`)
+
+Advanced Text
+~~~~~~~~~~~~~~~~~~~~~~
+
+To get a more advanced representation of the page text we can retrieve a :doc:`../../../classes/StructuredText` object as `JSON` as follows:
 
 
 |example_tag|

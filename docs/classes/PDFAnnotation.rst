@@ -123,36 +123,6 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
         annotation.setAppearance("N", null, mupdfjs.Matrix.identity, [0,0,100,100], resources, contents);
 
-.. method:: setAppearance(image:Image)
-
-    Set a stamp annotation's appearance to that of an image.
-
-    :arg image: :doc:`Image` containing the desired appearance.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        let img = new mupdfjs.Image(fs.readFileSync("photo.png"))
-        annotation.setAppearance(img)
-
-
-**Appearance stream values**
-
-
-.. list-table::
-   :header-rows: 1
-
-   * - Value
-     - Description
-   * - N
-     - normal appearance
-   * - R
-     - roll-over appearance
-   * - D
-     - down (pressed) appearance
-
-
 .. method:: update()
 
     Update the appearance stream to account for changes in the annotation.

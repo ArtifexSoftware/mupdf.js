@@ -51,8 +51,15 @@ export class StrokeState extends mupdf.StrokeState { }
 export class StructuredText extends mupdf.StructuredText { }
 export class Text extends mupdf.Text { }
 
+export type PDFWord = {
+	rect: Rect,
+	text: string,
+	font: Font,
+	size: number,
+};
+
 export function installLoadFontFunction(f: (name: string, script: string) => Buffer | null) {
-	mupdf.installLoadFontFunction(f) 
+	mupdf.installLoadFontFunction(f)
 }
 
 export type CreatableAnnotationType =
@@ -79,7 +86,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 	_doc: mupdf.PDFDocument | undefined
 
 	// bespoke constructor to ensure we get the correct type of PDFDocument instance
-	constructor(doc:mupdf.PDFDocument) {
+	constructor(doc: mupdf.PDFDocument) {
 		super(doc.pointer)
 		this._doc = doc;
 	}
@@ -450,7 +457,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 				}
 			}
 		}
-    }
+	}
 
 	private copyPageLinks(sourcePage: mupdf.PDFPage, targetPage: mupdf.PDFPage): void {
 		const links = sourcePage.getLinks();
@@ -471,14 +478,14 @@ export class PDFDocument extends mupdf.PDFDocument {
 	split(range: number[] | undefined) {
 		let document = this;
 		let documents: PDFDocument[] = [];
-		
+
 		if (range == undefined || range.length == 0) { // just split out all pages as single PDFs
 			let i = 0;
 			while (i < document.countPages()) {
 				let newDoc: PDFDocument = new mupdf.PDFDocument() as PDFDocument;
 				newDoc.graftPage(0, document, i);
 				documents.push(newDoc);
-				i ++;
+				i++;
 			}
 		} else { // we have a defined page ranges to consider, create the correct PDFs
 			let i = 0
@@ -494,9 +501,9 @@ export class PDFDocument extends mupdf.PDFDocument {
 					throw new Error("Split error: document page indexes cannot be less than zero");
 				}
 
-				var nextIndex: number = i+1;
+				var nextIndex: number = i + 1;
 				var b: number;
-				if (nextIndex > range.length-1) {
+				if (nextIndex > range.length - 1) {
 					b = document.countPages();
 				} else {
 					b = range[nextIndex] as number;
@@ -506,20 +513,20 @@ export class PDFDocument extends mupdf.PDFDocument {
 
 				while (a < b) {
 					set.push(a);
-					a ++;
+					a++;
 				}
 
 				ranges.push(set);
 
-				i ++;
+				i++;
 			}
 
 			// now cycle the ranges and create the new documents as required
 			var n: number = 0;
-			while (n < ranges.length) { 
+			while (n < ranges.length) {
 				let newDoc = new mupdf.PDFDocument() as PDFDocument;
 				let graftMap = newDoc.newGraftMap()
-				
+
 				if (ranges[n] != undefined) {
 					for (let o: number = 0; o < ranges[n]!.length; o++) {
 						// note: "o" is the "to" number for graftPage()
@@ -527,7 +534,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 					}
 					documents.push(newDoc);
 				}
-				n ++;
+				n++;
 			}
 		}
 		return documents
@@ -881,7 +888,7 @@ export class PDFPage extends mupdf.PDFPage {
 
 		// add drawing operations to page contents
 		var page_contents = page_obj.get("Contents")
-		
+
 		if (page_contents.isNull()) {
 			page_obj.put("Contents", extra_contents)
 		}
@@ -942,10 +949,10 @@ export class PDFPage extends mupdf.PDFPage {
 		return redaction
 	}
 
-	override applyRedactions(blackBoxes: boolean | number = true, 
-								imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS,
-								lineArtMethod: number = PDFPage.REDACT_LINE_ART_REMOVE_IF_COVERED, 
-								textMethod: number = PDFPage.REDACT_TEXT_REMOVE) {
+	override applyRedactions(blackBoxes: boolean | number = true,
+		imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS,
+		lineArtMethod: number = PDFPage.REDACT_LINE_ART_REMOVE_IF_COVERED,
+		textMethod: number = PDFPage.REDACT_TEXT_REMOVE) {
 		var num: number
 		if (typeof blackBoxes === "boolean") {
 			num = blackBoxes ? 1 : 0
@@ -993,6 +1000,73 @@ export class PDFPage extends mupdf.PDFPage {
 		})
 
 		return text
+	}
+
+	getWords(): PDFWord[] {
+		let page = this;
+
+		const words: PDFWord[] = [];
+		let cwordRect: Rect | undefined;
+		let cwordFont: Font | undefined;
+		let cwordSize: number | undefined;
+		let cwordText = '';
+
+		const endWord = () => {
+			// if word is complete, append to list
+			if (
+				cwordRect !== undefined &&
+				cwordFont !== undefined &&
+				cwordSize !== undefined &&
+				cwordText !== ''
+			) {
+				words.push({
+					rect: cwordRect,
+					text: cwordText,
+					font: cwordFont,
+					size: cwordSize,
+				});
+			}
+
+			// Reset values
+			cwordRect = undefined;
+			cwordFont = undefined;
+			cwordSize = undefined;
+			cwordText = '';
+		};
+
+		const enlargeRect = (quad: Quad) => {
+			if (cwordRect === undefined) {
+				cwordRect = [quad[0], quad[1], quad[6], quad[7]];
+				return;
+			}
+
+			cwordRect[0] = Math.min(cwordRect[0], quad[0]);
+			cwordRect[1] = Math.min(cwordRect[1], quad[1]);
+			cwordRect[2] = Math.max(cwordRect[2], quad[6]);
+			cwordRect[3] = Math.max(cwordRect[3], quad[7]);
+		}
+
+		// extract the words from the page
+		page.toStructuredText("preserve-whitespace,preserve-spans").walk({
+			onChar(c, _origin, font, size, quad) {
+				enlargeRect(quad);
+
+				cwordFont = font;
+				cwordSize = size;
+
+				// split by whitespace
+				if (c == ' ') {
+					endWord();
+				} else {
+					cwordText += c;
+				}
+			},
+			// split by block
+			endLine: endWord,
+			endTextBlock: endWord,
+		});
+
+		return words;
 	}
 
 	getImages(): { bbox: Rect, matrix: Matrix, image: Image }[] {

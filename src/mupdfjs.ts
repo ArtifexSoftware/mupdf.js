@@ -534,114 +534,191 @@ export class PDFDocument extends mupdf.PDFDocument {
 	}
 
 	scrub(options: {
-		attachedFiles?: boolean;
-		cleanPages?: boolean;
-		embeddedFiles?: boolean;
-		hiddenText?: boolean;
-		javascript?: boolean;
-		metadata?: boolean;
-		redactions?: boolean;
-		redactImages?: number;
-		removeLinks?: boolean;
-		resetFields?: boolean;
-		resetResponses?: boolean;
-		thumbnails?: boolean;
-		xmlMetadata?: boolean;
-	}): void {
-		const {
-			attachedFiles = true,
-			cleanPages = true,
-			embeddedFiles = true,
-			hiddenText = true,
-			javascript = true,
-			metadata = true,
-			redactions = true,
-			redactImages = 0,
-			removeLinks = true,
-			resetFields = true,
-			resetResponses = true,
-			thumbnails = true,
-			xmlMetadata = true
-		} = options;
+        attachedFiles?: boolean;
+        cleanPages?: boolean;
+        embeddedFiles?: boolean;
+        hiddenText?: boolean;
+        javascript?: boolean;
+        metadata?: boolean;
+        redactions?: boolean;
+        redactImages?: number;
+        removeLinks?: boolean;
+        resetFields?: boolean;
+        resetResponses?: boolean;
+        thumbnails?: boolean;
+        xmlMetadata?: boolean;
+    }): void {
+        const {
+            attachedFiles = true,
+            cleanPages = true,
+            embeddedFiles = true,
+            hiddenText = true,
+            javascript = true,
+            metadata = true,
+            redactions = true,
+            redactImages = 0,
+            removeLinks = true,
+            resetFields = true,
+            resetResponses = true,
+            thumbnails = true,
+            xmlMetadata = true
+        } = options;
 
-		// Basic validation
-		if (!this.isPDF()) {
-			throw new Error("is no PDF");
+        // Basic validation
+        if (!this.isPDF()) {
+            throw new Error("is not PDF");
+        }
+
+        if (this.needsPassword()) {
+            throw new Error("encrypted doc");
+        }
+
+        // Metadata cleaning
+        if (metadata) {
+			// Clear all standard PDF metadata fields
+			this.setMetaData("info:Title", "");
+			this.setMetaData("info:Author", "");
+			this.setMetaData("info:Subject", "");
+			this.setMetaData("info:Keywords", "");
+			this.setMetaData("info:Creator", "");
+			this.setMetaData("info:Producer", "");
+			this.setMetaData("info:CreationDate", "");
+			this.setMetaData("info:ModDate", "");
 		}
 
-		if (this.needsPassword()) {
-			throw new Error("encrypted doc");
-		}
+        // Process each page
+        const pageCount = this.countPages();
+        for (let i = 0; i < pageCount; i++) {
 
-		// Metadata cleaning
-		if (metadata) {
-			// TODO: Implement metadata cleaning
-		}
+            // Remove links
+            if (removeLinks) {
+                const page = this.loadPage(i);
+                const links = page.getLinks();
+                for (const link of links) {
+                    page.deleteLink(link);
+                }
+            }
 
-		// Process each page
-		const pageCount = this.countPages();
-		for (let i = 0; i < pageCount; i++) {
-			// const page = this.loadPage(i);
+            // Handle attached files
+            if (attachedFiles) {
+                const page = this.loadPage(i);
+                const annotations = page.getAnnotations();
+                for (const annot of annotations) {
+                    if (annot.getType() === "FileAttachment") {
+                        annot.setFileSpec(this.newNull());
+                    }
+                }
+            }
 
-			// Remove links
-			if (removeLinks) {
-				// TODO: Implement link removal
-			}
+            // Clean pages
+            if (cleanPages) {
+                const cleanBuffer = this.saveToBuffer("clean=yes");
+                const cleanDoc = PDFDocument.openDocument(cleanBuffer, "application/pdf");
+                // Copy all objects from the cleaned document back to this document
+                const pageCount = cleanDoc.countPages();
+                for (let j = 0; j < pageCount; j++) {
+                    const cleanPage = cleanDoc.loadPage(j);
+                    const cleanPageObj = cleanPage.getObject();
+                    const thisPage = this.loadPage(j);
+                    const thisPageObj = thisPage.getObject();
+                    thisPageObj.put("Contents", this.graftObject(cleanPageObj.get("Contents")));
+                }
+            }
 
-			// Handle attached files
-			if (attachedFiles) {
-				// TODO: Implement attached files handling
-			}
+            // Handle hidden text
+            if (hiddenText) {
+                // TODO: Implement hidden text removal
+            }
 
-			// Clean pages
-			if (cleanPages) {
-				// TODO: Implement page cleaning
-			}
+            // Handle redactions
+            if (redactions) {
+                // TODO: Implement redactions
+                if (redactImages >= 0) {
+                    // TODO: Handle redacted images
+                }
+            }
 
-			// Handle hidden text
-			if (hiddenText) {
-				// TODO: Implement hidden text removal
-			}
+            // Reset form fields
+            if (resetFields) {
+                const page = this.loadPage(i);
+                const widgets = page.getWidgets();
+                for (const widget of widgets) {
+                    const widgetObj = widget.getObject();
+                    // Get default value
+                    const defaultValue = widgetObj.get("DV");
+                    // Reset value
+                    if (defaultValue.isNull()) {
+                        widgetObj.delete("V");
+                    } else {
+                        widgetObj.put("V", defaultValue);
+                    }
+                    // Update appearance state for checkboxes and radio buttons
+                    const widgetType = widget.getFieldType();
+                    if (widgetType === "checkbox" || widgetType === "radiobutton") {
+                        widgetObj.put("AS", defaultValue.isNull() ? this.newName("Off") : defaultValue);
+                    }
+                    widget.update();
+                }
+            }
 
-			// Handle redactions
-			if (redactions) {
-				// TODO: Implement redactions
-				if (redactImages >= 0) {
-					// TODO: Handle redacted images
-				}
-			}
+            // Reset responses
+            if (resetResponses) {
+                const page = this.loadPage(i);
+                const annotations = page.getAnnotations();
+                for (const annot of annotations) {
+                    const annotObj = annot.getObject();
+                    // Remove response type and in-response-to reference
+                    annotObj.delete("RT");
+                    annotObj.delete("IRT");
+                    annot.update();
+                }
+            }
 
-			// Reset form fields
-			if (resetFields) {
-				// TODO: Implement form fields reset
-			}
+            // Remove thumbnails
+            if (thumbnails) {
+                const page = this.loadPage(i);
+                const pageObj = page.getObject();
+                pageObj.delete("Thumb");
+            }
+        }
 
-			// Reset responses
-			if (resetResponses) {
-				// TODO: Implement response reset
-			}
+        // Handle embedded files
+        if (embeddedFiles) {
+            const root = this.getTrailer().get("Root");
+            const names = root.get("Names");
+            if (!names.isNull() && names.isDictionary()) {
+                const embeddedFilesDict = names.get("EmbeddedFiles");
+                if (!embeddedFilesDict.isNull() && embeddedFilesDict.isDictionary()) {
+                    const emptyArray = this.newArray();
+                    embeddedFilesDict.put("Names", emptyArray);
+                }
+            }
+        }
 
-			// Remove thumbnails
-			if (thumbnails) {
-				// TODO: Implement thumbnail removal
-			}
-		}
+        // Handle JavaScript
+        if (javascript) {
+            const xrefLength = this.countObjects();
+            for (let xref = 1; xref < xrefLength; xref++) {
+                const obj = this.newIndirect(xref);
+                const resolvedObj = obj.resolve();
+                if (resolvedObj.isDictionary()) {
+                    const type = resolvedObj.get("S");
+                    if (!type.isNull() && type.asName() === "JavaScript") {
+                        const newObj = this.newDictionary();
+                        newObj.put("S", this.newName("JavaScript"));
+                        newObj.put("JS", this.newString(""));
+                        obj.writeObject(newObj);
+                    }
+                }
+            }
+        }
 
-		// Handle embedded files
-		if (embeddedFiles) {
-			// TODO: Implement embedded files handling
-		}
-
-		// Handle JavaScript
-		if (javascript) {
-			// TODO: Implement JavaScript removal
-		}
-
-		// Handle XML metadata
-		if (xmlMetadata) {
-			// TODO: Implement XML metadata handling
-		}
-	}
+        // Handle XML metadata
+        if (xmlMetadata) {
+            const root = this.getTrailer().get("Root");
+            root.delete("Metadata");
+        }
+    }
 
 	attachFile(
 		name: string,

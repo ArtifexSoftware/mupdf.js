@@ -51,13 +51,6 @@ export class StrokeState extends mupdf.StrokeState { }
 export class StructuredText extends mupdf.StructuredText { }
 export class Text extends mupdf.Text { }
 
-export type PDFWord = {
-	rect: Rect,
-	text: string,
-	font: Font,
-	size: number,
-};
-
 export function installLoadFontFunction(f: (name: string, script: string) => Buffer | null) {
 	mupdf.installLoadFontFunction(f)
 }
@@ -79,6 +72,13 @@ export type CreatableAnnotationType =
 	"Caret" |
 	"Ink" |
 	"FileAttachment"
+
+export type PDFWord = {
+	rect: Rect,
+	text: string,
+	font: Font,
+	size: number,
+};
 
 export class PDFDocument extends mupdf.PDFDocument {
 

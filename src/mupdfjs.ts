@@ -566,7 +566,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 
         // Basic validation
         if (!this.isPDF()) {
-            throw new Error("is no PDF");
+            throw new Error("is not PDF");
         }
 
         if (this.needsPassword()) {
@@ -589,7 +589,6 @@ export class PDFDocument extends mupdf.PDFDocument {
         // Process each page
         const pageCount = this.countPages();
         for (let i = 0; i < pageCount; i++) {
-            // const page = this.loadPage(i);
 
             // Remove links
             if (removeLinks) {

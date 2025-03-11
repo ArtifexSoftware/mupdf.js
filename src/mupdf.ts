@@ -89,13 +89,13 @@ Type checking of input arguments at runtime.
 --------------------------------------------------------------------------------
 */
 
-type Matrix = [number, number, number, number, number, number]
-type Rect = [number, number, number, number]
-type Quad = [number, number, number, number, number, number, number, number]
-type Point = [number, number]
-type Color = [number] | [number, number, number] | [number, number, number, number]
+export type Matrix = [number, number, number, number, number, number]
+export type Rect = [number, number, number, number]
+export type Quad = [number, number, number, number, number, number, number, number]
+export type Point = [number, number]
+export type Color = [number] | [number, number, number] | [number, number, number, number]
 
-type Rotate = 0 | 90 | 180 | 270
+export type Rotate = 0 | 90 | 180 | 270
 
 export const Matrix = {
 	identity: [ 1, 0, 0, 1, 0, 0 ] as Matrix,
@@ -648,7 +648,7 @@ export class Buffer extends Userdata<"fz_buffer"> {
 	}
 }
 
-type ColorSpaceType =
+export type ColorSpaceType =
 	"None" |
 	"Gray" |
 	"RGB" |
@@ -716,11 +716,11 @@ export class ColorSpace extends Userdata<"fz_colorspace"> {
 	static readonly Lab = new ColorSpace(libmupdf._wasm_device_lab())
 }
 
-type FontSimpleEncoding = "Latin" | "Greek" | "Cyrillic"
+export type FontSimpleEncoding = "Latin" | "Greek" | "Cyrillic"
 
-type FontCJKOrdering = 0 | 1 | 2 | 3
+export type FontCJKOrdering = 0 | 1 | 2 | 3
 
-type FontCJKLanguage =
+export type FontCJKLanguage =
 	"Adobe-CNS1" |
 	"Adobe-GB1" |
 	"Adobe-Japan1" |
@@ -877,8 +877,8 @@ export class Image extends Userdata<"fz_image"> {
 	}
 }
 
-type LineCap = "Butt" | "Round" | "Square" | "Triangle"
-type LineJoin = "Miter" | "Round" | "Bevel" | "MiterXPS"
+export type LineCap = "Butt" | "Round" | "Square" | "Triangle"
+export type LineJoin = "Miter" | "Round" | "Bevel" | "MiterXPS"
 
 // TODO: convert StrokeState from plain JS object to match mutool run ffi_pushstroke/ffi_tostroke
 
@@ -1409,7 +1409,7 @@ export class StructuredText extends Userdata<"fz_stext_page"> {
 	}
 }
 
-type BlendMode =
+export type BlendMode =
 	"Normal" |
 	"Multiply" |
 	"Screen" |
@@ -1662,7 +1662,7 @@ export class DocumentWriter extends Userdata<"fz_document_writer"> {
 	}
 }
 
-type DocumentPermission =
+export type DocumentPermission =
 	"print" |
 	"copy" |
 	"edit" |
@@ -1917,7 +1917,7 @@ export class OutlineIterator extends Userdata<"fz_outline_iterator"> {
 	}
 }
 
-type LinkDestType =
+export type LinkDestType =
 	"Fit" |
 	"FitB" |
 	"FitH" |
@@ -1964,7 +1964,7 @@ export class Link extends Userdata<"fz_link"> {
 	}
 }
 
-type PageBox = "MediaBox" | "CropBox" | "BleedBox" | "TrimBox" | "ArtBox"
+export type PageBox = "MediaBox" | "CropBox" | "BleedBox" | "TrimBox" | "ArtBox"
 
 export class Page extends Userdata<"any_page"> {
 	static override readonly _drop = libmupdf._wasm_drop_page
@@ -2906,7 +2906,7 @@ export class PDFGraftMap extends Userdata<"pdf_graft_map"> {
 	}
 }
 
-type PDFAnnotationType =
+export type PDFAnnotationType =
 	"Text" |
 	"Link" |
 	"FreeText" |
@@ -2936,7 +2936,7 @@ type PDFAnnotationType =
 	"3D" |
 	"Projection"
 
-type PDFAnnotationLineEndingStyle =
+export type PDFAnnotationLineEndingStyle =
 	"None" |
 	"Square" |
 	"Circle" |
@@ -2948,11 +2948,11 @@ type PDFAnnotationLineEndingStyle =
 	"RClosedArrow" |
 	"Slash"
 
-type PDFAnnotationBorderStyle = "Solid" | "Dashed" | "Beveled" | "Inset" | "Underline"
+export type PDFAnnotationBorderStyle = "Solid" | "Dashed" | "Beveled" | "Inset" | "Underline"
 
-type PDFAnnotationBorderEffect = "None" | "Cloudy"
+export type PDFAnnotationBorderEffect = "None" | "Cloudy"
 
-type PDFAnnotationIntent =
+export type PDFAnnotationIntent =
 	null |
 	"FreeTextCallout" |
 	"FreeTextTypeWriter" |

@@ -82,20 +82,6 @@ export type PDFWord = {
 
 export class PDFDocument extends mupdf.PDFDocument {
 
-	// this is required so the doc reference doesn't get garbage collected
-	_doc: mupdf.PDFDocument | undefined
-
-	// bespoke constructor to ensure we get the correct type of PDFDocument instance
-	constructor(doc: mupdf.PDFDocument) {
-		super(doc.pointer)
-		this._doc = doc;
-	}
-
-	override destroy() {
-        this._doc?.destroy()
-        super.destroy()
-    }
-
 	// creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
 	static createBlankDocument(width: number = 595, height: number = 842): PDFDocument {
 		let doc = new mupdf.PDFDocument()
@@ -103,7 +89,9 @@ export class PDFDocument extends mupdf.PDFDocument {
 		doc.insertPage(-1, pageObj)
 
 		if (doc instanceof mupdf.PDFDocument) {
-			return new PDFDocument(doc);
+			var clone = new PDFDocument(doc); // make a clone using the mupdfjs subclass!
+			doc.destroy() // and kill the original
+			return clone
 		}
 		throw new Error("Not a PDF document");
 	}
@@ -112,7 +100,9 @@ export class PDFDocument extends mupdf.PDFDocument {
 		let doc = super.openDocument(from, magic);
 
 		if (doc instanceof mupdf.PDFDocument) {
-			return new PDFDocument(doc);
+			var clone = new PDFDocument(doc); // make a clone using the mupdfjs subclass!
+			doc.destroy() // and kill the original
+			return clone
 		}
 		throw new Error("Not a PDF document");
 	}
@@ -797,23 +787,15 @@ export class PDFDocument extends mupdf.PDFDocument {
 }
 
 export class PDFPage extends mupdf.PDFPage {
-	// this is required so the page reference doesn't get garbage collected
-	_page: mupdf.PDFPage | undefined
-
 	// note page number is zero-indexed here
 	constructor(doc: mupdf.PDFDocument, pno: number) {
 		if (pno < 0) {
 			pno = 0
 		}
 		let page: mupdf.PDFPage = doc.loadPage(pno)
-		super(doc, page.pointer)
-		this._page = page
+		super(doc, page) // make a clone of the page object using the mupdfjs subclass!
+		page.destroy() // and kill the original
 	}
-
-	override destroy() {
-        this._page?.destroy()
-        super.destroy()
-    }
 
 	insertText(value: string,
 		point: Point,

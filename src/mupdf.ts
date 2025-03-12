@@ -2081,14 +2081,19 @@ export class PDFDocument extends Document {
 	constructor(data: Buffer | ArrayBuffer | Uint8Array)
 
 	// PRIVATE
+	constructor(clone: PDFDocument)
 	constructor(pointer: Pointer<"any_document">)
+	constructor(data: Buffer | ArrayBuffer | Uint8Array)
 
-	constructor(arg1?: Pointer<"any_document"> | Buffer | ArrayBuffer | Uint8Array) {
+	constructor(arg1?: Pointer<"any_document"> | Buffer | ArrayBuffer | Uint8Array | PDFDocument) {
 		if (typeof arg1 === "undefined")
 			super(libmupdf._wasm_pdf_create_document())
 		else if (typeof arg1 === "number")
 			super(arg1)
-		else {
+		else if (arg1 instanceof PDFDocument) {
+			super(arg1.pointer)
+			libmupdf._wasm_keep_document(this.pointer)
+		} else {
 			let doc = Document.openDocument(arg1, "application/pdf")
 			if (doc instanceof PDFDocument)
 				return doc
@@ -2578,8 +2583,16 @@ export class PDFPage extends Page {
 	_widgets: PDFWidget[] | null
 
 	// PRIVATE
-	constructor(doc: PDFDocument, pointer: Pointer<"any_page">) {
-		super(pointer)
+	constructor(doc: PDFDocument, clone: PDFPage)
+	constructor(doc: PDFDocument, pointer: Pointer<"any_page">)
+
+	constructor(doc: PDFDocument, arg2: Pointer<"any_page"> | PDFPage) {
+		if (arg2 instanceof PDFPage) {
+			super(arg2.pointer)
+			libmupdf._wasm_keep_page(this.pointer)
+		} else {
+			super(arg2)
+		}
 		this._doc = doc
 		this._annots = null
 		this._widgets = null

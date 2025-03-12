@@ -91,6 +91,11 @@ export class PDFDocument extends mupdf.PDFDocument {
 		this._doc = doc;
 	}
 
+	override destroy() {
+        this._doc?.destroy()
+        super.destroy()
+    }
+
 	// creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
 	static createBlankDocument(width: number = 595, height: number = 842): PDFDocument {
 		let doc = new mupdf.PDFDocument()
@@ -804,6 +809,11 @@ export class PDFPage extends mupdf.PDFPage {
 		super(doc, page.pointer)
 		this._page = page
 	}
+
+	override destroy() {
+        this._page?.destroy()
+        super.destroy()
+    }
 
 	insertText(value: string,
 		point: Point,

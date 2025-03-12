@@ -87,7 +87,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 
 	// bespoke constructor to ensure we get the correct type of PDFDocument instance
 	constructor(doc: mupdf.PDFDocument) {
-		super(doc.pointer)
+		super(doc) // this is a clone of the original document object
 		this._doc = doc;
 	}
 
@@ -806,7 +806,7 @@ export class PDFPage extends mupdf.PDFPage {
 			pno = 0
 		}
 		let page: mupdf.PDFPage = doc.loadPage(pno)
-		super(doc, page.pointer)
+		super(doc, page) // this is a clone of the original page object
 		this._page = page
 	}
 

@@ -456,6 +456,7 @@ GETP(stext_char, fz_point, origin)
 GETP(stext_char, fz_quad, quad)
 GET(stext_char, float, size)
 GET(stext_char, fz_font*, font)
+GET(stext_char, int, argb)
 
 GET_ALIAS(link_dest, int, chapter, loc.chapter)
 GET_ALIAS(link_dest, int, page, loc.page)

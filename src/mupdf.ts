@@ -1331,7 +1331,7 @@ interface StructuredTextWalker {
 	onImageBlock?(bbox: Rect, transform: Matrix, image: Image): void
 	beginTextBlock?(bbox: Rect): void
 	beginLine?(bbox: Rect, wmode: number, direction: Point): void
-	onChar?(c: string, origin: Point, font: Font, size: number, quad: Quad): void
+	onChar?(c: string, origin: Point, font: Font, size: number, quad: Quad, color: Color): void
 	endLine?(): void
 	endTextBlock?(): void
 }
@@ -1384,8 +1384,9 @@ export class StructuredText extends Userdata<"fz_stext_page"> {
 							let ch_font = new Font(libmupdf._wasm_stext_char_get_font(ch))
 							let ch_size = libmupdf._wasm_stext_char_get_size(ch)
 							let ch_quad = fromQuad(libmupdf._wasm_stext_char_get_quad(ch))
+							let ch_color = colorFromNumber(libmupdf._wasm_stext_char_get_argb(ch))
 
-							walker.onChar(ch_rune, ch_origin, ch_font, ch_size, ch_quad)
+							walker.onChar(ch_rune, ch_origin, ch_font, ch_size, ch_quad, ch_color)
 
 							ch = libmupdf._wasm_stext_char_get_next(ch)
 						}

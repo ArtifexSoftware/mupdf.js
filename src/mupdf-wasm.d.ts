@@ -135,6 +135,7 @@ interface Libmupdf {
 	_wasm_stext_char_get_quad(p: Pointer<"fz_stext_char">): Pointer<"fz_quad">,
 	_wasm_stext_char_get_size(p: Pointer<"fz_stext_char">): number,
 	_wasm_stext_char_get_font(p: Pointer<"fz_stext_char">): Pointer<"fz_font">,
+	_wasm_stext_char_get_argb(p: Pointer<"fz_stext_char">): number,
 	_wasm_link_dest_get_chapter(p: Pointer<"fz_link_dest">): number,
 	_wasm_link_dest_get_page(p: Pointer<"fz_link_dest">): number,
 	_wasm_link_dest_get_type(p: Pointer<"fz_link_dest">): number,

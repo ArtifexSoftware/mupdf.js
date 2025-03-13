@@ -1705,7 +1705,7 @@ void wasm_pdf_disable_js(pdf_document *doc)
 EXPORT
 void wasm_pdf_rearrange_pages(pdf_document *doc, int n, int *pages)
 {
-	VOID(pdf_rearrange_pages, doc, n, pages)
+	VOID(pdf_rearrange_pages, doc, n, pages, PDF_CLEAN_STRUCTURE_DROP)
 }
 
 EXPORT

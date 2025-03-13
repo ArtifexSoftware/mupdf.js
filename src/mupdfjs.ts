@@ -21,62 +21,12 @@
 // CA 94129, USA, for further information.
 
 import * as mupdf from "mupdf";
-
-export const Rect = mupdf.Rect
-export const Matrix = mupdf.Matrix
-export type Matrix = [number, number, number, number, number, number]
-export type Rect = [number, number, number, number]
-export type Point = [number, number]
-export type Quad = [number, number, number, number, number, number, number, number]
-export type Color = [number] | [number, number, number] | [number, number, number, number]
-
-export class Buffer extends mupdf.Buffer { }
-export class ColorSpace extends mupdf.ColorSpace { }
-export class Device extends mupdf.Device { }
-export class DocumentWriter extends mupdf.DocumentWriter { }
-export class DrawDevice extends mupdf.DrawDevice { }
-export class DisplayList extends mupdf.DisplayList { }
-export class DisplayListDevice extends mupdf.DisplayListDevice { }
-export class Font extends mupdf.Font { }
-export class Image extends mupdf.Image { }
-export class Link extends mupdf.Link { }
-export class OutlineIterator extends mupdf.OutlineIterator { }
-export class Path extends mupdf.Path { }
-export class PDFAnnotation extends mupdf.PDFAnnotation { }
-export class PDFGraftMap extends mupdf.PDFGraftMap { }
-export class PDFObject extends mupdf.PDFObject { }
-export class PDFWidget extends mupdf.PDFWidget { }
-export class Pixmap extends mupdf.Pixmap { }
-export class StrokeState extends mupdf.StrokeState { }
-export class StructuredText extends mupdf.StructuredText { }
-export class Text extends mupdf.Text { }
-
-export function installLoadFontFunction(f: (name: string, script: string) => Buffer | null) {
-	mupdf.installLoadFontFunction(f)
-}
-
-export type CreatableAnnotationType =
-	"Text" |
-	"FreeText" |
-	"Line" |
-	"Square" |
-	"Circle" |
-	"Polygon" |
-	"PolyLine" |
-	"Highlight" |
-	"Underline" |
-	"Squiggly" |
-	"StrikeOut" |
-	"Redact" |
-	"Stamp" |
-	"Caret" |
-	"Ink" |
-	"FileAttachment"
+export * from "mupdf";
 
 export type PDFWord = {
-	rect: Rect,
+	rect: mupdf.Rect,
 	text: string,
-	font: Font,
+	font: mupdf.Font,
 	size: number,
 };
 
@@ -798,12 +748,12 @@ export class PDFPage extends mupdf.PDFPage {
 	}
 
 	insertText(value: string,
-		point: Point,
+		point: mupdf.Point,
 		fontName: string = "Times-Roman",
 		fontSize: number = 18,
 		graphics: {
-			strokeColor: Color,
-			fillColor: Color,
+			strokeColor: mupdf.Color,
+			fillColor: mupdf.Color,
 			strokeThickness: number
 		} = { strokeColor: [0, 0, 0, 1], fillColor: [0, 0, 0, 1], strokeThickness: 1 }) {
 		let doc = this._doc
@@ -900,7 +850,7 @@ export class PDFPage extends mupdf.PDFPage {
 		}
 	}
 
-	insertImage(data: { image: Image, name: string },
+	insertImage(data: { image: mupdf.Image, name: string },
 		metrics: { x?: number, y?: number, width?: number, height?: number } = { x: 0, y: 0, width: 0, height: 0 }) {
 
 		if (data.image == null) {
@@ -992,10 +942,10 @@ export class PDFPage extends mupdf.PDFPage {
 		page_obj.put("Rotate", Number(rotate) + r)
 	}
 
-	addAnnotation(type: CreatableAnnotationType,
+	addAnnotation(type: mupdf.PDFAnnotationType,
 		metrics: { x: number, y: number, width: number, height: number },
 		author?: string,
-		contents?: string): PDFAnnotation {
+		contents?: string): mupdf.PDFAnnotation {
 		let page = this
 		let annotation = page.createAnnotation(type)
 		annotation.setRect([metrics.x, metrics.y, metrics.x + metrics.width, metrics.y + metrics.height])
@@ -1010,7 +960,7 @@ export class PDFPage extends mupdf.PDFPage {
 		return annotation
 	}
 
-	addRedaction(metrics: { x: number, y: number, width: number, height: number }): PDFAnnotation {
+	addRedaction(metrics: { x: number, y: number, width: number, height: number }): mupdf.PDFAnnotation {
 		let page = this
 		let redaction = page.createAnnotation("Redact")
 		redaction.setRect([metrics.x, metrics.y, metrics.x + metrics.width, metrics.y + metrics.height])
@@ -1031,27 +981,27 @@ export class PDFPage extends mupdf.PDFPage {
 		super.applyRedactions(num, imageMethod, lineArtMethod, textMethod)
 	}
 
-	override search(needle: string, maxHits: number = 50): Quad[][] {
+	override search(needle: string, maxHits: number = 50): mupdf.Quad[][] {
 		return super.search(needle, maxHits)
 	}
 
-	setCropBox(rect: Rect) {
+	setCropBox(rect: mupdf.Rect) {
 		super.setPageBox("CropBox", rect)
 	}
 
-	setArtBox(rect: Rect) {
+	setArtBox(rect: mupdf.Rect) {
 		super.setPageBox("ArtBox", rect)
 	}
 
-	setBleedBox(rect: Rect) {
+	setBleedBox(rect: mupdf.Rect) {
 		super.setPageBox("BleedBox", rect)
 	}
 
-	setTrimBox(rect: Rect) {
+	setTrimBox(rect: mupdf.Rect) {
 		super.setPageBox("TrimBox", rect)
 	}
 
-	setMediaBox(rect: Rect) {
+	setMediaBox(rect: mupdf.Rect) {
 		super.setPageBox("MediaBox", rect)
 	}
 
@@ -1075,8 +1025,8 @@ export class PDFPage extends mupdf.PDFPage {
 		let page = this;
 
 		const words: PDFWord[] = [];
-		let cwordRect: Rect | undefined;
-		let cwordFont: Font | undefined;
+		let cwordRect: mupdf.Rect | undefined;
+		let cwordFont: mupdf.Font | undefined;
 		let cwordSize: number | undefined;
 		let cwordText = '';
 
@@ -1103,7 +1053,7 @@ export class PDFPage extends mupdf.PDFPage {
 			cwordText = '';
 		};
 
-		const enlargeRect = (quad: Quad) => {
+		const enlargeRect = (quad: mupdf.Quad) => {
 			if (cwordRect === undefined) {
 				cwordRect = [quad[0], quad[1], quad[6], quad[7]];
 				return;
@@ -1138,26 +1088,24 @@ export class PDFPage extends mupdf.PDFPage {
 		return words;
 	}
 
-	getImages(): { bbox: Rect, matrix: Matrix, image: Image }[] {
-		var images: { bbox: Rect, matrix: Matrix, image: Image }[] = []
+	getImages(): { bbox: mupdf.Rect, matrix: mupdf.Matrix, image: mupdf.Image }[] {
+		var images: { bbox: mupdf.Rect, matrix: mupdf.Matrix, image: mupdf.Image }[] = []
 		let page = this
-
 		page.toStructuredText("preserve-images").walk({
 			onImageBlock(bbox, matrix, image) {
 				images.push({ bbox: bbox, matrix: matrix, image: image })
 			}
 		})
-
 		return images
 	}
 
-	delete(ref: PDFAnnotation | PDFWidget | Link | string) {
-		if (ref.constructor.name === "PDFAnnotation") {
-			super.deleteAnnotation(ref as PDFAnnotation)
-		} else if (ref.constructor.name === "PDFWidget") {
-			super.deleteAnnotation(ref as PDFWidget)
-		} else if (ref.constructor.name === "Link") {
-			super.deleteLink(ref as Link)
+	delete(ref: mupdf.PDFAnnotation | mupdf.PDFWidget | mupdf.Link | string) {
+		if (ref instanceof mupdf.PDFAnnotation) {
+			super.deleteAnnotation(ref)
+		} else if (ref instanceof mupdf.PDFWidget) {
+			super.deleteAnnotation(ref)
+		} else if (ref instanceof mupdf.Link) {
+			super.deleteLink(ref)
 		} else if (typeof ref === "string") {
 			let pageObj = this.getObject()
 			var isIndirect = pageObj.isIndirect()
@@ -1169,8 +1117,8 @@ export class PDFPage extends mupdf.PDFPage {
 			// replace the XObject with a 1x1 transparent pixel to "delete" it
 			let res = pageObj.get("Resources")
 			let resXObj = res.get("XObject")
-			let pix = new Pixmap(ColorSpace.DeviceRGB, [0, 0, 1, 1], true)
-			let imageRes = new Image(pix)
+			let pix = new mupdf.Pixmap(mupdf.ColorSpace.DeviceRGB, [0, 0, 1, 1], true)
+			let imageRes = new mupdf.Image(pix)
 
 			const image = this._doc.addImage(imageRes)
 			resXObj.put(ref, image)
@@ -1192,7 +1140,7 @@ export class PDFPage extends mupdf.PDFPage {
 		let resXObj = res.get("XObject")
 		let arr: { key: string | number, value: string }[] = []
 
-		resXObj.forEach(function (value: PDFObject, key: string | number) {
+		resXObj.forEach(function (value: mupdf.PDFObject, key: string | number) {
 			arr.push({ key: key, value: value.toString() })
 		})
 

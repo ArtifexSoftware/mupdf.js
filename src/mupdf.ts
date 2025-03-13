@@ -491,6 +491,7 @@ function fromBuffer(ptr: Pointer<"fz_buffer">): Uint8Array {
 	return libmupdf.HEAPU8.slice(data, data + size)
 }
 
+/* unused for now
 function rgbFromColor(c?: Color): [number, number, number] {
 	var r = 0, g = 0, b = 0
 	if (typeof c !== "undefined") {
@@ -513,7 +514,6 @@ function rgbFromColor(c?: Color): [number, number, number] {
 	return [ r, g, b ]
 }
 
-/* unused for now
 function numberFromColor(c?: Color): number {
 	var [ r, g, b ] = rgbFromColor(c)
 	return (255 << 24) | (r << 16) | (g << 8) | b

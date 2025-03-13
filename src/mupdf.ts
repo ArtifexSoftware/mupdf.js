@@ -487,6 +487,42 @@ function fromBuffer(ptr: Pointer<"fz_buffer">): Uint8Array {
 	return libmupdf.HEAPU8.slice(data, data + size)
 }
 
+function rgbFromColor(c?: Color): [number, number, number] {
+	var r = 0, g = 0, b = 0
+	if (typeof c !== "undefined") {
+		switch (c.length) {
+		case 1:
+			r = g = b = c[0]
+			break
+		case 3:
+			r = c[0]
+			g = c[1]
+			b = c[2]
+			break
+		case 4:
+			r = 1 - Math.min(1, c[0] + c[3])
+			g = 1 - Math.min(1, c[1] + c[3])
+			b = 1 - Math.min(1, c[2] + c[3])
+			break
+		}
+	}
+	return [ r, g, b ]
+}
+
+/* unused for now
+function numberFromColor(c?: Color): number {
+	var [ r, g, b ] = rgbFromColor(c)
+	return (255 << 24) | (r << 16) | (g << 8) | b
+}
+*/
+
+function colorFromNumber(argb: number): Color {
+	var r = (argb >> 16) & 255
+	var g = (argb >> 8) & 255
+	var b = (argb) & 255
+	return [ r / 255, g / 255, b / 255 ]
+}
+
 /* -------------------------------------------------------------------------- */
 
 type SearchFunction = (

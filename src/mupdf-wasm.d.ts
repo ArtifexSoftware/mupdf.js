@@ -1,5 +1,5 @@
 export default libmupdf_wasm
-declare function libmupdf_wasm(): Promise<Libmupdf>
+declare function libmupdf_wasm(Module: any): Promise<Libmupdf>
 declare const _brand: unique symbol
 export type Pointer<B> = number & { readonly [_brand]: B }
 export { libmupdf_wasm }

@@ -25,7 +25,11 @@
 import { Pointer } from "./mupdf-wasm.js"
 import libmupdf_wasm from "./mupdf-wasm.js"
 
-const libmupdf = await libmupdf_wasm()
+declare global {
+	var $libmupdf_wasm_Module: any
+}
+
+const libmupdf = await libmupdf_wasm(globalThis["$libmupdf_wasm_Module"])
 
 libmupdf._wasm_init_context()
 

@@ -151,13 +151,13 @@ PDFPage
 
 
 
-.. method:: insertLink(rect: Rect, destinationUri: string)
+.. method:: insertLink(metrics: {x: number, y: number, width: number, height: number}, uri: string)
 
-    Create a new link within the rectangle on the page, linking to the destination URI string.
+    Create a new link with the supplied metrics for the page, linking to the destination URI string.
 
     To create links to other pages within the document see the :meth:`formatLinkURI` method.
 
-    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
+    :arg metrics: `{x: number, y: number, width: number, height: number}`. Object containing the link metrics.
     :arg destinationUri: `string` containing URI.
     :return: :doc:`Link`.
 
@@ -166,10 +166,10 @@ PDFPage
     .. code-block:: javascript
 
         // create a link to an external URL
-        var link = page.insertLink([0,0,100,100], "https://example.com");
+        var link = page.insertLink({0,0,100,100}, "https://example.com");
 
         // create a link to another page in the document
-        var link = page.insertLink(rectobj, "#page=1&view=FitV,0");
+        var link = page.insertLink({0,0,100,100}, "#page=1&view=FitV,0");
 
 
 .. method:: createAnnotation(type:string)

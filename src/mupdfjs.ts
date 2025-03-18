@@ -98,7 +98,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 		const newPageObj = this.addPage(mediabox, 0, this.newDictionary(), "");
 
 		this.insertPage(insertPosition, newPageObj);
-		return this.loadPage(insertPosition);
+		return new PDFPage(this, insertPosition);
 	}
 
 	deletePages(...args: any[]): void {

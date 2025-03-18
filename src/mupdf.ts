@@ -29,6 +29,10 @@ declare global {
 	var $libmupdf_wasm_Module: any
 }
 
+var node_fs: any = null
+if (typeof process !== "undefined" && process.versions && process.versions.node)
+	node_fs = await import("node:fs")
+
 const libmupdf = await libmupdf_wasm(globalThis["$libmupdf_wasm_Module"])
 
 libmupdf._wasm_init_context()
@@ -685,6 +689,13 @@ export class Buffer extends Userdata<"fz_buffer"> {
 
 	asString() {
 		return fromString(libmupdf._wasm_string_from_buffer(this.pointer))
+	}
+
+	save(filename: string) {
+		if (node_fs)
+			node_fs.writeFileSync(filename, this.asUint8Array())
+		else
+			throw new Error("missing 'fs' module")
 	}
 }
 
@@ -1749,10 +1760,21 @@ export class Document extends Userdata<"any_document"> {
 		"XYZ",
 	]
 
-	static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream, magic: string) {
-		checkType(magic, "string")
-
+	static openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream | string, magic?: string): Document {
 		let pointer = 0 as Pointer<"any_document">
+
+		if (typeof from === "string") {
+			magic = from
+			if (node_fs)
+				from = node_fs.readFileSync(from)
+			else
+				throw new Error("missing 'fs' module")
+		} else {
+			if (typeof magic === "undefined")
+				magic = "application/pdf"
+		}
+
+		checkType(magic, "string")
 
 		if (from instanceof ArrayBuffer || from instanceof Uint8Array)
 			from = new Buffer(from)
@@ -2119,14 +2141,15 @@ export class PDFDocument extends Document {
 	constructor()
 
 	// Open an existing document
-	constructor(data: Buffer | ArrayBuffer | Uint8Array)
+	constructor(filename: string)
+	constructor(data: Buffer | ArrayBuffer | Uint8Array | Stream)
 
 	// PRIVATE
 	constructor(clone: PDFDocument)
 	constructor(pointer: Pointer<"any_document">)
-	constructor(data: Buffer | ArrayBuffer | Uint8Array)
+	constructor(data: Buffer | ArrayBuffer | Uint8Array | Stream)
 
-	constructor(arg1?: Pointer<"any_document"> | Buffer | ArrayBuffer | Uint8Array | PDFDocument) {
+	constructor(arg1?: Pointer<"any_document"> | Buffer | ArrayBuffer | Uint8Array | Stream | PDFDocument | string) {
 		if (typeof arg1 === "undefined")
 			super(libmupdf._wasm_pdf_create_document())
 		else if (typeof arg1 === "number")
@@ -2471,6 +2494,13 @@ export class PDFDocument extends Document {
 			options_string = ""
 		}
 		return new Buffer(libmupdf._wasm_pdf_write_document_buffer(this.pointer, STRING(options_string)))
+	}
+
+	save(filename: string, options: string | Record<string,any> = "") {
+		if (node_fs)
+			node_fs.writeFileSync(filename, this.saveToBuffer(options).asUint8Array())
+		else
+			throw new Error("missing 'fs' module")
 	}
 
 	static readonly PAGE_LABEL_NONE = "\0"

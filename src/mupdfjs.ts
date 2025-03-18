@@ -46,7 +46,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 		throw new Error("Not a PDF document");
 	}
 
-	static override openDocument(from: mupdf.Buffer | ArrayBuffer | Uint8Array | mupdf.Stream, magic: string): PDFDocument {
+	static override openDocument(from: mupdf.Buffer | ArrayBuffer | Uint8Array | mupdf.Stream | string, magic?: string): PDFDocument {
 		let doc = super.openDocument(from, magic);
 
 		if (doc instanceof mupdf.PDFDocument) {

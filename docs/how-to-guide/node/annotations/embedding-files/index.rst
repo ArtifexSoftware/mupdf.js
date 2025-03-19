@@ -19,7 +19,7 @@ Embedding files onto annotation objects requires us to associate a buffer of fil
 
 We need to:
 
-- Get a document reference to the file we want to attach.
+- Create a buffer with the contents of the file we want to attach.
 - Get a document reference to the file we want to add the attachment to.
 - Source the page we want to add the file attachment to.
 - Create a "FileAttachment" type annotation and set its position.
@@ -32,19 +32,17 @@ The following code exemplifies the steps outlined above:
 
 .. code-block:: javascript
 
-    let embedMe = mupdf.Document.openDocument(fs.readFileSync("embedMe.pdf"), "application/pdf")
+    let embedMe = fs.readFileSync("embedMe.doc")
     let document = mupdf.Document.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
 
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
     let annotation = page.createAnnotation("FileAttachment")
 
     annotation.setRect([50,50,100,100])
 
-    let buffer = embedMe.saveToBuffer("compress")
-
-    let fileSpecObject = document.addEmbeddedFile("embedMe.pdf",
-                                                "application/pdf",
-                                                buffer,
+    let fileSpecObject = document.addEmbeddedFile("embedMe.doc",
+                                                "application/msword",
+                                                embedMe,
                                                 new Date(),
                                                 new Date(),
                                                 false)

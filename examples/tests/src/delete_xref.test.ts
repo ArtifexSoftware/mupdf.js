@@ -18,13 +18,13 @@ describe('Delete Xref tests', () => {
             "application/pdf"
         )) as mupdfjs.PDFDocument;
     });
-  
+ 
     afterEach(() => {
       document.destroy();
     });
 
     it('should delete a page PDF object by xref reference', async () => {
-        let page:mupdfjs.PDFPage = new mupdfjs.PDFPage(document, 0); 
+        let page = document.loadPage(0);
         let xrefObjs:{key:string | number, value:string}[] = page.getResourcesXrefObjects();
 
         for (var obj in xrefObjs) {

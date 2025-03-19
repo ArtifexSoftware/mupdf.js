@@ -8,11 +8,10 @@ PDFPage
 
 |constructor_tag|
 
-.. method:: PDFPage(doc: PDFDocument, pno: number)
+.. method:: doc.loadPage(pno: number)
 
-    Returns a `PDFPage` from a supplied document and page number.
+    Calling loadPage on a `PDFDocument` returns a `PDFPage` for the given page number.
 
-    :arg doc: :doc:`PDFDocument`.
     :arg pno: `number`. Note: zero-indexed! - to get page `1` of the document use `0` here!
 
     :return: `PDFPage`.
@@ -21,7 +20,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        let page = new mupdfjs.PDFPage(doc, 0); // returns the first page of the document
+        let page = doc.loadPage(0); // returns the first page of the document
 
 
 |instance_method_tag|

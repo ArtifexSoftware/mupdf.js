@@ -13,7 +13,7 @@ describe('PDF insert image tests', () => {
     let logo:mupdfjs.Image;
 
     beforeEach(() => {    
-      mupdfJSPage = new mupdfjs.PDFPage(document, 0)
+      mupdfJSPage = document.loadPage(0);
       logo = new mupdfjs.Image(imageData);
     });
   

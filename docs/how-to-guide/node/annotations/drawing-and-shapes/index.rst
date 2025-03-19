@@ -34,7 +34,7 @@ By using the following **JavaScript** methods you should be able to create and m
     let fileData = fs.readFileSync("test.pdf")
 
     let document = mupdf.Document.openDocument(fileData, "application/pdf")
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
     let annotation = page.createAnnotation("Ink")
 
     annotation.setInkList([
@@ -89,7 +89,7 @@ For example, let's draw a large square with different stroke & fill colors, a bo
     let fileData = fs.readFileSync("test.pdf")
 
     let document = mupdf.Document.openDocument(fileData, "application/pdf")
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
     let annotation = page.createAnnotation("Square")
     annotation.setRect([100, 100, 300, 300])
     annotation.setColor([0, 0, 0])
@@ -127,7 +127,7 @@ The following example draws a line with a closed arrow `line ending <Glossary_Li
     let fileData = fs.readFileSync("test.pdf")
 
     let document = mupdf.Document.openDocument(fileData, "application/pdf")
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
     let annotation = page.createAnnotation("Line")
     annotation.setColor([1, 0, 0])
     annotation.setInteriorColor([0, 0, 1])
@@ -152,7 +152,7 @@ This example creates a blue triangle on the page using the `Polygon` type.
     let fileData = fs.readFileSync("test.pdf")
 
     let document = mupdf.Document.openDocument(fileData, "application/pdf")
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
     let annotation = page.createAnnotation("Polygon")
     annotation.setColor([0, 0, 1])
     annotation.setInteriorColor([0, 0, 1])

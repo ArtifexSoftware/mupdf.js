@@ -24,7 +24,7 @@ describe('PDF get text tests', () => {
 
     it('should get all the text from a page', async () => {
 
-        let page = new mupdfjs.PDFPage(document, 2)
+        let page = document.loadPage(2)
         let text: string= page.getText()
 
         expect(text).toBe("Welcome to the Node server test.pdf file.\nSorry there is not much to see here!\n3\nPage 3 footer\n");

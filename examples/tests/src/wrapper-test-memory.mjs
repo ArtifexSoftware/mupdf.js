@@ -22,7 +22,7 @@ async function start() {
 
 		// load pages, get text and destroy
 		for (let pageIdx = 0; pageIdx < doc.countPages(); pageIdx++) {
-			const page = new mupdfjs.PDFPage(doc, pageIdx);
+			const page = doc.loadPage(pageIdx);
 			console.log(page.getText());
 			page.destroy();
 		}

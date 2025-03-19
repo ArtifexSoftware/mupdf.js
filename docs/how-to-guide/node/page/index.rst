@@ -16,7 +16,7 @@ A **Page** is an instance of the :doc:`../../../classes/PDFPage` class.
 Loading a Page
 ----------------------------------
 
-To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_Guide_Document>` use the :ref:`PDFPage constructor <Classes_PDFPage>` method to return a page instance. 
+To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_Guide_Document>` use the :meth:`document.loadPage` method to return a page instance. 
 
 
 |example_tag|
@@ -24,7 +24,7 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
 .. code-block:: javascript
 
     // load the 1st page of the document
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
 
 
 Getting the Page Bounds
@@ -159,7 +159,7 @@ The following script creates a blank **PDF** document, adds some styled text to 
 .. code-block:: javascript
 
     let document = mupdfjs.PDFDocument.createBlankDocument()
-    let page = new mupdfjs.PDFPage(document, 0) // get the 1st page of the document
+    let page = document.loadPage(0) // get the 1st page of the document
     page.insertText("HELLO WORLD", 
                     [0,0], 
                     "Times-Roman", 

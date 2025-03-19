@@ -31,7 +31,7 @@ The following example creates a redaction area on the page and then applies the 
     let fileData = fs.readFileSync("test.pdf")
 
     let document = mupdf.Document.openDocument(fileData, "application/pdf")
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
     let annotation = page.createAnnotation("Redact")
     annotation.setRect([40, 40, 300, 20])
     annotation.applyRedaction(true)

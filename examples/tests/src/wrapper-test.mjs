@@ -6,7 +6,7 @@ const file = fs.readFileSync(filename)
 
 let document = mupdfjs.PDFDocument.createBlankDocument()
 
-let mupdfJSPage = new mupdfjs.PDFPage(document, 0)
+let mupdfJSPage = document.loadPage(0)
 mupdfJSPage.insertText("HELLO WORLD", 
                        [100,200], 
                        "Times-Roman", 

@@ -90,7 +90,7 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
 .. code-block:: javascript
 
     // load the 1st page of the document
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
     
 
 Splitting a Document
@@ -126,7 +126,7 @@ See the script below for an example implementation.
 
     // create a blank document and add some text
     let sourcePDF = mupdfjs.PDFDocument.createBlankDocument()
-    let page = new mupdfjs.PDFPage(sourcePDF, 0)
+    let page = sourcPDF.loadPage(0)
     page.insertText("HELLO WORLD", 
                         [0,0], 
                         "Times-Roman", 
@@ -148,7 +148,7 @@ To get the text for an entire document we can retrieve :doc:`../../../classes/St
 
     let i = 0
     while (i < document.countPages()) {
-        const page = new mupdfjs.PDFPage(document, i)
+        const page = document.loadPage(i)
         const json = page.toStructuredText("preserve-whitespace").asJSON()
         console.log(`json=${json}`)
         i++
@@ -174,7 +174,7 @@ To get the images for an entire document use the :meth:`getImages` method on eac
 
     let i = 0
     while (i < document.countPages()) {
-        const page = new mupdfjs.PDFPage(document, i)
+        const page = document.loadPage(i)
         let imageStack = page.getImages()
         i++
     }
@@ -186,7 +186,7 @@ The following example would extract all the images from a document and save them
 
     let i = 0
     while (i < document.countPages()) {
-        const page = new mupdfjs.PDFPage(document, i)
+        const page = document.loadPage(i)
         let imageStack = page.getImages()
 
         for (var j in imageStack) {
@@ -213,7 +213,7 @@ We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from d
 
     let i = 0
     while (i < document.countPages()) {
-        const page = new mupdfjs.PDFPage(document, i)
+        const page = document.loadPage(0)
         const annots = page.getAnnotations()
         console.log(`Page=${page}, Annotations=${annots}`)
         i++

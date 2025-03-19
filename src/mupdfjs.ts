@@ -57,6 +57,10 @@ export class PDFDocument extends mupdf.PDFDocument {
 		throw new Error("Not a PDF document");
 	}
 
+	override loadPage(pageno: number): PDFPage {
+		return new PDFPage(this, super.loadPage(pageno))
+	}
+
 	copyPage(pno: number, to: number = -1): void {
 		if (!this.isPDF()) {
 			throw new Error("This operation is only available for PDF documents.");
@@ -738,11 +742,10 @@ export class PDFDocument extends mupdf.PDFDocument {
 
 export class PDFPage extends mupdf.PDFPage {
 	// note page number is zero-indexed here
-	constructor(doc: mupdf.PDFDocument, pno: number) {
-		if (pno < 0) {
-			pno = 0
-		}
-		let page: mupdf.PDFPage = doc.loadPage(pno)
+	// can also be called with the mupdf.PDFPage to be cloned
+	constructor(doc: mupdf.PDFDocument, page: number | mupdf.PDFPage) {
+		if (typeof page === "number")
+			page = doc.loadPage(page) as mupdf.PDFPage
 		super(doc, page) // make a clone of the page object using the mupdfjs subclass!
 		page.destroy() // and kill the original
 	}

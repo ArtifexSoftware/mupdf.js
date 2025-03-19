@@ -1,12 +1,11 @@
 /// <reference lib="webworker" />
 import * as Comlink from "comlink";
-import * as mupdfjs from "mupdf/mupdfjs"
-import { PDFDocument } from "mupdf/mupdfjs";
+import * as mupdf from "mupdf"
 
 export const MUPDF_LOADED = "MUPDF_LOADED";
 
 export class MupdfWorker {
-  private pdfdocument?: PDFDocument;
+  private pdfdocument?: mupdf.Document;
 
   constructor() {
     this.initializeMupdf();
@@ -22,11 +21,11 @@ export class MupdfWorker {
 
   // ===> Here you can create methods <===
   // ===> that call statics and methods <===
-  // ===> from mupdfjs which wraps ./node_modules/mupdf/dist/mupdf.js <===
+  // ===> from mupdf (in ./node_modules/mupdf/dist/mupdf.js) <===
 
   loadDocument(document: ArrayBuffer): boolean {
 
-    this.pdfdocument = mupdfjs.PDFDocument.openDocument(
+    this.pdfdocument = mupdf.Document.openDocument(
       document,
       "application/pdf"
     ) as PDFDocument;
@@ -37,11 +36,11 @@ export class MupdfWorker {
   renderPageAsImage(pageIndex:number = 0, scale:number = 1): Uint8Array {
     if (!this.pdfdocument) throw new Error("Document not loaded");
 
-    const page = new mupdfjs.PDFPage(this.pdfdocument, pageIndex);
+    const page = this.pdfdocument.loadPage(pageIndex);
 
     const pixmap = page.toPixmap(
       [scale, 0, 0, scale, 0, 0],
-      mupdfjs.ColorSpace.DeviceRGB
+      mupdf.ColorSpace.DeviceRGB
     );
 
     let png = pixmap.asPNG();

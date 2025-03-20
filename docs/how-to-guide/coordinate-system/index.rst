@@ -1,4 +1,3 @@
-.. include:: ../../header.rst
 
 .. _How_To_Guide_Coordinate_System:
 
@@ -72,6 +71,5 @@ Then in this case we are working in the **PDF** coordinate space with the origin
 
 
 
-.. include:: ../../footer.rst
 
 

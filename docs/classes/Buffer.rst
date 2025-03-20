@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_Buffer:
 
@@ -23,7 +22,7 @@ Buffer
 
     .. code-block:: javascript
 
-        var buffer = new mupdfjs.Buffer();
+        var buffer = new mupdf.Buffer();
 
 .. method:: Buffer(data: string)
 
@@ -46,7 +45,7 @@ Buffer
 
     .. code-block:: javascript
 
-        let buffer = new mupdfjs.Buffer(fs.readFileSync("test.pdf"))
+        let buffer = new mupdf.Buffer(fs.readFileSync("test.pdf"))
 
 
 
@@ -145,7 +144,7 @@ Buffer
 
     .. code-block:: javascript
 
-        var buffer = new mupdfjs.Buffer();
+        var buffer = new mupdf.Buffer();
         buffer.write("hello world"); // buffer contains "hello world"
         var newBuffer = buffer.slice(1, -1); // newBuffer contains "ello worl"
 
@@ -176,8 +175,6 @@ Buffer
         var str = buffer.asString();
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

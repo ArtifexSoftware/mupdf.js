@@ -15,17 +15,15 @@ Within `docs` update the associated restructured text (`.rst`) files. These file
 
 ## Building HTML documentation
 
-- Ensure you have the `pydata` theme installed:
+- Ensure you have the necessary Sphinx extensions and themes installed:
 
 `pip install pydata-sphinx-theme`
-
-- Ensure you have `Sphinx design` installed:
-
 `pip install sphinx-design`
-
-- Ensure you have `Sphinx Copy Button` installed:
-
 `pip install sphinx-copybutton`
+`pip install sphinx-notfound-page`
+`pip install sphinxcontrib.googleanalytics`
+`pip install rst2pdf`
+`pip install furo`
 
 - From the "docs" location run:
 

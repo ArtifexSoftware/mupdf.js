@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_Link:
 
@@ -59,8 +58,6 @@ Link
         var isExternal = link.isExternal();
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

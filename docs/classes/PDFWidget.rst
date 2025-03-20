@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_PDFWidget:
 
@@ -251,8 +250,6 @@ To get the widgets on a page see: :meth:`getWidgets()`.
 
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

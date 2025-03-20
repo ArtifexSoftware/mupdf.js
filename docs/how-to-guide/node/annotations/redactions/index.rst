@@ -1,5 +1,3 @@
-.. include:: ../../../../header.rst
-.. include:: ../../node-header.rst
 
 .. _Node_How_To_Guide_Annotations_Redactions:
 
@@ -56,5 +54,3 @@ You can also apply all the current redaction annotations on a page at the page-l
 
 
 
-.. include:: ../../node-footer.rst
-.. include:: ../../../../footer.rst

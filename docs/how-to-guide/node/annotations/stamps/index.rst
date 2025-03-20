@@ -1,5 +1,3 @@
-.. include:: ../../../../header.rst
-.. include:: ../../node-header.rst
 
 .. _Node_How_To_Guide_Annotations_Stamps:
 
@@ -22,7 +20,7 @@ To set the kind of stamp you need refer to the :ref:`icon names <Glossary_Icon_N
 
     let fileData = fs.readFileSync("test.pdf")
 
-    let document = mupdfjs.PDFDocument.openDocument(fileData, "application/pdf")
+    let document = mupdf.PDFDocument.openDocument(fileData, "application/pdf")
     let page = document.loadPage(0)
     let annotation = page.createAnnotation("Stamp")
     annotation.setIcon("Draft")
@@ -38,5 +36,3 @@ To set the kind of stamp you need refer to the :ref:`icon names <Glossary_Icon_N
 
 
 
-.. include:: ../../node-footer.rst
-.. include:: ../../../../footer.rst

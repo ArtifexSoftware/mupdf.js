@@ -1,5 +1,3 @@
-.. include:: ../../../header.rst
-.. include:: ../node-header.rst
 
 .. _Node_How_To_Guide_Document:
 
@@ -21,14 +19,14 @@ A document may require a password if it is protected. To check this use the `nee
 
     let needsPassword = document.needsPassword()
 
-To provide a password use the `authenticate` method as follows:
+To provide a password use the `authenticatePassword` method as follows:
 
 
 |example_tag|
 
 .. code-block:: javascript
 
-    let auth = document.authenticate("abracadabra")
+    let auth = document.authenticatePassword("abracadabra")
 
 See the :ref:`authenticate password return values <authenticate password return values>` for what the return value means.
 
@@ -93,49 +91,6 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
     let page = document.loadPage(0)
     
 
-Splitting a Document
------------------------------
-
-To split a document's pages into new documents use the :meth:`split` method. Supply an array of page indicies that you want to use for the splitting operation.
-
-|example_tag|
-
-.. code-block:: javascript
-
-    let documents = document.split([0,2,3])
-
-The example above would return three new documents from a **10 page PDF** as the following:
-
-- Document containing pages 1 & 2 (from index `0`)
-- Document containing page 3 (from index `2`)
-- Document containing pages 4-10 (from final index `3`)
-
-
-
-
-Merging Documents
------------------------------
-
-To merge documents we can use the :meth:`merge` method.
-
-See the script below for an example implementation.
-
-|example_tag|
-
-.. code-block:: javascript
-
-    // create a blank document and add some text
-    let sourcePDF = mupdfjs.PDFDocument.createBlankDocument()
-    let page = sourcPDF.loadPage(0)
-    page.insertText("HELLO WORLD", 
-                        [0,0], 
-                        "Times-Roman", 
-                        20, 
-                        {strokeColor:[0,0,0,1], fillColor:[1,0,0,0.75], strokeThickness:0.5})
-    // now merge this document onto page 2 of our document and rotate it by 90 degrees
-    document.merge(sourcePDF, 0, -1, 1, 90);
-
-
 Extracting Document Text
 -----------------------------
 
@@ -160,46 +115,6 @@ To get the text for an entire document we can retrieve :doc:`../../../classes/St
 
 .. literalinclude:: ../structured-text-example.json
    :language: json
-
-
-Extracting Document Images
-----------------------------------
-
-
-To get the images for an entire document use the :meth:`getImages` method on each :ref:`page <Node_How_To_Guide_Page>`.
-
-|example_tag|
-
-.. code-block:: javascript
-
-    let i = 0
-    while (i < document.countPages()) {
-        const page = document.loadPage(i)
-        let imageStack = page.getImages()
-        i++
-    }
-
-
-The following example would extract all the images from a document and save them as individual files:
-
-.. code-block:: javascript
-
-    let i = 0
-    while (i < document.countPages()) {
-        const page = document.loadPage(i)
-        let imageStack = page.getImages()
-
-        for (var j in imageStack) {
-            var image = imageStack[j].image;
-            var pixmap = image.toPixmap();
-            let raster = pixmap.asJPEG(80);
-            fs.writeFileSync('page-'+i+'-image-'+j+'.jpg', raster);
-        }
-
-        i++
-    }
-
-
 
 
 Extracting Document Annotations
@@ -235,21 +150,6 @@ You can use the :meth:`bake` method as follows:
 
 
 .. _Node_How_To_Attach_File_To_Document:
-
-Attaching a File to a Document
------------------------------------
-
-Use the :meth:`attachFile` method on a document instance with a supplied name and :doc:`../../../classes/Buffer` for the data.
-
-|example_tag|
-
-.. code-block:: javascript
-
-    const content = "Test content";
-    const buffer = new mupdfjs.Buffer();
-    buffer.writeLine(content);
-    doc.attachFile("test.txt", buffer);
-
 
 Removing a File from a Document
 ----------------------------------------------------------------------
@@ -335,6 +235,4 @@ To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide
 
 
 
-.. include:: ../node-footer.rst
-.. include:: ../../../footer.rst
 

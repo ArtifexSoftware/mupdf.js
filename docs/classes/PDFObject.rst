@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_PDFObject:
 
@@ -449,8 +448,6 @@ This represents a type alias as follows:
 
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

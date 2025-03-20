@@ -19,7 +19,7 @@ A `Path` object represents vector graphics as drawn by a pen. A path can be eith
 
     .. code-block:: javascript
 
-        var path = new mupdfjs.Path();
+        var path = new mupdf.Path();
 
 
 
@@ -40,7 +40,7 @@ A `Path` object represents vector graphics as drawn by a pen. A path can be eith
 
     .. code-block:: javascript
 
-        var rect = path.getBounds(1.0, mupdfjs.Matrix.identity);
+        var rect = path.getBounds(1.0, mupdf.Matrix.identity);
 
 
 
@@ -161,7 +161,7 @@ A `Path` object represents vector graphics as drawn by a pen. A path can be eith
 
     .. code-block:: javascript
 
-        path.transform(mupdfjs.Matrix.scale(2,2));
+        path.transform(mupdf.Matrix.scale(2,2));
 
 
 
@@ -203,10 +203,10 @@ A `Path` object represents vector graphics as drawn by a pen. A path can be eith
             }
         }
 
-        var doc = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
+        var doc = mupdf.Document.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
         var page = doc.loadPage(0)
-        var device = new mupdfjs.Device(traceDevice)
-        page.run(device, mupdfjs.Matrix.identity)
+        var device = new mupdf.Device(traceDevice)
+        page.run(device, mupdf.Matrix.identity)
 
 
 

@@ -23,7 +23,7 @@ The `DrawDevice` can be used to render to a :doc:`Pixmap`; either by :ref:`runni
 
     .. code-block:: javascript
 
-        var drawDevice = new mupdfjs.DrawDevice(mupdfjs.Matrix.identity, pixmap);
+        var drawDevice = new mupdf.DrawDevice(mupdf.Matrix.identity, pixmap);
 
 
 

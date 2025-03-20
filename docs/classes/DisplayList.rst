@@ -24,7 +24,7 @@ A display list records all the device calls for playback later. If you want to r
 
     .. code-block:: javascript
 
-        var displayList = new mupdfjs.DisplayList([0,0,100,100]);
+        var displayList = new mupdf.DisplayList([0,0,100,100]);
 
 
 
@@ -42,7 +42,7 @@ A display list records all the device calls for playback later. If you want to r
 
     .. code-block:: javascript
 
-        displayList.run(device, mupdfjs.Matrix.identity);
+        displayList.run(device, mupdf.Matrix.identity);
 
 
 
@@ -77,7 +77,7 @@ A display list records all the device calls for playback later. If you want to r
 
     .. code-block:: javascript
 
-        var pixmap = displayList.toPixmap(mupdfjs.Matrix.identity, mupdfjs.ColorSpace.DeviceRGB, false);
+        var pixmap = displayList.toPixmap(mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB, false);
 
 
 .. method:: toStructuredText(options:string = "")

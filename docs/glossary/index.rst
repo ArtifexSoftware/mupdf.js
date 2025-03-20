@@ -76,7 +76,7 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var m = mupdfjs.Matrix.identity;
+      var m = mupdf.Matrix.identity;
 
 **Methods**
 
@@ -93,7 +93,7 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var m = mupdfjs.Matrix.scale(2,2);
+      var m = mupdf.Matrix.scale(2,2);
 
 
 .. method:: translate(tx:number, ty:number)
@@ -109,7 +109,7 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var m = mupdfjs.Matrix.translate(2,2);
+      var m = mupdf.Matrix.translate(2,2);
 
 .. method:: rotate(theta:number)
 
@@ -123,7 +123,7 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var m = mupdfjs.Matrix.rotate(90);
+      var m = mupdf.Matrix.rotate(90);
 
 .. method:: concat(a:[a,b,c,d,e,f], b:[a,b,c,d,e,f])
 
@@ -138,7 +138,7 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var m = mupdfjs.Matrix.concat([1,1,1,1,1,1], [2,2,2,2,2,2]);
+      var m = mupdf.Matrix.concat([1,1,1,1,1,1], [2,2,2,2,2,2]);
 
 
 .. method:: invert(matrix:[a,b,c,d,e,f])
@@ -153,7 +153,7 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var m = mupdfjs.Matrix.invert([1,0.5,1,1,1,1]);
+      var m = mupdf.Matrix.invert([1,0.5,1,1,1,1]);
 
 
 
@@ -193,8 +193,8 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var isEmpty = mupdfjs.Rect.isEmpty([0,0,0,0]); // true
-      var isEmpty = mupdfjs.Rect.isEmpty([0,0,100,100]); // false
+      var isEmpty = mupdf.Rect.isEmpty([0,0,0,0]); // true
+      var isEmpty = mupdf.Rect.isEmpty([0,0,100,100]); // false
 
 
 
@@ -210,8 +210,8 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var isValid = mupdfjs.Rect.isValid([0,0,100,100]); // true
-      var isValid = mupdfjs.Rect.isValid([0,0,-100,100]); // false
+      var isValid = mupdf.Rect.isValid([0,0,100,100]); // true
+      var isValid = mupdf.Rect.isValid([0,0,-100,100]); // false
 
 
 .. method:: isInfinite(rect:[x1,y1,x2,y2])
@@ -226,8 +226,8 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var isInfinite = mupdfjs.Rect.isInfinite([0x80000000,0x80000000,0x7fffff80,0x7fffff80]); //true
-      var isInfinite = mupdfjs.Rect.isInfinite([0,0,100,100]); // false
+      var isInfinite = mupdf.Rect.isInfinite([0x80000000,0x80000000,0x7fffff80,0x7fffff80]); //true
+      var isInfinite = mupdf.Rect.isInfinite([0,0,100,100]); // false
 
 
 
@@ -244,7 +244,7 @@ The convenience type is defined as follows:
 
    .. code-block:: javascript
 
-      var m = mupdfjs.Rect.transform([0,0,100,100], [1,0.5,1,1,1,1]);
+      var m = mupdf.Rect.transform([0,0,100,100], [1,0.5,1,1,1,1]);
 
 
 

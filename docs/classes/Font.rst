@@ -40,7 +40,7 @@ Font
 
     .. code-block:: javascript
 
-        var font = new mupdfjs.Font("Times-Roman");
+        var font = new mupdf.Font("Times-Roman");
 
 
 
@@ -58,7 +58,7 @@ Font
     .. code-block:: javascript
 
         let fontBuffer = fs.readFileSync("FreigSans.ttf");
-        let font = new mupdfjs.Font("Freight Sans", fontBuffer);
+        let font = new mupdf.Font("Freight Sans", fontBuffer);
 
 
 |instance_method_tag|

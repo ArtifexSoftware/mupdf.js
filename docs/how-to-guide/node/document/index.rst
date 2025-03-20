@@ -246,7 +246,7 @@ Use the :meth:`attachFile` method on a document instance with a supplied name an
 .. code-block:: javascript
 
     const content = "Test content";
-    const buffer = new mupdfjs.Buffer();
+    const buffer = new mupdf.Buffer();
     buffer.writeLine(content);
     doc.attachFile("test.txt", buffer);
 

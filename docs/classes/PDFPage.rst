@@ -80,8 +80,8 @@ PDFPage
 
     .. code-block:: javascript
 
-        var pixmap = pdfPage.toPixmap(mupdfjs.Matrix.identity,
-                                      mupdfjs.ColorSpace.DeviceRGB,
+        var pixmap = pdfPage.toPixmap(mupdf.Matrix.identity,
+                                      mupdf.ColorSpace.DeviceRGB,
                                       true,
                                       false,
                                       "View",
@@ -144,7 +144,7 @@ PDFPage
     .. code-block:: javascript
 
         const imageData = fs.readFileSync("logo.png"));
-        let logo:mupdfjs.Image = new mupdfjs.Image(imageData);
+        let logo = new mupdf.Image(imageData);
         mupdfJSPage.insertImage({image:logo, name:"MyLogo"}, 
                                 {x:0, y:0, width:200, height:200});
 
@@ -312,7 +312,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        pdfPage.applyRedactions(true, mupdfjs.PDFPage.REDACT_IMAGE_REMOVE);
+        pdfPage.applyRedactions(true, mupdf.PDFPage.REDACT_IMAGE_REMOVE);
 
 
 .. method:: getText()
@@ -496,7 +496,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        page.runPageContents(device, mupdfjs.Matrix.identity);
+        page.runPageContents(device, mupdf.Matrix.identity);
 
 
 .. method:: runPageAnnots(device: Device, matrix: Matrix)
@@ -510,7 +510,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        page.runPageAnnots(device, mupdfjs.Matrix.identity);
+        page.runPageAnnots(device, mupdf.Matrix.identity);
 
 
 .. method:: runPageWidgets(device: Device, matrix: Matrix)
@@ -524,7 +524,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        page.runPageWidgets(device, mupdfjs.Matrix.identity);
+        page.runPageWidgets(device, mupdf.Matrix.identity);
 
 
 .. method:: getLabel()

@@ -24,7 +24,7 @@ DocumentWriter
 
     .. code-block:: javascript
 
-        var writer = new mupdfjs.DocumentWriter(buffer, "PDF", "");
+        var writer = new mupdf.DocumentWriter(buffer, "PDF", "");
 
 
 |instance_method_tag|

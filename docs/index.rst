@@ -1,4 +1,3 @@
-.. include:: header.rst
 
 .. This is the TOC in the sidebar!
 
@@ -51,7 +50,6 @@ Find us
 
 
 
-.. include:: footer.rst
 
 
 .. The home page doesn't need to show the feedback form in the footer

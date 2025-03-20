@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_Image:
 
@@ -19,7 +18,7 @@ Image
 
     .. code-block:: javascript
 
-        let image = new mupdfjs.Image(fs.readFileSync("logo.png"))
+        let image = new mupdf.Image(fs.readFileSync("logo.png"))
 
 
 |instance_method_tag|
@@ -154,8 +153,6 @@ Image
         var pixmap = image.toPixmap();
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

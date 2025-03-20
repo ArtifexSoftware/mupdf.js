@@ -1,27 +1,8 @@
-.. include:: ../header.rst
 
 .. _Classes_PDFDocument:
 
 PDFDocument
 ===================
-
-
-|static_method_tag|
-
-.. method:: createBlankDocument(width:number = 595, height:number = 842)
-
-    Creates and returns a one paged :doc:`PDFDocument`. If no width or height is supplied then the default values for an A4 sized document will be used.
-
-    :arg width: `number`. Width of document. 
-    :arg height: `number`. Height of document.
-
-    :return: `PDFDocument`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        let document = mupdfjs.PDFDocument.createBlankDocument()
 
 
 .. method:: openDocument(from: Buffer | ArrayBuffer | Uint8Array | Stream, fileType: string)
@@ -37,8 +18,7 @@ PDFDocument
     
     .. code-block:: javascript
 
-        let document = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"),
-                                                        "application/pdf")
+        let document = mupdf.PDFDocument.openDocument(fs.readFileSync("test.pdf"))
 
 
 |instance_method_tag|
@@ -52,100 +32,12 @@ PDFDocument
 	:return: :doc:`PDFPage`.
 
 
-.. method:: newPage(pno: number = -1, width: number = 595, height: number = 842)
-
-    Creates and returns a :doc:`PDFPage` at a given place location in a document. If no width or height is supplied then the default values for an A4 sized document will be used.
-
-    :arg pno: `number`. The page location in the document to insert the page `0` = start of document, `-1` = end of document.
-    :arg width: `number`. Width of document. 
-    :arg height: `number`. Height of document.
-
-    :return: :doc:`PDFPage`.
-
-.. method:: copyPage(pno: number, to: number = -1)
-
-    Copys a page from one index to another in the document.
-
-    :arg pno: `number`. The page location in the document to copy the page from, `0` = start of document, `-1` = end of document.
-    :arg to: `number`. The page location in the document to copy the page to, `0` = start of document, `-1` = end of document.
-
 
 .. method:: deletePage(index: number)
 
     Deletes a page at a specific index. Zero-indexed.
 
     :arg index: `number`. `0` = first page of document.
-
-
-.. method:: deletePages(...args: any[])
-
-    A convenience method for deleting a range of pages.
-    
-    :arg ...args: `any[]`.
-
-    **Using a range**
-
-    Use `number, number` to delete a range of pages including the start and end index.
-
-    **Using keywords**
-
-    Use `{fromPage:number, toPage:number}` to delete a range of pages between the `fromPage` and the `toPage` (and including the `fromPage` and the `toPage`).
-
-    For example if you called: `document.deletePages({fromPage:2, toPage:5})` it would delete pages at indexes 2,3,4 & 5.
-
-    **Using a set**
-
-    Use `[number, ...]` to define the pages you want to delete.
-
-    For example if you called: `document.deletePages([0, 4, 6, 7])` it would delete pages at indexes 0,4,6 & 7.
-
-    .. note::
-
-        Remember pages indexes are **zero-indexed**! Thus `document.deletePages({fromPage:1, toPage:3})` is actually deleting from page 2 of your document.
-
-
-.. method:: split(range: number[] | undefined)
-
-    Splits a document into multiple documents with defined page ranges and returns a new set of documents.
-    
-    Supply a range of page numbers to be considered for how to split the document pages.
-
-    For example if you wanted to split out the first two pages of a document then use: `[0,2]` - this supplies the page indicies to be used - page's referenced by `0` & `1` will be in one document, all pages from index `2` will be in the other document.
-
-    :arg range: `number[]` or `undefined`. Page indicies for operation. If `undefined` then the document splits the document pages into single page document instances (one page for each document).
-
-    :return: `PDFDocument[]`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-        
-        // split out 3 documents, the first two pages, then page three, then everything from page 4 onwards
-        var documents = document.split([0, 2, 3])
-
-    .. note::
-
-        Remember page indexes are zero-indexed! i.e. Page 1 = index `0`!
-
-
-.. method:: merge(sourcePDF: PDFDocument, fromPage: number = 0, toPage: number = -1, startAt: number = -1, rotate: 0 | 90 | 180 | 270 = 0, copyLinks: boolean = true, copyAnnotations: boolean = true) 
-
-    Merges two documents together with options.
-
-    :arg sourcePDF: :doc:`PDFDocument`. The source :title:`PDF` to merge into the document instance.
-    :arg fromPage: `number`. The start page, defaults to the first page of the document (`0`).
-    :arg toPage: `number`. The end page, defaults to the last page of the document (`-1)`.
-    :arg startAt: `number`. Where to insert the `sourcePDF` pages in the document instance, defaults to the last page (`-1)`.
-    :arg rotate: `number`. Sets rotstion of inserted pages, defaults to no rotation (`0`).
-    :arg copyLinks: `boolean`. Whether to copy document links from the `sourcePDF` or not, defaults to `true`.
-    :arg copyAnnotations: `boolean`. Whether to copy document annotations from the `sourcePDF` or not, defaults to `true`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        // merge another document (sourcePDF) onto page 2 of our document instance
-        document.merge(sourcePDF, 0, -1, 1);
 
 
 .. method:: bake(bakeAnnots:boolean = true, bakeWidgets:boolean = true)
@@ -201,27 +93,6 @@ PDFDocument
         pdfDocument.graftPage(-1, srcDoc, 0);
 
 
-.. method:: attachFile(name: string, data: Buffer | ArrayBuffer | Uint8Array, options?: {filename?: string; creationDate?: Date; modificationDate?: Date;})
-
-    Attach a file to a document by supplying a name and buffer of data.
-
-    :arg name: `string`. The name of the file.
-    :arg data: `Buffer | ArrayBuffer | Uint8Array`. Data for file.
-    :arg options: `{filename?: string; creationDate?: Date; modificationDate?: Date;}`. Optional metadata.
-
-        - `filename`. Optionally supply a file name separately from the previous `name` parameter. (Defaults to `name` if not supplied)
-        - `creationDate`. Optionally supply a JavaScript `Date` object for the creation date. (Defaults to "now" `Date()` if not supplied))
-        - `modificationDate`. Optionally supply a JavaScript `Date` object for the modification date. (Defaults to "now" `Date()` if not supplied))
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        const content = "Test content";
-        const buffer = new Buffer();
-        buffer.writeLine(content);
-        pdfDocument.attachFile("test.txt", buffer);
-
 
 .. method:: deleteEmbeddedFile(filename: string)
 
@@ -273,7 +144,7 @@ PDFDocument
 
 .. _authenticate password return values:
 
-.. method:: authenticate(password:string)
+.. method:: authenticatePassword(password:string)
 
     Returns a bitfield value against the password authentication result.
 
@@ -302,7 +173,7 @@ PDFDocument
 
     .. code-block:: javascript
 
-        var auth = document.authenticate("abracadabra");
+        var auth = document.authenticatePassword("abracadabra");
 
 
 .. method:: hasPermission(permission:string)
@@ -463,14 +334,6 @@ PDFDocument
         document.createLink([0,0,100,100], uri);
 
 
-.. method:: getPageLabels()
-
-    Extract the list of page label definitions. Typically used for modifications before feeding into :meth:`setPageLabels`.
-
-    This method returns an array of :ref:`PageLabelRule <Glossary_Page_Labels>` objects.
-
-    :return: `PageLabelRule[]`
-
 .. method:: setPageLabels(index:number, style:string = "D", prefix:string = "", start:number = 1)
 
     Sets the page label numbering for the page and all pages following it, until the next page with an attached label.
@@ -485,26 +348,6 @@ PDFDocument
     .. code-block:: javascript
 
         pdfDocument.setPageLabels(0, "D", "Prefix", 1);
-
-
-.. method:: setPageLabelsArray(labels: PageLabelRule[])
-
-    Define a set of labels for your pages using this method.
-
-    :arg labels: `PageLabelRule[]`. See :ref:`PageLabelRule <Glossary_Page_Labels>`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        const labels = [
-            { startpage: 0, style: "D" },
-            { startpage: 5, prefix: "B-" },
-            { startpage: 10, firstpagenum: 5 },
-        ];
-
-        document.setPageLabelsArray(labels);
-
 
 
 .. method:: deletePageLabels(index:number)
@@ -905,8 +748,6 @@ Some dictionaries in :title:`PDF` also have attached binary data. These are call
 ----
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

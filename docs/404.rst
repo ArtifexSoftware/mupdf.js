@@ -1,5 +1,3 @@
-.. include:: header-404.rst
-
 404!
 ======
 
@@ -9,4 +7,3 @@
 
 Please use the menu or search to find what you are looking for.
 
-.. include:: footer.rst

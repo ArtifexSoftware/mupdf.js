@@ -1,5 +1,3 @@
-.. include:: ../../../../header.rst
-.. include:: ../../node-header.rst
 
 .. _Node_How_To_Guide_Annotations_Getting_Started:
 
@@ -36,7 +34,7 @@ To delete an annotation use the :ref:`delete <Classes_PDFPage_delete>` method on
 
 .. code-block:: javascript
 
-    page.delete(annotation)
+    page.deleteAnnotation(annotation)
 
 
 Annotation Types
@@ -240,7 +238,5 @@ Graphics and Drawing
 
 
 
-.. include:: ../../node-footer.rst
-.. include:: ../../../../footer.rst
 
 

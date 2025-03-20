@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_PDFPage:
 
@@ -80,8 +79,8 @@ PDFPage
 
     .. code-block:: javascript
 
-        var pixmap = pdfPage.toPixmap(mupdfjs.Matrix.identity,
-                                      mupdfjs.ColorSpace.DeviceRGB,
+        var pixmap = pdfPage.toPixmap(mupdf.Matrix.identity,
+                                      mupdf.ColorSpace.DeviceRGB,
                                       true,
                                       false,
                                       "View",
@@ -106,57 +105,13 @@ PDFPage
         var displayList = page.toDisplayList();
 
 
-.. method:: insertText(value:string, point: Point, fontName:string = "Times-Roman", fontSize:number = 18, graphics: {strokeColor:Color, fillColor:Color, strokeThickness:number} = {strokeColor:[0,0,0,1], fillColor:[0,0,0,1], strokeThickness:1})
-    
-    Inserts text onto a page at the given point along with styling options. 
-
-    :arg value: `string`. The value of the text. 
-    :arg point: `Point`. The :ref:`Point <Glossary_Points>` coordinate for the text.
-    :arg fontName: `string`. Defaults to "Times-Roman"
-    :arg fontSize: `number`. Font size, default is 18 points.
-    :arg graphics: `{strokeColor:Color, fillColor:Color, strokeThickness:number}`. An object with three keys to set the graphics styling for the text.
-
-        - `strokeColor`. :ref:`Color <Glossary_Colors>` for the color of the text border (or stroke).
-        - `fillColor`. :ref:`Color <Glossary_Colors>`  for the color of the text fill (or body)
-        - `strokeThickness`. `number`. `0` or above to set the stroke thickness in points. Floating point numbers are accepted.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        mupdfJSPage.insertText("HELLO WORLD!", 
-                       [0,0], 
-                       "Times-Roman", 
-                       65, 
-                       {strokeColor:[0,0,0,1], fillColor:[1,0,0,0.75], strokeThickness:1.5});
-
-
-
-.. method:: insertImage(data: {image:Image, name:string}, metrics: {x?:number, y?:number, width?:number, height?:number} = {x:0,y:0,width:0,height:0}) 
-
-    Inserts an image onto a page with a given name and within the given rectangle.
-
-    :arg data: `{image:Image, name:string}`. Object containing an :doc:`Image` and the name for the image (note this should ideally be unique for the page).
-    :arg metrics: `{x?:number, y?:number, width?:number, height?:number}`. An optional object used to define the position and size for the image. If these values are `undefined` then `x` = `0`, `y` = `0`, `width` = *inherent image width*, `height` = *inherent image height*. 
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        const imageData = fs.readFileSync("logo.png"));
-        let logo:mupdfjs.Image = new mupdfjs.Image(imageData);
-        mupdfJSPage.insertImage({image:logo, name:"MyLogo"}, 
-                                {x:0, y:0, width:200, height:200});
-
-
-
-.. method:: insertLink(metrics: {x: number, y: number, width: number, height: number}, uri: string)
+.. method:: createLink(rect: Rect, uri: string)
 
     Create a new link with the supplied metrics for the page, linking to the destination URI string.
 
     To create links to other pages within the document see the :meth:`formatLinkURI` method.
 
-    :arg metrics: `{x: number, y: number, width: number, height: number}`. Object containing the link metrics.
+    :arg rect: Rectangle specifying the active area on the page the link should cover.
     :arg destinationUri: `string` containing URI.
     :return: :doc:`Link`.
 
@@ -165,10 +120,10 @@ PDFPage
     .. code-block:: javascript
 
         // create a link to an external URL
-        var link = page.insertLink({0,0,100,100}, "https://example.com");
+        var link = page.createLink([0,0,100,50], "https://example.com");
 
         // create a link to another page in the document
-        var link = page.insertLink({0,0,100,100}, "#page=1&view=FitV,0");
+        var link = page.createLink([0,100,100,150], "#page=1&view=FitV,0");
 
 
 .. method:: createAnnotation(type:string)
@@ -185,17 +140,13 @@ PDFPage
         var annot = pdfPage.createAnnotation("Text");
 
 
-.. _Classes_PDFPage_delete:
+.. _Classes_PDFPage_deleteAnnotation:
 
-.. method:: delete(ref:PDFAnnotation | PDFWidget | Link | string)
+.. method:: deleteAnnotation(ref:PDFAnnotation)
 
-    Deletes a :doc:`PDFAnnotation`, :doc:`PDFWidget`, :doc:`Link` instance or a **PDF** :doc:`PDFObject` by `xref` key.
+    Delete a :doc:`PDFAnnotation` from the page.
 
-    :arg ref: :doc:`PDFAnnotation` | :doc:`PDFWidget` | :doc:`Link` | `string`
-
-    .. note:: 
-
-        Use :meth:`getResourcesXrefObjects` to find :doc:`PDFObject` `xref` keys which you may want to delete.
+    :arg ref: :doc:`PDFAnnotation`
 
     |example_tag|
 
@@ -204,7 +155,14 @@ PDFPage
         let annots = getAnnotations();
         page.delete(annots[0]);
 
-    
+.. _Classes_PDFPage_deleteLink:
+
+.. method:: deleteLink(link:Link)
+
+    Deletes a :doc:`Link` from the page.
+
+    :arg link: :doc:`Link`
+
 .. method:: search(needle:string, maxHits:number = 50)
 
 
@@ -239,41 +197,6 @@ PDFPage
     .. code-block:: javascript
 
         pdfPage.update();
-
-
-.. method:: addAnnotation(type: CreatableAnnotationType, metrics: {x:number, y:number, width:number, height:number}, author?:string, contents?:string)
-
-    Creates an annotation of your choice from the set in :ref:`CreatableAnnotationType <Glossary_CreatableAnnotationType>` at a location on the page defined by the `metrics`.
-
-    This method also has options for defining the author and contents of the annotation.
-
-    :arg type: `CreatableAnnotationType`.
-    :arg metrics: `{x:number, y:number, width:number, height:number}`.
-    :arg author: `string` | `null`. The annotation author.
-    :arg contents: `string`. The annotation contents. See :meth:`setContents`.
-
-    :return: :doc:`PDFAnnotation`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        let myNote = page.addAnnotation("Text", {x:100, y:200, width:300, height:50}, null, "Hello World!");
-
-
-.. method:: addRedaction(metrics: {x:number, y:number, width:number, height:number})
-
-    Creates a redaction annotation at a location on the page defined by the `metrics`.
-
-    :arg metrics: `{x:number, y:number, width:number, height:number}`.
-
-    :return: :doc:`PDFAnnotation`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        let redactionAnnotation = page.addRedaction({x:100, y:200, width:300, height:50})
 
 
 .. method:: applyRedactions(blackBoxes: boolean | number = true, imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS, lineArtMethod: number = PDFPage.REDACT_LINE_ART_REMOVE_IF_COVERED, textMethod: number = PDFPage.REDACT_TEXT_REMOVE)
@@ -312,20 +235,8 @@ PDFPage
 
     .. code-block:: javascript
 
-        pdfPage.applyRedactions(true, mupdfjs.PDFPage.REDACT_IMAGE_REMOVE);
+        pdfPage.applyRedactions(true, mupdf.PDFPage.REDACT_IMAGE_REMOVE);
 
-
-.. method:: getText()
-
-    Returns the unstyled, plain text for a page as a string.
-
-    :return: `string`.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        let text = pdfPage.getText();
 
 .. method:: getAnnotations()
 
@@ -403,26 +314,6 @@ PDFPage
             console.log(xrefObjs[obj])    
         }
 
-..  method:: rotate(r:number)
-
-    Rotating a page allows for 90 increment rotations on a page. 
-    
-    If you send a rotation value which is not one of postive or negative `0`, `90`, `180`, `270` then this method will do nothing.
-
-    :arg r: `number`. The rotation value to apply to the page.
-
-    |example_tag|
-
-    .. code-block:: javascript
-
-        // rotate a page 90 degrees anti-clockwise
-        page.rotate(-90)
-
-    .. note::
-
-        Positive rotation values are clockwise, negative are anti-clockwise.
-
-
 .. method:: setPageBox(box: PageBox, rect: Rect)
 
     Sets the type of box required for the page.
@@ -435,38 +326,6 @@ PDFPage
     .. code-block:: javascript
 
         page.setPageBox("TrimBox", [10,10, 585, 832]);
-
-.. method:: setTrimBox(rect: Rect) 
-
-    Convenience method for setting the trim box.
-
-    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
-
-.. method:: setMediaBox(rect: Rect)
-
-    Convenience method for setting the media box.
-
-    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
-
-.. method:: setCropBox(rect: Rect)
-
-    Convenience method for setting the crop box.
-
-    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
-
-.. method:: setArtBox(rect: Rect) 
-
-    Convenience method for setting the art box.
-
-    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
-
-.. method:: setBleedBox(rect: Rect)
-
-    Convenience method for setting the bleed box.
-
-    :arg rect: :ref:`Rect <Glossary_Rectangles>`.
-
-
 
 
 .. _PDFPage_run:
@@ -496,7 +355,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        page.runPageContents(device, mupdfjs.Matrix.identity);
+        page.runPageContents(device, mupdf.Matrix.identity);
 
 
 .. method:: runPageAnnots(device: Device, matrix: Matrix)
@@ -510,7 +369,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        page.runPageAnnots(device, mupdfjs.Matrix.identity);
+        page.runPageAnnots(device, mupdf.Matrix.identity);
 
 
 .. method:: runPageWidgets(device: Device, matrix: Matrix)
@@ -524,7 +383,7 @@ PDFPage
 
     .. code-block:: javascript
 
-        page.runPageWidgets(device, mupdfjs.Matrix.identity);
+        page.runPageWidgets(device, mupdf.Matrix.identity);
 
 
 .. method:: getLabel()
@@ -541,8 +400,6 @@ PDFPage
 
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

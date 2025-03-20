@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_PDFGraftMap:
 
@@ -41,8 +40,6 @@ See :meth:`newGraftMap` on the :doc:`PDFDocument` class to create a graft map.
 
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

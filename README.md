@@ -39,23 +39,6 @@ The examples include a simple PDF Viewer that runs MuPDF in the browser, several
 
 See [BUILDING.md](BUILDING.md) for instructions on building the MuPDF.js library from source.
 
-## The "mupdf" module.
-
-This is the stable API that shares its design with our other language bindings for the mutool run command line environment and the Java and Android libraries.
-Using this API gives you full control, but assumes some basic knowledge about the PDF file format internals.
-
-The documentation for this module is available here:
-
-https://mupdf.readthedocs.io/en/latest/mupdf-js.html
-
-## The "mupdf/mupdfjs" module.
-
-This is a new and experimental API that aims to provide higher level functionality much like pymupdf does for Python.
-
-The documentation for this module is available here:
-
-https://mupdfjs.readthedocs.io/en/latest/
-
 ## Contributing
 
 To contribute please open up (or help answer!) an Issue on our Github project, or create a Pull Request for review.

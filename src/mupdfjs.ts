@@ -248,11 +248,8 @@ export class PDFDocument extends mupdf.PDFDocument {
 	}
 
 	authenticate(password: string): number {
-		if (this.pointer === 0) {
-			throw new Error("document closed");
-		}
-		const val = super.authenticatePassword(password);
-		return val;
+		console.warn("doc.authenticate(password) is deprecated. Please use doc.authenticatePassword(password) instead!");
+		return super.authenticatePassword(password);
 	}
 
 	getPageNumbers(label: string, onlyOne: boolean = false): number[] {
@@ -748,8 +745,10 @@ export class PDFPage extends mupdf.PDFPage {
 	// note page number is zero-indexed here
 	// can also be called with the mupdf.PDFPage to be cloned
 	constructor(doc: mupdf.PDFDocument, page: number | mupdf.PDFPage) {
-		if (typeof page === "number")
+		if (typeof page === "number") {
+			console.warn("The mupdfjs.PDFPage(doc,n) constructor is deprecated. Please use document.loadPage(n) instead!")
 			page = doc.loadPage(page) as mupdf.PDFPage
+		}
 		super(doc, page) // make a clone of the page object using the mupdfjs subclass!
 		page.destroy() // and kill the original
 	}
@@ -933,6 +932,7 @@ export class PDFPage extends mupdf.PDFPage {
 	}
 
 	insertLink(metrics: { x: number, y: number, width: number, height: number }, uri: string) {
+		console.warn("page.insertLink({x,y,width,height},uri) is deprecated. Please use page.createLink(rect,uri) instead!")
 		super.createLink([metrics.x, metrics.y, metrics.x + metrics.width, metrics.y + metrics.height], uri)
 	}
 
@@ -1079,31 +1079,39 @@ export class PDFPage extends mupdf.PDFPage {
 
 	delete(ref: mupdf.PDFAnnotation | mupdf.PDFWidget | mupdf.Link | string) {
 		if (ref instanceof mupdf.PDFAnnotation) {
+                        console.warn("page.delete(annot) is deprecated. Please use page.deleteAnnotation(annot) instead!")
 			super.deleteAnnotation(ref)
 		} else if (ref instanceof mupdf.PDFWidget) {
+                        console.warn("page.delete(widget) is deprecated. Please use page.deleteAnnotation(annot) instead!")
 			super.deleteAnnotation(ref)
 		} else if (ref instanceof mupdf.Link) {
+                        console.warn("page.delete(link) is deprecated. Please use page.deleteLink(link) instead!")
 			super.deleteLink(ref)
 		} else if (typeof ref === "string") {
-			let pageObj = this.getObject()
-			var isIndirect = pageObj.isIndirect()
+			console.warn("page.delete(string) is deprecated. Please use page.deleteResourcesXrefObject(string) instead!")
+			this.deleteResourcesXrefObject(ref)
+                }
+	}
 
-			if (isIndirect) {
-				pageObj = pageObj.resolve()
-			}
+        deleteResourcesXrefObject(ref: string) {
+		let pageObj = this.getObject()
+		var isIndirect = pageObj.isIndirect()
 
-			// replace the XObject with a 1x1 transparent pixel to "delete" it
-			let res = pageObj.get("Resources")
-			let resXObj = res.get("XObject")
-			let pix = new mupdf.Pixmap(mupdf.ColorSpace.DeviceRGB, [0, 0, 1, 1], true)
-			let imageRes = new mupdf.Image(pix)
-
-			const image = this._doc.addImage(imageRes)
-			resXObj.put(ref, image)
-
-			res.put("XObject", resXObj)
-			pageObj.put("Resources", res)
+		if (isIndirect) {
+			pageObj = pageObj.resolve()
 		}
+
+		// replace the XObject with a 1x1 transparent pixel to "delete" it
+		let res = pageObj.get("Resources")
+		let resXObj = res.get("XObject")
+		let pix = new mupdf.Pixmap(mupdf.ColorSpace.DeviceRGB, [0, 0, 1, 1], true)
+		let imageRes = new mupdf.Image(pix)
+
+		const image = this._doc.addImage(imageRes)
+		resXObj.put(ref, image)
+
+		res.put("XObject", resXObj)
+		pageObj.put("Resources", res)
 	}
 
 	getResourcesXrefObjects(): { key: string | number, value: string }[] {

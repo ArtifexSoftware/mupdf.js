@@ -150,13 +150,13 @@ PDFPage
 
 
 
-.. method:: insertLink(metrics: {x: number, y: number, width: number, height: number}, uri: string)
+.. method:: createLink(rect: Rect, uri: string)
 
     Create a new link with the supplied metrics for the page, linking to the destination URI string.
 
     To create links to other pages within the document see the :meth:`formatLinkURI` method.
 
-    :arg metrics: `{x: number, y: number, width: number, height: number}`. Object containing the link metrics.
+    :arg rect: Rectangle specifying the active area on the page the link should cover.
     :arg destinationUri: `string` containing URI.
     :return: :doc:`Link`.
 
@@ -165,10 +165,10 @@ PDFPage
     .. code-block:: javascript
 
         // create a link to an external URL
-        var link = page.insertLink({0,0,100,100}, "https://example.com");
+        var link = page.createLink([0,0,100,50], "https://example.com");
 
         // create a link to another page in the document
-        var link = page.insertLink({0,0,100,100}, "#page=1&view=FitV,0");
+        var link = page.insertLink([0,100,100,150], "#page=1&view=FitV,0");
 
 
 .. method:: createAnnotation(type:string)
@@ -185,17 +185,13 @@ PDFPage
         var annot = pdfPage.createAnnotation("Text");
 
 
-.. _Classes_PDFPage_delete:
+.. _Classes_PDFPage_deleteAnnotation:
 
-.. method:: delete(ref:PDFAnnotation | PDFWidget | Link | string)
+.. method:: deleteAnnotation(ref:PDFAnnotation)
 
-    Deletes a :doc:`PDFAnnotation`, :doc:`PDFWidget`, :doc:`Link` instance or a **PDF** :doc:`PDFObject` by `xref` key.
+    Delete a :doc:`PDFAnnotation` from the page.
 
-    :arg ref: :doc:`PDFAnnotation` | :doc:`PDFWidget` | :doc:`Link` | `string`
-
-    .. note:: 
-
-        Use :meth:`getResourcesXrefObjects` to find :doc:`PDFObject` `xref` keys which you may want to delete.
+    :arg ref: :doc:`PDFAnnotation`
 
     |example_tag|
 
@@ -204,7 +200,27 @@ PDFPage
         let annots = getAnnotations();
         page.delete(annots[0]);
 
-    
+.. _Classes_PDFPage_deleteLink:
+
+.. method:: deleteLink(link:Link)
+
+    Deletes a :doc:`Link` from the page.
+
+    :arg link: :doc:`Link`
+
+.. _Classes_PDFPage_deleteResourcesXrefObject:
+
+.. method:: deleteResourcesXrefObject(ref:string)
+
+    Deletes a **PDF** :doc:`PDFObject` by `xref` key.
+
+    :arg ref: `string`
+
+    .. note:: 
+
+        Use :meth:`getResourcesXrefObjects` to find :doc:`PDFObject` `xref` keys which you may want to delete.
+
+
 .. method:: search(needle:string, maxHits:number = 50)
 
 

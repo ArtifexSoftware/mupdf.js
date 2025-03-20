@@ -172,170 +172,23 @@ export class PDFDocument extends mupdf.PDFDocument {
 		// TODO: Implement page reference reset (refer to PyMuPDF)
 	}
 
-	getPageLabels(): PageLabelRule[] {
-		const root = this.getTrailer().get("Root");
-		if (!root) return [];
-
-		const pageLabels = root.get("PageLabels");
-		if (!pageLabels) return [];
-
-		const nums = pageLabels.get("Nums");
-		if (!nums || !nums.isArray()) return [];
-
-		const labels: PageLabelRule[] = [];
-
-		for (let i = 0; i < nums.length; i += 2) {
-			const startPage = nums.get(i).asNumber();
-			const labelDict = nums.get(i + 1);
-
-			if (labelDict.isDictionary()) {
-				const rule: PageLabelRule = {
-					startpage: startPage,
-					prefix: "",
-					style: "",
-					firstpagenum: 1
-				};
-
-				const prefix = labelDict.get("P");
-				if (prefix) {
-					rule.prefix = prefix.asString();
-				}
-
-				const style = labelDict.get("S");
-				if (style) {
-					rule.style = style.asName();
-				}
-
-				const firstPageNum = labelDict.get("St");
-				if (firstPageNum) {
-					const num = firstPageNum.asNumber();
-					if (num > 1) {
-						rule.firstpagenum = num;
-					}
-				}
-
-				labels.push(rule);
-			}
-		}
-
-		return labels;
-	}
-
-	setPageLabelsArray(labels: PageLabelRule[]): void {
-		const root = this.getTrailer().get("Root");
-		const pageLabelsDict = this.newDictionary();
-		const numsArray = this.newArray();
-
-		labels.forEach(rule => {
-			numsArray.push(this.newInteger(rule.startpage));
-
-			const ruleDict = this.newDictionary();
-			if (rule.prefix !== undefined) {
-				ruleDict.put("P", this.newString(rule.prefix));
-			}
-			if (rule.style !== undefined) {
-				ruleDict.put("S", this.newName(rule.style));
-			}
-			if (rule.firstpagenum !== undefined && rule.firstpagenum > 1) {
-				ruleDict.put("St", this.newInteger(rule.firstpagenum));
-			}
-
-			numsArray.push(ruleDict);
-		});
-
-		pageLabelsDict.put("Nums", numsArray);
-		root.put("PageLabels", pageLabelsDict);
-	}
-
 	authenticate(password: string): number {
 		console.warn("doc.authenticate(password) is deprecated. Please use doc.authenticatePassword(password) instead!");
 		return super.authenticatePassword(password);
 	}
 
-	getPageNumbers(label: string, onlyOne: boolean = false): number[] {
+	getPageNumbers(matchLabel: string, onlyOne: boolean = false): number[] {
 		const numbers: number[] = [];
-		if (!label) {
-			return numbers;
-		}
-
-		const labels = this.getPageLabels();
-		if (labels.length === 0) {
-			return numbers;
-		}
-
 		for (let i = 0; i < this.countPages(); i++) {
-			const pageLabel = this.getPageLabel(i, labels);
-			if (pageLabel === label) {
+			const thisLabel = this.loadPage(i).getLabel()
+			if (thisLabel === matchLabel) {
 				numbers.push(i);
 				if (onlyOne) {
 					break;
 				}
 			}
 		}
-
 		return numbers;
-	}
-
-	private getPageLabel(pageNum: number, labels: PageLabelRule[]): string {
-		let currentRule: PageLabelRule | undefined;
-		for (const rule of labels) {
-			if (rule.startpage <= pageNum) {
-				currentRule = rule;
-			} else {
-				break;
-			}
-		}
-
-		if (!currentRule) {
-			return (pageNum + 1).toString();
-		}
-
-		let labelNum = pageNum - currentRule.startpage + (currentRule.firstpagenum || 1);
-		let prefix = currentRule.prefix || '';
-
-		switch (currentRule.style) {
-			case 'D':
-				return prefix + labelNum;
-			case 'r':
-				return prefix + this.toRoman(labelNum).toLowerCase();
-			case 'R':
-				return prefix + this.toRoman(labelNum);
-			case 'a':
-				return prefix + this.toAlpha(labelNum).toLowerCase();
-			case 'A':
-				return prefix + this.toAlpha(labelNum);
-			default:
-				return prefix + labelNum;
-		}
-	}
-
-	private toRoman(num: number): string {
-		const roman: string[][] = [
-			['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'],
-			['', 'X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX', 'LXXX', 'XC'],
-			['', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM'],
-			['', 'M', 'MM', 'MMM']
-		];
-
-		const thousands = Math.floor(num / 1000);
-		const hundreds = Math.floor((num % 1000) / 100);
-		const tens = Math.floor((num % 100) / 10);
-		const ones = num % 10;
-
-		return (roman[3]?.[thousands] ?? '') +
-			(roman[2]?.[hundreds] ?? '') +
-			(roman[1]?.[tens] ?? '') +
-			(roman[0]?.[ones] ?? '');
-	}
-
-	private toAlpha(num: number): string {
-		let result = '';
-		while (num > 0) {
-			num--;
-			result = String.fromCharCode(65 + (num % 26)) + result;
-			num = Math.floor(num / 26);
-		}
-		return result;
 	}
 
 	merge(
@@ -1136,12 +989,4 @@ export class PDFPage extends mupdf.PDFPage {
 	override toString() {
 		return "[mupdfjs.PDFPage extends " + super.toString() + "]"
 	}
-}
-
-//Type
-interface PageLabelRule {
-	startpage: number;
-	prefix?: string;
-	style?: string;
-	firstpagenum?: number;
 }

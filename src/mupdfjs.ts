@@ -975,23 +975,6 @@ export class PDFPage extends mupdf.PDFPage {
 		return redaction
 	}
 
-	override applyRedactions(blackBoxes: boolean | number = true,
-		imageMethod: number = PDFPage.REDACT_IMAGE_PIXELS,
-		lineArtMethod: number = PDFPage.REDACT_LINE_ART_REMOVE_IF_COVERED,
-		textMethod: number = PDFPage.REDACT_TEXT_REMOVE) {
-		var num: number
-		if (typeof blackBoxes === "boolean") {
-			num = blackBoxes ? 1 : 0
-		} else {
-			num = blackBoxes
-		}
-		super.applyRedactions(num, imageMethod, lineArtMethod, textMethod)
-	}
-
-	override search(needle: string, maxHits: number = 50): mupdf.Quad[][] {
-		return super.search(needle, maxHits)
-	}
-
 	setCropBox(rect: mupdf.Rect) {
 		super.setPageBox("CropBox", rect)
 	}
@@ -1013,19 +996,7 @@ export class PDFPage extends mupdf.PDFPage {
 	}
 
 	getText(): string {
-		var text = ""
-		let page = this
-
-		page.toStructuredText("preserve-whitespace,preserve-spans").walk({
-			onChar: function (utf) {
-				text += utf
-			},
-			endTextBlock: function () {
-				text += "\n"
-			}
-		})
-
-		return text
+		return super.toStructuredText().asText()
 	}
 
 	getWords(): PDFWord[] {

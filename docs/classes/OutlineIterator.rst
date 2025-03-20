@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_OutlineIterator:
 
@@ -117,8 +116,6 @@ An outline iterator can be used to walk over all the items in an :title:`Outline
         outlineIterator.update(item);
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Getting_Started:
 
@@ -213,6 +212,5 @@ Inspect the `console` log in your browser and you should see the internals of th
 
 
 
-.. include:: ../footer.rst
 
 

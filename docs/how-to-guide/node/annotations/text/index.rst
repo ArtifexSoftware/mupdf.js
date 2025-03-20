@@ -1,5 +1,3 @@
-.. include:: ../../../../header.rst
-.. include:: ../../node-header.rst
 
 .. _Node_How_To_Guide_Annotations_Text:
 
@@ -37,7 +35,7 @@ This code sample does the following:
 .. code-block:: javascript
 
     let fileData = fs.readFileSync("test.pdf")
-    let document = mupdfjs.PDFDocument.openDocument(fileData, "application/pdf")
+    let document = mupdf.PDFDocument.openDocument(fileData, "application/pdf")
     let page = document.loadPage(0)
 
     // note
@@ -92,7 +90,7 @@ The following example would add a yellow highlight text annotation over two line
 .. code-block:: javascript
 
     let fileData = fs.readFileSync("test.pdf")
-    let document = mupdfjs.PDFDocument.openDocument(fileData, "application/pdf")
+    let document = mupdf.PDFDocument.openDocument(fileData, "application/pdf")
     let page = document.loadPage(0)
     let annotation = page.createAnnotation("Highlight")
     annotation.setColor([1, 1, 0])
@@ -124,5 +122,3 @@ Redacting Text
 Se the section on :ref:`Node_How_To_Guide_Annotations_Redactions` for details.
 
 
-.. include:: ../../node-footer.rst
-.. include:: ../../../../footer.rst

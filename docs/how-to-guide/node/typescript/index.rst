@@ -1,5 +1,3 @@
-.. include:: ../../../header.rst
-.. include:: ../node-header.rst
 
 .. _Node_How_To_Guide_TypeScript:
 
@@ -38,7 +36,6 @@ If using **Visual Studio Code** the **MuPDF TypeScript API** (derived from `node
 
 
 
-.. include:: ../../../footer.rst
 
 
 

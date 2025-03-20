@@ -1,5 +1,3 @@
-.. include:: ../../../../header.rst
-.. include:: ../../node-header.rst
 
 .. _Node_How_To_Guide_Annotations_Drawing_and_Shapes:
 
@@ -165,5 +163,3 @@ This example creates a blue triangle on the page using the `Polygon` type.
 
 
 
-.. include:: ../../node-footer.rst
-.. include:: ../../../../footer.rst

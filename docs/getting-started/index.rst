@@ -41,8 +41,8 @@ To verify your installation you can create a file, e.g. `test.mjs` with the foll
 
 .. code-block:: javascript
 
-    import * as mupdfjs from "mupdf/mupdfjs"
-    console.log(mupdfjs)
+    import * as mupdf from "mupdf"
+    console.log(mupdf)
 
 
 3. Run the Test
@@ -54,7 +54,7 @@ Then, on the command line for the project folder, run the test script with `node
 
     node test.mjs
 
-This will print the `mupdfjs` object to the output - you are now ready to :ref:`use it! <How_To_Guide_With_Node>`
+This will print the `mupdf` object to the output - you are now ready to :ref:`use it! <How_To_Guide_With_Node>`
 
 |
 
@@ -161,7 +161,7 @@ Generally the more `-DTOFU` type options you give then the fewer fonts are inclu
 4. Create **HTML** & **JS** Test Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Just to try things out we can create a couple of test files to see if we can see the `mupdfjs` object in the browser.
+Just to try things out we can create a couple of test files to see if we can see the `mupdf` object in the browser.
 
 - Create a file called `test.html` and populate it as follows:
 
@@ -180,10 +180,10 @@ Just to try things out we can create a couple of test files to see if we can see
 
     "use strict"
 
-    import * as mupdfjs from "../../dist/mupdfjs.js"
+    import * as mupdf from "../../dist/mupdf.js"
 
-    for (var i in mupdfjs) {
-        console.log(`mupdfjs=${mupdfjs[i]}`)
+    for (var name in mupdf) {
+        console.log(`mupdf.${name}=${mupdf[name]}`)
     }
 
 Ensure to save the files in the root of the your git checkout so the library files can be accessed.

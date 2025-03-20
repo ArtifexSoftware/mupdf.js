@@ -16,7 +16,7 @@ If you are using **TypeScript** for your development you should create a `tsconf
         }
     }
 
-- To ensure you can work with the `mupdfjs` module either work with `mts` files in **TypeScript** or use `ts` files and add to your `package.json` the following:
+- To ensure you can work with the `mupdf` module either work with `mts` files in **TypeScript** or use `ts` files and add to your `package.json` the following:
 
 .. code-block:: json
 
@@ -32,7 +32,7 @@ If you are using **TypeScript** for your development you should create a `tsconf
 IDE auto-completion
 ------------------------
 
-If using **Visual Studio Code** the **MuPDF TypeScript API** (derived from `node_modules/mupdf/dist/mupdfjs.d.ts`) should be exposed for your use and IDE code prompts will suggest available methods against `mupdf` objects.
+If using **Visual Studio Code** the **MuPDF TypeScript API** (derived from `node_modules/mupdf/dist/mupdf.d.ts`) should be exposed for your use and IDE code prompts will suggest available methods against `mupdf` objects.
 
 
 

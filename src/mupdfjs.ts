@@ -738,6 +738,10 @@ export class PDFDocument extends mupdf.PDFDocument {
 		// Return the corresponding MIME type or default to octet-stream
 		return mimeTypes[ext || ''] || 'application/octet-stream';
 	}
+
+	override toString() {
+		return "[mupdfjs.PDFDocument extends " + super.toString() + "]"
+	}
 }
 
 export class PDFPage extends mupdf.PDFPage {
@@ -1148,6 +1152,10 @@ export class PDFPage extends mupdf.PDFPage {
 		})
 
 		return arr
+	}
+
+	override toString() {
+		return "[mupdfjs.PDFPage extends " + super.toString() + "]"
 	}
 }
 

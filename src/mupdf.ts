@@ -2491,7 +2491,7 @@ export class PDFDocument extends Document {
 					return k + "=" + String(v).replaceAll(",", ":")
 			}).join(",")
 		} else {
-			options_string = ""
+			options_string = options
 		}
 		return new Buffer(libmupdf._wasm_pdf_write_document_buffer(this.pointer, STRING(options_string)))
 	}

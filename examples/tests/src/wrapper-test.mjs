@@ -1,5 +1,6 @@
 import * as fs from "fs"
 import * as mupdfjs from "../../../dist/mupdfjs.js"
+import * as mupdf from "../../../dist/mupdf.js"
 
 const filename = "../test.pdf"
 const file = fs.readFileSync(filename)
@@ -13,7 +14,7 @@ mupdfJSPage.insertText("HELLO WORLD",
                        65, 
                        {strokeColor:[0,0,0,0.8], fillColor:[1,0,0,0.75]})
                  
-let image = new mupdfjs.Image(fs.readFileSync("../logo.png"))
+let image = new mupdf.Image(fs.readFileSync("../logo.png"))
 
 mupdfJSPage.insertImage({image:image, name:"MyLogo"}, {x:200, y:300})
 

@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as mupdf from 'mupdf';
+import * as mupdf from "../../../dist/mupdf";
 import path from 'path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 

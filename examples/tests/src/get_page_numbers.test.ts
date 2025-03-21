@@ -10,11 +10,9 @@ describe("PDFDocument getPageNumbers", () => {
             doc.newPage();
         }
 
-        doc.setPageLabelsArray([
-            { startpage: 0, style: "r", prefix: "Cover-" },
-            { startpage: 1, style: "D", prefix: "Page-" },
-            { startpage: 5, style: "A", prefix: "Appendix-" }
-        ]);
+        doc.setPageLabels(0, "r", "Cover-");
+        doc.setPageLabels(1, "D", "Page-");
+        doc.setPageLabels(5, "A", "Appendix-");
     });
 
     afterAll(() => {
@@ -35,10 +33,11 @@ describe("PDFDocument getPageNumbers", () => {
     });
 
     it("should stop after first hit when onlyOne is true", () => {
-        doc.setPageLabelsArray([
-            { startpage: 0, style: "D", prefix: "Page-" },
-            { startpage: 5, style: "D", prefix: "Page-" }
-        ]);
+        doc.deletePageLabels(0)
+        doc.deletePageLabels(1)
+        doc.deletePageLabels(5)
+        doc.setPageLabels(0, "D", "Page-");
+        doc.setPageLabels(5, "D", "Page-");
 
         expect(doc.getPageNumbers("Page-1", true)).toEqual([0]);
         expect(doc.getPageNumbers("Page-1", false)).toEqual([0, 5]);

@@ -19,7 +19,7 @@ Image
 
     .. code-block:: javascript
 
-        let image = new mupdfjs.Image(fs.readFileSync("logo.png"))
+        let image = new mupdf.Image(fs.readFileSync("logo.png"))
 
 
 |instance_method_tag|

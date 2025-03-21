@@ -16,7 +16,7 @@ A **Page** is an instance of the :doc:`../../../classes/PDFPage` class.
 Loading a Page
 ----------------------------------
 
-To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_Guide_Document>` use the :ref:`PDFPage constructor <Classes_PDFPage>` method to return a page instance. 
+To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_Guide_Document>` use the :meth:`document.loadPage` method to return a page instance. 
 
 
 |example_tag|
@@ -24,7 +24,7 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
 .. code-block:: javascript
 
     // load the 1st page of the document
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
 
 
 Getting the Page Bounds
@@ -58,7 +58,7 @@ The parameters for the method define:
 
 .. code-block:: javascript
 
-    let pixmap = page.toPixmap(mupdfjs.Matrix.identity, mupdfjs.ColorSpace.DeviceRGB, false, true)
+    let pixmap = page.toPixmap(mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB, false, true)
     let pngImage = pixmap.asPNG()
     let base64Image = Buffer.from(pngImage, 'binary').toString('base64')
 
@@ -159,7 +159,7 @@ The following script creates a blank **PDF** document, adds some styled text to 
 .. code-block:: javascript
 
     let document = mupdfjs.PDFDocument.createBlankDocument()
-    let page = new mupdfjs.PDFPage(document, 0) // get the 1st page of the document
+    let page = document.loadPage(0) // get the 1st page of the document
     page.insertText("HELLO WORLD", 
                     [0,0], 
                     "Times-Roman", 
@@ -183,7 +183,7 @@ The following script creates a blank **PDF** document, adds an :ref:`Image <Clas
 
 .. code-block:: javascript
 
-    let image = new mupdfjs.Image(fs.readFileSync("logo.png"))
+    let image = new mupdf.Image(fs.readFileSync("logo.png"))
     page.insertImage({image:image, name:"MyLogo"})
 
     fs.writeFileSync("output.pdf", document.saveToBuffer("").asUint8Array())
@@ -428,8 +428,8 @@ If you need to invesigate the internals of a PDF page then you can run a :doc:`.
 
     var doc = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
     var page = doc.loadPage(0)
-    var device = new mupdfjs.Device(traceDevice)
-    page.run(device, mupdfjs.Matrix.identity)
+    var device = new mupdf.Device(traceDevice)
+    page.run(device, mupdf.Matrix.identity)
 
 
 

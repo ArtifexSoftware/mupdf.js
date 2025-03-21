@@ -41,7 +41,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     .. code-block:: javascript
 
-        annotation.run(device, mupdfjs.Matrix.identity)
+        annotation.run(device, mupdf.Matrix.identity)
 
 .. _Classes_PDFAnnotation_toPixmap:
 
@@ -59,7 +59,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     .. code-block:: javascript
 
-        let pixmap = annotation.toPixmap(mupdfjs.Matrix.identity, mupdfjs.ColorSpace.DeviceRGB, true)
+        let pixmap = annotation.toPixmap(mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB, true)
 
 
 
@@ -104,7 +104,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     .. code-block:: javascript
 
-        annotation.setAppearanceFromDisplayList("N", null, mupdfjs.Matrix.identity, displayList);
+        annotation.setAppearanceFromDisplayList("N", null, mupdf.Matrix.identity, displayList);
 
 .. method:: setAppearance(appearance: string | null, state: string | null, transform: Matrix, bbox: Rect, resources: any, contents: AnyBuffer)
 
@@ -121,7 +121,7 @@ To get the annotations on a page see: :meth:`getAnnotations`, to create an annot
 
     .. code-block:: javascript
 
-        annotation.setAppearance("N", null, mupdfjs.Matrix.identity, [0,0,100,100], resources, contents);
+        annotation.setAppearance("N", null, mupdf.Matrix.identity, [0,0,100,100], resources, contents);
 
 .. method:: update()
 
@@ -1511,7 +1511,7 @@ Once redactions are added to a page you can *apply* them, which is an irreversab
     // create a redaction annotation
     let redactionAnnotation = page.addRedaction(rect)
     // apply redaction to the annotation with options
-    redactionAnnotation.applyRedaction(true, mupdfjs.PDFPage.REDACT_IMAGE_NONE);
+    redactionAnnotation.applyRedaction(true, mupdf.PDFPage.REDACT_IMAGE_NONE);
 
 
 .. method:: applyRedaction(blackBoxes:boolean = true, imageMethod:number = PDFPage.REDACT_IMAGE_PIXELS)
@@ -1541,7 +1541,7 @@ Once redactions are added to a page you can *apply* them, which is an irreversab
 
     .. code-block:: javascript
 
-        annotation.applyRedaction(true, mupdfjs.PDFPage.REDACT_IMAGE_REMOVE);
+        annotation.applyRedaction(true, mupdf.PDFPage.REDACT_IMAGE_REMOVE);
 
 
 

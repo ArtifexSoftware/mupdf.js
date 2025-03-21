@@ -24,7 +24,7 @@ describe('PDF get images tests', () => {
 
     it('should get an array of images from the page', async () => {
 
-        let page = new mupdfjs.PDFPage(document, 0)
+        let page = document.loadPage(0)
         let images: {bbox:mupdfjs.Rect, matrix:mupdfjs.Matrix, image:mupdfjs.Image}[] = page.getImages()
 
         expect(images.length).toBe(1);

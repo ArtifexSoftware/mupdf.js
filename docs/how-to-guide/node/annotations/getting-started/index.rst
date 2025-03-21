@@ -159,7 +159,7 @@ The following code queries all the pages of a :ref:`document <Node_How_To_Guide_
 
     let i = 0
     while (i < document.countPages()) {
-        const page = new mupdfjs.PDFPage(document, i)
+        const page = document.loadPage(i)
         const annots = page.getAnnotations()
         console.log(`Page=${page}, Annotations=${annots}`)
         i++

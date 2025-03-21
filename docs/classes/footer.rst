@@ -6,5 +6,6 @@
 
     .. code-block:: javascript
 
-        import * as fs from "fs"
+        import * as fs from "node:fs"
+        import * as mupdf from "mupdf"
         import * as mupdfjs from "mupdf/mupdfjs"

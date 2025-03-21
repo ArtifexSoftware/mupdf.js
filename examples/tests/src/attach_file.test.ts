@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { Buffer, PDFDocument } from "../../../dist/mupdfjs";
+import { PDFDocument } from "../../../dist/mupdfjs";
 
 describe('PDFDocument attachFile tests', () => {
     let doc: PDFDocument;
@@ -15,9 +15,7 @@ describe('PDFDocument attachFile tests', () => {
     describe('Basic functionality', () => {
         it('should attach and retrieve a text file', () => {
             const content = "Test content";
-            const buffer = new Buffer();
-            buffer.writeLine(content);
-            doc.attachFile("test.txt", buffer);
+            doc.attachFile("test.txt", new TextEncoder().encode(content));
 
             const files = doc.getEmbeddedFiles();
             expect("test.txt" in files).toBe(true);
@@ -27,8 +25,7 @@ describe('PDFDocument attachFile tests', () => {
         });
 
         it('should handle different file types', () => {
-            const buffer = new Buffer();
-            buffer.writeLine("test");
+            const buffer = new TextEncoder().encode("test");
 
             doc.attachFile("test.pdf", buffer);
             doc.attachFile("test.txt", buffer);
@@ -43,8 +40,7 @@ describe('PDFDocument attachFile tests', () => {
 
     describe('Document persistence', () => {
         it('should save and load PDF with attachments', () => {
-            const buffer = new Buffer();
-            buffer.writeLine("Test content");
+            const buffer = new TextEncoder().encode("Test content");
             doc.attachFile("test.txt", buffer);
 
             const pdfData = doc.saveToBuffer("").asUint8Array();

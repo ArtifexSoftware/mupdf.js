@@ -38,7 +38,7 @@ This code sample does the following:
 
     let fileData = fs.readFileSync("test.pdf")
     let document = mupdfjs.PDFDocument.openDocument(fileData, "application/pdf")
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
 
     // note
     let note = page.createAnnotation("Text")
@@ -93,7 +93,7 @@ The following example would add a yellow highlight text annotation over two line
 
     let fileData = fs.readFileSync("test.pdf")
     let document = mupdfjs.PDFDocument.openDocument(fileData, "application/pdf")
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
     let annotation = page.createAnnotation("Highlight")
     annotation.setColor([1, 1, 0])
     annotation.setQuadPoints([

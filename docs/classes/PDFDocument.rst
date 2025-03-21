@@ -265,7 +265,7 @@ PDFDocument
 
 .. _authenticate password return values:
 
-.. method:: authenticate(password:string)
+.. method:: authenticatePassword(password:string)
 
     Returns a bitfield value against the password authentication result.
 
@@ -294,7 +294,7 @@ PDFDocument
 
     .. code-block:: javascript
 
-        var auth = document.authenticate("abracadabra");
+        var auth = document.authenticatePassword("abracadabra");
 
 
 .. method:: hasPermission(permission:string)

@@ -20,8 +20,8 @@ DisplayListDevice
 
     .. code-block:: javascript
 
-        var myDisplayList = new mupdfjs.DisplayList([0,0,100,100]);
-        var displayListDevice = new mupdfjs.DisplayListDevice(myDisplayList);
+        var myDisplayList = new mupdf.DisplayList([0,0,100,100]);
+        var displayListDevice = new mupdf.DisplayListDevice(myDisplayList);
 
 
 

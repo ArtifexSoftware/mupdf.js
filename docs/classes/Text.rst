@@ -22,7 +22,7 @@ A `Text` object contains text. See the :meth:`fillText` method on :doc:`Device` 
 
     .. code-block:: javascript
 
-        var text = new mupdfjs.Text();
+        var text = new mupdf.Text();
 
 
 |instance_method_tag|
@@ -53,8 +53,8 @@ A `Text` object contains text. See the :meth:`fillText` method on :doc:`Device` 
 
     .. code-block:: javascript
 
-        text.showGlyph(new mupdfjs.Font("Times-Roman"), mupdfjs.Matrix.identity, 21, 0x66, 0);
-        text.showGlyph(new mupdfjs.Font("Times-Roman"), mupdfjs.Matrix.identity, -1, 0x69, 0);
+        text.showGlyph(new mupdf.Font("Times-Roman"), mupdf.Matrix.identity, 21, 0x66, 0);
+        text.showGlyph(new mupdf.Font("Times-Roman"), mupdf.Matrix.identity, -1, 0x69, 0);
 
 
 .. method:: showString(font: Font, trm: Matrix, str: string, wmode: number = 0)
@@ -70,7 +70,7 @@ A `Text` object contains text. See the :meth:`fillText` method on :doc:`Device` 
 
     .. code-block:: javascript
 
-        text.showString(new mupdfjs.Font("Times-Roman"), mupdfjs.Matrix.identity, "Hello World");
+        text.showString(new mupdf.Font("Times-Roman"), mupdf.Matrix.identity, "Hello World");
 
 
 .. method:: walk(walker: TextWalker)
@@ -117,10 +117,10 @@ A `Text` object contains text. See the :meth:`fillText` method on :doc:`Device` 
             }
         }
 
-        var doc = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
+        var doc = mupdf.PDFDocument.openDocument(fs.readFileSync("test.pdf"), "application/pdf")
         var page = doc.loadPage(0)
-        var device = new mupdfjs.Device(traceDevice)
-        page.run(device, mupdfjs.Matrix.identity)
+        var device = new mupdf.Device(traceDevice)
+        page.run(device, mupdf.Matrix.identity)
 
 
 

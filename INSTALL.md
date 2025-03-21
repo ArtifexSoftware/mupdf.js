@@ -23,7 +23,7 @@ compiler and Visual Studio Code to use the "nodenext" module resolution:
 ## Run with Node
 
 The following example script demonstrates how to load a document and render
-save each page as a PNG image.
+and save each page as a PNG image.
 
 Save a PDF file named "input.pdf" in the current directory for use with the examples.
 

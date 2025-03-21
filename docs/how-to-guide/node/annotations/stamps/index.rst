@@ -23,7 +23,7 @@ To set the kind of stamp you need refer to the :ref:`icon names <Glossary_Icon_N
     let fileData = fs.readFileSync("test.pdf")
 
     let document = mupdfjs.PDFDocument.openDocument(fileData, "application/pdf")
-    let page = new mupdfjs.PDFPage(document, 0)
+    let page = document.loadPage(0)
     let annotation = page.createAnnotation("Stamp")
     annotation.setIcon("Draft")
     annotation.setRect([0, 0, 50, 50])

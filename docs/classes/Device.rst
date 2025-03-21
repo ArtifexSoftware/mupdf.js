@@ -42,7 +42,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.fillPath(path, false, mupdfjs.Matrix.identity, mupdfjs.ColorSpace.DeviceRGB, [1,0,0], true);
+        device.fillPath(path, false, mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB, [1,0,0], true);
 
 
 .. method:: strokePath(path: Path, stroke: StrokeState, ctm: Matrix, colorspace: ColorSpace, color: Color, alpha: number)
@@ -62,8 +62,8 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
         device.strokePath(path,
                           {dashes:[5,10], lineWidth:3, lineCap:'Round'},
-                          mupdfjs.Matrix.identity,
-                          mupdfjs.ColorSpace.DeviceRGB,
+                          mupdf.Matrix.identity,
+                          mupdf.ColorSpace.DeviceRGB,
                           [0,1,0],
                           0.5);
 
@@ -83,7 +83,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.clipPath(path, true, mupdfjs.Matrix.identity);
+        device.clipPath(path, true, mupdf.Matrix.identity);
 
 
 
@@ -100,7 +100,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.clipStrokePath(path, true, mupdfjs.Matrix.identity);
+        device.clipStrokePath(path, true, mupdf.Matrix.identity);
 
 
 
@@ -120,7 +120,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.fillText(text, mupdfjs.Matrix.identity, mupdfjs.ColorSpace.DeviceRGB, [1,0,0], 1);
+        device.fillText(text, mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB, [1,0,0], 1);
 
 .. method:: strokeText(text: Text, stroke: StrokeState, ctm: Matrix, colorspace: ColorSpace, color: Color, alpha: number)
 
@@ -140,7 +140,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
         device.strokeText(text,
                           {dashes:[5,10], lineWidth:3, lineCap:'Round'},
-                          mupdfjs.Matrix.identity, mupdfjs.ColorSpace.DeviceRGB,
+                          mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB,
                           [1,0,0],
                           1);
 
@@ -156,7 +156,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.clipText(text, mupdfjs.Matrix.identity);
+        device.clipText(text, mupdf.Matrix.identity);
 
 
 .. method:: clipStrokeText(text: Text, stroke: StrokeState, ctm: Matrix)
@@ -172,7 +172,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.clipStrokeText(text, {dashes:[5,10], lineWidth:3, lineCap:'Round'},  mupdfjs.Matrix.identity);
+        device.clipStrokeText(text, {dashes:[5,10], lineWidth:3, lineCap:'Round'},  mupdf.Matrix.identity);
 
 
 
@@ -188,7 +188,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.ignoreText(text, mupdfjs.Matrix.identity);
+        device.ignoreText(text, mupdf.Matrix.identity);
 
 
 
@@ -210,7 +210,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.fillShade(shade, mupdfjs.Matrix.identity, true, {overPrinting:true});
+        device.fillShade(shade, mupdf.Matrix.identity, true, {overPrinting:true});
 
 
 
@@ -228,7 +228,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.fillImage(image, mupdfjs.Matrix.identity, false, {overPrinting:true});
+        device.fillImage(image, mupdf.Matrix.identity, false, {overPrinting:true});
 
 
 
@@ -248,7 +248,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.fillImageMask(image, mupdfjs.Matrix.identity, mupdfjs.ColorSpace.DeviceRGB, [0,1,0], true);
+        device.fillImageMask(image, mupdf.Matrix.identity, mupdf.ColorSpace.DeviceRGB, [0,1,0], true);
 
 
 
@@ -265,7 +265,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.clipImageMask(image, mupdfjs.Matrix.identity);
+        device.clipImageMask(image, mupdf.Matrix.identity);
 
 
 .. method:: popClip()
@@ -294,7 +294,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.beginMask([0,0,100,100], true, mupdfjs.ColorSpace.DeviceRGB, [1,0,1]);
+        device.beginMask([0,0,100,100], true, mupdf.ColorSpace.DeviceRGB, [1,0,1]);
 
 
 
@@ -332,7 +332,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.beginGroup([0,0,100,100], mupdfjs.ColorSpace.DeviceRGB, true, true, "Multiply", 0.5);
+        device.beginGroup([0,0,100,100], mupdf.ColorSpace.DeviceRGB, true, true, "Multiply", 0.5);
 
 
 
@@ -363,7 +363,7 @@ The methods that clip graphics must be balanced with a corresponding `popClip`.
 
     .. code-block:: javascript
 
-        device.beginTile([0,0,100,100], [100,100,200,200], 10, 10, mupdfjs.Matrix.identity, 0);
+        device.beginTile([0,0,100,100], [100,100,200,200], 10, 10, mupdf.Matrix.identity, 0);
 
 
 .. method:: endTile()

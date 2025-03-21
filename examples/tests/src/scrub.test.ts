@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { Buffer, PDFDocument, PDFWidget } from "../../../dist/mupdfjs";
+import { PDFDocument } from "../../../dist/mupdfjs";
+import { PDFWidget } from "../../../dist/mupdf";
 
 describe("PDFDocument scrub test", () => {
 	it("should clean metadata from a new document", () => {
@@ -179,7 +180,7 @@ describe("PDFDocument scrub test", () => {
 
 		try {
 			// Add embedded file
-			const data = new Buffer("test data");
+			const data = new TextEncoder().encode("test data");
 			doc.attachFile("test.txt", data);
 
 			// Verify embedded file exists
@@ -264,7 +265,7 @@ describe("PDFDocument scrub test", () => {
 			// Add a thumbnail to the first page
 			const page = doc.loadPage(0);
 			const pageObj = page.getObject();
-			const thumbData = new Buffer("dummy thumbnail data");
+			const thumbData = new TextEncoder().encode("dummy thumbnail data");
 			const thumbStream = doc.addStream(thumbData, {});
 			pageObj.put("Thumb", thumbStream);
 

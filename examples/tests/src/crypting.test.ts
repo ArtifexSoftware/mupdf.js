@@ -1,4 +1,4 @@
-import * as mupdf from 'mupdf';
+import * as mupdf from "../../../dist/mupdf";
 import { describe, expect, it } from 'vitest';
 
 describe('PDF encryption tests', () => {
@@ -14,7 +14,14 @@ describe('PDF encryption tests', () => {
     
     // Create a new PDF document with a blank A4 size page
     const doc = new mupdf.PDFDocument();
-    doc.addPage([0, 0, 595, 842], 0, null, "");
+    doc.insertPage(-1,
+        doc.addPage(
+            [0, 0, 595, 842],
+            0,
+            null,
+            "0.5 g 10 10 200 200 re f"
+        )
+    );
     
     // Encrypt the document
     const encryptionOptions = `compress,encrypt=aes-256,owner-password=${ownerPass},user-password=${userPass},permissions=${perm}`;

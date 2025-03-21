@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as mupdfjs from "../../../dist/mupdfjs";
+import * as mupdf from "../../../dist/mupdf";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
@@ -10,11 +11,11 @@ describe('PDF insert image tests', () => {
 
     let document:mupdfjs.PDFDocument = mupdfjs.PDFDocument.createBlankDocument()
     let mupdfJSPage: mupdfjs.PDFPage;
-    let logo:mupdfjs.Image;
+    let logo:mupdf.Image;
 
     beforeEach(() => {    
       mupdfJSPage = document.loadPage(0);
-      logo = new mupdfjs.Image(imageData);
+      logo = new mupdf.Image(imageData);
     });
   
     afterEach(() => {

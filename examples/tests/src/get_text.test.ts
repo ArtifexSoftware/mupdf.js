@@ -27,7 +27,7 @@ describe('PDF get text tests', () => {
         let page = document.loadPage(2)
         let text: string= page.getText()
 
-        expect(text).toBe("Welcome to the Node server test.pdf file.\nSorry there is not much to see here!\n3\nPage 3 footer\n");
+        expect(text).toBe("Welcome to the Node server test.pdf file.\n\nSorry there is not much to see here!\n\n3\n\nPage 3 footer\n\n");
 
     });
 });

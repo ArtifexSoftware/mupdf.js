@@ -3624,6 +3624,10 @@ export class PDFAnnotation extends Userdata<"pdf_annot"> {
 		}
 	}
 
+	setStampImage(image: Image) {
+		libmupdf._wasm_pdf_set_annot_stamp_image(this.pointer, image.pointer)
+	}
+
 	setAppearanceFromDisplayList(appearance: string | null, state: string | null, transform: Matrix, list: DisplayList) {
 		checkMatrix(transform)
 		checkType(list, DisplayList)

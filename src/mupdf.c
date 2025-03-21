@@ -2184,6 +2184,12 @@ int wasm_pdf_annot_default_appearance_color(pdf_annot *annot, float *color)
 }
 
 EXPORT
+void wasm_pdf_set_annot_stamp_image(pdf_annot *annot, fz_image *img)
+{
+	VOID(pdf_set_annot_stamp_image, annot, img)
+}
+
+EXPORT
 void wasm_pdf_set_annot_appearance_from_display_list(pdf_annot *annot, char *appearance, char *state, fz_matrix *ctm, fz_display_list *list)
 {
 	VOID(pdf_set_annot_appearance_from_display_list, annot, appearance, state, *ctm, list)

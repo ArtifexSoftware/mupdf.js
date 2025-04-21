@@ -66,11 +66,7 @@
             </a>
         </div>
 
-        <div class="feedbackLink"><a id="feedbackLinkTop" target=_blank>Do you have any feedback on this page?</b></a></div>
+
     </div>
 
-    <script>
-        var url_string = window.location.href;
-        var a = document.getElementById('feedbackLinkTop');
-        a.setAttribute("href", "https://artifex.com/contributor/feedback.php?utm_source=rtd-mupdjsf&utm_medium=rtd&utm_content=header-link&url="+url_string);
-    </script>
+

@@ -43,6 +43,14 @@ PDFDocument
 
 |instance_method_tag|
 
+.. method:: loadPage(pno: number)
+
+	Return the :doc:`PDFPage` for a page number. 
+
+	:arg pno: `number`. The page index to load. Zero-indexed, `0` = 1st page of document.
+
+	:return: :doc:`PDFPage`.
+
 
 .. method:: newPage(pno: number = -1, width: number = 595, height: number = 842)
 

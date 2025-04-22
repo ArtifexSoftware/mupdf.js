@@ -17,7 +17,7 @@ echo
 
 echo BUILDING MUPDF WASM
 mkdir -p dist
-emcc -o dist/mupdf-wasm.js -I $MUPDF_DIR/include src/mupdf.c \
+emcc -o dist/mupdf-wasm.js -I $MUPDF_DIR/include src/core.c \
 	--no-entry \
 	-sABORTING_MALLOC=0 \
 	-sALLOW_MEMORY_GROWTH=1 \
@@ -31,5 +31,5 @@ emcc -o dist/mupdf-wasm.js -I $MUPDF_DIR/include src/mupdf.c \
 echo
 
 echo BUILDING TYPESCRIPT
-cat src/mupdf.c | sed '/#include/d' | emcc -E - | node src/gen-wasm-type.js > src/mupdf-wasm.d.ts
+cat src/core.c | sed '/#include/d' | emcc -E - | node src/gen-wasm-type.js > src/mupdf-wasm.d.ts
 npx tsc -p .

@@ -6,6 +6,7 @@
   "license": "AGPL-3.0-or-later",
   "keywords": [
     "mupdf",
+	"mupdfjs",
     "pdf",
     "wasm",
     "webassembly",
@@ -18,13 +19,13 @@
   },
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/core.d.ts",
-      "default": "./dist/core.js"
-    },
-    "./mupdfjs": {
+	".": {
       "types": "./dist/mupdfjs.d.ts",
       "default": "./dist/mupdfjs.js"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "default": "./dist/core.js"
     },
     "./tasks": {
       "types": "./dist/tasks.d.ts",

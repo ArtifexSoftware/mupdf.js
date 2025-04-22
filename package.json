@@ -19,8 +19,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/mupdf.d.ts",
-      "default": "./dist/mupdf.js"
+      "types": "./dist/core.d.ts",
+      "default": "./dist/core.js"
     },
     "./mupdfjs": {
       "types": "./dist/mupdfjs.d.ts",
@@ -34,8 +34,8 @@
   "files": [
     "dist/mupdf-wasm.js",
     "dist/mupdf-wasm.wasm",
-    "dist/mupdf.d.ts",
-    "dist/mupdf.js",
+    "dist/core.d.ts",
+    "dist/core.js",
     "dist/mupdfjs.d.ts",
     "dist/mupdfjs.js",
     "dist/tasks.d.ts",

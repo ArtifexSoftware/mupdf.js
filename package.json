@@ -23,6 +23,10 @@
       "types": "./dist/mupdfjs.d.ts",
       "default": "./dist/mupdfjs.js"
     },
+	"./mupdfjs": {
+      "types": "./dist/mupdfjs.d.ts",
+      "default": "./dist/mupdfjs.js"
+    },
     "./core": {
       "types": "./dist/core.d.ts",
       "default": "./dist/core.js"

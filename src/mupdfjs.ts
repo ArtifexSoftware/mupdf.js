@@ -157,7 +157,7 @@ export class PDFDocument extends core.PDFDocument {
 		}
 
 		if (pagesToDelete.length === 0) {
-			console.log("Nothing to delete");
+			//console.log("Nothing to delete");
 			return;
 		}
 
@@ -833,7 +833,7 @@ export class PDFPage extends core.PDFPage {
 		point[1] = page.getBounds()[3] - (point[1] + fontSize);
 
 		let contentStream: string = "q " + graphicsState + " BT " + strokeColor + " " + fillColor + " " + strokeThicknessMarkup + " /F1 " + fontSize + " Tf " + point[0] + " " + point[1] + " Td (" + value + ") Tj ET Q"
-		console.log(`Inserting text to page with content stream:\n${contentStream}`)
+		//console.log(`Inserting text to page with content stream:\n${contentStream}`)
 
 		// Create drawing operations
 		var extra_contents = doc.addStream(contentStream, {})
@@ -907,7 +907,7 @@ export class PDFPage extends core.PDFPage {
 
 		let contentStream: string = "q " + metrics.width + " 0 0 " + metrics.height + " " + metrics.x + " " + metrics.y + " cm /" + data.name + " Do Q"
 
-		console.log(`Inserting image to page with content stream:\n${contentStream}`)
+		//console.log(`Inserting image to page with content stream:\n${contentStream}`)
 
 		// create drawing operations
 		var extra_contents = doc.addStream(contentStream, null)

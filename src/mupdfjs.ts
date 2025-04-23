@@ -20,37 +20,37 @@
 // Artifex Software, Inc., 39 Mesa Street, Suite 108A, San Francisco,
 // CA 94129, USA, for further information.
 
-import * as mupdf from "mupdf/core";
+import * as core from "mupdf/core";
 export * from "mupdf/core";
 
 export type PDFWord = {
-	rect: mupdf.Rect,
+	rect: core.Rect,
 	text: string,
-	font: mupdf.Font,
+	font: core.Font,
 	size: number,
 };
 
-export class PDFDocument extends mupdf.PDFDocument {
+export class PDFDocument extends core.PDFDocument {
 
 	// creates a new blank document with one page and adds a font resource, default size is A4 @ 595x842
 	static createBlankDocument(width: number = 595, height: number = 842): PDFDocument {
-		let doc = new mupdf.PDFDocument()
+		let doc = new core.PDFDocument()
 		let pageObj = doc.addPage([0, 0, width, height], 0, {}, "")
 		doc.insertPage(-1, pageObj)
 
-		if (doc instanceof mupdf.PDFDocument) {
-			var clone = new PDFDocument(doc); // make a clone using the mupdfjs subclass!
+		if (doc instanceof core.PDFDocument) {
+			var clone = new PDFDocument(doc); // make a clone using the corejs subclass!
 			doc.destroy() // and kill the original
 			return clone
 		}
 		throw new Error("Not a PDF document");
 	}
 
-	static override openDocument(from: mupdf.Buffer | ArrayBuffer | Uint8Array | mupdf.Stream | string, magic?: string): PDFDocument {
+	static override openDocument(from: core.Buffer | ArrayBuffer | Uint8Array | core.Stream | string, magic?: string): PDFDocument {
 		let doc = super.openDocument(from, magic);
 
-		if (doc instanceof mupdf.PDFDocument) {
-			var clone = new PDFDocument(doc); // make a clone using the mupdfjs subclass!
+		if (doc instanceof core.PDFDocument) {
+			var clone = new PDFDocument(doc); // make a clone using the corejs subclass!
 			doc.destroy() // and kill the original
 			return clone
 		}
@@ -86,7 +86,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 		}
 	}
 
-	newPage(pno: number = -1, width: number = 595, height: number = 842): mupdf.PDFPage {
+	newPage(pno: number = -1, width: number = 595, height: number = 842): core.PDFPage {
 		if (width <= 0 || height <= 0) {
 			throw new Error("Invalid page dimensions: width and height must be positive numbers");
 		}
@@ -342,7 +342,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 	}
 
 	merge(
-		sourcePDF: mupdf.PDFDocument,
+		sourcePDF: core.PDFDocument,
 		fromPage: number = 0,
 		toPage: number = -1,
 		startAt: number = -1,
@@ -408,14 +408,14 @@ export class PDFDocument extends mupdf.PDFDocument {
 		}
 	}
 
-	private copyPageLinks(sourcePage: mupdf.PDFPage, targetPage: mupdf.PDFPage): void {
+	private copyPageLinks(sourcePage: core.PDFPage, targetPage: core.PDFPage): void {
 		const links = sourcePage.getLinks();
 		for (const link of links) {
 			targetPage.createLink(link.getBounds(), link.getURI());
 		}
 	}
 
-	private copyPageAnnotations(sourcePage: mupdf.PDFPage, targetPage: mupdf.PDFPage): void {
+	private copyPageAnnotations(sourcePage: core.PDFPage, targetPage: core.PDFPage): void {
 		const annotations = sourcePage.getAnnotations();
 		for (const annotation of annotations) {
 			const newAnnotation = targetPage.createAnnotation(annotation.getType());
@@ -431,7 +431,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 		if (range == undefined || range.length == 0) { // just split out all pages as single PDFs
 			let i = 0;
 			while (i < document.countPages()) {
-				let newDoc: PDFDocument = new mupdf.PDFDocument() as PDFDocument;
+				let newDoc: PDFDocument = new core.PDFDocument() as PDFDocument;
 				newDoc.graftPage(0, document, i);
 				documents.push(newDoc);
 				i++;
@@ -473,7 +473,7 @@ export class PDFDocument extends mupdf.PDFDocument {
 			// now cycle the ranges and create the new documents as required
 			var n: number = 0;
 			while (n < ranges.length) {
-				let newDoc = new mupdf.PDFDocument() as PDFDocument;
+				let newDoc = new core.PDFDocument() as PDFDocument;
 				let graftMap = newDoc.newGraftMap()
 
 				if (ranges[n] != undefined) {
@@ -692,13 +692,13 @@ export class PDFDocument extends mupdf.PDFDocument {
 		// Determine MIME type based on file extension
 		const mimeType = this.guessMimeType(name);
 
-		// Convert input data to mupdf Buffer format
+		// Convert input data to core Buffer format
 		// Handles multiple input formats: Buffer, ArrayBuffer, Uint8Array
-		let buffer: mupdf.Buffer;
-		if (data instanceof mupdf.Buffer) {
+		let buffer: core.Buffer;
+		if (data instanceof core.Buffer) {
 			buffer = data;
 		} else {
-			buffer = new mupdf.Buffer();
+			buffer = new core.Buffer();
 			if (data instanceof ArrayBuffer) {
 				buffer.writeBuffer(new Uint8Array(data));
 			} else if (data instanceof Uint8Array) {
@@ -740,33 +740,33 @@ export class PDFDocument extends mupdf.PDFDocument {
 	}
 
 	override toString() {
-		return "[mupdfjs.PDFDocument extends " + super.toString() + "]"
+		return "[corejs.PDFDocument extends " + super.toString() + "]"
 	}
 }
 
-export class PDFPage extends mupdf.PDFPage {
+export class PDFPage extends core.PDFPage {
 	// note page number is zero-indexed here
-	// can also be called with the mupdf.PDFPage to be cloned
-	constructor(doc: mupdf.PDFDocument, page: number | mupdf.PDFPage) {
+	// can also be called with the core.PDFPage to be cloned
+	constructor(doc: core.PDFDocument, page: number | core.PDFPage) {
 		if (typeof page === "number")
-			page = doc.loadPage(page) as mupdf.PDFPage
-		super(doc, page) // make a clone of the page object using the mupdfjs subclass!
+			page = doc.loadPage(page) as core.PDFPage
+		super(doc, page) // make a clone of the page object using the corejs subclass!
 		page.destroy() // and kill the original
 	}
 
 	insertText(value: string,
-		point: mupdf.Point,
+		point: core.Point,
 		fontName: string = "Times-Roman",
 		fontSize: number = 18,
 		graphics: {
-			strokeColor: mupdf.Color,
-			fillColor: mupdf.Color,
+			strokeColor: core.Color,
+			fillColor: core.Color,
 			strokeThickness: number
 		} = { strokeColor: [0, 0, 0, 1], fillColor: [0, 0, 0, 1], strokeThickness: 1 }) {
 		let doc = this._doc
 		let page = this
 		let page_obj = page.getObject()
-		let font = new mupdf.Font(fontName)
+		let font = new core.Font(fontName)
 		let fontResource = doc.addSimpleFont(font)
 
 		// add object to page/Resources/XObject/F1 dictionary (creating nested dictionaries as needed)
@@ -857,7 +857,7 @@ export class PDFPage extends mupdf.PDFPage {
 		}
 	}
 
-	insertImage(data: { image: mupdf.Image, name: string },
+	insertImage(data: { image: core.Image, name: string },
 		metrics: { x?: number, y?: number, width?: number, height?: number } = { x: 0, y: 0, width: 0, height: 0 }) {
 
 		if (data.image == null) {
@@ -949,10 +949,10 @@ export class PDFPage extends mupdf.PDFPage {
 		page_obj.put("Rotate", Number(rotate) + r)
 	}
 
-	addAnnotation(type: mupdf.PDFAnnotationType,
+	addAnnotation(type: core.PDFAnnotationType,
 		metrics: { x: number, y: number, width: number, height: number },
 		author?: string,
-		contents?: string): mupdf.PDFAnnotation {
+		contents?: string): core.PDFAnnotation {
 		let page = this
 		let annotation = page.createAnnotation(type)
 		annotation.setRect([metrics.x, metrics.y, metrics.x + metrics.width, metrics.y + metrics.height])
@@ -967,7 +967,7 @@ export class PDFPage extends mupdf.PDFPage {
 		return annotation
 	}
 
-	addRedaction(metrics: { x: number, y: number, width: number, height: number }): mupdf.PDFAnnotation {
+	addRedaction(metrics: { x: number, y: number, width: number, height: number }): core.PDFAnnotation {
 		let page = this
 		let redaction = page.createAnnotation("Redact")
 		redaction.setRect([metrics.x, metrics.y, metrics.x + metrics.width, metrics.y + metrics.height])
@@ -975,23 +975,23 @@ export class PDFPage extends mupdf.PDFPage {
 		return redaction
 	}
 
-	setCropBox(rect: mupdf.Rect) {
+	setCropBox(rect: core.Rect) {
 		super.setPageBox("CropBox", rect)
 	}
 
-	setArtBox(rect: mupdf.Rect) {
+	setArtBox(rect: core.Rect) {
 		super.setPageBox("ArtBox", rect)
 	}
 
-	setBleedBox(rect: mupdf.Rect) {
+	setBleedBox(rect: core.Rect) {
 		super.setPageBox("BleedBox", rect)
 	}
 
-	setTrimBox(rect: mupdf.Rect) {
+	setTrimBox(rect: core.Rect) {
 		super.setPageBox("TrimBox", rect)
 	}
 
-	setMediaBox(rect: mupdf.Rect) {
+	setMediaBox(rect: core.Rect) {
 		super.setPageBox("MediaBox", rect)
 	}
 
@@ -1003,8 +1003,8 @@ export class PDFPage extends mupdf.PDFPage {
 		let page = this;
 
 		const words: PDFWord[] = [];
-		let cwordRect: mupdf.Rect | undefined;
-		let cwordFont: mupdf.Font | undefined;
+		let cwordRect: core.Rect | undefined;
+		let cwordFont: core.Font | undefined;
 		let cwordSize: number | undefined;
 		let cwordText = '';
 
@@ -1031,7 +1031,7 @@ export class PDFPage extends mupdf.PDFPage {
 			cwordText = '';
 		};
 
-		const enlargeRect = (quad: mupdf.Quad) => {
+		const enlargeRect = (quad: core.Quad) => {
 			if (cwordRect === undefined) {
 				cwordRect = [quad[0], quad[1], quad[6], quad[7]];
 				return;
@@ -1066,8 +1066,8 @@ export class PDFPage extends mupdf.PDFPage {
 		return words;
 	}
 
-	getImages(): { bbox: mupdf.Rect, matrix: mupdf.Matrix, image: mupdf.Image }[] {
-		var images: { bbox: mupdf.Rect, matrix: mupdf.Matrix, image: mupdf.Image }[] = []
+	getImages(): { bbox: core.Rect, matrix: core.Matrix, image: core.Image }[] {
+		var images: { bbox: core.Rect, matrix: core.Matrix, image: core.Image }[] = []
 		let page = this
 		page.toStructuredText("preserve-images").walk({
 			onImageBlock(bbox, matrix, image) {
@@ -1077,12 +1077,12 @@ export class PDFPage extends mupdf.PDFPage {
 		return images
 	}
 
-	delete(ref: mupdf.PDFAnnotation | mupdf.PDFWidget | mupdf.Link | string) {
-		if (ref instanceof mupdf.PDFAnnotation) {
+	delete(ref: core.PDFAnnotation | core.PDFWidget | core.Link | string) {
+		if (ref instanceof core.PDFAnnotation) {
 			super.deleteAnnotation(ref)
-		} else if (ref instanceof mupdf.PDFWidget) {
+		} else if (ref instanceof core.PDFWidget) {
 			super.deleteAnnotation(ref)
-		} else if (ref instanceof mupdf.Link) {
+		} else if (ref instanceof core.Link) {
 			super.deleteLink(ref)
 		} else if (typeof ref === "string") {
 			let pageObj = this.getObject()
@@ -1095,8 +1095,8 @@ export class PDFPage extends mupdf.PDFPage {
 			// replace the XObject with a 1x1 transparent pixel to "delete" it
 			let res = pageObj.get("Resources")
 			let resXObj = res.get("XObject")
-			let pix = new mupdf.Pixmap(mupdf.ColorSpace.DeviceRGB, [0, 0, 1, 1], true)
-			let imageRes = new mupdf.Image(pix)
+			let pix = new core.Pixmap(core.ColorSpace.DeviceRGB, [0, 0, 1, 1], true)
+			let imageRes = new core.Image(pix)
 
 			const image = this._doc.addImage(imageRes)
 			resXObj.put(ref, image)
@@ -1118,7 +1118,7 @@ export class PDFPage extends mupdf.PDFPage {
 		let resXObj = res.get("XObject")
 		let arr: { key: string | number, value: string }[] = []
 
-		resXObj.forEach(function (value: mupdf.PDFObject, key: string | number) {
+		resXObj.forEach(function (value: core.PDFObject, key: string | number) {
 			arr.push({ key: key, value: value.toString() })
 		})
 
@@ -1126,7 +1126,7 @@ export class PDFPage extends mupdf.PDFPage {
 	}
 
 	override toString() {
-		return "[mupdfjs.PDFPage extends " + super.toString() + "]"
+		return "[corejs.PDFPage extends " + super.toString() + "]"
 	}
 }
 

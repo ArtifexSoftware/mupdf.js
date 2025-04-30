@@ -1,0 +1,10 @@
+{
+  "name": "simple-viewer",
+  "dependencies": {
+    "http-server": "^14.1.1",
+    "mupdf": "latest"
+  },
+  "scripts": {
+    "start": "npx http-server -o"
+  }
+}

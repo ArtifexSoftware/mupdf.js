@@ -2,16 +2,14 @@
 
 This is an extremely simple example of using the MuPDF.js module from a web browser.
 
-> You CANNOT run this from the file system!
->
-> Modern web browsers refuse to load and run scripts from the file system, so
-> this project must be served up by a web server.
+The page rendering runs directly on the main thread, so this viewer may cause
+your browser to slow down while it is loading the PDF document!
 
 Initialize the project:
 
 	npm install
 
-Then to start the HTTP server and open your browser to the viewer:
+Then to start a local HTTP server and open your browser to the viewer:
 
 	npm start
 

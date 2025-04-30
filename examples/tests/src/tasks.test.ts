@@ -1,12 +1,12 @@
 import {describe, expect, it} from 'vitest'
 import path from "path"
 import * as fs from "node:fs"
-import * as mupdf from "../../../dist/mupdf"
-import {drawPageAsHTML, drawPageAsPNG, drawPageAsSVG, getPageText, loadPDF, searchPageText} from "../../../dist/tasks"
+import * as mupdf from "mupdf"
+import {drawPageAsHTML, drawPageAsPNG, drawPageAsSVG, getPageText, loadPDF, searchPageText} from "../tasks.ts"
 
 const scriptdir = path.resolve(__dirname)
-const filename = path.join(scriptdir, "..", "test.pdf")
-const outputDir = path.join(scriptdir, "resources")
+const filename = path.join(scriptdir, "..", "resources", "test.pdf")
+const outputDir = path.join(scriptdir, "..", "resources")
 
 const file = fs.readFileSync(filename)
 
@@ -37,7 +37,7 @@ describe("drawPageAsPng", () => {
 describe("drawPageAsHtml", () => {
     it("successfully renders a page as HTML", () => {
         const result = drawPageAsHTML(loadPDF(file), 0, 0)
-        expect(result).toHaveLength(654)
+        expect(result).toHaveLength(710)
         fs.writeFileSync(
           path.join(outputDir, "output-tasks.html"),
           Buffer.from(result)
@@ -48,7 +48,7 @@ describe("drawPageAsHtml", () => {
 describe("drawPageAsSvg", () => {
     it("successfully renders a page as SVG", () => {
         const result = drawPageAsSVG(loadPDF(file), 0)
-        expect(result).toHaveLength(91467)
+        expect(result).toHaveLength(91551)
         fs.writeFileSync(
           path.join(outputDir, "output-tasks.svg"),
           Buffer.from(result)
@@ -81,13 +81,13 @@ describe("searchPageText", () => {
             [
               [
                 30.7637996673584,
-                32.626708984375,
-                80.7696304321289,
-                32.626708984375,
+                31.41798973083496,
+                80.76780700683594,
+                31.41798973083496,
                 30.7637996673584,
-                46.032958984375,
-                80.7696304321289,
-                46.032958984375,
+                47.389991760253906,
+                80.76780700683594,
+                47.389991760253906,
               ],
             ],
           ]

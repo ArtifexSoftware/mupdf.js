@@ -1,22 +1,20 @@
 import * as fs from "fs";
-import * as mupdfjs from "../../../dist/mupdfjs";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import * as mupdf from "mupdf";
+import * as tasks from "../mupdfjs.ts";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "resources", "test.pdf");
+const filename = path.join(scriptdir, "..", "resources", "test.pdf");
 
 
 describe('Delete Xref tests', () => {
 
-    let document: mupdfjs.PDFDocument;
+    let document: mupdf.PDFDocument;
 
-    beforeEach(async () => {
+    beforeEach(() => {
         const data = fs.readFileSync(filename);
-        document = (await mupdfjs.PDFDocument.openDocument(
-            data,
-            "application/pdf"
-        )) as mupdfjs.PDFDocument;
+        document = mupdf.PDFDocument.openDocument(data, "application/pdf")
     });
  
     afterEach(() => {
@@ -25,7 +23,7 @@ describe('Delete Xref tests', () => {
 
     it('should delete a page PDF object by xref reference', async () => {
         let page = document.loadPage(0);
-        let xrefObjs:{key:string | number, value:string}[] = page.getResourcesXrefObjects();
+        let xrefObjs:{key:string | number, value:string}[] = tasks.getPageResourcesXObjects(page);
 
         for (var obj in xrefObjs) {
             console.log(xrefObjs[obj].key)
@@ -35,9 +33,9 @@ describe('Delete Xref tests', () => {
 
         // note it doesn;t really delete the object - rather it sets it to a 1x1 transparent pixel
         // this test needs to update to check for the 1x1 transparent pixel
-        page.delete("Im0")
+        tasks.deletePageResourcesXObject(document, page, "Im0")
 
-        xrefObjs = page.getResourcesXrefObjects();
+        xrefObjs = tasks.getPageResourcesXObjects(page);
 
         expect(xrefObjs[xrefObjs.length-1].key).toBe("Im0");
 

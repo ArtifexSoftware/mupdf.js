@@ -1,20 +1,18 @@
 import * as fs from "fs";
 import path from "path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import * as mupdfjs from "../../../dist/mupdfjs";
+import * as mupdf from "mupdf";
+import * as tasks from "../mupdfjs.ts";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "resources", "test.pdf");
+const filename = path.join(scriptdir, "..", "resources", "test.pdf");
 
-describe("mupdfjs PDFDocument newPage tests", () => {
-  let document: mupdfjs.PDFDocument;
+describe("mupdf PDFDocument newPage tests", () => {
+  let document: mupdf.PDFDocument;
 
-  beforeAll(async () => {
+  beforeAll(() => {
     const data = fs.readFileSync(filename);
-    document = (await mupdfjs.PDFDocument.openDocument(
-      data,
-      "application/pdf"
-    )) as mupdfjs.PDFDocument;
+    document = mupdf.PDFDocument.openDocument(data, "application/pdf")
   });
 
   afterAll(() => {
@@ -23,7 +21,7 @@ describe("mupdfjs PDFDocument newPage tests", () => {
 
   it("should add a new page at the end of the document", () => {
     const initialPageCount = document.countPages();
-    const newPage = document.newPage();
+    const newPage = tasks.newPage(document);
     expect(document.countPages()).toBe(initialPageCount + 1);
     expect(newPage).toBeDefined();
   });
@@ -31,7 +29,7 @@ describe("mupdfjs PDFDocument newPage tests", () => {
   it("should add a new page at the specified position", () => {
     const initialPageCount = document.countPages();
     const insertPosition = 1;
-    const newPage = document.newPage(insertPosition);
+    const newPage = tasks.newPage(document, insertPosition);
     expect(document.countPages()).toBe(initialPageCount + 1);
     expect(newPage).toBeDefined();
   });
@@ -39,7 +37,7 @@ describe("mupdfjs PDFDocument newPage tests", () => {
   it("should add a new page with custom dimensions", () => {
     const width = 400;
     const height = 600;
-    const newPage = document.newPage(-1, width, height);
+    const newPage = tasks.newPage(document, -1, width, height);
     expect(newPage).toBeDefined();
     const pageBounds = newPage.getBounds();
     expect(pageBounds[2] - pageBounds[0]).toBeCloseTo(width);
@@ -47,12 +45,12 @@ describe("mupdfjs PDFDocument newPage tests", () => {
   });
 
   it("should throw an error for invalid page dimensions", () => {
-    expect(() => document.newPage(-1, 0, 100)).toThrow("Invalid page dimensions");
-    expect(() => document.newPage(-1, 100, -1)).toThrow("Invalid page dimensions");
+    expect(() => tasks.newPage(document, -1, 0, 100)).toThrow("Invalid page dimensions");
+    expect(() => tasks.newPage(document, -1, 100, -1)).toThrow("Invalid page dimensions");
   });
 
   it("should throw an error for invalid page number", () => {
     const invalidPageNumber = document.countPages() + 1;
-    expect(() => document.newPage(invalidPageNumber)).toThrow("Invalid page number");
+    expect(() => tasks.newPage(document, invalidPageNumber)).toThrow("Invalid page number");
   });
 });

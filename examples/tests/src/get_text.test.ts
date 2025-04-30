@@ -1,21 +1,18 @@
 import * as fs from "fs";
-import * as mupdfjs from "../../../dist/mupdfjs";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import * as mupdf from "mupdf";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "resources", "test.pdf");
+const filename = path.join(scriptdir, "..", "resources", "test.pdf");
 
 describe('PDF get text tests', () => {
 
-    let document: mupdfjs.PDFDocument;
+    let document: mupdf.PDFDocument;
 
-    beforeEach(async () => {
+    beforeEach(() => {
         const data = fs.readFileSync(filename);
-        document = (await mupdfjs.PDFDocument.openDocument(
-            data,
-            "application/pdf"
-        )) as mupdfjs.PDFDocument;
+        document = mupdf.PDFDocument.openDocument(data, "application/pdf")
     });
   
     afterEach(() => {
@@ -24,8 +21,8 @@ describe('PDF get text tests', () => {
 
     it('should get all the text from a page', async () => {
 
-        let page = document.loadPage(2)
-        let text: string= page.getText()
+	let page = document.loadPage(2)
+	let text = page.toStructuredText().asText()
 
         expect(text).toBe("Welcome to the Node server test.pdf file.\n\nSorry there is not much to see here!\n\n3\n\nPage 3 footer\n\n");
 

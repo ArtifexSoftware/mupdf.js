@@ -1,21 +1,19 @@
 import * as fs from "fs";
-import * as mupdfjs from "../../../dist/mupdfjs";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import * as mupdf from "mupdf";
+import * as tasks from "../mupdfjs.ts";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "resources", "test.pdf");
+const filename = path.join(scriptdir, "..", "resources", "test.pdf");
 
 describe('PDF split tests', () => {
 
-    let document: mupdfjs.PDFDocument;
+    let document: mupdf.PDFDocument;
 
-    beforeEach(async () => {
+    beforeEach(() => {
         const data = fs.readFileSync(filename);
-        document = (await mupdfjs.PDFDocument.openDocument(
-            data,
-            "application/pdf"
-        )) as mupdfjs.PDFDocument;
+        document = mupdf.PDFDocument.openDocument(data, "application/pdf")
     });
   
     afterEach(() => {
@@ -24,12 +22,12 @@ describe('PDF split tests', () => {
 
     it('should split the document into two documents of 2 pages (0,1) and 1 page (2)', async () => {
 
-        let split:mupdfjs.PDFDocument[] = document.split([0,2])
+        let split:mupdf.PDFDocument[] = tasks.split(document, [0,2])
 
         expect(split.length).toBe(2);
 
-        let docA:mupdfjs.PDFDocument = split[0];
-        let docB:mupdfjs.PDFDocument = split[1];
+        let docA:mupdf.PDFDocument = split[0];
+        let docB:mupdf.PDFDocument = split[1];
 
         let countA:number = docA.countPages()
         expect(countA).toBe(2);

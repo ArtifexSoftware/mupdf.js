@@ -1,10 +1,10 @@
 import * as fs from "fs";
-import * as mupdf from "../../../dist/mupdf";
+import * as mupdf from "mupdf";
 import path from "path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "resources", "encrypted.pdf");
+const filename = path.join(scriptdir, "..", "resources", "encrypted.pdf");
 
 describe("mupdf authenticate tests", () => {
   let document: mupdf.PDFDocument;

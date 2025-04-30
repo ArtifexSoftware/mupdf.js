@@ -1,5 +1,3 @@
-.. include:: ../../../../header.rst
-.. include:: ../../node-header.rst
 
 .. _Node_How_To_Guide_Annotations_Links:
 
@@ -53,7 +51,7 @@ Adding an external link is relatively simple, for example, this would add a link
 
 .. code-block:: javascript
 
-    page.insertLink({x:0,y:0,width:100,height:30}, "https://mupdfjs.readthedocs.io")
+    page.createLink([ 10, 10, 100, 40 ], "https://mupdfjs.readthedocs.io")
 
 
 For an internal document link we need to understand a little about the :ref:`Link Destination Object <Glossary_Object_Protocols_Link_Destination_Object>` and create a suitable object to represent our needs for the link.
@@ -66,7 +64,7 @@ For example, this would add a link with a bounding box of `100x100` at the top l
 
 .. code-block:: javascript
 
-    page.insertLink({x:0,y:0,width:100,height:100}, document.formatLinkURI({ type: "Fit", page: 1 }))
+    page.createLink([x, y, x + width, y + height], document.formatLinkURI({ type: "Fit", page: 1 }))
 
 
 Resolving Internal Links
@@ -91,10 +89,8 @@ Use the :ref:`delete <Classes_PDFPage_delete>` method on a :doc:`../../../../cla
 
 .. code-block:: javascript
 
-    page.delete(link)
+    page.deleteLink(link)
 
 
 
 
-.. include:: ../../node-footer.rst
-.. include:: ../../../../footer.rst

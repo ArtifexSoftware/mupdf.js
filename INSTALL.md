@@ -27,14 +27,11 @@ and save each page as a PNG image.
 
 Save a PDF file named "input.pdf" in the current directory for use with the examples.
 
-Create a file "example.mjs" and run it:
+Create a file "example.mjs":
 
-	import * as fs from "node:fs"
 	import * as mupdf from "mupdf"
 
-	var buffer = fs.readFileSync("input.pdf")
-
-	var doc = mupdf.Document.openDocument(buffer, "application/pdf")
+	var doc = mupdf.Document.openDocument("input.pdf")
 	var n = doc.countPages()
 	for (var i = 0; i < n; ++i) {
 		console.log(`Rendering page ${i+1} / ${n}.`)
@@ -42,6 +39,10 @@ Create a file "example.mjs" and run it:
 		var pixmap = page.toPixmap(mupdf.Matrix.scale(96 / 72, 96 / 72), mupdf.ColorSpace.DeviceRGB)
 		fs.writeFileSync(`page${i+1}.png`, pixmap.asPNG())
 	}
+
+Then run the example script:
+
+	node example.mjs
 
 ## Run in the Browser
 
@@ -60,7 +61,7 @@ Create a file "example.html":
 		var buffer = await response.arrayBuffer()
 
 		// open the PDF file and render the first page
-		var doc = mupdf.Document.openDocument(buffer, "application/pdf")
+		var doc = mupdf.Document.openDocument(buffer)
 		var page = doc.loadPage(0)
 		var pixmap = page.toPixmap(mupdf.Matrix.scale(96 / 72, 96 / 72), mupdf.ColorSpace.DeviceRGB)
 
@@ -71,10 +72,9 @@ Create a file "example.html":
 		document.body.appendChild(img)
 	</script>
 
-Serve up this file in a local web server and browse to it. Python comes with a ready to use web server:
+Serve up this file in a local web server and browse to it.
 
-	python -m http.server &
-	firefox http://localhost:8000/example.html
+	npx http-server -o example.html
 
 ## Next Steps
 

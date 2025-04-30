@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_StructuredText:
 
@@ -142,8 +141,6 @@ instance use :meth:`toStructuredText`.
     :return: `string`.
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

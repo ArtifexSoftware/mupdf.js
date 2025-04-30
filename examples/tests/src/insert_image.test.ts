@@ -1,20 +1,21 @@
 import * as fs from "fs";
-import * as mupdfjs from "../../../dist/mupdfjs";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import * as mupdf from "mupdf";
+import * as tasks from "../mupdfjs.ts";
 
 const scriptdir = path.resolve(__dirname);
-const imageData = fs.readFileSync(path.join(scriptdir, "..", "logo.png"));
+const imageData = fs.readFileSync(path.join(scriptdir, "..", "resources", "logo.png"));
 
 describe('PDF insert image tests', () => {
 
-    let document:mupdfjs.PDFDocument = mupdfjs.PDFDocument.createBlankDocument()
-    let mupdfJSPage: mupdfjs.PDFPage;
-    let logo:mupdfjs.Image;
+    let document:mupdf.PDFDocument = tasks.createBlankDocument()
+    let mupdfJSPage: mupdf.PDFPage;
+    let logo:mupdf.Image;
 
     beforeEach(() => {    
       mupdfJSPage = document.loadPage(0);
-      logo = new mupdfjs.Image(imageData);
+      logo = new mupdf.Image(imageData);
     });
   
     afterEach(() => {
@@ -23,7 +24,7 @@ describe('PDF insert image tests', () => {
 
     it('should insert an image on to the page', async () => {
 
-        mupdfJSPage.insertImage({image:logo, name:"MyLogo"}, {x:0, y:0, width:200, height:200});
+        tasks.insertImage(document, mupdfJSPage, {image:logo, name:"MyLogo"}, {x:0, y:0, width:200, height:200});
 
         mupdfJSPage.toStructuredText("preserve-images").walk({
             onImageBlock(bbox, transform, image) {

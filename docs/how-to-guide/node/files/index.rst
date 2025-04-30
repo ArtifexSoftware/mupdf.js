@@ -1,5 +1,3 @@
-.. include:: ../../../header.rst
-.. include:: ../node-header.rst
 
 .. _Node_How_To_Guide_Loading_Files:
 
@@ -17,7 +15,7 @@ An example of loading a local file using the :meth:`openDocument` method with a 
 
 .. code-block:: javascript
 
-    let document = mupdfjs.PDFDocument.openDocument(fs.readFileSync("test.pdf"), 
+    let document = mupdf.PDFDocument.openDocument(fs.readFileSync("test.pdf"), 
                                                     "application/pdf")
 
 Remote Files
@@ -36,7 +34,7 @@ An example of loading a remote file which waits for the remote data and then use
             return
         }
         let data = await response.arrayBuffer()
-        let document = mupdfjs.PDFDocument.openDocument(data, url)
+        let document = mupdf.PDFDocument.openDocument(data, url)
     }
 
     loadRemoteFile("https://mupdf.com/docs/mupdf_explored.pdf")
@@ -64,7 +62,5 @@ For the simplest implementation, which saves the file locally to the current fol
 
 For full details refer to the :meth:`saveToBuffer` method.
 
-.. include:: ../node-footer.rst
 
-.. include:: ../../../footer.rst
 

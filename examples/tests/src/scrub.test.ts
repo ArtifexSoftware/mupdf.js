@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { Buffer, PDFDocument, PDFWidget } from "../../../dist/mupdfjs";
+import * as mupdf from "mupdf";
+import * as tasks from "../mupdfjs.ts";
 
 describe("PDFDocument scrub test", () => {
 	it("should clean metadata from a new document", () => {
 		// Create a new document
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Set and verify Title
@@ -27,7 +28,7 @@ describe("PDFDocument scrub test", () => {
 			expect(doc.getMetaData("info:ModDate")).toBe("D:20240101120000Z");
 
 			// Scrub metadata
-			doc.scrub({ metadata: true });
+			tasks.scrub(doc, { metadata: true });
 
 			// Verify all metadata is cleaned after scrub
 			expect(doc.getMetaData("info:Title")).toBeUndefined();
@@ -45,7 +46,7 @@ describe("PDFDocument scrub test", () => {
 
 	it("should remove all links from pages", () => {
 		// Create a new document
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Add a link to the first page
@@ -58,7 +59,7 @@ describe("PDFDocument scrub test", () => {
 			expect(linksBeforeScrub[0].getURI()).toBe("https://example.com");
 
 			// Scrub links
-			doc.scrub({ removeLinks: true });
+			tasks.scrub(doc, { removeLinks: true });
 
 			// Verify links are removed
 			const linksAfterScrub = page.getLinks();
@@ -70,7 +71,7 @@ describe("PDFDocument scrub test", () => {
 
 	it("should remove file attachment annotations", () => {
 		// Create a new document
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Add a file attachment annotation to the first page
@@ -88,7 +89,7 @@ describe("PDFDocument scrub test", () => {
 			expect(fileAttachment).toBeDefined();
 
 			// Scrub file attachments
-			doc.scrub({ attachedFiles: true });
+			tasks.scrub(doc, { attachedFiles: true });
 
 			// Verify file attachment exists but content is empty
 			const annotationsAfterScrub = page.getAnnotations();
@@ -112,7 +113,7 @@ describe("PDFDocument scrub test", () => {
 
 	it("should remove JavaScript actions", () => {
 		// Create a new document
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Add JavaScript action
@@ -126,7 +127,7 @@ describe("PDFDocument scrub test", () => {
 			expect(actionObj.get("JS").asString()).toBe("app.alert('Hello');");
 
 			// Scrub JavaScript
-			doc.scrub({ javascript: true });
+			tasks.scrub(doc, { javascript: true });
 
 			// Verify JavaScript is removed
 			const scrubbedObj = doc.newIndirect(actionObj.asIndirect()).resolve();
@@ -139,7 +140,7 @@ describe("PDFDocument scrub test", () => {
 
 	it("should remove XML metadata", () => {
 		// Create a new document
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Add XML metadata
@@ -163,7 +164,7 @@ describe("PDFDocument scrub test", () => {
 			expect(streamBeforeScrub).toContain("Test Value");
 
 			// Scrub XML metadata
-			doc.scrub({ xmlMetadata: true });
+			tasks.scrub(doc, { xmlMetadata: true });
 
 			// Verify XML metadata is removed
 			const metadataAfterScrub = root.get("Metadata");
@@ -175,12 +176,12 @@ describe("PDFDocument scrub test", () => {
 
 	it("should remove embedded files", () => {
 		// Create a new document
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Add embedded file
-			const data = new Buffer("test data");
-			doc.attachFile("test.txt", data);
+			const data = new TextEncoder().encode("test data");
+			tasks.attachFile(doc, "test.txt", data);
 
 			// Verify embedded file exists
 			const root = doc.getTrailer().get("Root");
@@ -194,7 +195,7 @@ describe("PDFDocument scrub test", () => {
 			expect(dests.get(0).asString()).toBe("test.txt");
 
 			// Scrub embedded files
-			doc.scrub({ embeddedFiles: true });
+			tasks.scrub(doc, { embeddedFiles: true });
 
 			// Verify embedded files are removed
 			const namesAfterScrub = root.get("Names");
@@ -209,7 +210,7 @@ describe("PDFDocument scrub test", () => {
 
 	it("should clean page contents", () => {
 		// Create a new document
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Create redundant graphics state by adding text content
@@ -239,7 +240,7 @@ describe("PDFDocument scrub test", () => {
 			const sizeBefore = contentsBefore.readStream().getLength();
 
 			// Scrub with cleanPages option
-			doc.scrub({ cleanPages: true });
+			tasks.scrub(doc, { cleanPages: true });
 
 			// Verify content is cleaned (should be smaller due to optimization)
 			const contentsAfter = pageObj.get("Contents");
@@ -258,13 +259,13 @@ describe("PDFDocument scrub test", () => {
 
 	it("should remove page thumbnails", () => {
 		// Create a new document
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Add a thumbnail to the first page
 			const page = doc.loadPage(0);
 			const pageObj = page.getObject();
-			const thumbData = new Buffer("dummy thumbnail data");
+			const thumbData = new TextEncoder().encode("dummy thumbnail data");
 			const thumbStream = doc.addStream(thumbData, {});
 			pageObj.put("Thumb", thumbStream);
 
@@ -272,7 +273,7 @@ describe("PDFDocument scrub test", () => {
 			expect(pageObj.get("Thumb").isStream()).toBe(true);
 
 			// Scrub thumbnails
-			doc.scrub({ thumbnails: true });
+			tasks.scrub(doc, { thumbnails: true });
 
 			// Verify thumbnail is removed
 			expect(pageObj.get("Thumb").isNull()).toBe(true);
@@ -282,7 +283,7 @@ describe("PDFDocument scrub test", () => {
 	});
 
 	it("should reset form fields", () => {
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Create and test checkbox
@@ -311,7 +312,7 @@ describe("PDFDocument scrub test", () => {
 			expect(widgets[1].getObject().get("V").asString()).toBe("Current Value");
 
 			// Reset fields
-			doc.scrub({ resetFields: true });
+			tasks.scrub(doc, { resetFields: true });
 
 			// Verify reset values
 			expect(widgets[0].getObject().get("V").asName()).toBe("Off");
@@ -323,7 +324,7 @@ describe("PDFDocument scrub test", () => {
 
 	it("should reset annotation responses", () => {
 		// Create a new document
-		const doc = PDFDocument.createBlankDocument();
+		const doc = tasks.createBlankDocument();
 
 		try {
 			// Create parent annotation
@@ -349,7 +350,7 @@ describe("PDFDocument scrub test", () => {
 			expect(responseObj.get("RT").asName()).toBe("R");
 
 			// Scrub responses
-			doc.scrub({ resetResponses: true });
+			tasks.scrub(doc, { resetResponses: true });
 
 			// Verify response properties are removed
 			expect(responseObj.get("IRT").isNull()).toBe(true);

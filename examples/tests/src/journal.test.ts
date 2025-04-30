@@ -4,10 +4,10 @@ import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "..", "test.pdf");
+const filename = path.join(scriptdir, "..", "resources", "test.pdf");
 const data = fs.readFileSync(filename);
 
-describe("mupdfjs journal operations", () => {
+describe("mupdf journal operations", () => {
   let document: mupdf.PDFDocument;
 
   beforeEach(() => {

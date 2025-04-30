@@ -1,5 +1,3 @@
-.. include:: ../../../header.rst
-.. include:: ../node-header.rst
 
 .. _Node_How_To_Guide_Annotations:
 
@@ -26,6 +24,5 @@ Overview
     embedding-files/index.rst
 
 
-.. include:: ../../../footer.rst
 
 

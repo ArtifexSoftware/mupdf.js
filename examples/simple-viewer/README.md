@@ -1,11 +1,9 @@
 # Simple Viewer
 
-This project contains a very simple demo of a PDF viewer using the MuPDF.js Library.
+This project contains a simple demo of a PDF viewer using the MuPDF.js Library.
 
-> You CANNOT run this from the file system!
->
-> Modern web browsers refuse to load and run scripts from the file system, so
-> this project must be served up by a web server.
+This viewer uses a Worker background thread to do the heavy lifting, and
+inserts rendered images and text in the DOM as pages scroll into view.
 
 Initialize the project:
 

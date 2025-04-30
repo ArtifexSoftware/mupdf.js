@@ -1,4 +1,4 @@
-import * as mupdf from "../../../dist/mupdf";
+import * as mupdf from "mupdf";
 import { describe, expect, it } from 'vitest';
 
 describe('PDF encryption tests', () => {

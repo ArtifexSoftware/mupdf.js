@@ -1,13 +1,13 @@
 import * as fs from "fs";
-import * as mupdf from "../../../dist/mupdf";
+import * as mupdf from "mupdf";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "..", "test.pdf");
+const filename = path.join(scriptdir, "..", "resources", "test.pdf");
 const data = fs.readFileSync(filename);
 
-describe("mupdfjs rearrangePages operation", () => {
+describe("mupdf rearrangePages operation", () => {
   let document: mupdf.PDFDocument;
 
   beforeEach(async () => {

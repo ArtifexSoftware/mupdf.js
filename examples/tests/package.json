@@ -8,6 +8,9 @@
   },
   "devDependencies": {
     "typescript": "^5.2.2",
-    "vitest": "^1.6.0"
+    "vitest": "^3.1.2"
+  },
+  "dependencies": {
+    "mupdf": "latest"
   }
 }

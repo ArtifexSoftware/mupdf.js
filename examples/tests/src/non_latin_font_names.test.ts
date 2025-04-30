@@ -1,10 +1,10 @@
 import * as fs from "fs";
-import * as mupdf from "../../../dist/mupdf";
+import * as mupdf from "mupdf";
 import * as path from "path";
 import { describe, expect, it } from "vitest";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "resources", "has-bad-fonts.pdf");
+const filename = path.join(scriptdir, "..", "resources", "has-bad-fonts.pdf");
 const fileData = fs.readFileSync(filename);
 
 describe("Non-Latin font names test", () => {

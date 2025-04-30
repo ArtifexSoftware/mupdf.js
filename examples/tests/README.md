@@ -13,8 +13,3 @@ To run all the tests do:
 To run a single test, then send the test file you want as a parameter, e.g.
 
 	npm run test -- src/journal.test.ts
-
-## Note
-
-These tests run with your local "mupdf" module that is found in the "dist" directory on the top level!
-

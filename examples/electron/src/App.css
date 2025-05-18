@@ -1,0 +1,21 @@
+#root {
+  display: flex;
+  justify-content: center;
+}
+
+#pages {
+    width:90%;
+    margin:0 auto;
+}
+
+#pages div {
+    position: relative;
+    width:inherit;
+	background-color: white;
+	margin: 16px auto;
+	box-shadow: 0px 2px 8px #0004;
+}
+
+#pages div img {
+    width:100%;
+}

@@ -1,0 +1,56 @@
+{
+  "name": "mupdf-electron",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/electron.js",
+  "build": {
+    "icon": "public/logo",
+    "files": ["dist"],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  },
+  "scripts": {
+    "dev": "npm-run-all -p start:react start:electron",
+    "package": "npm-run-all build electron-builder",
+    "start:electron": "npm run build:electron && electron .",
+    "start:react": "vite",
+    "build": "npm-run-all build:react build:electron",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "build:react": "vite build",
+    "electron-builder": "npm-run-all electron-builder:win electron-builder:mac",
+    "electron-builder:win": "electron-builder --win --x64",
+    "electron-builder:mac": "electron-builder --mac --universal"
+  },
+  "dependencies": {
+    "comlink": "^4.4.2",
+    "mupdf": "^1.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^36.2.1",
+    "electron-builder": "^26.0.12",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.18.2",
+    "vite": "^6.0.5",
+    "wait-on": "^8.0.3"
+  }
+}

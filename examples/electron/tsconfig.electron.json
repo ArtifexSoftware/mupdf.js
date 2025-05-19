@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noEmitOnError": true,
+    "sourceMap": false,
+    "incremental": false,
+  },
+  "include": ["electron.ts"],
+  "exclude": ["node_modules"]
+}
+  

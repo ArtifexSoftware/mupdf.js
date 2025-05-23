@@ -1,4 +1,3 @@
-.. include:: ../../header.rst
 
 .. _How_To_Guide_Destroy:
 
@@ -16,6 +15,5 @@ Alongside class constructors, each **MuPDF.js** class has a `destroy()` method w
 
 
 
-.. include:: ../../footer.rst
 
 

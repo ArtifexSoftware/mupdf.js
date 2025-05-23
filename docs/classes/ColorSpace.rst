@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_ColorSpace:
 
@@ -40,7 +39,7 @@ ColorSpace
 
     .. code-block:: javascript
 
-        let icc_colorspace = new mupdfjs.ColorSpace(fs.readFileSync("SWOP.icc"), "SWOP");
+        let icc_colorspace = new mupdf.ColorSpace(fs.readFileSync("SWOP.icc"), "SWOP");
 
 
 
@@ -57,7 +56,7 @@ ColorSpace
 
     .. code-block:: javascript
 
-        let cs = mupdfjs.ColorSpace.DeviceRGB;
+        let cs = mupdf.ColorSpace.DeviceRGB;
         let num = cs.getNumberOfComponents(); // 3
 
 
@@ -71,7 +70,7 @@ ColorSpace
 
     .. code-block:: javascript
 
-        var cs = mupdfjs.ColorSpace.DeviceRGB;
+        var cs = mupdf.ColorSpace.DeviceRGB;
         var name = cs.toString(); // "[ColorSpace DeviceRGB]"
 
 
@@ -195,8 +194,6 @@ ColorSpace
         var type = colorSpace.getType();
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

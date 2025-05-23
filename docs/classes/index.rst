@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes:
 
@@ -33,7 +32,6 @@ Classes
     Text.rst
 
 
-.. include:: ../footer.rst
 
 
 

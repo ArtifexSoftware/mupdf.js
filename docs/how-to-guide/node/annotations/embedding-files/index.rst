@@ -1,5 +1,3 @@
-.. include:: ../../../../header.rst
-.. include:: ../../node-header.rst
 
 .. _Node_How_To_Guide_Annotations_Embedding_Files:
 
@@ -68,5 +66,3 @@ To remove an embedded file, retrieve the required "FileAttachment" annotation an
     annotation.setFileSpec(null)
 
 
-.. include:: ../../node-footer.rst
-.. include:: ../../../../footer.rst

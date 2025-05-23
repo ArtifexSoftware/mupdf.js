@@ -4,10 +4,10 @@ import path from "path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "resources", "001003ED.pdf");
-const metafile = path.join(scriptdir, "resources", "metadata.txt");
+const filename = path.join(scriptdir, "..", "resources", "001003ED.pdf");
+const metafile = path.join(scriptdir, "..", "resources", "metadata.txt");
 
-describe("mupdfjs metadata tests", () => {
+describe("mupdf metadata tests", () => {
   let document: mupdf.PDFDocument;
 
   beforeAll(async () => {

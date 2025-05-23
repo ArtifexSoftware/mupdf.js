@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_StrokeState:
 
@@ -19,7 +18,7 @@ A `StrokeState` object is used to define stroke styles.
 
     .. code-block:: javascript
 
-        var strokeState = new mupdfjs.StrokeState();
+        var strokeState = new mupdf.StrokeState();
 
 
 |instance_method_tag|
@@ -146,8 +145,6 @@ The following enumerations are available for line caps and joins.
 
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

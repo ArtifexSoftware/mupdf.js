@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_DocumentWriter:
 
@@ -24,7 +23,7 @@ DocumentWriter
 
     .. code-block:: javascript
 
-        var writer = new mupdfjs.DocumentWriter(buffer, "PDF", "");
+        var writer = new mupdf.DocumentWriter(buffer, "PDF", "");
 
 
 |instance_method_tag|
@@ -67,8 +66,6 @@ DocumentWriter
         writer.close();
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

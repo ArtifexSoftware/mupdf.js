@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _How_To_Guide:
 
@@ -13,8 +12,8 @@ Additionally the following requirements should be defined in your **TypeScript**
 
 .. code-block:: javascript
 
-    import * as fs from "fs"
-    import * as mupdfjs from "mupdf/mupdfjs"
+    import * as fs from "node:fs"
+    import * as mupdf from "mupdf"
 
 ----
 
@@ -33,7 +32,7 @@ Additionally the following requirements should be defined in your **TypeScript**
 
 
 .. toctree::
-    :caption: Migrating from mupdf-js
+    :caption: Migrating from older versions
     :maxdepth: 1
 
     migration/index.rst
@@ -47,7 +46,6 @@ Additionally the following requirements should be defined in your **TypeScript**
     destroy/index.rst
 
 
-.. include:: ../footer.rst
 
 
 

@@ -1,21 +1,19 @@
 import * as fs from "fs";
-import * as mupdfjs from "../../../dist/mupdfjs";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import * as mupdf from "mupdf";
+import * as tasks from "../mupdfjs.ts";
 
 const scriptdir = path.resolve(__dirname);
-const filename = path.join(scriptdir, "resources", "test.pdf");
+const filename = path.join(scriptdir, "..", "resources", "test.pdf");
 
 describe('PDF get images tests', () => {
 
-    let document: mupdfjs.PDFDocument;
+    let document: mupdf.PDFDocument;
 
-    beforeEach(async () => {
+    beforeEach(() => {
         const data = fs.readFileSync(filename);
-        document = (await mupdfjs.PDFDocument.openDocument(
-            data,
-            "application/pdf"
-        )) as mupdfjs.PDFDocument;
+        document = mupdf.PDFDocument.openDocument(data, "application/pdf")
     });
   
     afterEach(() => {
@@ -25,7 +23,7 @@ describe('PDF get images tests', () => {
     it('should get an array of images from the page', async () => {
 
         let page = document.loadPage(0)
-        let images: {bbox:mupdfjs.Rect, matrix:mupdfjs.Matrix, image:mupdfjs.Image}[] = page.getImages()
+        let images: {bbox:mupdf.Rect, matrix:mupdf.Matrix, image:mupdf.Image}[] = tasks.getPageImages(page)
 
         expect(images.length).toBe(1);
 

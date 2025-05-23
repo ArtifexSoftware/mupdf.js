@@ -1,4 +1,3 @@
-.. include:: ../header.rst
 
 .. _Classes_Pixmap:
 
@@ -30,7 +29,7 @@ so that they can easily be used to represent tiles of a page.
 
     .. code-block:: javascript
 
-        var pixmap = new mupdfjs.Pixmap(mupdfjs.ColorSpace.DeviceRGB, [0,0,100,100], true);
+        var pixmap = new mupdf.Pixmap(mupdf.ColorSpace.DeviceRGB, [0,0,100,100], true);
 
 
 
@@ -328,8 +327,6 @@ so that they can easily be used to represent tiles of a page.
         var buffer = pixmap.asJPEG(80, false);
 
 
-.. include:: footer.rst
-.. include:: ../footer.rst
 
 
 

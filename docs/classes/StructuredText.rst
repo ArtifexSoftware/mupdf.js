@@ -116,15 +116,168 @@ instance use :meth:`toStructuredText`.
 
     :return: `string`.
 
+    The returned JSON has a property named ``blocks`` whose value is a list of
+    ``block``.
+
+    Each ``block`` has the following properties:
+
+    ``type``
+        ``"image"`` for an image block or ``"text"`` for a text block.
+    ``bbox``
+        bounding-box of the block with following properties:
+
+        ``x``
+             x-coordinate of the top-left point.
+        ``y``
+             y-coordinate of the top-left point.
+        ``w``
+             width of the box.
+        ``h``
+             height of the box.
+
+    A text-block has a property named ``lines`` whose value is a list of
+    ``line``.
+
+    Each ``line`` has the following properties:
+
+    ``wmode``
+        writing mode, ``0`` for horizontal, ``1`` for vertical.
+    ``bbox``
+        bounding-box of the text (same structure as above).
+    ``font``
+        font used in the text with the following properties:
+
+        ``name``
+             name of the font.
+        ``family``
+             family of the font, can be ``"sans-serif"`` or ``"serif"`` or ``"monospace"``.
+        ``weight``
+             weight of the font, can be ``"bold"`` or ``"normal"``.
+        ``style``
+             style of the font, can be ``"italic"`` or ``"normal"``.
+        ``size``
+             size of the font.
+
+    ``x``
+        x-coordinate of the line's origin.
+    ``y``
+        y-coordinate of the line's origin.
+    ``text``
+        text value of the line.
+
     |example_tag|
 
     .. code-block:: javascript
 
         var json = sText.asJSON();
+        console.log(JSON.stringify(JSON.parse(json), null, 2));
+        {
+          "blocks": [
+            {
+              "type": "text",
+              "bbox": {
+                "x": 220,
+                "y": 69,
+                "w": 154,
+                "h": 31
+              },
+              "lines": [
+                {
+                  "wmode": 0,
+                  "bbox": {
+                    "x": 220,
+                    "y": 69,
+                    "w": 154,
+                    "h": 31
+                  },
+                  "font": {
+                    "name": "BAAAAA+LiberationSans-Bold",
+                    "family": "serif",
+                    "weight": "bold",
+                    "style": "normal",
+                    "size": 28
+                  },
+                  "x": 220,
+                  "y": 94,
+                  "text": "Hello World"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "bbox": {
+                "x": 56,
+                "y": 107,
+                "w": 81,
+                "h": 13
+              },
+              "lines": [
+                {
+                  "wmode": 0,
+                  "bbox": {
+                    "x": 56,
+                    "y": 107,
+                    "w": 81,
+                    "h": 13
+                  },
+                  "font": {
+                    "name": "CAAAAA+LiberationSerif",
+                    "family": "serif",
+                    "weight": "normal",
+                    "style": "normal",
+                    "size": 12
+                  },
+                  "x": 56,
+                  "y": 118,
+                  "text": "MuPDF.js rocks!"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "bbox": {
+                "x": 56,
+                "y": 130,
+                "w": 206,
+                "h": 13
+              },
+              "lines": [
+                {
+                  "wmode": 0,
+                  "bbox": {
+                    "x": 56,
+                    "y": 130,
+                    "w": 206,
+                    "h": 13
+                  },
+                  "font": {
+                    "name": "CAAAAA+LiberationSerif",
+                    "family": "serif",
+                    "weight": "normal",
+                    "style": "normal",
+                    "size": 12
+                  },
+                  "x": 56,
+                  "y": 140,
+                  "text": "No PDFs were harmed in making the docs."
+                }
+              ]
+            }
+          ]
+        }
 
     .. note::
 
         If you want the coordinates to be 300 DPI then pass (300/72) as the `scale` parameter.
+
+        All the numbers are rounded to integers. If you want high-precision
+        output, consider using the :meth:`walk` method.
+
+        ``origin`` of a line refers to its `baseline
+        <https://en.wikipedia.org/wiki/Baseline_(typography)>`_. On the other
+        hand, ``bbox`` will cover the full text including its ascenders and
+        descenders. The height of a ``bbox`` is the `line's height
+        <https://en.wikipedia.org/wiki/Leading>`_.
 
 
 .. method:: asHTML(id:number)

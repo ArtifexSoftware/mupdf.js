@@ -83,7 +83,7 @@ Once you've got these examples running, you are set to go!
 Here are some useful links to documentation:
 
 - See the [example projects](examples/).
-- https://mupdf.readthedocs.io/en/latest/mupdf-js.html
+- https://mupdf.readthedocs.io/en/latest/
 - https://mupdfjs.readthedocs.io/en/latest/
 
 Good luck!

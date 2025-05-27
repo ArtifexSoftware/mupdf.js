@@ -1,7 +1,4 @@
-
 .. _Node_How_To_Guide_Loading_Files:
-
-
 
 Working with Files
 ===================
@@ -15,7 +12,7 @@ An example of loading a local file using the :meth:`openDocument` method with a 
 
 .. code-block:: javascript
 
-    let document = mupdf.PDFDocument.openDocument(fs.readFileSync("test.pdf"), 
+    let document = mupdf.PDFDocument.openDocument(fs.readFileSync("test.pdf"),
                                                     "application/pdf")
 
 Remote Files
@@ -43,8 +40,6 @@ An example of loading a remote file which waits for the remote data and then use
 
     After loading a file we receive a :ref:`Document instance <Node_How_To_Guide_Document>` in return.
 
-
-
 Saving Files
 -----------------
 
@@ -58,9 +53,4 @@ For the simplest implementation, which saves the file locally to the current fol
 
     fs.writeFileSync("output.pdf", document.saveToBuffer("incremental").asUint8Array())
 
-
-
 For full details refer to the :meth:`saveToBuffer` method.
-
-
-

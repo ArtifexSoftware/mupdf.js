@@ -1,7 +1,4 @@
-
 .. _Node_How_To_Guide_Document:
-
-
 
 Working with Documents
 =========================
@@ -21,7 +18,6 @@ A document may require a password if it is protected. To check this use the `nee
 
 To provide a password use the `authenticatePassword` method as follows:
 
-
 |example_tag|
 
 .. code-block:: javascript
@@ -33,14 +29,12 @@ See the :ref:`authenticate password return values <authenticate password return 
 Document Metadata
 ---------------------------
 
-
 Get Metadata
 """""""""""""""""""""
 
-You can get metadata for a document using the :meth:`getMetaData` method. 
+You can get metadata for a document using the :meth:`getMetaData` method.
 
 The common keys are: `format`, `encryption`, `info:ModDate`, and `info:Title`.
-
 
 |example_tag|
 
@@ -50,12 +44,10 @@ The common keys are: `format`, `encryption`, `info:ModDate`, and `info:Title`.
     const modificationDate = document.getMetaData("info:ModDate")
     const author = document.getMetaData("info:Author")
 
-
 Set Metadata
 """""""""""""""""""""
 
-You can set metadata for a document using the :meth:`setMetaData` method. 
-
+You can set metadata for a document using the :meth:`setMetaData` method.
 
 |example_tag|
 
@@ -63,12 +55,10 @@ You can set metadata for a document using the :meth:`setMetaData` method.
 
     document.setMetaData("info:Author", "Jane Doe")
 
-
 Get the Document Page Count
 ---------------------------------
 
 Count the number of :ref:`pages <Node_How_To_Guide_Page>` in the document.
-
 
 |example_tag|
 
@@ -76,12 +66,10 @@ Count the number of :ref:`pages <Node_How_To_Guide_Page>` in the document.
 
     const numPages = document.countPages()
 
-
-
 Load a Page of a Document
 -------------------------------------------
 
-To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_Guide_Document>` use the :ref:`PDFPage constructor <Classes_PDFPage>` method to return a page instance. 
+To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_Guide_Document>` use the :ref:`PDFPage constructor <Classes_PDFPage>` method to return a page instance.
 
 |example_tag|
 
@@ -89,13 +77,11 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
 
     // load the 1st page of the document
     let page = document.loadPage(0)
-    
 
 Extracting Document Text
 -----------------------------
 
 To get the text for an entire document we can retrieve :doc:`../../../classes/StructuredText` objects as `JSON` for each page as follows:
-
 
 |example_tag|
 
@@ -113,9 +99,8 @@ To get the text for an entire document we can retrieve :doc:`../../../classes/St
 
 |example_tag|
 
-.. literalinclude:: ../structured-text-example.json
+.. literalinclude:: structured-text-example.json
    :language: json
-
 
 Extracting Document Annotations
 -----------------------------------
@@ -134,7 +119,6 @@ We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from d
         i++
     }
 
-
 "Baking" a Document
 ---------------------------
 
@@ -147,7 +131,6 @@ You can use the :meth:`bake` method as follows:
 .. code-block:: javascript
 
     document.bake()
-
 
 .. _Node_How_To_Attach_File_To_Document:
 
@@ -162,19 +145,16 @@ Use the :meth:`deleteEmbeddedFile` method on a document instance to remove an at
 
     document.deleteEmbeddedFile("test.txt")
 
-
 Searching a Document
 ------------------------------------------
 
 To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the :meth:`search` method as follows:
-
 
 |example_tag|
 
 .. code-block:: javascript
 
     let results = page.search("my search phrase")
-
 
 .. note::
 
@@ -213,7 +193,6 @@ To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` an
         ]
     ]
 
-
 Getting Document Links
 ------------------------------------------
 
@@ -223,16 +202,6 @@ To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide
 
     let links = page.getLinks()
 
-.. note:: 
+.. note::
 
     The resulting array contains an array of :doc:`../../../classes/Link` objects which have their own bounds and `uri` for the link.
-
-
-
-
-
-
-
-
-
-

@@ -1,7 +1,7 @@
 
 .. _Node_How_To_Guide_TypeScript:
 
-Developing with TypeScript
+Using TypeScript
 ======================================
 
 If you are using **TypeScript** for your development you should create a `tsconfig.json` file at the root of your project with the minimal configuration:

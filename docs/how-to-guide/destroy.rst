@@ -1,4 +1,3 @@
-
 .. _How_To_Guide_Destroy:
 
 Destroying Objects
@@ -12,8 +11,3 @@ Alongside class constructors, each **MuPDF.js** class has a `destroy()` method w
 
     page.destroy()
     document.destroy()
-
-
-
-
-

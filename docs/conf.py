@@ -28,6 +28,7 @@ exclude_patterns = [
 
 extlinks = {
 	'mupdf': ('https://mupdf.readthedocs.io/en/latest/reference/javascript/types/%s.html', '%s'),
+	'mupdf-common': ('https://mupdf.readthedocs.io/en/latest/reference/%s.html', '%s'),
 }
 
 toc_object_entries_show_parents = "hide"

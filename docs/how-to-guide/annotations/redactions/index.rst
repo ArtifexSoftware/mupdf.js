@@ -38,9 +38,3 @@ You can also apply all the current redaction annotations on a page at the page-l
 .. code-block:: javascript
 
     page.applyRedactions()
-
-.. note::
-
-    Redactions are secure and any textual or pixel data is irretrievable.
-
-    Find out more on the :meth:`applyRedaction` method.

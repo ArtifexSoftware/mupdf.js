@@ -79,7 +79,7 @@ To get a more advanced representation of the page text we can retrieve a :mupdf:
 
 .. code-block:: javascript
 
-    const json = page.toStructuredText("preserve-whitespace").asJSON()
+    const json = page.toStructuredText("preserve-spans").asJSON()
     console.log(`json=${json}`)
 
 :mupdf:`StructuredText` contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the ``JSON`` returned is *structured* and contains positional data and font data alongside text values, e.g.:
@@ -88,32 +88,6 @@ To get a more advanced representation of the page text we can retrieve a :mupdf:
 
 .. literalinclude:: structured-text-example.json
    :language: json
-
-Extracting Page Images
-----------------------------------
-
-To get the images for a page we can use the :meth:`getImages` method as follows:
-
-|example_tag|
-
-.. code-block:: javascript
-
-    var result = page.getImages()
-
-This returns an array of objects which includes the image (:mupdf:`Image`) along with the bounding box and matrix transform.
-
-The following example would extract all the images from a page and save them as individual files:
-
-.. code-block:: javascript
-
-    var imageStack = page.getImages()
-
-    for (var i in imageStack) {
-        var image = imageStack[i].image;
-        var pixmap = image.toPixmap();
-        let raster = pixmap.asJPEG(80);
-        fs.writeFileSync('image-'+i+'.jpg', raster);
-    }
 
 Extracting Page Annotations
 -----------------------------------
@@ -169,7 +143,7 @@ To crop a page we just need to set its "CropBox" value with :meth:`setPageBox` a
 Implement a Device to print out PDF page contents
 -------------------------------------------------------
 
-If you need to invesigate the internals of a PDF page then you can run a :mupdf:`Device` on a page to detect objects.
+If you need to investigate the internals of a PDF page then you can run a :mupdf:`Device` on a page to detect objects.
 
 |example_tag|
 

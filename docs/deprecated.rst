@@ -54,4 +54,3 @@ This might be useful for something.
 
 .. literalinclude:: ../examples/tasks/page-resources-xobject.ts
 	:caption: examples/tasks/page-resources-xobject.ts
-

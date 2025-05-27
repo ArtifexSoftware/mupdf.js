@@ -1,7 +1,4 @@
-
 .. _Node_How_To_Guide_Annotations:
-
-
 
 Working with Annotations
 =========================
@@ -22,7 +19,3 @@ Overview
     drawing-and-shapes/index.rst
     stamps/index.rst
     embedding-files/index.rst
-
-
-
-

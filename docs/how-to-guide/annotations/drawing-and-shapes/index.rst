@@ -1,20 +1,16 @@
-
 .. _Node_How_To_Guide_Annotations_Drawing_and_Shapes:
-
-
 
 Drawing & Shapes
 ===============================
-
 
 .. _Node_How_To_Guide_Annotations_Drawing_and_Shapes_Drawing:
 
 Drawing
 -------------
 
-Drawing freehand on a **PDF** is used to typically add scribbled notations and can be acheived by adding ink lists to an annotation of type `Ink`.
+Drawing freehand on a **PDF** is used to typically add scribbled notations and can be acheived by adding ink lists to an annotation of type ``Ink``.
 
-By using the following **JavaScript** methods you should be able to create and manage `Ink` annotations with the following **API**:
+By using the following **JavaScript** methods you should be able to create and manage ``Ink`` annotations with the following **API**:
 
 - :meth:`hasInkList`.
 - :meth:`getInkList`.
@@ -51,12 +47,9 @@ By using the following **JavaScript** methods you should be able to create and m
 
     fs.writeFileSync("output-ink.pdf", document.saveToBuffer("incremental").asUint8Array())
 
-
 .. note::
 
-    By default the color of an `Ink` annotation is red (`[1,0,0]`). Use `PDFAnnotation.setColor` to change it.
-
-
+    By default the color of an ``Ink`` annotation is red (``[1,0,0]``). Use ``PDFAnnotation.setColor`` to change it.
 
 ----
 
@@ -67,11 +60,11 @@ Shapes
 
 Adding a shape involves creating an annotation with one of the following types:
 
-- `Square`
-- `Circle`
-- `Line`
-- `Polygon`
-- `PolyLine`
+- ``Square``
+- ``Circle``
+- ``Line``
+- ``Polygon``
+- ``PolyLine``
 
 Adding Circles & Squares
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,24 +92,22 @@ For example, let's draw a large square with different stroke & fill colors, a bo
 
     fs.writeFileSync("output-circle.pdf", document.saveToBuffer("incremental").asUint8Array())
 
-The available **API** for both `Circle` & `Square` is the same and you are able to get/set the following:
+The available **API** for both ``Circle`` & ``Square`` is the same and you are able to get/set the following:
 
 - :meth:`getColor` (the "stroke" color of the shape)
 - :meth:`getInteriorColor` (the "fill" color of the shape)
-- :meth:`getOpacity` 
+- :meth:`getOpacity`
 - :meth:`getBorderWidth` (the "stroke" thickness)
 - :meth:`getBorderStyle` (the "stroke" style)
 - :meth:`getBorderEffect` (the "stroke" effect)
 - :meth:`getBorderEffectIntensity` (the "stroke" effect intensity)
-
 
 Adding Lines, Polygons & PolyLines
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 These type of shapes take an either an array of line points (:meth:`getLine`) (``Line``) or vertex points :meth:`getVertices` (``Polygon`` & ``PolyLine``) to make the drawings.
 
-
-The following example draws a line with a closed arrow `line ending <Glossary_Line_Ending_Styles>`.
+The following example draws a line with a closed arrow line ending.
 
 |example_tag|
 
@@ -141,7 +132,7 @@ The following example draws a line with a closed arrow `line ending <Glossary_Li
 
 ----
 
-This example creates a blue triangle on the page using the `Polygon` type.
+This example creates a blue triangle on the page using the ``Polygon`` type.
 
 |example_tag|
 
@@ -160,6 +151,3 @@ This example creates a blue triangle on the page using the `Polygon` type.
     annotation.update()
 
     fs.writeFileSync("output-polygon.pdf", document.saveToBuffer("incremental").asUint8Array())
-
-
-

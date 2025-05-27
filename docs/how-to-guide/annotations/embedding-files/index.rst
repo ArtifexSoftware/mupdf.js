@@ -1,19 +1,15 @@
-
 .. _Node_How_To_Guide_Annotations_Embedding_Files:
-
 
 File Attachment Annotations
 ============================================
 
-
 There are two ways to embed files - :ref:`directly to a document <Node_How_To_Attach_File_To_Document>` (attaching a file to the whole document)
-or as an embedded file on a `"FileAttachment"` annotation.
-
+or as an embedded file on a ``"FileAttachment"`` annotation.
 
 Creating an Annotation File Attachment
 -----------------------------------------
 
-Embedding files onto annotation objects requires us to associate a buffer of file data against a `"FileAttachment"` annotation object.
+Embedding files onto annotation objects requires us to associate a buffer of file data against a ``"FileAttachment"`` annotation object.
 
 We need to:
 
@@ -21,7 +17,7 @@ We need to:
 - Get a document reference to the file we want to add the attachment to.
 - Source the page we want to add the file attachment to.
 - Create a "FileAttachment" type annotation and set its position.
-- Create a :ref:`file specification object <Glossary_Object_Filespec_Params_Object>` and add the attached file data to it.
+- Create a file specification object and add the attached file data to it.
 - Associate the annotation with our newly created file specification object.
 
 The following code exemplifies the steps outlined above:
@@ -49,7 +45,6 @@ The following code exemplifies the steps outlined above:
 
     fs.writeFileSync("output.pdf", document.saveToBuffer("incremental").asUint8Array())
 
-
 The file attachment will appear as a "push pin" icon by default on the **PDF** document, clicking on the icon will open the attachment.
 
 You can also change the look of the icon with :meth:`setIcon` for this annotation (to a paper clip for example) if required.
@@ -57,12 +52,10 @@ You can also change the look of the icon with :meth:`setIcon` for this annotatio
 Removing an Embedded File on a File Attachment
 ----------------------------------------------------------------------
 
-To remove an embedded file, retrieve the required "FileAttachment" annotation and set it to `null`.
+To remove an embedded file, retrieve the required "FileAttachment" annotation and set it to ``null``.
 
 |example_tag|
 
 .. code-block:: javascript
 
     annotation.setFileSpec(null)
-
-

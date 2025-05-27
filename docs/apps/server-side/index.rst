@@ -8,4 +8,3 @@ and doesn't need a lot of CPU processing power.
 .. toctree::
 
 	nextjs
-

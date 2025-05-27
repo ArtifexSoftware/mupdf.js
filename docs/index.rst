@@ -30,11 +30,6 @@ Find us
 - On `NPM <https://www.npmjs.com/package/mupdf>`_.
 - On `Github <https://github.com/ArtifexSoftware/mupdf.js>`_.
 
-
-
-
-
-
 .. The home page doesn't need to show the feedback form in the footer
 .. raw:: html
 

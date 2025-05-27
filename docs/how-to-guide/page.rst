@@ -6,7 +6,7 @@ Working with Pages
 
 .. _Node_How_To_Guide_Page_Core_API:
 
-A **Page** is an instance of the :doc:`../../../classes/PDFPage` class.
+A **Page** is an instance of the :mupdf:`PDFPage` class.
 
 Loading a Page
 ----------------------------------
@@ -31,17 +31,17 @@ To get the bounds of page do the following:
 
     let rect = page.getBounds()
 
-This returns a numerical array object in the following format: `[ulx,uly,lrx,lry]`.
+This returns a numerical array object in the following format: ``[ulx,uly,lrx,lry]``.
 
 Convert a Page to an Image
 ------------------------------
 
-To convert a page to an image use the :meth:`toPixmap` method, after this the :doc:`../../../classes/Pixmap` data can be converted to the image format you require.
+To convert a page to an image use the :meth:`toPixmap` method, after this the :mupdf:`Pixmap` data can be converted to the image format you require.
 
 The parameters for the method define:
 
 - the resolution via a matrix
-- the :doc:`../../../classes/ColorSpace` for rendering
+- the :mupdf:`ColorSpace` for rendering
 - background transparency
 - whether to render any annotations on the page.
 
@@ -61,7 +61,7 @@ There are two methods for extracting text, one which simply gives the plain text
 Basic Text
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To get the plain text for a page we can retrieve a `string` as follows:
+To get the plain text for a page we can retrieve a ``string`` as follows:
 
 |example_tag|
 
@@ -73,7 +73,7 @@ To get the plain text for a page we can retrieve a `string` as follows:
 Advanced Text
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To get a more advanced representation of the page text we can retrieve a :doc:`../../../classes/StructuredText` object as `JSON` as follows:
+To get a more advanced representation of the page text we can retrieve a :mupdf:`StructuredText` object as ``JSON`` as follows:
 
 |example_tag|
 
@@ -82,7 +82,7 @@ To get a more advanced representation of the page text we can retrieve a :doc:`.
     const json = page.toStructuredText("preserve-whitespace").asJSON()
     console.log(`json=${json}`)
 
-:doc:`../../../classes/StructuredText` contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the `JSON` returned is *structured* and contains positional data and font data alongside text values, e.g.:
+:mupdf:`StructuredText` contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the ``JSON`` returned is *structured* and contains positional data and font data alongside text values, e.g.:
 
 |example_tag|
 
@@ -100,7 +100,7 @@ To get the images for a page we can use the :meth:`getImages` method as follows:
 
     var result = page.getImages()
 
-This returns an array of objects which includes the image (:doc:`../../../classes/Image`) along with the bounding box and matrix transform.
+This returns an array of objects which includes the image (:mupdf:`Image`) along with the bounding box and matrix transform.
 
 The following example would extract all the images from a page and save them as individual files:
 
@@ -118,7 +118,7 @@ The following example would extract all the images from a page and save them as 
 Extracting Page Annotations
 -----------------------------------
 
-We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from pages by querying with `getAnnotations()`.
+We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from pages by querying with ``getAnnotations()``.
 
 |example_tag|
 
@@ -130,7 +130,7 @@ We can retrieve :ref:`Annotation objects <Node_How_To_Guide_Annotations>` from p
 Copying pages from another document
 ------------------------------------------
 
-The following script uses :meth:`graftPage` to copy the first page (`0`) of another document to the end (`-1`) of the current document:
+The following script uses :meth:`graftPage` to copy the first page (``0``) of another document to the end (``-1``) of the current document:
 
 |example_tag|
 
@@ -158,7 +158,7 @@ To delete a page from a document use the :meth:`deletePage` method on the :meth:
 Cropping Pages
 --------------------
 
-To crop a page we just need to set its "CropBox" value with :meth:`setPageBox` and an associated :ref:`rectangle <Glossary_Rectangles>`.
+To crop a page we just need to set its "CropBox" value with :meth:`setPageBox` and an associated :mupdf:`rectangle <Rect>`.
 
 |example_tag|
 
@@ -169,7 +169,7 @@ To crop a page we just need to set its "CropBox" value with :meth:`setPageBox` a
 Implement a Device to print out PDF page contents
 -------------------------------------------------------
 
-If you need to invesigate the internals of a PDF page then you can run a :doc:`../../../classes/Device` on a page to detect objects.
+If you need to invesigate the internals of a PDF page then you can run a :mupdf:`Device` on a page to detect objects.
 
 |example_tag|
 

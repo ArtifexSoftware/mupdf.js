@@ -8,7 +8,7 @@ Working with Documents
 Passwords & Security
 --------------------------
 
-A document may require a password if it is protected. To check this use the `needsPassword` method as follows:
+A document may require a password if it is protected. To check this use the ``needsPassword`` method as follows:
 
 |example_tag|
 
@@ -16,7 +16,7 @@ A document may require a password if it is protected. To check this use the `nee
 
     let needsPassword = document.needsPassword()
 
-To provide a password use the `authenticatePassword` method as follows:
+To provide a password use the ``authenticatePassword`` method as follows:
 
 |example_tag|
 
@@ -24,7 +24,7 @@ To provide a password use the `authenticatePassword` method as follows:
 
     let auth = document.authenticatePassword("abracadabra")
 
-See the :ref:`authenticate password return values <authenticate password return values>` for what the return value means.
+See the :mupdf:`authenticate password return values <PDFDocument>` for what the return value means.
 
 Document Metadata
 ---------------------------
@@ -34,7 +34,7 @@ Get Metadata
 
 You can get metadata for a document using the :meth:`getMetaData` method.
 
-The common keys are: `format`, `encryption`, `info:ModDate`, and `info:Title`.
+The common keys are: ``format``, ``encryption``, ``info:ModDate``, and ``info:Title``.
 
 |example_tag|
 
@@ -69,7 +69,7 @@ Count the number of :ref:`pages <Node_How_To_Guide_Page>` in the document.
 Load a Page of a Document
 -------------------------------------------
 
-To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_Guide_Document>` use the :ref:`PDFPage constructor <Classes_PDFPage>` method to return a page instance.
+To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_Guide_Document>` use the :mupdf:`PDFDocument` loadPage method to return a page instance.
 
 |example_tag|
 
@@ -81,7 +81,7 @@ To load a :ref:`page <Node_How_To_Guide_Page>` of a :ref:`document <Node_How_To_
 Extracting Document Text
 -----------------------------
 
-To get the text for an entire document we can retrieve :doc:`../../../classes/StructuredText` objects as `JSON` for each page as follows:
+To get the text for an entire document we can retrieve :mupdf:`StructuredText` objects as ``JSON`` for each page as follows:
 
 |example_tag|
 
@@ -95,7 +95,7 @@ To get the text for an entire document we can retrieve :doc:`../../../classes/St
         i++
     }
 
-:doc:`../../../classes/StructuredText` contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the `JSON` returned is *structured* and contains positional data and font data alongside text values, e.g.:
+:mupdf:`StructuredText` contains objects from a page that have been analyzed and grouped into blocks, lines and spans. As such the ``JSON`` returned is *structured* and contains positional data and font data alongside text values, e.g.:
 
 |example_tag|
 
@@ -158,7 +158,7 @@ To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` an
 
 .. note::
 
-    The resulting array contains numbers which are a sequence of `[ulx, uly, urx, ury, llx, lly, lrx, lry]` which defines each rectangle for each result. These type of rectangles are known as :ref:`QuadPoints <Glossary_Object_Points_and_QuadPoints>` in the :title:`PDF` specification.
+    The resulting array contains numbers which are a sequence of ``[ulx, uly, urx, ury, llx, lly, lrx, lry]`` which defines each rectangle for each result. These type of rectangles are known as :mupdf:`QuadPoints <Quad>` in the :title:`PDF` specification.
 
     For example, the following would represent a search result with two results showing one "QuadPoint" (or "Quad") for each result:
 
@@ -196,7 +196,7 @@ To search a document we can look at each :ref:`page <Node_How_To_Guide_Page>` an
 Getting Document Links
 ------------------------------------------
 
-To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the :meth:`getLinks` method as follows:
+To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide_Page>` and use the ``getLinks()`` method as follows:
 
 .. code-block:: javascript
 
@@ -204,4 +204,4 @@ To get document links (if any) we can look at each :ref:`page <Node_How_To_Guide
 
 .. note::
 
-    The resulting array contains an array of :doc:`../../../classes/Link` objects which have their own bounds and `uri` for the link.
+    The resulting array contains an array of :mupdf:`Link` objects which have their own bounds and ``uri`` for the link.

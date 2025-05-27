@@ -20,12 +20,12 @@ From the command line, go to the project folder you want to work from and instal
 
     npm install mupdf
 
-This will then install the dependency you need to work with **MuPDF.js** in your `package.json` file.
+This will then install the dependency you need to work with **MuPDF.js** in your ``package.json`` file.
 
 2. Create a Test File
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-To verify your installation you can create a file, e.g. `test.mjs` with the following script:
+To verify your installation you can create a file, e.g. ``test.mjs`` with the following script:
 
 .. code-block:: javascript
 
@@ -35,20 +35,20 @@ To verify your installation you can create a file, e.g. `test.mjs` with the foll
 3. Run the Test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Then, on the command line for the project folder, run the test script with `node`:
+Then, on the command line for the project folder, run the test script with ``node``:
 
 .. code-block:: bash
 
     node test.mjs
 
-This will print the `mupdf` object to the output - you are now ready to :ref:`use it! <How_To_Guide_With_Node>`
+This will print the ``mupdf`` object to the output - you are now ready to use it!
 
 4. Create **HTML** & **JS** Test Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Just to try things out we can create a couple of test files to see if we can see the `mupdf` object in the browser.
+Just to try things out we can create a couple of test files to see if we can see the ``mupdf`` object in the browser.
 
-- Create a file called `test.html` and populate it as follows:
+- Create a file called ``test.html`` and populate it as follows:
 
 .. code-block:: html
 
@@ -58,7 +58,7 @@ Just to try things out we can create a couple of test files to see if we can see
         </script>
     </html>
 
-- Create a file called `worker.js` and populate it as follows:
+- Create a file called ``worker.js`` and populate it as follows:
 
 .. code-block:: javascript
 
@@ -75,7 +75,7 @@ Ensure to save the files in the root of the your git checkout so the library fil
 5. Start a Server with **Python**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Because we are relying on web workers to run local **JavaScript** files we need to run the `test.html` in a server context.
+Because we are relying on web workers to run local **JavaScript** files we need to run the ``test.html`` in a server context.
 
 Start a local server with **Python** as follows:
 
@@ -90,4 +90,4 @@ Finally, open in a browser with the following **URL**:
 
 `http://localhost:8000/test.html`_
 
-Inspect the `console` log in your browser and you should see the internals of the **MuPDF** object printed out - you are now ready to use it!
+Inspect the ``console`` log in your browser and you should see the internals of the **MuPDF** object printed out - you are now ready to use it!

@@ -1,7 +1,4 @@
-dist
-node_modules
+.idea
 .next
 build
-.idea
-/docs/venv/
-docs/_build
+node_modules

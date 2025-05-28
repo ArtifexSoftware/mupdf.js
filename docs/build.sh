@@ -15,15 +15,15 @@ pip install -r docs/requirements.txt
 case "$1" in
 	live)
 		pip install sphinx-autobuild
-		sphinx-autobuild -b html --open-browser --port 9001 docs build/html
+		sphinx-autobuild -d build/doctrees -b html --open-browser --port 9001 docs build/html
 		;;
 	force)
-		sphinx-build -b html -E -a docs build/html
+		sphinx-build -d build/doctrees -b html -E -a docs build/html
 		;;
 	pdf)
-		sphinx-build -b pdf docs build/pdf
+		sphinx-build -d build/doctrees -b pdf docs build/pdf
 		;;
 	*)
-		sphinx-build -b html docs build/html
+		sphinx-build -d build/doctrees -b html docs build/html
 		;;
 esac

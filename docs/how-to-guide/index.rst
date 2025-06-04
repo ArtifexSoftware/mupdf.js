@@ -1,4 +1,3 @@
-
 .. _How_To_Guide:
 
 How To Guide
@@ -15,37 +14,12 @@ Additionally the following requirements should be defined in your **TypeScript**
     import * as fs from "node:fs"
     import * as mupdf from "mupdf"
 
-----
-
-
 .. toctree::
-    :caption: How to with Node.js
     :maxdepth: 2
 
-    node/typescript/index.rst
-    node/files/index.rst
-    node/document/index.rst
-    node/page/index.rst
-    node/annotations/index.rst
-
-
-
-
-.. toctree::
-    :caption: Migrating from older versions
-    :maxdepth: 1
-
-    migration/index.rst
-
-
-.. toctree::
-    :caption: Glossary
-    :maxdepth: 1
-
-    coordinate-system/index.rst
-    destroy/index.rst
-
-
-
-
-
+    files
+    document
+    page
+    annotations/index
+    destroy
+    glossary

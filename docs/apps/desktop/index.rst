@@ -25,7 +25,7 @@ Initialize the project
 
 .. code-block:: bash
 
-	npm ci
+	npm install
 
 Start the server
 """"""""""""""""""""""""

@@ -25,4 +25,4 @@ Start the server
 
 .. code-block:: bash
 
-	ng serve
+	npx ng serve

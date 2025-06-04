@@ -1,7 +1,7 @@
 API Reference
 =============
 
-The `MuPDF API reference documentation <https://mupdf.readthedocs.io/en/latest/reference/javascript/index.html>`_ is in another castle!
+`MuPDF API reference documentation <https://mupdf.readthedocs.io/en/latest/reference/javascript/index.html>`_
 
 * :mupdf:`Archive`
 * :mupdf:`Buffer`

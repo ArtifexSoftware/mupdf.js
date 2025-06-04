@@ -21,36 +21,43 @@ From ``mupdfjs``
 =================
 
 Splitting a Document
+--------------------
 
 .. literalinclude:: ../examples/tasks/pdf-split.ts
 	:caption: examples/tasks/pdf-split.ts
 
 Merging Documents
+--------------------
 
 .. literalinclude:: ../examples/tasks/pdf-merge.ts
 	:caption: examples/tasks/pdf-merge.ts
 
 Scrubbing a Document
+--------------------
 
 .. literalinclude:: ../examples/tasks/pdf-scrub.ts
 	:caption: examples/tasks/pdf-scrub.ts
 
 Adding Text to Pages
+--------------------
 
 .. literalinclude:: ../examples/tasks/page-insert-text.ts
 	:caption: examples/tasks/page-insert-text.ts
 
 Adding Images to Pages
+----------------------
 
 .. literalinclude:: ../examples/tasks/page-insert-image.ts
 	:caption: examples/tasks/page-insert-image.ts
 
 Extracting Document Images and Text
+-----------------------------------
 
 .. literalinclude:: ../examples/tasks/page-words.ts
 	:caption: examples/tasks/page-words.ts
 
-This might be useful for something.
+Managing Page Resources & XObjects
+-----------------------------------
 
 .. literalinclude:: ../examples/tasks/page-resources-xobject.ts
 	:caption: examples/tasks/page-resources-xobject.ts

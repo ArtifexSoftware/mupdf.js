@@ -17,11 +17,9 @@ Additionally the following requirements should be defined in your **TypeScript**
 .. toctree::
     :maxdepth: 2
 
-    glossary
-
     files
     document
     page
     annotations/index
-
     destroy
+    glossary

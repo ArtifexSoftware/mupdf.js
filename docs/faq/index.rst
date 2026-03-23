@@ -356,7 +356,6 @@ Frequently Asked Questions
         <a href="#nodejs">Node.js Usage</a>
         <a href="#browser">Browser Usage</a>
         <a href="#documents">Documents & Pages</a>
-        <a href="#rendering">Rendering</a>
         <a href="#text">Text & Search</a>
         <a href="#annotations">Annotations</a>
         <a href="#editing">PDF Editing</a>
@@ -386,12 +385,12 @@ Frequently Asked Questions
         <div class="faq-q"><span class="marker">Q</span><span class="question">What can MuPDF.js do?</span><span class="toggle">+</span></div>
         <div class="faq-a">
             <p><strong>Document Operations:</strong></p>
-            <p>• Open PDF, XPS, EPUB, and image files</p>
+            <p>• Open PDF files</p>
             <p>• Merge, split, and rearrange pages</p>
             <p>• Crop and rotate pages</p>
             <p>• Save modified documents</p>
             <p><strong>Rendering:</strong></p>
-            <p>• Render pages to PNG, SVG, or HTML</p>
+            <p>• Render pages to image format</p>
             <p>• Render to HTML5 Canvas in browsers</p>
             <p>• Control resolution and zoom</p>
             <p><strong>Content Extraction:</strong></p>
@@ -409,10 +408,9 @@ Frequently Asked Questions
         <div class="faq-q"><span class="marker">Q</span><span class="question">How does MuPDF.js compare to PDF.js?</span><span class="toggle">+</span></div>
         <div class="faq-a">
             <p><strong>MuPDF.js advantages:</strong></p>
-            <p>• More accurate rendering (uses same engine as Adobe Reader)</p>
+            <p>• Fast, accurate rendering</p>
             <p>• Full PDF editing capabilities (annotations, merging, etc.)</p>
             <p>• Better font handling and text extraction</p>
-            <p>• Supports more formats (XPS, EPUB)</p>
             <p><strong>PDF.js advantages:</strong></p>
             <p>• Pure JavaScript (no WASM dependency)</p>
             <p>• Mozilla-backed, widely used</p>
@@ -522,6 +520,8 @@ Frequently Asked Questions
             
             return &lt;canvas ref={canvasRef} /&gt;;
         }</code></pre>
+
+        <p>For examples see: <a href="../apps/">Building Web apps</a>.</p>
         </div>
         </div>
 
@@ -818,96 +818,7 @@ Frequently Asked Questions
         </div>
         </div>
 
-        <div class="faq">
-        <div class="faq-q"><span class="marker">Q</span><span class="question">How do I merge multiple PDFs?</span><span class="toggle">+</span></div>
-        <div class="faq-a">
-            <pre><code>
-        import * as fs from "fs";
-        import mupdf from "mupdf";
 
-        // Create new document
-        const output = new mupdf.PDFDocument();
-
-        const files = ["file1.pdf", "file2.pdf", "file3.pdf"];
-
-        for (const file of files) {
-            const buffer = fs.readFileSync(file);
-            const src = mupdf.Document.openDocument(buffer, "application/pdf");
-            
-            // Copy all pages using graftObject
-            for (let i = 0; i &lt; src.countPages(); i++) {
-                const srcPage = src.loadPage(i);
-                const [x0, y0, x1, y1] = srcPage.getBounds();
-                
-                // Create new page in output
-                const newPage = output.newPage(-1, x1 - x0, y1 - y0);
-                
-                // Copy content (simplified - actual implementation more complex)
-                // See MuPDF.js examples for full merge implementation
-                
-                srcPage.destroy();
-            }
-            
-            src.destroy();
-        }
-
-        // Save merged document
-        const outputBuffer = output.saveToBuffer("compress");
-        fs.writeFileSync("merged.pdf", outputBuffer);
-        output.destroy();</code></pre>
-        </div>
-        </div>
-
-        <div class="faq">
-        <div class="faq-q"><span class="marker">Q</span><span class="question">How do I crop a page?</span><span class="toggle">+</span></div>
-        <div class="faq-a">
-            <pre><code>
-        const doc = mupdf.Document.openDocument(buffer, "application/pdf");
-        const page = doc.loadPage(0);
-
-        // Set CropBox to crop the page
-        // [x0, y0, x1, y1] - coordinates in points
-        page.setPageBox("CropBox", [50, 50, 500, 700]);
-
-        // Save the modified document
-        const outputBuffer = doc.saveToBuffer("incremental");
-        fs.writeFileSync("cropped.pdf", outputBuffer);
-
-        page.destroy();
-        doc.destroy();</code></pre>
-        </div>
-        </div>
-
-        <div class="faq">
-        <div class="faq-q"><span class="marker">Q</span><span class="question">How do I rotate a page?</span><span class="toggle">+</span></div>
-        <div class="faq-a">
-            <pre><code>
-        const doc = mupdf.Document.openDocument(buffer, "application/pdf");
-
-        // For PDFDocument (not generic Document)
-        const pdfDoc = doc.asPDF();
-        const pageObj = pdfDoc.findPage(0);
-
-        // Get current rotation
-        const currentRotation = pageObj.get("Rotate")?.asNumber() || 0;
-
-        // Set new rotation (0, 90, 180, or 270)
-        pageObj.put("Rotate", (currentRotation + 90) % 360);
-
-        // Save
-        const outputBuffer = pdfDoc.saveToBuffer("incremental");
-        fs.writeFileSync("rotated.pdf", outputBuffer);</code></pre>
-        </div>
-        </div>
-
-        </div>
-
-        <!-- ===== RENDERING ===== -->
-        <div class="section" id="rendering">
-        <div class="section-header">
-        <h2>Rendering</h2>
-
-        </div>
 
         <div class="faq">
         <div class="faq-q"><span class="marker">Q</span><span class="question">How do I control rendering resolution/DPI?</span><span class="toggle">+</span></div>
@@ -936,47 +847,6 @@ Frequently Asked Questions
         </div>
         </div>
 
-        <div class="faq">
-        <div class="faq-q"><span class="marker">Q</span><span class="question">How do I render to SVG instead of raster?</span><span class="toggle">+</span></div>
-        <div class="faq-a">
-            <pre><code>
-        const page = doc.loadPage(0);
-
-        // Render page as SVG string
-        const svgString = page.toSVG();
-
-        // Save to file (Node.js)
-        fs.writeFileSync("page.svg", svgString);
-
-        // Or use in browser
-        document.getElementById("svgContainer").innerHTML = svgString;</code></pre>
-            <p>SVG output is vector-based and scales without pixelation, making it ideal for zoom interfaces.</p>
-        </div>
-        </div>
-
-        <div class="faq">
-        <div class="faq-q"><span class="marker">Q</span><span class="question">How do I render a page with or without annotations?</span><span class="toggle">+</span></div>
-        <div class="faq-a">
-            <pre><code>
-        const page = doc.loadPage(0);
-
-        // With annotations (default)
-        const pixWithAnnots = page.toPixmap(
-            mupdf.Matrix.identity,
-            mupdf.ColorSpace.DeviceRGB,
-            false,
-            true   // &lt;-- include annotations
-        );
-
-        // Without annotations
-        const pixNoAnnots = page.toPixmap(
-            mupdf.Matrix.identity,
-            mupdf.ColorSpace.DeviceRGB,
-            false,
-            false  // &lt;-- exclude annotations
-        );</code></pre>
-        </div>
-        </div>
 
         </div>
 
@@ -1200,24 +1070,14 @@ Frequently Asked Questions
             <p><strong>AGPL v3:</strong> Free for open-source projects. If you distribute software using MuPDF.js or provide it as a network service, you must release your source code under AGPL.</p>
             <p><strong>Commercial License:</strong> For proprietary applications, SaaS products, or when you can't comply with AGPL. Contact Artifex for pricing.</p>
             <p>The licensing applies to both the JavaScript wrapper and the underlying MuPDF WASM binary.</p>
+            <p><a href="https://artifex.com/contact/mupdf-js" target="_blank">Contact Artifex for more details</a>.</p>
         </div>
         </div>
 
-        <div class="faq">
-        <div class="faq-q"><span class="marker">Q</span><span class="question">Do I need a commercial license for a web application?</span><span class="toggle">+</span></div>
-        <div class="faq-a">
-            <p><strong>Client-side only (JavaScript in browser):</strong> Users download the WASM to their browser. This is distribution under AGPL. If your web app is open source, you're fine. If proprietary, you likely need a commercial license.</p>
-            <p><strong>Server-side (Node.js):</strong> If users interact with MuPDF over a network (upload PDFs, get rendered images), AGPL's network provision applies. You'd need to release your server code or get a commercial license.</p>
-            <p>When in doubt, contact Artifex for clarification on your specific use case.</p>
-        </div>
-        </div>
+ 
 
         </div>
 
-        <div class="footer">
-        <p>This FAQ was generated by analyzing community discussions from the Artifex Discord #mupdf channel and GitHub issues for MuPDF.js. Questions were clustered by topic, answers synthesized from maintainer responses and official documentation.</p>
-        <p style="margin-top:12px;">For documentation, visit <a href="https://mupdf.com/mupdf-js" style="color:var(--blue)">mupdf.com/mupdf-js</a>. For source code, visit <a href="https://github.com/ArtifexSoftware/mupdf.js" style="color:var(--blue)">GitHub</a>. For community support, join the <a href="https://discord.gg/artifex" style="color:var(--blue)">Artifex Discord</a>.</p>
-        </div>
 
     </div>
 

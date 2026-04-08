@@ -24,6 +24,12 @@ Developer documentation to help you get started.
 
 	reference
 	deprecated
+    
+.. toctree::
+    :maxdepth: 1
+    :caption: FAQ
+
+    faq/index
 
 Find us
 

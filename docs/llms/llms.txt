@@ -1,0 +1,54 @@
+# MuPDF.js
+
+> MuPDF.js is the official JavaScript/TypeScript binding for MuPDF from Artifex Software. Powered by WebAssembly (WASM), it enables browser-side PDF processing, Node.js server-side manipulation, and cross-platform document handling anywhere JavaScript runs.
+
+MuPDF.js supports document loading, page rendering, text extraction, annotations, and full PDF manipulation. It is available under AGPL v3 (open source) or a commercial license from Artifex.
+
+- NPM: https://www.npmjs.com/package/mupdf
+- GitHub: https://github.com/ArtifexSoftware/mupdf.js
+- Discord: https://artifex.com/discord/artifex
+
+## Documentation
+
+### Getting Started
+
+- [Getting Started](https://mupdfjs.readthedocs.io/en/latest/getting-started/index.html): Overview and introduction
+- [Setup with NPM](https://mupdfjs.readthedocs.io/en/latest/getting-started/setup.html): Install via `npm install mupdf`, verify with Node.js
+- [Using TypeScript](https://mupdfjs.readthedocs.io/en/latest/getting-started/typescript.html): TypeScript definitions included, no extra `@types` package needed
+
+### How To Guide
+
+- [Working with Files](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/files.html): Load local and remote files; save documents using `saveToBuffer()`
+- [Working with Documents](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/document.html): Password protection (`needsPassword`, `authenticatePassword`), metadata, page count
+- [Working with Pages](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/page.html): Load pages, get bounds, render to Pixmap, extract text
+- [Working with Annotations](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/annotations/index.html): Create, delete, and iterate annotations
+  - [Getting Started with Annotations](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/annotations/getting-started/index.html)
+  - [Text Annotations](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/annotations/text/index.html)
+  - [Redactions](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/annotations/redactions/index.html)
+  - [Managing Links](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/annotations/links/index.html)
+  - [Drawing & Shapes](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/annotations/drawing-and-shapes/index.html)
+  - [Stamps](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/annotations/stamps/index.html)
+  - [File Attachment Annotations](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/annotations/embedding-files/index.html)
+- [Destroying Objects](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/destroy.html): Call `destroy()` on objects to manage WASM memory
+- [Glossary](https://mupdfjs.readthedocs.io/en/latest/how-to-guide/glossary.html): Key terms and concepts
+
+### Examples — Building Web Apps
+
+- [Building Web Apps](https://mupdfjs.readthedocs.io/en/latest/apps/index.html): Overview
+- [Client Side Rendering](https://mupdfjs.readthedocs.io/en/latest/apps/client-side/index.html)
+  - [Vanilla JS](https://mupdfjs.readthedocs.io/en/latest/apps/client-side/vanilla.html)
+  - [Angular.js](https://mupdfjs.readthedocs.io/en/latest/apps/client-side/angular.html)
+  - [React](https://mupdfjs.readthedocs.io/en/latest/apps/client-side/react.html)
+  - [Vue](https://mupdfjs.readthedocs.io/en/latest/apps/client-side/vue.html)
+- [Server Side Rendering](https://mupdfjs.readthedocs.io/en/latest/apps/server-side/index.html)
+  - [Next.js](https://mupdfjs.readthedocs.io/en/latest/apps/server-side/nextjs.html)
+- [Desktop Apps](https://mupdfjs.readthedocs.io/en/latest/apps/desktop/index.html)
+
+### Reference
+
+- [API Reference](https://mupdfjs.readthedocs.io/en/latest/reference.html): Full class listing linking to MuPDF JS API docs (Archive, Buffer, Color, ColorSpace, Device, DisplayList, Document, DocumentWriter, Font, Image, Link, Matrix, Page, Path, Pixmap, Rect, StructuredText, PDFAnnotation, PDFDocument, PDFPage, PDFWidget, and more)
+- [Deprecated Modules](https://mupdfjs.readthedocs.io/en/latest/deprecated.html): `mupdf/tasks` and `mupdf/mupdfjs` sub-modules removed; example task code available (split, merge, scrub, insert text/image, extract words/images)
+
+### FAQ
+
+- [Frequently Asked Questions](https://mupdfjs.readthedocs.io/en/latest/faq/index.html): Installation, Node.js usage, browser usage, documents & pages, text & search, annotations, PDF editing, licensing

@@ -1,0 +1,746 @@
+# MuPDF.js
+
+> MuPDF.js is the official JavaScript/TypeScript binding for MuPDF from Artifex Software. Powered by WebAssembly (WASM), it enables browser-side PDF processing, Node.js server-side manipulation, and cross-platform document handling anywhere JavaScript runs.
+
+MuPDF.js supports document loading, page rendering, text extraction, annotations, and full PDF manipulation. It is available under AGPL v3 (open source) or a commercial license from Artifex.
+
+- NPM: https://www.npmjs.com/package/mupdf  
+- GitHub: https://github.com/ArtifexSoftware/mupdf.js  
+- Discord: https://artifex.com/discord/artifex
+
+---
+
+## Getting Started
+
+### Installation (NPM)
+
+Install via NPM:
+
+```bash
+npm install mupdf
+```
+
+Or with yarn / pnpm:
+
+```bash
+yarn add mupdf
+pnpm add mupdf
+```
+
+The package includes the WebAssembly binary and TypeScript definitions. No `@types` package is needed.
+
+Verify installation with a test file `test.mjs`:
+
+```js
+import mupdf from "mupdf";
+console.log(mupdf);
+```
+
+Run: `node test.mjs` — this prints the mupdf object if installed correctly.
+
+### Supported Environments
+
+- **Node.js:** 14+ (recommended: 18+)
+- **Bun:** Full support
+- **Deno:** With npm compatibility
+- **Browsers:** Chrome, Firefox, Safari, Edge (all modern versions)
+
+The module is ESM-only: use `import` syntax, not `require()`.
+
+### Using TypeScript
+
+TypeScript definitions are included out of the box:
+
+```ts
+import mupdf from "mupdf";
+import type { Document, Page, Pixmap } from "mupdf";
+
+const doc: Document = mupdf.Document.openDocument(buffer, "application/pdf");
+const page: Page = doc.loadPage(0);
+const pixmap: Pixmap = page.toPixmap(
+    mupdf.Matrix.identity,
+    mupdf.ColorSpace.DeviceRGB,
+    false,
+    true
+);
+```
+
+---
+
+## How To Guide
+
+### Working with Files
+
+#### Loading a Local File (Node.js)
+
+```js
+import * as fs from "fs";
+import mupdf from "mupdf";
+
+const buffer = fs.readFileSync("input.pdf");
+const doc = mupdf.Document.openDocument(buffer, "application/pdf");
+```
+
+#### Loading a Remote File (Browser/Node)
+
+```js
+async function loadRemoteFile(url) {
+    let response = await fetch(url);
+    if (!response.ok) {
+        console.error(`Cannot fetch document: ${response.statusText}`);
+        return;
+    }
+    let data = await response.arrayBuffer();
+    let document = mupdf.PDFDocument.openDocument(data, url);
+}
+loadRemoteFile("https://mupdf.com/docs/mupdf_explored.pdf");
+```
+
+#### Saving a File
+
+After obtaining a document instance, save with `saveToBuffer()`:
+
+```js
+const outputBuffer = doc.saveToBuffer("incremental");
+fs.writeFileSync("output.pdf", outputBuffer);
+```
+
+### Working with Documents
+
+#### Password-Protected Documents
+
+```js
+if (doc.needsPassword()) {
+    doc.authenticatePassword("mypassword");
+}
+```
+
+#### Document Metadata
+
+```js
+console.log(`Pages: ${doc.countPages()}`);
+console.log(`Title: ${doc.getMetaData("info:Title")}`);
+console.log(`Author: ${doc.getMetaData("info:Author")}`);
+console.log(`Subject: ${doc.getMetaData("info:Subject")}`);
+console.log(`Creator: ${doc.getMetaData("info:Creator")}`);
+console.log(`Producer: ${doc.getMetaData("info:Producer")}`);
+console.log(`CreationDate: ${doc.getMetaData("info:CreationDate")}`);
+console.log(`Is PDF: ${doc.isPDF()}`);
+```
+
+#### Document Outline (Table of Contents)
+
+```js
+const outline = doc.loadOutline();
+if (outline) {
+    function printOutline(items, indent = 0) {
+        for (const item of items) {
+            console.log(" ".repeat(indent) + item.title);
+            if (item.down) printOutline(item.down, indent + 2);
+        }
+    }
+    printOutline(outline);
+}
+```
+
+### Working with Pages
+
+A page is a `PDFPage` class instance. Load it using:
+
+```js
+const page = doc.loadPage(0); // zero-indexed
+```
+
+#### Page Bounds
+
+Returns `[ulx, uly, lrx, lry]`:
+
+```js
+const [x0, y0, x1, y1] = page.getBounds();
+```
+
+#### Rendering to an Image (Pixmap)
+
+```js
+const matrix = mupdf.Matrix.scale(2, 2); // 2x zoom = 144 DPI
+const pixmap = page.toPixmap(
+    matrix,
+    mupdf.ColorSpace.DeviceRGB,
+    false,  // no alpha
+    true    // include annotations
+);
+const pngData = pixmap.asPNG();
+fs.writeFileSync("page1.png", pngData);
+```
+
+#### Resolution / DPI
+
+MuPDF's default resolution is 72 DPI. Scale factor = desired DPI / 72:
+
+```js
+const matrix150 = mupdf.Matrix.scale(150/72, 150/72); // 150 DPI
+const matrix300 = mupdf.Matrix.scale(300/72, 300/72); // 300 DPI
+```
+
+#### Text Extraction
+
+Plain text:
+
+```js
+const stext = page.toStructuredText();
+const text = stext.asText();
+```
+
+Structured text as JSON:
+
+```js
+const json = page.toStructuredText("preserve-spans").asJSON();
+```
+
+Iterating blocks, lines:
+
+```js
+for (const block of stext.getBlocks()) {
+    if (block.type === "text") {
+        for (const line of block.lines) {
+            console.log(`Line at y=${line.bbox[1]}: ${line.text}`);
+        }
+    }
+}
+```
+
+#### Searching
+
+```js
+const hits = stext.search("search term");
+console.log(`Found ${hits.length} matches`);
+for (const quad of hits) {
+    console.log(`Match at: ${quad}`);
+}
+```
+
+### The MuPDF Coordinate System
+
+- In PDF, the origin (0, 0) is at the **bottom-left** of the page.
+- In MuPDF, the origin (0, 0) is at the **top-left** of the page.
+- Coordinates are float numbers measured in **points** (1 point = 1/72 inch).
+
+### Working with Annotations
+
+#### Creating an Annotation
+
+```js
+const annot = page.createAnnotation("Text"); // or "Highlight", "FreeText", etc.
+```
+
+#### Deleting an Annotation
+
+```js
+page.deleteAnnotation(annot);
+```
+
+#### Listing All Annotations on a Document
+
+```js
+for (let i = 0; i < doc.countPages(); i++) {
+    const page = doc.loadPage(i);
+    const annotations = page.getAnnotations();
+    for (const annot of annotations) {
+        console.log(annot.getType());
+    }
+}
+```
+
+#### Supported Annotation Types
+
+- **Text markup:** Highlight, Underline, StrikeOut, Squiggly
+- **Text:** Text (sticky note), FreeText
+- **Drawing:** Line, Square, Circle, Polygon, PolyLine, Ink
+- **Other:** Stamp, FileAttachment, Redact
+
+#### Highlight Annotation (from search results)
+
+```js
+const quads = stext.search("important text");
+if (quads.length > 0) {
+    const annot = page.createAnnotation("Highlight");
+    annot.setQuadPoints(quads);
+    annot.setColor([1, 1, 0]); // Yellow
+    annot.update();
+}
+```
+
+#### Text (Sticky Note) Annotation
+
+```js
+const annot = page.createAnnotation("Text");
+annot.setRect([100, 100, 120, 120]);
+annot.setContents("This is a note comment");
+annot.setColor([1, 1, 0]);
+annot.update();
+```
+
+#### FreeText (Text Box) Annotation
+
+```js
+const annot = page.createAnnotation("FreeText");
+annot.setRect([100, 100, 300, 150]);
+annot.setContents("This is editable text");
+annot.setDefaultAppearance("Helv", 12, [0, 0, 0]); // Font, size, color
+annot.update();
+```
+
+#### Redactions
+
+```js
+const redact = page.createAnnotation("Redact");
+redact.setRect([100, 200, 300, 220]);
+redact.update();
+page.applyRedactions(); // PERMANENTLY removes content
+const outputBuffer = pdfDoc.saveToBuffer("");
+```
+
+> **Warning:** `applyRedactions()` permanently removes content. The original data cannot be recovered.
+
+#### Links
+
+Create an external link:
+
+```js
+page.createLink([x, y, x + width, y + height], "https://mupdfjs.readthedocs.io");
+```
+
+Create an internal link:
+
+```js
+page.createLink([x, y, x + width, y + height], document.formatLinkURI({
+    type: "Fit",
+    page: 1 // zero-indexed
+}));
+```
+
+Resolve an internal link:
+
+```js
+const dest = document.resolveLinkDestination(link);
+```
+
+#### File Attachment Annotations
+
+Two ways to embed files:
+1. Directly to the document (whole-document attachment)
+2. As a FileAttachment annotation on a page
+
+```js
+// Embed file onto an annotation
+const annot = page.createAnnotation("FileAttachment");
+// Associate buffer of file data with the annotation
+```
+
+### Destroying Objects
+
+For memory maintenance, always destroy JavaScript objects when no longer needed:
+
+```js
+pixmap.destroy();
+page.destroy();
+doc.destroy();
+```
+
+Pattern for safe cleanup in Node.js:
+
+```js
+const doc = mupdf.Document.openDocument(buffer, "application/pdf");
+try {
+    const page = doc.loadPage(0);
+    try {
+        const pixmap = page.toPixmap(/*...*/);
+        try {
+            const png = pixmap.asPNG();
+        } finally {
+            pixmap.destroy();
+        }
+    } finally {
+        page.destroy();
+    }
+} finally {
+    doc.destroy();
+}
+```
+
+---
+
+## Building Web Apps
+
+### Browser — Rendering to HTML5 Canvas
+
+```html
+<canvas id="pdfCanvas"></canvas>
+<script type="module">
+import mupdf from "mupdf";
+
+async function renderPdf(url) {
+    const response = await fetch(url);
+    const buffer = await response.arrayBuffer();
+    const doc = mupdf.Document.openDocument(new Uint8Array(buffer), "application/pdf");
+    const page = doc.loadPage(0);
+    const [, , width, height] = page.getBounds();
+    const scale = window.devicePixelRatio || 1;
+    const matrix = mupdf.Matrix.scale(scale, scale);
+    const pixmap = page.toPixmap(matrix, mupdf.ColorSpace.DeviceRGB, false, true);
+
+    const canvas = document.getElementById("pdfCanvas");
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+
+    const ctx = canvas.getContext("2d");
+    const imageData = new ImageData(
+        new Uint8ClampedArray(pixmap.getPixels()),
+        pixmap.getWidth(),
+        pixmap.getHeight()
+    );
+    ctx.putImageData(imageData, 0, 0);
+
+    pixmap.destroy();
+    page.destroy();
+    doc.destroy();
+}
+renderPdf("/sample.pdf");
+</script>
+```
+
+### Browser — Handling User-Uploaded Files
+
+```html
+<input type="file" id="fileInput" accept=".pdf" />
+<script type="module">
+import mupdf from "mupdf";
+document.getElementById("fileInput").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const buffer = await file.arrayBuffer();
+    const doc = mupdf.Document.openDocument(new Uint8Array(buffer), "application/pdf");
+    console.log(`Loaded: ${file.name}, ${doc.countPages()} pages`);
+});
+</script>
+```
+
+### React Component Example
+
+```jsx
+import { useEffect, useRef } from 'react';
+
+export default function PdfViewer({ pdfUrl }) {
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+        async function renderPdf() {
+            const mupdf = await import('mupdf');
+            const response = await fetch(pdfUrl);
+            const buffer = await response.arrayBuffer();
+            const doc = mupdf.Document.openDocument(new Uint8Array(buffer), "application/pdf");
+            const page = doc.loadPage(0);
+            // ... render to canvasRef.current
+            page.destroy();
+            doc.destroy();
+        }
+        renderPdf();
+    }, [pdfUrl]);
+
+    return <canvas ref={canvasRef} />;
+}
+```
+
+### Client-Side Frameworks
+
+- **Vanilla JS:** https://mupdfjs.readthedocs.io/en/latest/apps/client-side/vanilla.html
+- **Angular.js:** https://mupdfjs.readthedocs.io/en/latest/apps/client-side/angular.html — proof-of-concept displaying the first page of a PDF in the browser
+- **React:** https://mupdfjs.readthedocs.io/en/latest/apps/client-side/react.html
+- **Vue:** https://mupdfjs.readthedocs.io/en/latest/apps/client-side/vue.html — proof-of-concept displaying the first page of a PDF in the browser
+
+### Server-Side (Next.js)
+
+- **Next.js:** https://mupdfjs.readthedocs.io/en/latest/apps/server-side/nextjs.html — use in API routes or with dynamic imports
+
+### Desktop Apps
+
+- https://mupdfjs.readthedocs.io/en/latest/apps/desktop/index.html
+
+---
+
+## API Reference
+
+The full API reference links to: https://mupdf.readthedocs.io/en/latest/reference/javascript/index.html
+
+Classes available in MuPDF.js:
+
+- **Archive** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Archive.html
+- **Buffer** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Buffer.html
+- **Color** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Color.html
+- **ColorSpace** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/ColorSpace.html
+- **DOM** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/DOM.html
+- **DefaultColorSpaces** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/DefaultColorSpaces.html
+- **Device** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Device.html
+- **DisplayList** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/DisplayList.html
+- **DisplayListDevice** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/DisplayListDevice.html
+- **Document** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Document.html
+- **DocumentWriter** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/DocumentWriter.html
+- **DrawDevice** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/DrawDevice.html
+- **Font** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Font.html
+- **Image** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Image.html
+- **Link** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Link.html
+- **LinkDestination** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/LinkDestination.html
+- **Matrix** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Matrix.html
+- **MultiArchive** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/MultiArchive.html
+- **OutlineItem** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/OutlineItem.html
+- **OutlineIterator** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/OutlineIterator.html
+- **Page** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Page.html
+- **Path** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Path.html
+- **PathWalker** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/PathWalker.html
+- **Pixmap** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Pixmap.html
+- **Point** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Point.html
+- **Quad** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Quad.html
+- **Rect** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Rect.html
+- **Shade** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Shade.html
+- **Story** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Story.html
+- **StrokeState** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/StrokeState.html
+- **StructuredText** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/StructuredText.html
+- **StructuredTextWalker** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/StructuredTextWalker.html
+- **Text** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/Text.html
+- **TextWalker** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/TextWalker.html
+- **TreeArchive** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/TreeArchive.html
+- **PDFAnnotation** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/PDFAnnotation.html
+- **PDFDocument** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/PDFDocument.html
+- **PDFFilespecParams** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/PDFFilespecParams.html
+- **PDFGraftMap** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/PDFGraftMap.html
+- **PDFObject** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/PDFObject.html
+- **PDFPage** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/PDFPage.html
+- **PDFProcessor** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/PDFProcessor.html
+- **PDFWidget** — https://mupdf.readthedocs.io/en/latest/reference/javascript/types/PDFWidget.html
+
+---
+
+## Deprecated Modules
+
+The `mupdf/tasks` and `mupdf/mupdfjs` sub-modules are deprecated and no longer available. Their functionality is now available as copyable example code.
+
+### Migration from `andytango/mupdf-js`
+
+```ts
+// OLD (deprecated)
+import { createMuPdf } from "mupdf-js";
+
+// NEW (official)
+import mupdf from "mupdf";
+```
+
+#### tasks.ts — Compatibility helpers
+
+```ts
+import * as mupdf from "mupdf"
+
+export function loadPDF(data: Buffer | ArrayBuffer | Uint8Array) {
+    return new mupdf.PDFDocument(data)
+}
+
+export function drawPageAsPNG(document: mupdf.PDFDocument, pageNumber: number, dpi: number): Uint8Array {
+    const page = document.loadPage(pageNumber)
+    const zoom = dpi / 72
+    return page.toPixmap([zoom, 0, 0, zoom, 0, 0], mupdf.ColorSpace.DeviceRGB).asPNG()
+}
+
+export function drawPageAsHTML(document: mupdf.PDFDocument, pageNumber: number, id: number): string {
+    return document.loadPage(pageNumber).toStructuredText().asHTML(id)
+}
+
+export function drawPageAsSVG(document: mupdf.PDFDocument, pageNumber: number): string {
+    const page = document.loadPage(pageNumber)
+    const buffer = new mupdf.Buffer()
+    const writer = new mupdf.DocumentWriter(buffer, "svg", "")
+    const device = writer.beginPage(page.getBounds())
+    page.run(device, mupdf.Matrix.identity)
+    device.close()
+    writer.endPage()
+    return buffer.asString()
+}
+
+export function getPageText(document: mupdf.PDFDocument, pageNumber: number): string {
+    return document.loadPage(pageNumber).toStructuredText().asText()
+}
+
+export function searchPageText(document: mupdf.PDFDocument, pageNumber: number, searchString: string, maxHits = 500) {
+    return document.loadPage(pageNumber).toStructuredText().search(searchString, maxHits)
+}
+```
+
+### Splitting a Document
+
+```ts
+import * as mupdf from "mupdf"
+
+export function split(document: mupdf.PDFDocument, range: number[] | undefined) {
+    let documents: mupdf.PDFDocument[] = [];
+    if (range == undefined || range.length == 0) {
+        for (let i = 0; i < document.countPages(); ++i) {
+            let newDoc: mupdf.PDFDocument = new mupdf.PDFDocument()
+            newDoc.graftPage(0, document, i);
+            documents.push(newDoc);
+        }
+    } else {
+        let ranges: number[][] = [];
+        for (let i = 0; i < range.length; ++i) {
+            var a: number = range[i] as number;
+            if (a < 0) throw new Error("Split error: document page indexes cannot be less than zero");
+            var nextIndex: number = i + 1;
+            var b: number = nextIndex > range.length - 1 ? document.countPages() : range[nextIndex] as number;
+            var set: number[] = [];
+            for (; a < b; ++a) set.push(a);
+            ranges.push(set);
+        }
+        for (let n = 0; n < ranges.length; ++n) {
+            let newDoc = new mupdf.PDFDocument()
+            let graftMap = newDoc.newGraftMap()
+            if (ranges[n] != undefined) {
+                for (let o: number = 0; o < ranges[n]!.length; o++) {
+                    graftMap.graftPage(o, document, ranges[n]![o]!);
+                }
+                documents.push(newDoc);
+            }
+        }
+    }
+    return documents
+}
+```
+
+### Merging Documents
+
+```ts
+import * as mupdf from "mupdf"
+
+export function merge(targetPDF, sourcePDF, fromPage = 0, toPage = -1, startAt = -1) {
+    const sourcePageCount = sourcePDF.countPages()
+    const targetPageCount = targetPDF.countPages()
+    const graftMap = targetPDF.newGraftMap()
+    fromPage = Math.max(0, Math.min(fromPage, sourcePageCount - 1))
+    toPage = toPage < 0 ? sourcePageCount - 1 : Math.min(toPage, sourcePageCount - 1)
+    startAt = startAt < 0 ? targetPageCount : Math.min(startAt, targetPageCount)
+    for (let i = fromPage; i <= toPage; i++)
+        copyPage(targetPDF, sourcePDF, i, startAt + (i - fromPage), graftMap)
+}
+```
+
+### Scrubbing a Document (remove metadata, links, JS, etc.)
+
+```ts
+import * as mupdf from "mupdf"
+
+export function scrub(document: mupdf.PDFDocument, options: {
+    attachedFiles?: boolean, cleanPages?: boolean, embeddedFiles?: boolean,
+    hiddenText?: boolean, javascript?: boolean, metadata?: boolean,
+    redactions?: boolean, redactImages?: number, removeLinks?: boolean,
+    resetFields?: boolean, resetResponses?: boolean, thumbnails?: boolean,
+    xmlMetadata?: boolean,
+}): void {
+    // Clears metadata fields, removes links, JS, thumbnails, embedded files, etc.
+    if (options.metadata) {
+        document.setMetaData("info:Title", "")
+        document.setMetaData("info:Author", "")
+        // ... etc.
+    }
+    // Process each page for removeLinks, attachedFiles, cleanPages,
+    // resetFields, resetResponses, thumbnails...
+}
+```
+
+### Adding Text to Pages
+
+```ts
+import * as mupdf from "mupdf"
+
+export function insertText(
+    doc: mupdf.PDFDocument,
+    page: mupdf.PDFPage,
+    value: string,
+    point: mupdf.Point,
+    fontName: string = "Times-Roman",
+    fontSize: number = 18,
+    graphics: { strokeColor: mupdf.Color, fillColor: mupdf.Color, strokeThickness: number }
+) {
+    // Adds a font resource, creates a content stream with BT/ET operators,
+    // and appends it to page Contents.
+}
+```
+
+### Adding Images to Pages
+
+```ts
+import * as mupdf from "mupdf"
+
+export function insertImage(
+    doc: mupdf.PDFDocument,
+    page: mupdf.PDFPage,
+    data: { image: mupdf.Image, name: string },
+    metrics: { x?: number, y?: number, width?: number, height?: number }
+) {
+    // Adds image to page XObject resources and appends a content stream
+    // using the "cm" and "Do" operators.
+}
+```
+
+### Extracting Words and Images from Pages
+
+```ts
+export function getPageWords(page: mupdf.PDFPage): MyWord[] {
+    // Walks StructuredText with preserve-whitespace,preserve-spans
+    // Returns array of { rect, text, font, size }
+}
+
+export function getPageImages(page: mupdf.PDFPage) {
+    // Walks StructuredText with preserve-images
+    // Returns array of { bbox, matrix, image }
+}
+```
+
+### Managing Page XObjects
+
+```ts
+export function getPageResourcesXObjects(page: mupdf.PDFPage): { key: string | number; value: string }[]
+export function deletePageResourcesXObject(doc: mupdf.PDFDocument, page: mupdf.PDFPage, ref: string): void
+```
+
+---
+
+## Frequently Asked Questions
+
+### What is MuPDF.js?
+
+MuPDF.js is the official JavaScript/TypeScript binding for MuPDF from Artifex Software. It's powered by WebAssembly (WASM). This enables browser-side PDF processing without server round-trips, Node.js server processing, and cross-platform use anywhere JavaScript runs.
+
+### What can MuPDF.js do?
+
+- Open, merge, split, rearrange, crop, rotate, and save PDF files
+- Render pages to image format or HTML5 Canvas
+- Extract text with position information and search across documents
+- Create highlights, notes, drawings, redactions, and other annotations
+- Modify existing annotations
+
+### How does MuPDF.js compare to PDF.js?
+
+**MuPDF.js advantages:** Fast, accurate rendering; full PDF editing; better font handling and text extraction.  
+**PDF.js advantages:** Pure JavaScript (no WASM); Mozilla-backed; smaller bundle size; Apache 2.0 license.
+
+Choose MuPDF.js for high-fidelity rendering, editing, or advanced text extraction. Choose PDF.js for simpler viewing where bundle size matters.
+
+### What is the bundle size?
+
+- JavaScript wrapper: ~50KB (minified)
+- WebAssembly binary: ~8–12MB (compresses to ~3–4MB over the wire with gzip/brotli)
+
+The WASM binary is loaded asynchronously and can be cached by browsers.
+
+### Licensing
+
+- **AGPL v3:** Free for open-source projects. Distributing software or providing network services using MuPDF.js requires releasing source code under AGPL.
+- **Commercial License:** For proprietary applications or SaaS products. Contact Artifex: https://artifex.com/contact/mupdf-js
